@@ -10,6 +10,11 @@ import '../../features/auth/presentation/change_pin_page.dart';
 import '../../features/auth/presentation/lock_screen.dart';
 import '../../features/auth/presentation/pin_setup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
+import '../../features/auth/presentation/login_screen.dart';
+import '../../features/auth/presentation/register_screen.dart';
+import '../../features/auth/presentation/account_screen.dart';
+import '../../features/auth/presentation/force_update_screen.dart';
+import '../../features/auth/presentation/maintenance_screen.dart';
 import '../../features/calls/presentation/calls_list_screen.dart';
 import '../../features/contacts/presentation/create_contact_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
@@ -38,6 +43,8 @@ import '../../features/visitors/presentation/visitors_list_screen.dart';
 // Phase 5
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/settings/presentation/security_log_screen.dart';
+import '../../features/settings/presentation/privacy_policy_screen.dart';
+import '../../features/settings/presentation/legal_protection_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 import 'route_names.dart';
 
@@ -76,6 +83,48 @@ class AppRouter {
       GoRoute(
         path: RouteNames.pinSetup,
         builder: (context, state) => const PinSetupScreen(),
+      ),
+
+      // ─── Login Screen ───
+      GoRoute(
+        path: RouteNames.login,
+        builder: (context, state) => const LoginScreen(),
+      ),
+
+      // ─── Register Screen ───
+      GoRoute(
+        path: RouteNames.register,
+        builder: (context, state) => const RegisterScreen(),
+      ),
+
+      // ─── Account Screen ───
+      GoRoute(
+        path: RouteNames.account,
+        builder: (context, state) => const AccountScreen(),
+      ),
+
+      // ─── Privacy Policy Screen ───
+      GoRoute(
+        path: RouteNames.privacyPolicy,
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+
+      // ─── Legal Protection Screen ───
+      GoRoute(
+        path: RouteNames.legalProtection,
+        builder: (context, state) => const LegalProtectionScreen(),
+      ),
+
+      // ─── Force Update Screen ───
+      GoRoute(
+        path: RouteNames.forceUpdate,
+        builder: (context, state) => const ForceUpdateScreen(),
+      ),
+
+      // ─── Maintenance Screen ───
+      GoRoute(
+        path: RouteNames.maintenance,
+        builder: (context, state) => const MaintenanceScreen(),
       ),
 
       // ─── Main Shell (Bottom Navigation) ───

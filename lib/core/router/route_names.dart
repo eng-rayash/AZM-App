@@ -137,6 +137,13 @@ class RouteNames {
   // ─────────────────────────────────────────────
 
   static const String changePin = '/change-pin';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String account = '/account';
+  static const String privacyPolicy = '/privacy-policy';
+  static const String legalProtection = '/legal-protection';
+  static const String forceUpdate = '/force-update';
+  static const String maintenance = '/maintenance';
 
   // ─────────────────────────────────────────────
   // Settings Extended Routes

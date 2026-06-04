@@ -151,6 +151,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTap: () => context.push(RouteNames.securityLog),
               ),
 
+              _buildNavigationTile(
+                isDark,
+                icon: Icons.cloud_done_rounded,
+                title: 'الحساب والتحقق',
+                subtitle: 'ربط ومزامنة الحساب سحابياً',
+                onTap: () => context.push(RouteNames.account),
+              ),
+
               AppSpacing.gapXxl,
 
               // ─── Section 2: Appearance ───
@@ -419,7 +427,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 icon: Icons.privacy_tip_rounded,
                 title: 'سياسة الخصوصية',
                 subtitle: 'بيان حماية البيانات والسرية الأمنية',
-                onTap: () => _showPrivacyPolicyDialog(context),
+                onTap: () => context.push(RouteNames.privacyPolicy),
+              ),
+              _buildNavigationTile(
+                isDark,
+                icon: Icons.gavel_rounded,
+                title: 'شروط الاستخدام والملكية الفكرية',
+                subtitle: 'حقوق الملكية الفكرية والترخيص القانوني',
+                onTap: () => context.push(RouteNames.legalProtection),
               ),
               _buildNavigationTile(
                 isDark,
@@ -687,112 +702,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showPrivacyPolicyDialog(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: NeuCard(
-              padding: const EdgeInsets.all(24),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.privacy_tip_rounded,
-                            color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                            size: 40,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'سياسة الخصوصية وحماية البيانات',
-                            style: (isDark ? AppTypography.h3Dark : AppTypography.h3).copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 12),
-                    
-                    _buildPolicyPoint(
-                      title: '1. العمل المحلي الكامل (Offline-First):',
-                      description: 'تطبيق "مديري" يعمل محلياً بشكل كامل على جهازك. لا نقوم بجمع أو معالجة أو رفع أي من بياناتك الشخصية، أو المستندات، أو الأنشطة التنفيذية إلى أي خوادم خارجية.',
-                      isDark: isDark,
-                    ),
-                    const SizedBox(height: 12),
-                    
-                    _buildPolicyPoint(
-                      title: '2. تشفير وحماية البيانات:',
-                      description: 'يتم تشفير قاعدة بيانات التطبيق بالكامل محلياً باستخدام محرك SQLCipher والتشفير العسكري AES256 لحماية ملفاتك ومذكراتك من الوصول غير المصرح به.',
-                      isDark: isDark,
-                    ),
-                    const SizedBox(height: 12),
-                    
-                    _buildPolicyPoint(
-                      title: '3. أذونات الدخول والوصول:',
-                      description: 'يطلب التطبيق أذونات البصمة (المقاييس الحيوية) لتأمين الدخول السريع، وصلاحية الوصول للملفات فقط من أجل حفظ المرفقات والمستندات بداخل الأرشيف التنفيذي للجهاز.',
-                      isDark: isDark,
-                    ),
-                    const SizedBox(height: 12),
-                    
-                    _buildPolicyPoint(
-                      title: '4. النسخ الاحتياطي المشفر:',
-                      description: 'عند تصدير نسخة احتياطية من بياناتك، يتم تشفيرها وتخزينها محلياً على جهازك. تقع مسؤولية الحفاظ على هذه النسخ الاحتياطية على عاتق المستخدم بالكامل.',
-                      isDark: isDark,
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: NeuButton(
-                        onPressed: () => Navigator.of(ctx).pop(),
-                        label: 'إغلاق',
-                        variant: NeuButtonVariant.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildPolicyPoint({required String title, required String description, required bool isDark}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
-            fontWeight: FontWeight.bold,
-            color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          description,
-          style: (isDark ? AppTypography.captionDark : AppTypography.caption).copyWith(
-            height: 1.4,
-          ),
-        ),
-      ],
     );
   }
 
