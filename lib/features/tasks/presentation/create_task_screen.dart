@@ -12,6 +12,8 @@ import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
 
+import '../../followups/domain/follow_ups_repository.dart';
+
 /// Create Task Screen — form for adding a new task.
 class CreateTaskScreen extends ConsumerStatefulWidget {
   const CreateTaskScreen({super.key});
@@ -29,6 +31,7 @@ class _CreateTaskScreenState extends ConsumerState<CreateTaskScreen> {
   Priority _selectedPriority = Priority.medium;
   DateTime _selectedDate = DateTime.now();
   bool _isSubmitting = false;
+  bool _promoteToFollowUp = false;
 
   @override
   void dispose() {
@@ -56,13 +59,26 @@ class _CreateTaskScreenState extends ConsumerState<CreateTaskScreen> {
     try {
       final repository = ref.read(tasksRepositoryProvider);
       
-      await repository.createTask(
+      final taskId = await repository.createTask(
         title: _titleController.text,
         description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
         priority: _selectedPriority,
         dueDate: _selectedDate.toIso8601String().split('T').first,
         assignedTo: _assignedToController.text.isNotEmpty ? _assignedToController.text : null,
       );
+
+      if (_promoteToFollowUp) {
+        final followupRepo = ref.read(followUpsRepositoryProvider);
+        await followupRepo.createFollowUp(
+          title: 'متابعة مهمة: ${_titleController.text.trim()}',
+          type: FollowUpEntityType.task,
+          priority: _selectedPriority,
+          notes: _descriptionController.text.isNotEmpty ? _descriptionController.text : 'متابعة تفاصيل المهمة المستندة',
+          targetDate: _selectedDate.toIso8601String().split('T').first,
+          entityId: taskId,
+          assignedTo: _assignedToController.text.isNotEmpty ? _assignedToController.text : 'غير محدد',
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -209,6 +225,43 @@ class _CreateTaskScreenState extends ConsumerState<CreateTaskScreen> {
                   ),
                 );
               }).toList()),
+              AppSpacing.gapXxl,
+
+              // ── Promote to Follow-up Switch ────────────────────
+              NeuCard(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.trending_up_rounded,
+                      color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                      size: 22,
+                    ),
+                    AppSpacing.gapHMd,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'رفع المهمة للمتابعة',
+                            style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                          ),
+                          Text(
+                            'إضافة المهمة تلقائياً لقسم المتابعة الذكية وتتبع إنجازها',
+                            style: isDark ? AppTypography.captionDark : AppTypography.caption,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: _promoteToFollowUp,
+                      onChanged: (val) => setState(() => _promoteToFollowUp = val),
+                      activeTrackColor: NeuColors.goldAccent,
+                      activeThumbColor: NeuColors.navyDeep,
+                    ),
+                  ],
+                ),
+              ),
               AppSpacing.gapXxl,
 
               // Submit Button

@@ -119,6 +119,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ─── Section 0: Account & Verification (Top) ───
+              _buildSectionTitle(
+                  'الحساب والتحقق', Icons.cloud_done_rounded, isDark),
+              AppSpacing.gapMd,
+
+              _buildNavigationTile(
+                isDark,
+                icon: Icons.cloud_done_rounded,
+                title: 'إعدادات الحساب والتحقق',
+                subtitle: 'ربط ومزامنة الحساب سحابياً',
+                onTap: () => context.push(RouteNames.account),
+              ),
+
+              AppSpacing.gapXxl,
+
               // ─── Section 1: Security ───
               _buildSectionTitle(
                   'الحماية والأمان', Icons.shield_rounded, isDark),
@@ -149,14 +164,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 title: 'سجل الأنشطة الأمنية',
                 subtitle: 'عرض سجل تسجيلات الدخول',
                 onTap: () => context.push(RouteNames.securityLog),
-              ),
-
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.cloud_done_rounded,
-                title: 'الحساب والتحقق',
-                subtitle: 'ربط ومزامنة الحساب سحابياً',
-                onTap: () => context.push(RouteNames.account),
               ),
 
               AppSpacing.gapXxl,
@@ -341,7 +348,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 5: About ───
+              // ─── Section 5: About (Bottom) ───
               _buildSectionTitle(
                   'عن التطبيق', Icons.info_rounded, isDark),
               AppSpacing.gapMd,

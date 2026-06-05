@@ -12,6 +12,7 @@ import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
+import '../../followups/domain/follow_ups_repository.dart';
 
 /// Edit Task Screen
 class EditTaskScreen extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
   DateTime? _selectedDate;
   bool _isSubmitting = false;
   bool _isInitialized = false;
+  bool _promoteToFollowUp = false;
 
   @override
   void initState() {
@@ -62,7 +64,21 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
       _selectedDate = DateTime.tryParse(task.dueDate!);
     }
     
+    _checkFollowUpStatus();
     _isInitialized = true;
+  }
+
+  Future<void> _checkFollowUpStatus() async {
+    try {
+      final followupRepo = ref.read(followUpsRepositoryProvider);
+      final list = await followupRepo.watchAll().first;
+      final existing = list.any((f) => f.entityId == widget.taskId && f.entityType == FollowUpEntityType.task.value);
+      if (mounted) {
+        setState(() {
+          _promoteToFollowUp = existing;
+        });
+      }
+    } catch (_) {}
   }
 
   Future<void> _pickDate() async {
@@ -91,6 +107,39 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
         dueDate: _selectedDate?.toIso8601String().split('T').first,
         assignedTo: _assignedToController.text.isNotEmpty ? _assignedToController.text : null,
       );
+
+      final followupRepo = ref.read(followUpsRepositoryProvider);
+      final currentFollowUps = await followupRepo.watchAll().first;
+      final existing = currentFollowUps.where((f) => f.entityId == widget.taskId && f.entityType == FollowUpEntityType.task.value).toList();
+
+      if (_promoteToFollowUp) {
+        if (existing.isNotEmpty) {
+          await followupRepo.updateFollowUp(
+            id: existing.first.id,
+            title: 'متابعة مهمة: ${_titleController.text.trim()}',
+            type: FollowUpEntityType.task,
+            priority: _selectedPriority!,
+            notes: _descriptionController.text.isNotEmpty ? _descriptionController.text : 'متابعة تفاصيل المهمة المستندة',
+            targetDate: _selectedDate?.toIso8601String().split('T').first,
+            entityId: widget.taskId,
+            assignedTo: _assignedToController.text.isNotEmpty ? _assignedToController.text : 'غير محدد',
+          );
+        } else {
+          await followupRepo.createFollowUp(
+            title: 'متابعة مهمة: ${_titleController.text.trim()}',
+            type: FollowUpEntityType.task,
+            priority: _selectedPriority!,
+            notes: _descriptionController.text.isNotEmpty ? _descriptionController.text : 'متابعة تفاصيل المهمة المستندة',
+            targetDate: _selectedDate?.toIso8601String().split('T').first,
+            entityId: widget.taskId,
+            assignedTo: _assignedToController.text.isNotEmpty ? _assignedToController.text : 'غير محدد',
+          );
+        }
+      } else {
+        if (existing.isNotEmpty) {
+          await followupRepo.deleteFollowUp(existing.first.id);
+        }
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -242,6 +291,43 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
                       ),
                     );
                   }).toList()),
+                  AppSpacing.gapXxl,
+
+                  // ── Promote to Follow-up Switch ────────────────────
+                  NeuCard(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.trending_up_rounded,
+                          color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                          size: 22,
+                        ),
+                        AppSpacing.gapHMd,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'رفع المهمة للمتابعة',
+                                style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                              ),
+                              Text(
+                                'إضافة المهمة تلقائياً لقسم المتابعة الذكية وتتبع إنجازها',
+                                style: isDark ? AppTypography.captionDark : AppTypography.caption,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Switch(
+                          value: _promoteToFollowUp,
+                          onChanged: (val) => setState(() => _promoteToFollowUp = val),
+                          activeTrackColor: NeuColors.goldAccent,
+                          activeThumbColor: NeuColors.navyDeep,
+                        ),
+                      ],
+                    ),
+                  ),
                   AppSpacing.gapXxl,
 
                   NeuButton(label: 'حفظ التعديلات', onPressed: _isSubmitting ? null : _submit, isLoading: _isSubmitting, icon: Icons.save_rounded),

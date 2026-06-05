@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:convert';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/router/route_names.dart';
@@ -94,6 +95,30 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
 
     UnifiedStatus currentStatus = UnifiedStatus.fromValue(followup.status);
 
+    // Decode notes JSON
+    String notesGeneral = '';
+    String executedProgress = '';
+    String obstaclesText = '';
+
+    if (followup.notes != null && followup.notes!.isNotEmpty) {
+      try {
+        final decoded = json.decode(followup.notes!);
+        if (decoded is Map) {
+          notesGeneral = decoded['general']?.toString() ?? '';
+          executedProgress = decoded['executed']?.toString() ?? '';
+          obstaclesText = decoded['obstacles']?.toString() ?? '';
+        } else {
+          notesGeneral = followup.notes!;
+        }
+      } catch (_) {
+        notesGeneral = followup.notes!;
+      }
+    }
+
+    final generalCtrl = TextEditingController(text: notesGeneral);
+    final executedCtrl = TextEditingController(text: executedProgress);
+    final obstaclesCtrl = TextEditingController(text: obstaclesText);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
@@ -134,7 +159,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'تفاصيل وإجراءات المتابعة',
+                        'تفاصيل وإجراءات المتابعة الذكية',
                         style: (isDark ? AppTypography.h3Dark : AppTypography.h3).copyWith(
                           color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
                           fontWeight: FontWeight.bold,
@@ -250,9 +275,43 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(
-                                type.arabicLabel,
-                                style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                              Row(
+                                children: [
+                                  Text(
+                                    type.arabicLabel,
+                                    style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                                  ),
+                                  const Spacer(),
+                                  if (followup.entityId != null)
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(ctx).pop();
+                                        if (type == FollowUpEntityType.meeting) {
+                                          context.push(RouteNames.meetingDetailPath(followup.entityId!));
+                                        } else if (type == FollowUpEntityType.task) {
+                                          context.push(RouteNames.taskDetailPath(followup.entityId!));
+                                        } else if (type == FollowUpEntityType.directive) {
+                                          context.push(RouteNames.directiveDetailPath(followup.entityId!));
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? NeuColors.goldAccent.withAlpha(30) : NeuColors.navyDeep.withAlpha(20),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          'انتقال للمصدر 🔗',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                                            fontFamily: 'Tajawal',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ],
                           ),
@@ -288,29 +347,84 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Notes (if any)
-                  if (followup.notes != null && followup.notes!.isNotEmpty) ...[
-                    NeuCard(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'ملاحظات إضافية',
-                            style: (isDark ? AppTypography.captionDark : AppTypography.caption).copyWith(
-                              color: isDark ? NeuColors.textHintDark : NeuColors.textHint,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            followup.notes!,
-                            style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(height: 1.4),
-                          ),
-                        ],
-                      ),
+                  // Remaining Time & Duration Tracker
+                  NeuCard(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.timer_outlined, size: 16, color: isDark ? NeuColors.goldAccent : NeuColors.navyMid),
+                            const SizedBox(width: 8),
+                            Text('الزمن المتبقي للتنفيذ:', style: isDark ? AppTypography.bodyDark : AppTypography.body),
+                          ],
+                        ),
+                        _buildRemainingTimeWidget(followup.targetDate, isDark),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Smart Fields: General Notes, Achievements (Executed), and Obstacles
+                  Text(
+                    'المتابعة الذكية للتنفيذ:',
+                    style: (isDark ? AppTypography.labelDark : AppTypography.label).copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Editable General Notes
+                  TextField(
+                    controller: generalCtrl,
+                    maxLines: 2,
+                    textDirection: TextDirection.rtl,
+                    style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                    decoration: InputDecoration(
+                      labelText: 'ملاحظات عامة',
+                      labelStyle: TextStyle(color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep),
+                      filled: true,
+                      fillColor: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Editable Achievements (What has been executed)
+                  TextField(
+                    controller: executedCtrl,
+                    maxLines: 2,
+                    textDirection: TextDirection.rtl,
+                    style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                    decoration: InputDecoration(
+                      labelText: 'ما تم إنجازه وتنفيذه حتى الآن',
+                      labelStyle: const TextStyle(color: NeuColors.success),
+                      filled: true,
+                      fillColor: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Editable Obstacles
+                  TextField(
+                    controller: obstaclesCtrl,
+                    maxLines: 2,
+                    textDirection: TextDirection.rtl,
+                    style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                    decoration: InputDecoration(
+                      labelText: 'العوائق والصعوبات القائمة',
+                      labelStyle: const TextStyle(color: NeuColors.priorityCritical),
+                      filled: true,
+                      fillColor: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
                   // Interactive Status Update
                   Text(
@@ -403,6 +517,53 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                       );
                     },
                   ),
+                  const SizedBox(height: 20),
+
+                  // Save Smart Fields Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: NeuButton(
+                      label: 'حفظ الملاحظات والإجراءات الذكية',
+                      icon: Icons.save_rounded,
+                      onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final navigator = Navigator.of(ctx);
+                        try {
+                          final newNotesEncoded = jsonEncode({
+                            'general': generalCtrl.text.trim(),
+                            'executed': executedCtrl.text.trim(),
+                            'obstacles': obstaclesCtrl.text.trim(),
+                          });
+
+                          await ref.read(followUpsRepositoryProvider).updateFollowUp(
+                            id: followup.id,
+                            title: followup.title,
+                            type: FollowUpEntityType.fromValue(followup.entityType),
+                            priority: Priority.fromValue(followup.priority),
+                            notes: newNotesEncoded,
+                            targetDate: followup.targetDate,
+                            entityId: followup.entityId,
+                            assignedTo: followup.assignedTo,
+                          );
+
+                          navigator.pop();
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('تم حفظ الإجراءات والمتابعة بنجاح'),
+                              backgroundColor: NeuColors.success,
+                            ),
+                          );
+                        } catch (e) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text('حدث خطأ أثناء الحفظ: $e'),
+                              backgroundColor: NeuColors.priorityCritical,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -410,6 +571,59 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
         );
       },
     );
+  }
+
+  Widget _buildRemainingTimeWidget(String? targetDateStr, bool isDark) {
+    if (targetDateStr == null || targetDateStr.isEmpty) {
+      return Text('غير محدد', style: isDark ? AppTypography.bodyDark : AppTypography.body);
+    }
+    try {
+      final dueDate = DateTime.parse(targetDateStr);
+      final now = DateTime.now();
+      final difference = dueDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+
+      String label;
+      Color color;
+
+      if (difference < 0) {
+        label = 'متأخر بمقدار ${difference.abs()} يوم';
+        color = NeuColors.priorityCritical;
+      } else if (difference == 0) {
+        label = 'يستحق اليوم';
+        color = NeuColors.priorityHigh;
+      } else if (difference == 1) {
+        label = 'يستحق غداً';
+        color = NeuColors.priorityHigh;
+      } else {
+        label = 'متبقي $difference يوم';
+        if (difference <= 2) {
+          color = NeuColors.priorityCritical;
+        } else if (difference <= 7) {
+          color = NeuColors.warning;
+        } else {
+          color = NeuColors.success;
+        }
+      }
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withAlpha(20),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            fontFamily: 'Tajawal',
+          ),
+        ),
+      );
+    } catch (_) {
+      return Text(targetDateStr, style: isDark ? AppTypography.bodyDark : AppTypography.body);
+    }
   }
 
   // Soft delete confirmation
@@ -592,10 +806,18 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
     }
   }
 
+  bool _initializedStatusFromRoute = false;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final followupsState = ref.watch(followUpsListProvider);
+
+    final statusParam = GoRouterState.of(context).uri.queryParameters['status'];
+    if (!_initializedStatusFromRoute && statusParam != null) {
+      _statusFilter = statusParam;
+      _initializedStatusFromRoute = true;
+    }
 
     return Scaffold(
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
@@ -815,6 +1037,30 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
 
                       final isSelected = _selectedIds.contains(followup.id);
 
+                      // Decode notes JSON
+                      String notesGeneral = '';
+                      String executedProgress = '';
+                      String obstaclesText = '';
+
+                      if (followup.notes != null && followup.notes!.isNotEmpty) {
+                        try {
+                          final decoded = json.decode(followup.notes!);
+                          if (decoded is Map) {
+                            notesGeneral = decoded['general']?.toString() ?? '';
+                            executedProgress = decoded['executed']?.toString() ?? '';
+                            obstaclesText = decoded['obstacles']?.toString() ?? '';
+                          } else {
+                            notesGeneral = followup.notes!;
+                          }
+                        } catch (_) {
+                          notesGeneral = followup.notes!;
+                        }
+                      }
+
+                      final hasGeneral = notesGeneral.trim().isNotEmpty;
+                      final hasExecuted = executedProgress.trim().isNotEmpty;
+                      final hasObstacles = obstaclesText.trim().isNotEmpty;
+
                       return GestureDetector(
                         onTap: () {
                           if (_selectedIds.isNotEmpty) {
@@ -906,6 +1152,8 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                             followup.targetDate!,
                                             style: isDark ? AppTypography.captionDark : AppTypography.caption,
                                           ),
+                                          const SizedBox(width: 8),
+                                          _buildRemainingTimeWidget(followup.targetDate, isDark),
                                           if (followup.assignedTo != null && followup.assignedTo!.isNotEmpty) ...[
                                             const SizedBox(width: 16),
                                             Icon(Icons.business_rounded,
@@ -918,6 +1166,93 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                                 style: isDark ? AppTypography.captionDark : AppTypography.caption,
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ],
+                                    if (hasGeneral || hasExecuted || hasObstacles) ...[
+                                      AppSpacing.gapSm,
+                                      Row(
+                                        children: [
+                                          if (hasGeneral) ...[
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: (isDark ? NeuColors.goldAccent : NeuColors.navyMid).withValues(alpha: 0.15),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.description_outlined,
+                                                      size: 12,
+                                                      color: isDark ? NeuColors.goldAccent : NeuColors.navyMid),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    'ملاحظات',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontFamily: 'Tajawal',
+                                                      color: isDark ? NeuColors.goldAccent : NeuColors.navyMid,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          if (hasExecuted) ...[
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: NeuColors.success.withValues(alpha: 0.15),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.check_circle_outline_rounded,
+                                                      size: 12,
+                                                      color: NeuColors.success),
+                                                  SizedBox(width: 4),
+                                                  Text(
+                                                    'إنجازات',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontFamily: 'Tajawal',
+                                                      color: NeuColors.success,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          if (hasObstacles) ...[
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: NeuColors.priorityCritical.withValues(alpha: 0.15),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.warning_amber_rounded,
+                                                      size: 12,
+                                                      color: NeuColors.priorityCritical),
+                                                  SizedBox(width: 4),
+                                                  Text(
+                                                    'عوائق',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontFamily: 'Tajawal',
+                                                      color: NeuColors.priorityCritical,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],

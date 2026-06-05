@@ -281,7 +281,7 @@ class MeetingDetailScreen extends ConsumerWidget {
                   context: context,
                   icon: Icons.groups_rounded,
                   title: 'قائمة الحضور',
-                  items: _decodeJsonList(meeting.attendees),
+                  items: _decodeJsonList(meeting.attendees, isAttendee: true),
                   isNumbered: false,
                   isDark: isDark,
                 ),
@@ -291,7 +291,7 @@ class MeetingDetailScreen extends ConsumerWidget {
                   context: context,
                   icon: Icons.list_alt_rounded,
                   title: 'جدول الأعمال',
-                  items: _decodeJsonList(meeting.agenda),
+                  items: _decodeJsonList(meeting.agenda, isAttendee: false),
                   isNumbered: true,
                   isDark: isDark,
                 ),
@@ -301,7 +301,7 @@ class MeetingDetailScreen extends ConsumerWidget {
                   context: context,
                   icon: Icons.gavel_rounded,
                   title: 'القرارات والتوصيات',
-                  items: _decodeJsonList(meeting.decisions),
+                  items: _decodeJsonList(meeting.decisions, isAttendee: false),
                   isNumbered: true,
                   isDark: isDark,
                   accentColor: NeuColors.goldAccent,
@@ -315,16 +315,22 @@ class MeetingDetailScreen extends ConsumerWidget {
     );
   }
 
-  List<String> _decodeJsonList(String? jsonStr) {
+  List<String> _decodeJsonList(String? jsonStr, {bool isAttendee = false}) {
     if (jsonStr == null || jsonStr.isEmpty || jsonStr == '[]') return [];
     try {
       final decoded = json.decode(jsonStr);
       if (decoded is List) {
         return decoded.map((e) {
           if (e is Map) {
-            final name = e['name']?.toString() ?? '';
-            final role = e['role']?.toString() ?? '';
-            return role.isNotEmpty ? '$name ($role)' : name;
+            if (isAttendee) {
+              final name = e['name']?.toString() ?? e['description']?.toString() ?? '';
+              final role = e['role']?.toString() ?? e['executor']?.toString() ?? '';
+              return role.isNotEmpty ? '$name ($role)' : name;
+            } else {
+              final desc = e['description']?.toString() ?? '';
+              final exec = e['executor']?.toString() ?? '';
+              return (exec.isNotEmpty && exec != 'غير محدد') ? '$desc [المنفذ: $exec]' : desc;
+            }
           }
           return e.toString();
         }).where((s) => s.isNotEmpty).toList();

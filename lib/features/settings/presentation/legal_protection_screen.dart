@@ -96,54 +96,6 @@ class LegalProtectionScreen extends StatelessWidget {
                 ),
                 AppSpacing.gapLg,
 
-                // Section 4: Open Source Attributions
-                NeuCard(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'مكتبات الطرف الثالث والتراخيص المفتوحة',
-                        style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                        ),
-                      ),
-                      AppSpacing.gapSm,
-                      Text(
-                        'يفخر تطبيق "مديري" بالاعتماد على حزم برمجية مفتوحة المصدر مثل Flutter, Riverpod, Drift SQLite, Supabase وغيرها. يمكنك عرض التراخيص البرمجية التفصيلية عبر الرابط أدناه.',
-                        style: (isDark ? AppTypography.captionDark : AppTypography.caption).copyWith(
-                          height: 1.5,
-                          fontSize: 13,
-                        ),
-                      ),
-                      AppSpacing.gapLg,
-                      SizedBox(
-                        width: double.infinity,
-                        child: NeuButton(
-                          label: 'عرض رخص البرمجيات المفتوحة',
-                          icon: Icons.description_outlined,
-                          variant: NeuButtonVariant.secondary,
-                          onPressed: () {
-                            showLicensePage(
-                              context: context,
-                              applicationName: 'مديري',
-                              applicationVersion: '0.1.0',
-                              applicationIcon: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Image.asset(
-                                  'assets/icon.png',
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 AppSpacing.gapXxl,
 
                 SizedBox(

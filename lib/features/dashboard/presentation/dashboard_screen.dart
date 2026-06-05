@@ -9,6 +9,7 @@ import '../../../core/router/route_names.dart';
 import '../../meetings/providers/meetings_provider.dart';
 import '../../reports/providers/reports_provider.dart';
 import '../../timeline/providers/timeline_provider.dart';
+import '../../followups/providers/follow_ups_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
@@ -347,16 +348,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-              // Task Distribution Donut Chart
+              // Executive Follow-ups Donut Chart
               SliverToBoxAdapter(
                 child: Padding(
                   padding: AppSpacing.screenH,
-                  child: TaskDistributionChart(
-                    completed: analytics.completedTasks,
-                    inProgress: analytics.inProgressTasks,
-                    overdue: analytics.overdueTasks,
-                    stalled: analytics.stalledTasks,
-                    isDark: isDark,
+                  child: ref.watch(followUpsListProvider).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (err, _) => Center(
+                      child: Text(
+                        'خطأ في تحميل إحصائيات المتابعات: $err',
+                        style: const TextStyle(color: NeuColors.priorityCritical),
+                      ),
+                    ),
+                    data: (followups) {
+                      final newCount = followups.where((f) => f.status == 0).length;
+                      final inProgressCount = followups.where((f) => f.status == 1).length;
+                      final awaitingResponseCount = followups.where((f) => f.status == 2).length;
+                      final completedCount = followups.where((f) => f.status == 3).length;
+                      final overdueCount = followups.where((f) => f.status == 4).length;
+
+                      return FollowUpDistributionChart(
+                        newItems: newCount,
+                        inProgress: inProgressCount,
+                        awaitingResponse: awaitingResponseCount,
+                        completed: completedCount,
+                        overdue: overdueCount,
+                        isDark: isDark,
+                      );
+                    },
                   ),
                 ),
               ),
@@ -628,26 +647,29 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 }
 
-/// Task distribution fl_chart section
-class TaskDistributionChart extends StatelessWidget {
-  final int completed;
+/// Executive follow-up distribution fl_chart section
+class FollowUpDistributionChart extends StatelessWidget {
+  final int newItems;
   final int inProgress;
+  final int awaitingResponse;
+  final int completed;
   final int overdue;
-  final int stalled;
   final bool isDark;
 
-  const TaskDistributionChart({
+  const FollowUpDistributionChart({
     super.key,
-    required this.completed,
+    required this.newItems,
     required this.inProgress,
+    required this.awaitingResponse,
+    required this.completed,
     required this.overdue,
-    required this.stalled,
     required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
-    final total = completed + inProgress + overdue + stalled;
+    final total = newItems + inProgress + awaitingResponse + completed + overdue;
+    final awaitingColor = isDark ? NeuColors.goldAccent : NeuColors.navyMid;
 
     return NeuCard(
       radius: 24,
@@ -663,7 +685,7 @@ class TaskDistributionChart extends StatelessWidget {
               ),
               AppSpacing.gapHSm,
               Text(
-                'توزيع حالات مهام العمل',
+                'مخطط المتابعات التنفيذية',
                 style: isDark ? AppTypography.h4Dark : AppTypography.h4,
               ),
             ],
@@ -674,7 +696,7 @@ class TaskDistributionChart extends StatelessWidget {
               height: 120,
               child: Center(
                 child: Text(
-                  'لا توجد مهام عمل مسجلة حتى الآن.',
+                  'لا توجد متابعات تنفيذية مسجلة حتى الآن.',
                   style: isDark ? AppTypography.bodySmallDark : AppTypography.bodySmall,
                 ),
               ),
@@ -693,9 +715,9 @@ class TaskDistributionChart extends StatelessWidget {
                         startDegreeOffset: -90,
                         sections: [
                           PieChartSectionData(
-                            color: NeuColors.success,
-                            value: completed.toDouble(),
-                            title: completed > 0 ? '$completed' : '',
+                            color: NeuColors.info,
+                            value: newItems.toDouble(),
+                            title: newItems > 0 ? '$newItems' : '',
                             radius: 16,
                             titleStyle: const TextStyle(
                               fontSize: 11,
@@ -717,9 +739,21 @@ class TaskDistributionChart extends StatelessWidget {
                             ),
                           ),
                           PieChartSectionData(
-                            color: NeuColors.danger,
-                            value: overdue.toDouble(),
-                            title: overdue > 0 ? '$overdue' : '',
+                            color: awaitingColor,
+                            value: awaitingResponse.toDouble(),
+                            title: awaitingResponse > 0 ? '$awaitingResponse' : '',
+                            radius: 16,
+                            titleStyle: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.black : Colors.white,
+                              fontFamily: 'Tajawal',
+                            ),
+                          ),
+                          PieChartSectionData(
+                            color: NeuColors.success,
+                            value: completed.toDouble(),
+                            title: completed > 0 ? '$completed' : '',
                             radius: 16,
                             titleStyle: const TextStyle(
                               fontSize: 11,
@@ -729,9 +763,9 @@ class TaskDistributionChart extends StatelessWidget {
                             ),
                           ),
                           PieChartSectionData(
-                            color: isDark ? NeuColors.navyLight : NeuColors.navyMid,
-                            value: stalled.toDouble(),
-                            title: stalled > 0 ? '$stalled' : '',
+                            color: NeuColors.danger,
+                            value: overdue.toDouble(),
+                            title: overdue > 0 ? '$overdue' : '',
                             radius: 16,
                             titleStyle: const TextStyle(
                               fontSize: 11,
@@ -747,18 +781,20 @@ class TaskDistributionChart extends StatelessWidget {
                 ),
                 AppSpacing.gapHMd,
                 Expanded(
-                  flex: 4,
+                  flex: 5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildLegendItem(context, 'مكتملة', completed, NeuColors.success, isDark, () => context.push('${RouteNames.tasksListFull}?status=3')),
+                      _buildLegendItem(context, 'جديدة', newItems, NeuColors.info, isDark, () => context.push('${RouteNames.followupsListFull}?status=0')),
                       AppSpacing.gapSm,
-                      _buildLegendItem(context, 'قيد التنفيذ', inProgress, NeuColors.warning, isDark, () => context.push('${RouteNames.tasksListFull}?status=1')),
+                      _buildLegendItem(context, 'قيد التنفيذ', inProgress, NeuColors.warning, isDark, () => context.push('${RouteNames.followupsListFull}?status=1')),
                       AppSpacing.gapSm,
-                      _buildLegendItem(context, 'متأخرة', overdue, NeuColors.danger, isDark, () => context.push('${RouteNames.tasksListFull}?status=4')),
+                      _buildLegendItem(context, 'بانتظار الرد', awaitingResponse, awaitingColor, isDark, () => context.push('${RouteNames.followupsListFull}?status=2')),
                       AppSpacing.gapSm,
-                      _buildLegendItem(context, 'متعثرة', stalled, isDark ? NeuColors.navyLight : NeuColors.navyMid, isDark, () => context.push('${RouteNames.tasksListFull}?status=5')),
+                      _buildLegendItem(context, 'مكتملة', completed, NeuColors.success, isDark, () => context.push('${RouteNames.followupsListFull}?status=3')),
+                      AppSpacing.gapSm,
+                      _buildLegendItem(context, 'متأخرة', overdue, NeuColors.danger, isDark, () => context.push('${RouteNames.followupsListFull}?status=4')),
                     ],
                   ),
                 ),

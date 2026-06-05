@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/constants/enums.dart';
 import '../domain/meetings_repository.dart';
 import '../providers/meeting_categories_provider.dart';
+import '../../followups/domain/follow_ups_repository.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
@@ -50,14 +51,15 @@ class _CreateMeetingScreenState
 
   // ─── Dynamic Lists ─────────────────────────────────────────────
   final List<String> _attendees = [];
-  final List<String> _agendaItems = [];
-  final List<String> _decisions = [];
+  final List<Map<String, String>> _agendaItems = [];
+  final List<Map<String, String>> _decisions = [];
 
   // ─── State ─────────────────────────────────────────────────────
   Priority _selectedPriority = Priority.medium;
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   bool _isSubmitting = false;
+  bool _promoteToFollowUp = false;
 
   @override
   void dispose() {
@@ -94,10 +96,12 @@ class _CreateMeetingScreenState
 
   void _addItemDialog({
     required String title,
-    required String hint,
-    required List<String> targetList,
+    required String descHint,
+    required String execHint,
+    required List<Map<String, String>> targetList,
   }) {
-    final ctrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    final execCtrl = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => Directionality(
@@ -112,6 +116,109 @@ class _CreateMeetingScreenState
               style: Theme.of(context).brightness == Brightness.dark
                   ? AppTypography.h4Dark
                   : AppTypography.h4),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: descCtrl,
+                autofocus: true,
+                textDirection: TextDirection.rtl,
+                style: Theme.of(context).brightness == Brightness.dark
+                    ? AppTypography.bodyDark
+                    : AppTypography.body,
+                decoration: InputDecoration(
+                  hintText: descHint,
+                  hintStyle: AppTypography.caption,
+                  filled: true,
+                  fillColor: Theme.of(context).brightness == Brightness.dark
+                      ? NeuColors.surfaceDark
+                      : NeuColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                        color: NeuColors.goldAccent, width: 1.5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: execCtrl,
+                textDirection: TextDirection.rtl,
+                style: Theme.of(context).brightness == Brightness.dark
+                    ? AppTypography.bodyDark
+                    : AppTypography.body,
+                decoration: InputDecoration(
+                  hintText: execHint,
+                  hintStyle: AppTypography.caption,
+                  filled: true,
+                  fillColor: Theme.of(context).brightness == Brightness.dark
+                      ? NeuColors.surfaceDark
+                      : NeuColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                        color: NeuColors.goldAccent, width: 1.5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 12),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('إلغاء',
+                  style: AppTypography.bodySmall
+                      .copyWith(color: NeuColors.textSecondary)),
+            ),
+            NeuButton(
+              label: 'إضافة',
+              icon: Icons.add_rounded,
+              isExpanded: false,
+              radius: 12,
+              onPressed: () {
+                final desc = descCtrl.text.trim();
+                final exec = execCtrl.text.trim();
+                if (desc.isNotEmpty) {
+                  setState(() => targetList.add({
+                    'description': desc,
+                    'executor': exec.isNotEmpty ? exec : 'غير محدد',
+                  }));
+                }
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _addAttendeeDialog() {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? NeuColors.bgColorDark
+              : NeuColors.bgColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
+          title: const Text('إضافة حاضر جديد',
+              style: AppTypography.h4),
           content: TextField(
             controller: ctrl,
             autofocus: true,
@@ -120,7 +227,7 @@ class _CreateMeetingScreenState
                 ? AppTypography.bodyDark
                 : AppTypography.body,
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: 'اسم الحاضر أو منصبه',
               hintStyle: AppTypography.caption,
               filled: true,
               fillColor: Theme.of(context).brightness == Brightness.dark
@@ -154,7 +261,7 @@ class _CreateMeetingScreenState
               onPressed: () {
                 final text = ctrl.text.trim();
                 if (text.isNotEmpty) {
-                  setState(() => targetList.add(text));
+                  setState(() => _attendees.add(text));
                 }
                 Navigator.pop(ctx);
               },
@@ -190,7 +297,7 @@ class _CreateMeetingScreenState
 
       await ref.read(meetingCategoriesProvider.notifier).addCategory(typeStr);
 
-      await ref.read(meetingsRepositoryProvider).createMeeting(
+      final meetingId = await ref.read(meetingsRepositoryProvider).createMeeting(
             title: _titleController.text.trim(),
             type: finalEnum,
             customMeetingType: customMeetingType,
@@ -216,6 +323,34 @@ class _CreateMeetingScreenState
             ? jsonEncode(_decisions)
             : null,
       );
+
+      if (_promoteToFollowUp) {
+        final followupRepo = ref.read(followUpsRepositoryProvider);
+        final buffer = StringBuffer();
+        buffer.writeln('متابعة مخرجات الاجتماع:');
+        if (_agendaItems.isNotEmpty) {
+          buffer.writeln('\n--- جدول الأعمال ---');
+          for (var item in _agendaItems) {
+            buffer.writeln('• ${item['description']} (المنفذ: ${item['executor']})');
+          }
+        }
+        if (_decisions.isNotEmpty) {
+          buffer.writeln('\n--- القرارات ---');
+          for (var item in _decisions) {
+            buffer.writeln('• ${item['description']} (المنفذ: ${item['executor']})');
+          }
+        }
+
+        await followupRepo.createFollowUp(
+          title: 'متابعة اجتماع: ${_titleController.text.trim()}',
+          type: FollowUpEntityType.meeting,
+          priority: _selectedPriority,
+          notes: buffer.toString(),
+          targetDate: _selectedDate.toIso8601String().split('T').first,
+          entityId: meetingId,
+          assignedTo: _locationController.text.isNotEmpty ? _locationController.text : 'إدارة الاجتماعات',
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -496,8 +631,7 @@ class _CreateMeetingScreenState
                 items: _attendees,
                 emptyHint: 'لم يتم إضافة حضور بعد',
                 addLabel: 'إضافة حاضر',
-                dialogTitle: 'إضافة حاضر جديد',
-                dialogHint: 'اسم الحاضر أو منصبه',
+                onAdd: _addAttendeeDialog,
                 isDark: isDark,
               ),
               AppSpacing.gapXxl,
@@ -511,8 +645,12 @@ class _CreateMeetingScreenState
                 items: _agendaItems,
                 emptyHint: 'لم يتم إضافة بنود بعد',
                 addLabel: 'إضافة بند',
-                dialogTitle: 'إضافة بند جديد',
-                dialogHint: 'وصف البند',
+                onAdd: () => _addItemDialog(
+                  title: 'إضافة بند جديد لجدول الأعمال',
+                  descHint: 'وصف البند',
+                  execHint: 'المنفذ / المسؤول (اختياري)',
+                  targetList: _agendaItems,
+                ),
                 isDark: isDark,
                 isNumbered: true,
               ),
@@ -527,8 +665,12 @@ class _CreateMeetingScreenState
                 items: _decisions,
                 emptyHint: 'لم يتم تسجيل قرارات بعد',
                 addLabel: 'إضافة قرار',
-                dialogTitle: 'تسجيل قرار جديد',
-                dialogHint: 'نص القرار',
+                onAdd: () => _addItemDialog(
+                  title: 'تسجيل قرار جديد',
+                  descHint: 'نص القرار',
+                  execHint: 'المنفذ / المسؤول (اختياري)',
+                  targetList: _decisions,
+                ),
                 isDark: isDark,
                 isNumbered: true,
                 accentColor: NeuColors.goldAccent,
@@ -542,6 +684,43 @@ class _CreateMeetingScreenState
                 hint: 'ملاحظات إضافية',
                 maxLines: 3,
                 prefixIcon: Icons.notes_rounded,
+              ),
+              AppSpacing.gapXxl,
+
+              // ── Promote to Follow-up Switch ────────────────────
+              NeuCard(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.trending_up_rounded,
+                      color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                      size: 22,
+                    ),
+                    AppSpacing.gapHMd,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'رفع الاجتماع للمتابعة',
+                            style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                          ),
+                          Text(
+                            'إنشاء ملف متابعة ذكي بمخرجات هذا الاجتماع تلقائياً',
+                            style: isDark ? AppTypography.captionDark : AppTypography.caption,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: _promoteToFollowUp,
+                      onChanged: (val) => setState(() => _promoteToFollowUp = val),
+                      activeTrackColor: NeuColors.goldAccent,
+                      activeThumbColor: NeuColors.navyDeep,
+                    ),
+                  ],
+                ),
               ),
               AppSpacing.gapXxl,
 
@@ -565,11 +744,10 @@ class _CreateMeetingScreenState
   Widget _buildDynamicListSection({
     required IconData icon,
     required String title,
-    required List<String> items,
+    required List<dynamic> items,
     required String emptyHint,
     required String addLabel,
-    required String dialogTitle,
-    required String dialogHint,
+    required VoidCallback onAdd,
     required bool isDark,
     bool isNumbered = false,
     Color? accentColor,
@@ -651,6 +829,17 @@ class _CreateMeetingScreenState
               children: items.asMap().entries.map((entry) {
                 final i = entry.key;
                 final item = entry.value;
+
+                String descText = '';
+                String? executorText;
+
+                if (item is Map) {
+                  descText = item['description'] ?? '';
+                  executorText = item['executor'];
+                } else {
+                  descText = item.toString();
+                }
+
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 6),
@@ -680,11 +869,33 @@ class _CreateMeetingScreenState
                       ),
                       AppSpacing.gapHSm,
                       Expanded(
-                        child: Text(
-                          item,
-                          style: isDark
-                              ? AppTypography.bodyDark
-                              : AppTypography.body,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              descText,
+                              style: isDark
+                                  ? AppTypography.bodyDark
+                                  : AppTypography.body,
+                            ),
+                            if (executorText != null && executorText != 'غير محدد' && executorText.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Icon(Icons.person_outline_rounded, size: 12, color: color),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'المنفذ: $executorText',
+                                    style: (isDark ? AppTypography.captionDark : AppTypography.caption).copyWith(
+                                      color: color,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                       // Delete button
@@ -714,11 +925,7 @@ class _CreateMeetingScreenState
 
         // Add Button
         GestureDetector(
-          onTap: () => _addItemDialog(
-            title: dialogTitle,
-            hint: dialogHint,
-            targetList: items,
-          ),
+          onTap: onAdd,
           child: NeuCard(
             margin: EdgeInsets.zero,
             padding:

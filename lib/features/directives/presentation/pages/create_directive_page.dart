@@ -11,6 +11,7 @@ import '../../../../shared/widgets/neu_button.dart';
 import '../../../../shared/widgets/neu_card.dart';
 import '../../../../shared/widgets/neu_input.dart';
 import '../../domain/directives_repository.dart';
+import '../../../followups/domain/follow_ups_repository.dart';
 
 /// Create Directive Page — form for issuing a new executive directive.
 class CreateDirectivePage extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _CreateDirectivePageState
   Priority _priority = Priority.medium;
   DateTime? _deadline;
   bool _isLoading = false;
+  bool _promoteToFollowUp = false;
 
   @override
   void initState() {
@@ -61,12 +63,26 @@ class _CreateDirectivePageState
             _deadline = DateTime.tryParse(directive.deadline!);
           }
         });
+        await _checkFollowUpStatus();
       }
     } catch (e) {
       debugPrint('Error loading directive: $e');
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _checkFollowUpStatus() async {
+    try {
+      final followupRepo = ref.read(followUpsRepositoryProvider);
+      final list = await followupRepo.watchAll().first;
+      final existing = list.any((f) => f.entityId == widget.directiveId && f.entityType == FollowUpEntityType.directive.value);
+      if (mounted) {
+        setState(() {
+          _promoteToFollowUp = existing;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -97,41 +113,64 @@ class _CreateDirectivePageState
     setState(() => _isLoading = true);
 
     try {
+      int finalDirectiveId = widget.directiveId ?? 0;
+      final directivesRepo = ref.read(directivesRepositoryProvider);
+      final deadlineStr = _deadline != null
+          ? DateFormat('yyyy-MM-dd').format(_deadline!)
+          : null;
+
       if (widget.directiveId != null) {
-        await ref.read(directivesRepositoryProvider).updateDirective(
-              id: widget.directiveId!,
-              title: _titleCtrl.text.trim(),
-              details: _detailsCtrl.text.trim().isEmpty
-                  ? null
-                  : _detailsCtrl.text.trim(),
-              source: _sourceCtrl.text.trim().isEmpty
-                  ? null
-                  : _sourceCtrl.text.trim(),
-              assignedTo: _assignedCtrl.text.trim().isEmpty
-                  ? null
-                  : _assignedCtrl.text.trim(),
-              priority: _priority,
-              deadline: _deadline != null
-                  ? DateFormat('yyyy-MM-dd').format(_deadline!)
-                  : null,
-            );
+        await directivesRepo.updateDirective(
+          id: widget.directiveId!,
+          title: _titleCtrl.text.trim(),
+          details: _detailsCtrl.text.trim().isEmpty ? null : _detailsCtrl.text.trim(),
+          source: _sourceCtrl.text.trim().isEmpty ? null : _sourceCtrl.text.trim(),
+          assignedTo: _assignedCtrl.text.trim().isEmpty ? null : _assignedCtrl.text.trim(),
+          priority: _priority,
+          deadline: deadlineStr,
+        );
       } else {
-        await ref.read(directivesRepositoryProvider).createDirective(
-              title: _titleCtrl.text.trim(),
-              details: _detailsCtrl.text.trim().isEmpty
-                  ? null
-                  : _detailsCtrl.text.trim(),
-              source: _sourceCtrl.text.trim().isEmpty
-                  ? null
-                  : _sourceCtrl.text.trim(),
-              assignedTo: _assignedCtrl.text.trim().isEmpty
-                  ? null
-                  : _assignedCtrl.text.trim(),
-              priority: _priority,
-              deadline: _deadline != null
-                  ? DateFormat('yyyy-MM-dd').format(_deadline!)
-                  : null,
-            );
+        finalDirectiveId = await directivesRepo.createDirective(
+          title: _titleCtrl.text.trim(),
+          details: _detailsCtrl.text.trim().isEmpty ? null : _detailsCtrl.text.trim(),
+          source: _sourceCtrl.text.trim().isEmpty ? null : _sourceCtrl.text.trim(),
+          assignedTo: _assignedCtrl.text.trim().isEmpty ? null : _assignedCtrl.text.trim(),
+          priority: _priority,
+          deadline: deadlineStr,
+        );
+      }
+
+      final followupRepo = ref.read(followUpsRepositoryProvider);
+      final currentFollowUps = await followupRepo.watchAll().first;
+      final existing = currentFollowUps.where((f) => f.entityId == finalDirectiveId && f.entityType == FollowUpEntityType.directive.value).toList();
+
+      if (_promoteToFollowUp) {
+        if (existing.isNotEmpty) {
+          await followupRepo.updateFollowUp(
+            id: existing.first.id,
+            title: 'متابعة توجيه: ${_titleCtrl.text.trim()}',
+            type: FollowUpEntityType.directive,
+            priority: _priority,
+            notes: _detailsCtrl.text.isNotEmpty ? _detailsCtrl.text : 'متابعة تفاصيل التوجيه الصادر',
+            targetDate: deadlineStr,
+            entityId: finalDirectiveId,
+            assignedTo: _assignedCtrl.text.isNotEmpty ? _assignedCtrl.text : 'غير محدد',
+          );
+        } else {
+          await followupRepo.createFollowUp(
+            title: 'متابعة توجيه: ${_titleCtrl.text.trim()}',
+            type: FollowUpEntityType.directive,
+            priority: _priority,
+            notes: _detailsCtrl.text.isNotEmpty ? _detailsCtrl.text : 'متابعة تفاصيل التوجيه الصادر',
+            targetDate: deadlineStr,
+            entityId: finalDirectiveId,
+            assignedTo: _assignedCtrl.text.isNotEmpty ? _assignedCtrl.text : 'غير محدد',
+          );
+        }
+      } else {
+        if (existing.isNotEmpty) {
+          await followupRepo.deleteFollowUp(existing.first.id);
+        }
       }
 
       if (mounted) {
@@ -341,6 +380,43 @@ class _CreateDirectivePageState
                   ),
                 ),
 
+                AppSpacing.gapXxl,
+
+                // ── Promote to Follow-up Switch ────────────────────
+                NeuCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.trending_up_rounded,
+                        color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                        size: 22,
+                      ),
+                      AppSpacing.gapHMd,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'رفع التوجيه للمتابعة',
+                              style: isDark ? AppTypography.bodyDark : AppTypography.body,
+                            ),
+                            Text(
+                              'إرسال هذا التوجيه مباشرة إلى لوحة المتابعة وتتبع حالته التنفيذية',
+                              style: isDark ? AppTypography.captionDark : AppTypography.caption,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: _promoteToFollowUp,
+                        onChanged: (val) => setState(() => _promoteToFollowUp = val),
+                        activeTrackColor: NeuColors.goldAccent,
+                        activeThumbColor: NeuColors.navyDeep,
+                      ),
+                    ],
+                  ),
+                ),
                 AppSpacing.gapXxl,
 
                 // Submit
