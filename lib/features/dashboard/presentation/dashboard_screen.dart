@@ -10,6 +10,7 @@ import '../../meetings/providers/meetings_provider.dart';
 import '../../reports/providers/reports_provider.dart';
 import '../../timeline/providers/timeline_provider.dart';
 import '../../followups/providers/follow_ups_provider.dart';
+import '../providers/periodic_tasks_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
@@ -184,7 +185,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final hijri = HijriCalendar.fromDate(now);
     final hijriStr = '${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} هـ';
 
-    final analytics = ref.watch(reportsAnalyticsProvider);
     final events = ref.watch(timelineProvider);
     final displayedEvents = events.take(5).toList();
 
@@ -263,86 +263,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ),
 
-              // Today Summary Card
+              // Periodic Tasks System Card (replaces Today Summary)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: AppSpacing.screenH,
-                  child: NeuCard(
-                    showGoldBorder: true,
-                    radius: 24,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today_rounded,
-                              color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                              size: 20,
-                            ),
-                            AppSpacing.gapHSm,
-                            Text(
-                              'ملخص اليوم التنفيذي',
-                              style: isDark ? AppTypography.h4Dark : AppTypography.h4,
-                            ),
-                          ],
-                        ),
-                        AppSpacing.gapLg,
-                        Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => context.push('${RouteNames.meetingsListFull}?filter=today'),
-                                child: _buildSummaryItem(
-                                  Icons.groups_rounded,
-                                  '${ref.watch(todayMeetingsProvider).valueOrNull?.length ?? 0}',
-                                  'اجتماعات',
-                                  isDark,
-                                  NeuColors.info,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => context.push('${RouteNames.tasksListFull}?status=all'),
-                                child: _buildSummaryItem(
-                                  Icons.task_alt_rounded,
-                                  '${analytics.totalTasks}',
-                                  'مهام عمل',
-                                  isDark,
-                                  NeuColors.success,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => context.push('${RouteNames.directivesList}?filter=critical'),
-                                child: _buildSummaryItem(
-                                  Icons.campaign_rounded,
-                                  '${analytics.criticalDirectives}',
-                                  'توجيهات عاجلة',
-                                  isDark,
-                                  NeuColors.danger,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => context.push('${RouteNames.appointmentsList}?filter=today'),
-                                child: _buildSummaryItem(
-                                  Icons.event_rounded,
-                                  '${analytics.upcomingAppointments}',
-                                  'مواعيد هامة',
-                                  isDark,
-                                  NeuColors.warning,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: _PeriodicTasksCard(),
                 ),
               ),
 
@@ -444,6 +369,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               case 'task': return Icons.task_alt_rounded;
                               case 'call': return Icons.phone_in_talk_rounded;
                               case 'directive': return Icons.campaign_rounded;
+                              case 'followup': return Icons.track_changes_rounded;
                               default: return Icons.event_note_rounded;
                             }
                           }
@@ -457,6 +383,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               case 'task': return NeuColors.navyLight;
                               case 'call': return NeuColors.info;
                               case 'directive': return NeuColors.danger;
+                              case 'followup': return NeuColors.priorityCritical;
                               default: return NeuColors.goldAccent;
                             }
                           }
@@ -470,6 +397,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               case 'task': return 'مهمة عمل';
                               case 'call': return 'مكالمة هاتفية';
                               case 'directive': return 'توجيه تنفيذي';
+                              case 'followup': return 'متابعة تنفيذية';
                               default: return 'حدث';
                             }
                           }
@@ -485,6 +413,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 break;
                               case 'directive':
                                 context.push(RouteNames.directiveDetailPath(event.id!));
+                                break;
+                              case 'followup':
+                                context.push(RouteNames.followupEditPath(event.id!));
                                 break;
                               case 'appointment':
                                 context.push(RouteNames.appointmentsList);
@@ -623,28 +554,316 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  static Widget _buildSummaryItem(
-      IconData icon, String count, String label, bool isDark, Color highlightColor) {
-    return Column(
-      children: [
-        Icon(icon, color: highlightColor, size: 24),
-        AppSpacing.gapXs,
-        Text(
-          count,
-          style: (isDark ? AppTypography.h3Dark : AppTypography.h3).copyWith(
-            fontWeight: FontWeight.bold,
+
+
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Periodic Tasks Card Widget
+// ─────────────────────────────────────────────────────────────────
+
+class _PeriodicTasksCard extends ConsumerWidget {
+  const _PeriodicTasksCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final periodicState = ref.watch(periodicTasksProvider);
+    final selectedPeriod = ref.watch(selectedPeriodProvider);
+    final completeAction = ref.watch(periodicTaskCompletionProvider);
+
+    return NeuCard(
+      showGoldBorder: true,
+      radius: 24,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Icon(
+                Icons.checklist_rounded,
+                color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                size: 20,
+              ),
+              AppSpacing.gapHSm,
+              Text(
+                'نظام المهام',
+                style: isDark ? AppTypography.h4Dark : AppTypography.h4,
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => context.push('${RouteNames.tasksListFull}?status=all'),
+                child: Text(
+                  'عرض الكل',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: isDark ? NeuColors.goldAccent : NeuColors.navyMid,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        Text(
-          label,
-          style: isDark
-              ? AppTypography.captionDark.copyWith(fontSize: 11)
-              : AppTypography.caption.copyWith(fontSize: 11),
-        ),
-      ],
+          AppSpacing.gapMd,
+
+          // Period Tabs
+          Row(
+            children: TaskPeriod.values.map((period) {
+              final isSelected = selectedPeriod == period;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => ref.read(selectedPeriodProvider.notifier).setPeriod(period),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.transparent
+                            : (isDark ? NeuColors.dividerDark : NeuColors.divider),
+                      ),
+                    ),
+                    child: Text(
+                      '${period.iconLabel} ${period.arabicLabel}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'Tajawal',
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected
+                            ? (isDark ? Colors.black : Colors.white)
+                            : (isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          AppSpacing.gapLg,
+
+          // Progress Ring + Stats Row
+          Row(
+            children: [
+              // Donut progress circle
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CircularProgressIndicator(
+                      value: periodicState.completionRatio,
+                      strokeWidth: 8,
+                      backgroundColor:
+                          isDark ? NeuColors.dividerDark : NeuColors.divider,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        periodicState.completionPercent >= 80
+                            ? NeuColors.success
+                            : periodicState.completionPercent >= 40
+                                ? NeuColors.warning
+                                : NeuColors.danger,
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        '${periodicState.completionPercent}%',
+                        style: (isDark
+                                ? AppTypography.h4Dark
+                                : AppTypography.h4)
+                            .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AppSpacing.gapHMd,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'الإنجاز: ${periodicState.completedCount} / ${periodicState.totalCount}',
+                      style: (isDark ? AppTypography.bodyDark : AppTypography.body)
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    AppSpacing.gapXs,
+                    Text(
+                      periodicState.totalCount == 0
+                          ? 'لا توجد مهام لهذه الفترة'
+                          : periodicState.completionPercent >= 80
+                              ? '🎉 أداء رائع! استمر'
+                              : periodicState.completionPercent >= 40
+                                  ? '💪 على الطريق الصحيح'
+                                  : '⚡ ابدأ بالمهام الأهم',
+                      style: (isDark ? AppTypography.captionDark : AppTypography.caption)
+                          .copyWith(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          // Tasks list
+          if (periodicState.items.isNotEmpty) ...[
+            AppSpacing.gapMd,
+            const Divider(),
+            AppSpacing.gapSm,
+            ...periodicState.items.take(5).map((item) {
+              return _PeriodicTaskTile(
+                item: item,
+                isDark: isDark,
+                onToggle: () => completeAction(
+                  item.task.id,
+                  !item.isCompleted,
+                ),
+              );
+            }),
+            if (periodicState.items.length > 5)
+              Center(
+                child: TextButton(
+                  onPressed: () => context.push('${RouteNames.tasksListFull}?status=all'),
+                  child: Text(
+                    '+${periodicState.items.length - 5} مهام أخرى',
+                    style: TextStyle(
+                      color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                      fontFamily: 'Tajawal',
+                    ),
+                  ),
+                ),
+              ),
+          ] else ...[
+            AppSpacing.gapMd,
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.task_alt_rounded,
+                    color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+                    size: 32,
+                  ),
+                  AppSpacing.gapXs,
+                  Text(
+                    'لا توجد مهام لهذه الفترة',
+                    style: isDark ? AppTypography.bodySmallDark : AppTypography.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Single task tile with completion toggle
+class _PeriodicTaskTile extends StatelessWidget {
+  final PeriodicTaskItem item;
+  final bool isDark;
+  final VoidCallback onToggle;
+
+  const _PeriodicTaskTile({
+    required this.item,
+    required this.isDark,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final priorityColor = _priorityColor(item.task.priority);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          // Completion checkbox
+          GestureDetector(
+            onTap: onToggle,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: item.isCompleted
+                    ? NeuColors.success
+                    : Colors.transparent,
+                border: Border.all(
+                  color: item.isCompleted
+                      ? NeuColors.success
+                      : (isDark ? NeuColors.dividerDark : NeuColors.divider),
+                  width: 2,
+                ),
+              ),
+              child: item.isCompleted
+                  ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                  : null,
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Priority dot
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: priorityColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Task title
+          Expanded(
+            child: Text(
+              item.task.title,
+              style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
+                fontSize: 13,
+                decoration: item.isCompleted ? TextDecoration.lineThrough : null,
+                color: item.isCompleted
+                    ? (isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary)
+                    : null,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          // Routine/Achievement badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: item.isRoutine
+                  ? NeuColors.info.withValues(alpha: 0.15)
+                  : NeuColors.goldAccent.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              item.isRoutine ? 'روتيني' : 'إنجازي',
+              style: TextStyle(
+                fontSize: 10,
+                fontFamily: 'Tajawal',
+                color: item.isRoutine ? NeuColors.info : NeuColors.goldAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
+  Color _priorityColor(int priority) {
+    switch (priority) {
+      case 0: return NeuColors.priorityCritical;
+      case 1: return NeuColors.danger;
+      case 2: return NeuColors.warning;
+      default: return NeuColors.success;
+    }
+  }
 }
 
 /// Executive follow-up distribution fl_chart section

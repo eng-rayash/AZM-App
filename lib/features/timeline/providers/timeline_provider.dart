@@ -8,14 +8,17 @@ import '../../tasks/providers/tasks_provider.dart';
 import '../../visitors/domain/visitors_repository.dart';
 import '../../movements/domain/movements_repository.dart';
 import '../../directives/providers/directives_provider.dart';
+import '../../followups/providers/follow_ups_provider.dart';
 
 /// Represents a single event on the timeline
 class TimelineEvent {
   final int? id;
   final String title;
   final String time;
-  final String type; // 'meeting', 'visitor', 'movement', 'appointment', 'task', 'call', 'directive'
+  final String type; // 'meeting', 'visitor', 'movement', 'appointment', 'task', 'call', 'directive', 'followup'
   final bool isCompleted;
+  final int priority; // 0=critical,1=high,2=medium,3=low (for sorting)
+  final bool isOverdue; // for followup overdue items
 
   TimelineEvent({
     this.id,
@@ -23,10 +26,27 @@ class TimelineEvent {
     required this.time,
     required this.type,
     this.isCompleted = false,
+    this.priority = 3,
+    this.isOverdue = false,
   });
 }
 
+/// Priority order for timeline display:
+/// Overdue followups (4) > Critical (0) > InProgress (1) > Awaiting (2) > New (0) > Others
+int _eventSortKey(TimelineEvent e) {
+  if (e.type == 'followup') {
+    if (e.isOverdue) return 0; // متأخر — highest priority
+    if (e.priority == 0) return 1; // عاجل
+    if (e.priority == 1) return 2; // عالي
+    if (e.priority == 2) return 3; // متوسط
+    return 4; // منخفض
+  }
+  return 5; // all other events after followups
+}
+
 /// Provider that aggregates events for the daily timeline
+/// Includes: meetings, visitors, movements, appointments, tasks, calls, directives, 
+/// AND incomplete follow-ups (new, in-progress, overdue, awaiting-response)
 final timelineProvider = Provider<List<TimelineEvent>>((ref) {
   final events = <TimelineEvent>[];
 
@@ -142,8 +162,51 @@ final timelineProvider = Provider<List<TimelineEvent>>((ref) {
     }
   }
 
-  // Sort events by time chronologically (ascending: earliest first)
-  events.sort((a, b) => a.time.compareTo(b.time));
+  // 8. Follow-ups (المتابعات) — only INCOMPLETE ones (not status 3=completed)
+  // Status: 0=new, 1=inProgress, 2=awaitingResponse, 4=overdue
+  final followups = ref.watch(followUpsListProvider).valueOrNull ?? [];
+  for (final f in followups) {
+    // Skip completed follow-ups
+    if (f.status == 3) continue;
+    // Only include: new(0), inProgress(1), awaitingResponse(2), overdue(4)
+    if (![0, 1, 2, 4].contains(f.status)) continue;
+
+    final isOverdue = f.status == 4;
+    
+    // Determine display time: use targetDate if available, otherwise createdAt
+    String displayTime = '09:00';
+    if (f.targetDate != null && f.targetDate!.isNotEmpty) {
+      displayTime = '⏰'; // placeholder — followups don't have time, show early
+    }
+    displayTime = formatTimestamp(f.createdAt);
+
+    String statusLabel = '';
+    if (f.status == 0) statusLabel = 'جديد';
+    if (f.status == 1) statusLabel = 'قيد التنفيذ';
+    if (f.status == 2) statusLabel = 'بانتظار الرد';
+    if (f.status == 4) statusLabel = 'متأخر';
+
+    events.add(TimelineEvent(
+      id: f.id,
+      title: '${isOverdue ? '⚠️ ' : ''}متابعة: ${f.title} ($statusLabel)',
+      time: displayTime,
+      type: 'followup',
+      isCompleted: false,
+      priority: f.priority,
+      isOverdue: isOverdue,
+    ));
+  }
+
+  // Sort events:
+  // 1. Follow-up overdue & critical first
+  // 2. Then by sort key ascending
+  // 3. Within same key, by time ascending
+  events.sort((a, b) {
+    final keyA = _eventSortKey(a);
+    final keyB = _eventSortKey(b);
+    if (keyA != keyB) return keyA.compareTo(keyB);
+    return a.time.compareTo(b.time);
+  });
 
   return events;
 });

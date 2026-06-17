@@ -467,9 +467,14 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                       currentStatus = statusVal;
                                     });
                                     if (context.mounted) {
+                                      final hasLinked = followup.entityId != null && 
+                                          FollowUpEntityType.fromValue(followup.entityType) != FollowUpEntityType.other;
+                                      final msg = (statusVal == UnifiedStatus.completed && hasLinked)
+                                          ? 'تم تحديث حالة المتابعة والكيان المرتبط إلى "مكتمل" بنجاح'
+                                          : 'تم تحديث حالة المتابعة إلى "${statusVal.arabicLabel}" بنجاح';
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text('تم تحديث حالة المتابعة إلى "${statusVal.arabicLabel}" بنجاح', textDirection: TextDirection.rtl),
+                                          content: Text(msg, textDirection: TextDirection.rtl),
                                           backgroundColor: NeuColors.navyDeep,
                                         ),
                                       );

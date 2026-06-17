@@ -17,6 +17,8 @@ class AuthService {
   final LocalAuthentication _localAuth = LocalAuthentication();
   final SecureStorageService _secureStorage = SecureStorageService.instance;
 
+  SecureStorageService get secureStorage => _secureStorage;
+
   // ─────────────────────────────────────────────
   // Biometric Authentication
   // ─────────────────────────────────────────────

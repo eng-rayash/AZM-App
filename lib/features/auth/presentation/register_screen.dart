@@ -55,16 +55,109 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final authState = ref.watch(authStateNotifierProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Listen to auth state transitions
+    // Always register the listener first (Riverpod requirement)
     ref.listen<AuthState>(authStateNotifierProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
         context.go(RouteNames.splash);
       }
     });
 
+    // === Email Verification Pending Screen ===
+    if (authState.status == AuthStatus.emailVerificationPending) {
+      return Scaffold(
+        backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
+        body: SafeArea(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Center(
+              child: Padding(
+                padding: AppSpacing.screen,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        color: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: NeuColors.goldAccent.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.mark_email_unread_rounded,
+                        color: NeuColors.goldAccent,
+                        size: 48,
+                      ),
+                    ),
+                    AppSpacing.gapXxl,
+                    Text(
+                      'تم إرسال رابط التفعيل',
+                      style: isDark ? AppTypography.h2Dark : AppTypography.h2,
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.gapMd,
+                    Text(
+                      'تم إرسال رابط التحقق إلى بريدك الإلكتروني. يرجى فتح بريدك والضغط على رابط التفعيل، ثم عد إلى التطبيق وسجّل دخولك.',
+                      style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
+                        color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+                        height: 1.6,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    AppSpacing.gapXl,
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: NeuColors.goldAccent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: NeuColors.goldAccent.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline_rounded,
+                            color: NeuColors.goldAccent,
+                            size: 20,
+                          ),
+                          AppSpacing.gapHSm,
+                          Expanded(
+                            child: Text(
+                              'لم تجد الرسالة؟ تحقق من مجلد البريد غير المرغوب فيه (Spam).',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: NeuColors.goldAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    AppSpacing.gapXxl,
+                    NeuButton(
+                      label: 'الذهاب إلى تسجيل الدخول',
+                      icon: Icons.login_rounded,
+                      onPressed: () => context.go(RouteNames.login),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // === Normal Register Form ===
     return Scaffold(
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       appBar: AppBar(

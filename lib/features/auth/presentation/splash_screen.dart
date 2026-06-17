@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/security/auth_service.dart';
+import '../../../core/security/secure_storage_service.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../providers/auth_providers.dart';
@@ -93,10 +94,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     if (!mounted) return;
 
-    if (isFirstLaunch) {
+    // Check if PIN is enabled (default: disabled)
+    final SecureStorageService storage = authService.secureStorage;
+    final pinEnabled = await storage.read('pin_enabled');
+    final isPinEnabled = pinEnabled == 'true';
+
+    if (!mounted) return;
+
+    if (isPinEnabled && isFirstLaunch) {
       context.go(RouteNames.pinSetup);
-    } else {
+    } else if (isPinEnabled) {
       context.go(RouteNames.lock);
+    } else {
+      // PIN disabled — go directly to home
+      context.go(RouteNames.dashboardFull);
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/auth_repository.dart';
 
-enum AuthStatus { initial, loading, authenticated, guest, unauthenticated, error }
+enum AuthStatus { initial, loading, authenticated, guest, unauthenticated, error, emailVerificationPending }
 
 class AuthState {
   final AuthStatus status;
@@ -21,6 +21,7 @@ class AuthState {
   const AuthState.guest() : status = AuthStatus.guest, errorMessage = null, user = null;
   const AuthState.unauthenticated() : status = AuthStatus.unauthenticated, errorMessage = null, user = null;
   const AuthState.error(String message) : status = AuthStatus.error, errorMessage = message, user = null;
+  const AuthState.emailVerificationPending() : status = AuthStatus.emailVerificationPending, errorMessage = null, user = null;
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -72,10 +73,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password: password,
         fullName: fullName,
       );
-      if (response.user != null) {
+      // When Supabase email confirmation is enabled, session is null but user may exist
+      if (response.session != null && response.user != null) {
         state = AuthState.authenticated(response.user!);
       } else {
-        state = const AuthState.unauthenticated();
+        // Email verification required — show pending state
+        state = const AuthState.emailVerificationPending();
       }
     } catch (e) {
       state = AuthState.error(_translateError(e));
@@ -111,13 +114,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   String _translateError(dynamic error) {
-    final errStr = error.toString();
-    if (errStr.contains('Invalid login credentials')) {
-      return 'بيانات الدخول غير صحيحة، يرجى التحقق من البريد وكلمة المرور.';
-    } else if (errStr.contains('User already registered')) {
-      return 'هذا البريد الإلكتروني مسجل بالفعل.';
-    } else if (errStr.contains('Network')) {
+    final errStr = error.toString().toLowerCase();
+    if (errStr.contains('invalid login credentials') || errStr.contains('invalid_credentials')) {
+      // Could be wrong password OR account not found
+      return 'كلمة المرور غير صحيحة أو الحساب غير موجود. تحقق من بيانات الدخول.';
+    } else if (errStr.contains('user not found') || errStr.contains('no user')) {
+      return 'الحساب غير موجود. يرجى إنشاء حساب جديد.';
+    } else if (errStr.contains('wrong password') || errStr.contains('invalid password')) {
+      return 'كلمة المرور غير صحيحة. يرجى المحاولة مجددًا.';
+    } else if (errStr.contains('user already registered') || errStr.contains('already registered')) {
+      return 'هذا البريد الإلكتروني مسجل بالفعل. يرجى تسجيل الدخول.';
+    } else if (errStr.contains('network') || errStr.contains('connection') || errStr.contains('timeout')) {
       return 'فشل الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت.';
+    } else if (errStr.contains('email not confirmed') || errStr.contains('email_not_confirmed')) {
+      return 'لم يتم تأكيد البريد الإلكتروني بعد. يرجى مراجعة بريدك والضغط على رابط التفعيل.';
+    } else if (errStr.contains('too many requests') || errStr.contains('rate limit')) {
+      return 'محاولات كثيرة. يرجى الانتظار قليلًا ثم المحاولة مجددًا.';
     }
     return 'حدث خطأ: $error';
   }

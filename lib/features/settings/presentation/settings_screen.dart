@@ -38,6 +38,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _biometricAvailable = false;
   bool _notificationsEnabled = true;
   bool _overdueAlertsEnabled = true;
+  bool _pinEnabled = false;
 
   @override
   void initState() {
@@ -54,9 +55,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final storage = SecureStorageService.instance;
     final notificationsVal = await storage.read('notifications_enabled');
     final overdueVal = await storage.read('overdue_alerts_enabled');
+    final pinEnabledVal = await storage.read('pin_enabled');
 
     _notificationsEnabled = notificationsVal != 'false';
     _overdueAlertsEnabled = overdueVal != 'false';
+    _pinEnabled = pinEnabledVal == 'true'; // Default: disabled
 
     if (mounted) setState(() {});
   }
@@ -85,6 +88,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final storage = SecureStorageService.instance;
     await storage.write('overdue_alerts_enabled', value.toString());
     setState(() => _overdueAlertsEnabled = value);
+  }
+
+  Future<void> _togglePinEnabled(bool value) async {
+    final storage = SecureStorageService.instance;
+    await storage.write('pin_enabled', value.toString());
+    setState(() => _pinEnabled = value);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            value ? 'تم تفعيل رمز الدخول بنجاح' : 'تم إيقاف رمز الدخول',
+            textDirection: TextDirection.rtl,
+          ),
+          backgroundColor: value ? NeuColors.success : NeuColors.navyDeep,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -138,6 +159,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               _buildSectionTitle(
                   'الحماية والأمان', Icons.shield_rounded, isDark),
               AppSpacing.gapMd,
+
+              // PIN toggle (default: disabled)
+              _buildToggleTile(
+                isDark,
+                icon: Icons.dialpad_rounded,
+                title: 'تفعيل رمز الدخول',
+                subtitle: 'تمكين حماية التطبيق برمز PIN (الافتراضي: معطل)',
+                value: _pinEnabled,
+                onChanged: _togglePinEnabled,
+              ),
 
               // Biometric toggle
               if (_biometricAvailable)

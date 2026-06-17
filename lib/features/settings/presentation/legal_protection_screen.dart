@@ -90,7 +90,7 @@ class LegalProtectionScreen extends StatelessWidget {
                 // Section 3: Developer Info
                 _buildSection(
                   title: 'معلومات التطوير والمسؤولية القانونية',
-                  content: '• تطوير وإشراف: المهندس رياض البريحي (Eng: Rayash Albureihi).\n'
+                  content: '• تطوير وإشراف: المهندس رياش البريهي (Eng: Rayash Albureihi).\n'
                       '• إخلاء المسؤولية: تم تصميم التطبيق كأداة لتنظيم وإدارة المهام والاجتماعات للمدراء التنفيذيين. لا يتحمل المطور أي مسؤولية عن فقدان البيانات الناتج عن سوء استخدام الجهاز، أو عمل فورمات للهاتف دون حفظ نسخة احتياطية مشفرة.',
                   isDark: isDark,
                 ),

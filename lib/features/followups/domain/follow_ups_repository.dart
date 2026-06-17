@@ -50,10 +50,65 @@ class FollowUpsRepository {
     return id;
   }
 
-  /// Update status
+  /// Update status — when completed, also update the linked entity (task/directive/meeting)
   Future<void> updateStatus(int id, UnifiedStatus status) async {
     await _db.followUpsDao.updateStatus(id, status.value);
-    await _logger.log(SecurityAction.settingsChanged, details: 'تحديث حالة المتابعة #$id');
+    await _logger.log(SecurityAction.settingsChanged, details: 'تحديث حالة المتابعة #$id إلى ${status.arabicLabel}');
+
+    // If marking as completed, sync status to linked entity
+    if (status == UnifiedStatus.completed) {
+      await _syncLinkedEntityStatus(id);
+    }
+  }
+
+  /// Sync the linked entity status when a follow-up is completed
+  Future<void> _syncLinkedEntityStatus(int followUpId) async {
+    try {
+      final followUp = await _db.followUpsDao.getById(followUpId);
+      if (followUp == null || followUp.entityId == null) return;
+
+      final entityType = FollowUpEntityType.fromValue(followUp.entityType);
+      final entityId = followUp.entityId!;
+
+      switch (entityType) {
+        case FollowUpEntityType.task:
+          // Update task status to completed (UnifiedStatus.completed = 3)
+          await _db.tasksDao.updateStatus(entityId, UnifiedStatus.completed.value);
+          await _logger.log(
+            SecurityAction.settingsChanged,
+            details: 'تم تحديث حالة المهمة #$entityId إلى مكتمل (مزامنة مع المتابعة #$followUpId)',
+          );
+          break;
+
+        case FollowUpEntityType.directive:
+          // Update directive status to completed (UnifiedStatus.completed = 3)
+          await _db.directivesDao.updateStatus(entityId, UnifiedStatus.completed.value);
+          await _logger.log(
+            SecurityAction.settingsChanged,
+            details: 'تم تحديث حالة التوجيه #$entityId إلى مكتمل (مزامنة مع المتابعة #$followUpId)',
+          );
+          break;
+
+        case FollowUpEntityType.meeting:
+          // Update meeting status to completed (MeetingStatus.completed = 2)
+          await _db.meetingsDao.updateStatus(entityId, MeetingStatus.completed.value);
+          await _logger.log(
+            SecurityAction.settingsChanged,
+            details: 'تم تحديث حالة الاجتماع #$entityId إلى مكتمل (مزامنة مع المتابعة #$followUpId)',
+          );
+          break;
+
+        case FollowUpEntityType.other:
+          // No linked entity to sync
+          break;
+      }
+    } catch (e) {
+      // Log but don't fail the main status update
+      await _logger.log(
+        SecurityAction.settingsChanged,
+        details: 'خطأ في مزامنة حالة الكيان المرتبط بالمتابعة #$followUpId: $e',
+      );
+    }
   }
 
   /// Update follow-up
