@@ -39,6 +39,7 @@ import '../../features/tasks/presentation/task_detail_screen.dart';
 import '../../features/tasks/presentation/tasks_list_screen.dart';
 import '../../features/timeline/presentation/timeline_screen.dart';
 import '../../features/visitors/presentation/visitors_list_screen.dart';
+import '../../features/routine_tasks/presentation/routine_tasks_screen.dart';
 
 // Phase 5
 import '../../features/settings/presentation/settings_screen.dart';
@@ -365,6 +366,27 @@ class AppRouter {
       GoRoute(
         path: RouteNames.changePin,
         builder: (context, state) => const ChangePinPage(),
+      ),
+
+      // ─── Routine Tasks Route ───
+      GoRoute(
+        path: RouteNames.routineTasksList,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RoutineTasksScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeInOut,
+              )),
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+        ),
       ),
     ],
   );

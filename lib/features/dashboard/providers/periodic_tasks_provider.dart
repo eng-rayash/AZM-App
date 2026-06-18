@@ -4,9 +4,10 @@ import '../../../core/constants/enums.dart';
 import '../../../core/database/app_database.dart';
 import '../../tasks/domain/tasks_repository.dart';
 import '../../tasks/providers/tasks_provider.dart';
+import '../../routine_tasks/providers/routine_tasks_provider.dart';
+import '../../routine_tasks/domain/routine_task_model.dart';
 
-/// نظام المهام الدورية — يصنف المهام حسب الفترة الزمنية ويحسب نسبة الإنجاز
-/// Daily / Weekly / Monthly task system
+/// نظام المهام الدورية — يجمع مهام العمل + مهام الروتين في لوحة التحكم
 
 enum TaskPeriod { daily, weekly, monthly }
 
@@ -34,17 +35,27 @@ extension TaskPeriodArabic on TaskPeriod {
   }
 }
 
-/// Represents a task item in the periodic system
+/// Unified task item — wraps either a work task or a routine task
 class PeriodicTaskItem {
-  final Task task;
+  final Task? task;               // Work task from Tasks table
+  final RoutineTask? routineTask; // Routine task from RoutineTasks table
   final bool isCompleted;
-  final bool isRoutine; // routine vs achievement
+  final bool isRoutine;
 
   const PeriodicTaskItem({
-    required this.task,
+    this.task,
+    this.routineTask,
     required this.isCompleted,
     required this.isRoutine,
   });
+
+  String get title => isRoutine ? (routineTask?.title ?? '') : (task?.title ?? '');
+
+  int get priorityIndex =>
+      isRoutine ? (routineTask?.priority.index ?? 2) : (task?.priority ?? 2);
+
+  String get uniqueId =>
+      isRoutine ? 'routine_${routineTask?.id}' : 'task_${task?.id}';
 }
 
 /// Periodic tasks state
@@ -65,10 +76,9 @@ class PeriodicTasksState {
   int get completionPercent => (completionRatio * 100).round();
 }
 
-/// Filter tasks by period using dueDate (falls back to createdAt)
+/// Filter work tasks by period
 List<Task> _filterByPeriod(List<Task> tasks, TaskPeriod period) {
   final now = DateTime.now();
-
   return tasks.where((task) {
     DateTime taskDate;
     if (task.dueDate != null && task.dueDate!.isNotEmpty) {
@@ -77,27 +87,25 @@ List<Task> _filterByPeriod(List<Task> tasks, TaskPeriod period) {
     } else {
       taskDate = DateTime.fromMillisecondsSinceEpoch(task.createdAt);
     }
-
     switch (period) {
       case TaskPeriod.daily:
         return taskDate.year == now.year &&
             taskDate.month == now.month &&
             taskDate.day == now.day;
-
       case TaskPeriod.weekly:
         final weekStart = now.subtract(Duration(days: now.weekday - 1));
         final weekEnd = weekStart.add(const Duration(days: 6));
         final start = DateTime(weekStart.year, weekStart.month, weekStart.day);
         final end = DateTime(weekEnd.year, weekEnd.month, weekEnd.day, 23, 59, 59);
         return !taskDate.isBefore(start) && !taskDate.isAfter(end);
-
       case TaskPeriod.monthly:
         return taskDate.year == now.year && taskDate.month == now.month;
     }
   }).toList();
 }
 
-/// Notifier for selected period tab
+// ─── Selected period tab ───
+
 class SelectedPeriodNotifier extends StateNotifier<TaskPeriod> {
   SelectedPeriodNotifier() : super(TaskPeriod.daily);
   void setPeriod(TaskPeriod period) => state = period;
@@ -108,54 +116,73 @@ final selectedPeriodProvider =
   (ref) => SelectedPeriodNotifier(),
 );
 
-/// Provider for periodic tasks filtered by selected period
+// ─── Main merged provider ───
+
 final periodicTasksProvider = Provider<PeriodicTasksState>((ref) {
-  final allTasks = ref.watch(tasksListProvider).valueOrNull ?? [];
+  final allWorkTasks = ref.watch(tasksListProvider).valueOrNull ?? [];
+  final routineState = ref.watch(routineTasksProvider);
   final period = ref.watch(selectedPeriodProvider);
+  final now = DateTime.now();
 
-  final filtered = _filterByPeriod(allTasks, period);
+  // Work tasks filtered by period
+  final filteredWork = _filterByPeriod(allWorkTasks, period);
+  final workItems = filteredWork.map((task) => PeriodicTaskItem(
+        task: task,
+        isCompleted: task.status == UnifiedStatus.completed.value,
+        isRoutine: false,
+      )).toList();
 
-  // Classify: routine = medium/low priority OR title contains keywords
-  // Achievement = critical/high priority
-  final items = filtered.map((task) {
-    final titleLower = task.title;
-    final isRoutine = task.priority >= 2 ||
-        titleLower.contains('روتين') ||
-        titleLower.contains('يومي') ||
-        titleLower.contains('أسبوعي') ||
-        titleLower.contains('شهري');
+  // Routine tasks
+  List<PeriodicTaskItem> routineItems = [];
+  if (!routineState.isLoading) {
+    final routineTasks = switch (period) {
+      TaskPeriod.daily => routineState.tasksForDate(now),
+      TaskPeriod.weekly => routineState.tasks.where((t) => t.isActive).toList(),
+      TaskPeriod.monthly => routineState.tasks.where((t) => t.isActive).toList(),
+    };
+    routineItems = routineTasks
+        .map((rt) => PeriodicTaskItem(
+              routineTask: rt,
+              isCompleted: routineState.isCompletedOn(rt.id, now),
+              isRoutine: true,
+            ))
+        .toList();
+  }
 
-    return PeriodicTaskItem(
-      task: task,
-      isCompleted: task.status == UnifiedStatus.completed.value,
-      isRoutine: isRoutine,
-    );
-  }).toList();
-
-  // Sort: incomplete first (critical/high priority first), completed at end
-  items.sort((a, b) {
-    if (a.isCompleted != b.isCompleted) {
-      return a.isCompleted ? 1 : -1;
-    }
-    return a.task.priority.compareTo(b.task.priority);
+  // Merge & sort: incomplete first, then by priority
+  final allItems = [...workItems, ...routineItems];
+  allItems.sort((a, b) {
+    if (a.isCompleted != b.isCompleted) return a.isCompleted ? 1 : -1;
+    return a.priorityIndex.compareTo(b.priorityIndex);
   });
 
-  final completedCount = items.where((i) => i.isCompleted).length;
+  final completedCount = allItems.where((i) => i.isCompleted).length;
 
   return PeriodicTasksState(
-    items: items,
+    items: allItems,
     period: period,
     completedCount: completedCount,
-    totalCount: items.length,
+    totalCount: allItems.length,
   );
 });
 
-/// Action: toggle task completion in periodic system
+// ─── Actions ───
+
+/// Toggle completion for a work task
 final periodicTaskCompletionProvider =
     Provider<Future<void> Function(int taskId, bool markComplete)>((ref) {
   final repo = ref.watch(tasksRepositoryProvider);
   return (int taskId, bool markComplete) async {
-    final status = markComplete ? UnifiedStatus.completed : UnifiedStatus.inProgress;
+    final status =
+        markComplete ? UnifiedStatus.completed : UnifiedStatus.inProgress;
     await repo.updateStatus(taskId, status);
+  };
+});
+
+/// Toggle completion for a routine task
+final periodicRoutineCompletionProvider =
+    Provider<Future<void> Function(String taskId, DateTime date)>((ref) {
+  return (String taskId, DateTime date) async {
+    await ref.read(routineTasksProvider.notifier).toggleTask(taskId, date);
   };
 });

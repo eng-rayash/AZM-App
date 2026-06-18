@@ -16020,3 +16020,807 @@ class $AppDatabaseManager {
   $$MovementsTableTableManager get movements =>
       $$MovementsTableTableManager(_db, _db.movements);
 }
+
+// ─────────────────────────────────────────────────────────────────
+// RoutineTasks — hand-written stub (replace with build_runner output)
+// ─────────────────────────────────────────────────────────────────
+
+class $RoutineTasksTable extends RoutineTasks
+    with TableInfo<$RoutineTasksTable, RoutineTaskData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoutineTasksTable(this.attachedDatabase, [this._alias]);
+
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id', aliasedName, false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints:
+        GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
+  );
+
+  static const VerificationMeta _syncIdMeta =
+      const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id', aliasedName, false,
+    additionalChecks:
+        GeneratedColumn.checkTextLength(minTextLength: 36, maxTextLength: 36),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at', aliasedName, false,
+    type: DriftSqlType.int, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at', aliasedName, false,
+    type: DriftSqlType.int, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _isDeletedMeta =
+      const VerificationMeta('isDeleted');
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted', aliasedName, false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints:
+        GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
+    defaultValue: const Constant(false),
+  );
+
+  static const VerificationMeta _createdByMeta =
+      const VerificationMeta('createdBy');
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by', aliasedName, true,
+    type: DriftSqlType.string, requiredDuringInsert: false,
+  );
+
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title', aliasedName, false,
+    additionalChecks:
+        GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 200),
+    type: DriftSqlType.string, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description', aliasedName, true,
+    type: DriftSqlType.string, requiredDuringInsert: false,
+  );
+
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category', aliasedName, false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('personal'),
+  );
+
+  static const VerificationMeta _priorityMeta =
+      const VerificationMeta('priority');
+  @override
+  late final GeneratedColumn<int> priority = GeneratedColumn<int>(
+    'priority', aliasedName, false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(2),
+  );
+
+  static const VerificationMeta _repeatMeta =
+      const VerificationMeta('repeat');
+  @override
+  late final GeneratedColumn<String> repeat = GeneratedColumn<String>(
+    'repeat', aliasedName, false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('daily'),
+  );
+
+  static const VerificationMeta _timeMeta = const VerificationMeta('time');
+  @override
+  late final GeneratedColumn<String> time = GeneratedColumn<String>(
+    'time', aliasedName, true,
+    type: DriftSqlType.string, requiredDuringInsert: false,
+  );
+
+  static const VerificationMeta _daysOfWeekMeta =
+      const VerificationMeta('daysOfWeek');
+  @override
+  late final GeneratedColumn<String> daysOfWeek = GeneratedColumn<String>(
+    'days_of_week', aliasedName, false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+
+  static const VerificationMeta _isActiveMeta =
+      const VerificationMeta('isActive');
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active', aliasedName, false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints:
+        GeneratedColumn.constraintIsAlways('CHECK ("is_active" IN (0, 1))'),
+    defaultValue: const Constant(true),
+  );
+
+  @override
+  List<GeneratedColumn> get $columns => [
+        id, syncId, createdAt, updatedAt, isDeleted, createdBy,
+        title, description, category, priority, repeat, time,
+        daysOfWeek, isActive,
+      ];
+
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'routine_tasks';
+
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RoutineTaskData> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('sync_id')) {
+      context.handle(_syncIdMeta,
+          syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta));
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+
+  @override
+  RoutineTaskData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RoutineTaskData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      syncId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sync_id'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}updated_at'])!,
+      isDeleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+      createdBy: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_by']),
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      priority: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}priority'])!,
+      repeat: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}repeat'])!,
+      time: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}time']),
+      daysOfWeek: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}days_of_week'])!,
+      isActive: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
+    );
+  }
+
+  @override
+  $RoutineTasksTable createAlias(String alias) =>
+      $RoutineTasksTable(attachedDatabase, alias);
+}
+
+class RoutineTaskData extends DataClass
+    implements Insertable<RoutineTaskData> {
+  final int id;
+  final String syncId;
+  final int createdAt;
+  final int updatedAt;
+  final bool isDeleted;
+  final String? createdBy;
+  final String title;
+  final String? description;
+  final String category;
+  final int priority;
+  final String repeat;
+  final String? time;
+  final String daysOfWeek;
+  final bool isActive;
+
+  const RoutineTaskData({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.title,
+    this.description,
+    required this.category,
+    required this.priority,
+    required this.repeat,
+    this.time,
+    required this.daysOfWeek,
+    required this.isActive,
+  });
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['category'] = Variable<String>(category);
+    map['priority'] = Variable<int>(priority);
+    map['repeat'] = Variable<String>(repeat);
+    if (!nullToAbsent || time != null) {
+      map['time'] = Variable<String>(time);
+    }
+    map['days_of_week'] = Variable<String>(daysOfWeek);
+    map['is_active'] = Variable<bool>(isActive);
+    return map;
+  }
+
+  RoutineTasksCompanion toCompanion(bool nullToAbsent) {
+    return RoutineTasksCompanion(
+      id: Value(id),
+      syncId: Value(syncId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      title: Value(title),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      category: Value(category),
+      priority: Value(priority),
+      repeat: Value(repeat),
+      time: time == null && nullToAbsent ? const Value.absent() : Value(time),
+      daysOfWeek: Value(daysOfWeek),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory RoutineTaskData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RoutineTaskData(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      title: serializer.fromJson<String>(json['title']),
+      description: serializer.fromJson<String?>(json['description']),
+      category: serializer.fromJson<String>(json['category']),
+      priority: serializer.fromJson<int>(json['priority']),
+      repeat: serializer.fromJson<String>(json['repeat']),
+      time: serializer.fromJson<String?>(json['time']),
+      daysOfWeek: serializer.fromJson<String>(json['daysOfWeek']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'title': serializer.toJson<String>(title),
+      'description': serializer.toJson<String?>(description),
+      'category': serializer.toJson<String>(category),
+      'priority': serializer.toJson<int>(priority),
+      'repeat': serializer.toJson<String>(repeat),
+      'time': serializer.toJson<String?>(time),
+      'daysOfWeek': serializer.toJson<String>(daysOfWeek),
+      'isActive': serializer.toJson<bool>(isActive),
+    };
+  }
+
+  RoutineTaskData copyWith({
+    int? id, String? syncId, int? createdAt, int? updatedAt,
+    bool? isDeleted, Value<String?> createdBy = const Value.absent(),
+    String? title, Value<String?> description = const Value.absent(),
+    String? category, int? priority, String? repeat,
+    Value<String?> time = const Value.absent(),
+    String? daysOfWeek, bool? isActive,
+  }) => RoutineTaskData(
+    id: id ?? this.id, syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt, updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    title: title ?? this.title,
+    description: description.present ? description.value : this.description,
+    category: category ?? this.category, priority: priority ?? this.priority,
+    repeat: repeat ?? this.repeat,
+    time: time.present ? time.value : this.time,
+    daysOfWeek: daysOfWeek ?? this.daysOfWeek, isActive: isActive ?? this.isActive,
+  );
+
+  @override
+  String toString() => 'RoutineTaskData(id: $id, title: $title)';
+
+  @override
+  int get hashCode => Object.hash(id, syncId, title, priority);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RoutineTaskData && other.id == id && other.syncId == syncId);
+}
+
+class RoutineTasksCompanion extends UpdateCompanion<RoutineTaskData> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> title;
+  final Value<String?> description;
+  final Value<String> category;
+  final Value<int> priority;
+  final Value<String> repeat;
+  final Value<String?> time;
+  final Value<String> daysOfWeek;
+  final Value<bool> isActive;
+
+  const RoutineTasksCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.title = const Value.absent(),
+    this.description = const Value.absent(),
+    this.category = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.repeat = const Value.absent(),
+    this.time = const Value.absent(),
+    this.daysOfWeek = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+
+  RoutineTasksCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String title,
+    this.description = const Value.absent(),
+    this.category = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.repeat = const Value.absent(),
+    this.time = const Value.absent(),
+    this.daysOfWeek = const Value.absent(),
+    this.isActive = const Value.absent(),
+  })  : syncId = Value(syncId),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        title = Value(title);
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) map['id'] = Variable<int>(id.value);
+    if (syncId.present) map['sync_id'] = Variable<String>(syncId.value);
+    if (createdAt.present) map['created_at'] = Variable<int>(createdAt.value);
+    if (updatedAt.present) map['updated_at'] = Variable<int>(updatedAt.value);
+    if (isDeleted.present) map['is_deleted'] = Variable<bool>(isDeleted.value);
+    if (createdBy.present) map['created_by'] = Variable<String>(createdBy.value);
+    if (title.present) map['title'] = Variable<String>(title.value);
+    if (description.present) map['description'] = Variable<String>(description.value);
+    if (category.present) map['category'] = Variable<String>(category.value);
+    if (priority.present) map['priority'] = Variable<int>(priority.value);
+    if (repeat.present) map['repeat'] = Variable<String>(repeat.value);
+    if (time.present) map['time'] = Variable<String>(time.value);
+    if (daysOfWeek.present) map['days_of_week'] = Variable<String>(daysOfWeek.value);
+    if (isActive.present) map['is_active'] = Variable<bool>(isActive.value);
+    return map;
+  }
+
+  @override
+  String toString() => 'RoutineTasksCompanion(title: $title)';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// RoutineCompletions
+// ─────────────────────────────────────────────────────────────────
+
+class $RoutineCompletionsTable extends RoutineCompletions
+    with TableInfo<$RoutineCompletionsTable, RoutineCompletionData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoutineCompletionsTable(this.attachedDatabase, [this._alias]);
+
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id', aliasedName, false,
+    hasAutoIncrement: true, type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints:
+        GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
+  );
+
+  static const VerificationMeta _syncIdMeta =
+      const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id', aliasedName, false,
+    additionalChecks:
+        GeneratedColumn.checkTextLength(minTextLength: 36, maxTextLength: 36),
+    type: DriftSqlType.string, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at', aliasedName, false,
+    type: DriftSqlType.int, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at', aliasedName, false,
+    type: DriftSqlType.int, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _isDeletedMeta =
+      const VerificationMeta('isDeleted');
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted', aliasedName, false,
+    type: DriftSqlType.bool, requiredDuringInsert: false,
+    defaultConstraints:
+        GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
+    defaultValue: const Constant(false),
+  );
+
+  static const VerificationMeta _createdByMeta =
+      const VerificationMeta('createdBy');
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by', aliasedName, true,
+    type: DriftSqlType.string, requiredDuringInsert: false,
+  );
+
+  static const VerificationMeta _routineTaskSyncIdMeta =
+      const VerificationMeta('routineTaskSyncId');
+  @override
+  late final GeneratedColumn<String> routineTaskSyncId =
+      GeneratedColumn<String>(
+    'routine_task_sync_id', aliasedName, false,
+    additionalChecks:
+        GeneratedColumn.checkTextLength(minTextLength: 36, maxTextLength: 36),
+    type: DriftSqlType.string, requiredDuringInsert: true,
+  );
+
+  static const VerificationMeta _dateKeyMeta =
+      const VerificationMeta('dateKey');
+  @override
+  late final GeneratedColumn<String> dateKey = GeneratedColumn<String>(
+    'date_key', aliasedName, false,
+    additionalChecks:
+        GeneratedColumn.checkTextLength(minTextLength: 10, maxTextLength: 10),
+    type: DriftSqlType.string, requiredDuringInsert: true,
+  );
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, syncId, createdAt, updatedAt, isDeleted, createdBy,
+       routineTaskSyncId, dateKey];
+
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'routine_completions';
+
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<RoutineCompletionData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_id')) {
+      context.handle(_syncIdMeta,
+          syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta));
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('routine_task_sync_id')) {
+      context.handle(
+          _routineTaskSyncIdMeta,
+          routineTaskSyncId.isAcceptableOrUnknown(
+              data['routine_task_sync_id']!, _routineTaskSyncIdMeta));
+    } else if (isInserting) {
+      context.missing(_routineTaskSyncIdMeta);
+    }
+    if (data.containsKey('date_key')) {
+      context.handle(_dateKeyMeta,
+          dateKey.isAcceptableOrUnknown(data['date_key']!, _dateKeyMeta));
+    } else if (isInserting) {
+      context.missing(_dateKeyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+
+  @override
+  RoutineCompletionData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RoutineCompletionData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      syncId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sync_id'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}updated_at'])!,
+      isDeleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+      createdBy: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_by']),
+      routineTaskSyncId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}routine_task_sync_id'])!,
+      dateKey: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}date_key'])!,
+    );
+  }
+
+  @override
+  $RoutineCompletionsTable createAlias(String alias) =>
+      $RoutineCompletionsTable(attachedDatabase, alias);
+}
+
+class RoutineCompletionData extends DataClass
+    implements Insertable<RoutineCompletionData> {
+  final int id;
+  final String syncId;
+  final int createdAt;
+  final int updatedAt;
+  final bool isDeleted;
+  final String? createdBy;
+  final String routineTaskSyncId;
+  final String dateKey;
+
+  const RoutineCompletionData({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.routineTaskSyncId,
+    required this.dateKey,
+  });
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['routine_task_sync_id'] = Variable<String>(routineTaskSyncId);
+    map['date_key'] = Variable<String>(dateKey);
+    return map;
+  }
+
+  RoutineCompletionsCompanion toCompanion(bool nullToAbsent) {
+    return RoutineCompletionsCompanion(
+      id: Value(id), syncId: Value(syncId),
+      createdAt: Value(createdAt), updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent() : Value(createdBy),
+      routineTaskSyncId: Value(routineTaskSyncId),
+      dateKey: Value(dateKey),
+    );
+  }
+
+  factory RoutineCompletionData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RoutineCompletionData(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      routineTaskSyncId: serializer.fromJson<String>(json['routineTaskSyncId']),
+      dateKey: serializer.fromJson<String>(json['dateKey']),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'routineTaskSyncId': serializer.toJson<String>(routineTaskSyncId),
+      'dateKey': serializer.toJson<String>(dateKey),
+    };
+  }
+
+  RoutineCompletionData copyWith({
+    int? id, String? syncId, int? createdAt, int? updatedAt,
+    bool? isDeleted, Value<String?> createdBy = const Value.absent(),
+    String? routineTaskSyncId, String? dateKey,
+  }) => RoutineCompletionData(
+    id: id ?? this.id, syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt, updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    routineTaskSyncId: routineTaskSyncId ?? this.routineTaskSyncId,
+    dateKey: dateKey ?? this.dateKey,
+  );
+
+  @override
+  String toString() =>
+      'RoutineCompletionData(taskId: $routineTaskSyncId, date: $dateKey)';
+
+  @override
+  int get hashCode => Object.hash(id, routineTaskSyncId, dateKey);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RoutineCompletionData &&
+          other.routineTaskSyncId == routineTaskSyncId &&
+          other.dateKey == dateKey);
+}
+
+class RoutineCompletionsCompanion
+    extends UpdateCompanion<RoutineCompletionData> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> routineTaskSyncId;
+  final Value<String> dateKey;
+
+  const RoutineCompletionsCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.routineTaskSyncId = const Value.absent(),
+    this.dateKey = const Value.absent(),
+  });
+
+  RoutineCompletionsCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String routineTaskSyncId,
+    required String dateKey,
+  })  : syncId = Value(syncId),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        routineTaskSyncId = Value(routineTaskSyncId),
+        dateKey = Value(dateKey);
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) map['id'] = Variable<int>(id.value);
+    if (syncId.present) map['sync_id'] = Variable<String>(syncId.value);
+    if (createdAt.present) map['created_at'] = Variable<int>(createdAt.value);
+    if (updatedAt.present) map['updated_at'] = Variable<int>(updatedAt.value);
+    if (isDeleted.present) map['is_deleted'] = Variable<bool>(isDeleted.value);
+    if (createdBy.present) map['created_by'] = Variable<String>(createdBy.value);
+    if (routineTaskSyncId.present)
+      map['routine_task_sync_id'] = Variable<String>(routineTaskSyncId.value);
+    if (dateKey.present) map['date_key'] = Variable<String>(dateKey.value);
+    return map;
+  }
+
+  @override
+  String toString() =>
+      'RoutineCompletionsCompanion(taskId: $routineTaskSyncId, date: $dateKey)';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// _$AppDatabase mixin additions for new tables
+// ─────────────────────────────────────────────────────────────────
+// NOTE: The _$AppDatabase abstract class is auto-generated above.
+// The routineTasks and routineCompletions getters below are appended
+// as an extension to avoid modifying the generated mixin.
+// Run `dart run build_runner build --delete-conflicting-outputs`
+// to regenerate the full file cleanly.

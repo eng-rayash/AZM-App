@@ -39,6 +39,10 @@ import 'dao/visitors_dao.dart';
 import 'dao/notes_dao.dart';
 import 'dao/movements_dao.dart';
 
+// Phase 5 — Routine Tasks
+import 'tables/routine_tasks_table.dart';
+import 'dao/routine_tasks_dao.dart';
+
 part 'app_database.g.dart';
 
 /// Main Drift database for the Mudiri application.
@@ -62,6 +66,8 @@ part 'app_database.g.dart';
     Visitors,
     Notes,
     Movements,
+    RoutineTasks,
+    RoutineCompletions,
   ],
   daos: [
     UsersDao,
@@ -78,6 +84,7 @@ part 'app_database.g.dart';
     VisitorsDao,
     NotesDao,
     MovementsDao,
+    RoutineTasksDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -85,6 +92,18 @@ class AppDatabase extends _$AppDatabase {
 
   /// Named constructor for testing with a custom executor
   AppDatabase.forTesting(super.e);
+
+  late final $RoutineTasksTable routineTasks = $RoutineTasksTable(this);
+  late final $RoutineCompletionsTable routineCompletions = $RoutineCompletionsTable(this);
+  late final RoutineTasksDao routineTasksDao = RoutineTasksDao(this);
+
+  @override
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        ...super.allSchemaEntities,
+        routineTasks,
+        routineCompletions,
+      ];
+
 
   @override
   int get schemaVersion => AppConstants.dbVersion;
@@ -113,6 +132,11 @@ class AppDatabase extends _$AppDatabase {
             try {
               await m.addColumn(meetings, meetings.customMeetingType);
             } catch (_) {}
+          }
+          if (from < 5) {
+            // Phase 5: Routine Tasks DB tables
+            try { await m.createTable(routineTasks); } catch (_) {}
+            try { await m.createTable(routineCompletions); } catch (_) {}
           }
         },
         beforeOpen: (details) async {

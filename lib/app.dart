@@ -8,6 +8,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
 import 'features/notifications/domain/notification_service.dart';
+import 'features/notifications/providers/smart_notifications_provider.dart';
 
 /// Mudiri Application Root Widget.
 ///
@@ -42,6 +43,9 @@ class _MudiriAppState extends ConsumerState<MudiriApp> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
+
+    // Watch smart notification scheduler to reactively sync alerts globally
+    ref.watch(smartNotificationsSchedulerProvider);
 
     return MaterialApp.router(
       // App Identity

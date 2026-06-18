@@ -146,6 +146,12 @@ class RouteNames {
   static const String maintenance = '/maintenance';
 
   // ─────────────────────────────────────────────
+  // Routine Tasks Routes
+  // ─────────────────────────────────────────────
+
+  static const String routineTasksList = '/routine-tasks';
+
+  // ─────────────────────────────────────────────
   // Settings Extended Routes
   // ─────────────────────────────────────────────
 

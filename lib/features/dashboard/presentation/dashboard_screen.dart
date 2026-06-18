@@ -571,6 +571,7 @@ class _PeriodicTasksCard extends ConsumerWidget {
     final periodicState = ref.watch(periodicTasksProvider);
     final selectedPeriod = ref.watch(selectedPeriodProvider);
     final completeAction = ref.watch(periodicTaskCompletionProvider);
+    final routineToggle = ref.watch(periodicRoutineCompletionProvider);
 
     return NeuCard(
       showGoldBorder: true,
@@ -593,12 +594,34 @@ class _PeriodicTasksCard extends ConsumerWidget {
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => context.push('${RouteNames.tasksListFull}?status=all'),
-                child: Text(
-                  'عرض الكل',
-                  style: AppTypography.bodySmall.copyWith(
-                    color: isDark ? NeuColors.goldAccent : NeuColors.navyMid,
-                    fontWeight: FontWeight.bold,
+                onTap: () => context.push(RouteNames.routineTasksList),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: isDark ? NeuColors.goldAccent.withValues(alpha: 0.15) : NeuColors.navyDeep.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isDark ? NeuColors.goldAccent.withValues(alpha: 0.4) : NeuColors.navyDeep.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.open_in_new_rounded,
+                        size: 12,
+                        color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'فتح الروتين',
+                        style: AppTypography.bodySmall.copyWith(
+                          color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -719,10 +742,13 @@ class _PeriodicTasksCard extends ConsumerWidget {
               return _PeriodicTaskTile(
                 item: item,
                 isDark: isDark,
-                onToggle: () => completeAction(
-                  item.task.id,
-                  !item.isCompleted,
-                ),
+                onToggle: () {
+                  if (item.isRoutine && item.routineTask != null) {
+                    routineToggle(item.routineTask!.id, DateTime.now());
+                  } else if (!item.isRoutine && item.task != null) {
+                    completeAction(item.task!.id, !item.isCompleted);
+                  }
+                },
               );
             }),
             if (periodicState.items.length > 5)
@@ -777,7 +803,7 @@ class _PeriodicTaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priorityColor = _priorityColor(item.task.priority);
+    final priorityColor = _priorityColor(item.priorityIndex);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -791,9 +817,7 @@ class _PeriodicTaskTile extends StatelessWidget {
               height: 28,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: item.isCompleted
-                    ? NeuColors.success
-                    : Colors.transparent,
+                color: item.isCompleted ? NeuColors.success : Colors.transparent,
                 border: Border.all(
                   color: item.isCompleted
                       ? NeuColors.success
@@ -820,7 +844,7 @@ class _PeriodicTaskTile extends StatelessWidget {
           // Task title
           Expanded(
             child: Text(
-              item.task.title,
+              item.title,
               style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
                 fontSize: 13,
                 decoration: item.isCompleted ? TextDecoration.lineThrough : null,
@@ -832,7 +856,7 @@ class _PeriodicTaskTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          // Routine/Achievement badge
+          // Type badge: روتيني / عملي
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
@@ -842,7 +866,7 @@ class _PeriodicTaskTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              item.isRoutine ? 'روتيني' : 'إنجازي',
+              item.isRoutine ? '🔄 روتيني' : '⭐ عملي',
               style: TextStyle(
                 fontSize: 10,
                 fontFamily: 'Tajawal',
