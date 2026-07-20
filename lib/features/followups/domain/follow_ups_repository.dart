@@ -23,10 +23,12 @@ class FollowUpsRepository {
     required String title,
     required FollowUpEntityType type,
     required Priority priority,
+    FollowupType followupType = FollowupType.followup,
     String? notes,
     String? targetDate,
     int? entityId,
     String? assignedTo,
+    String? linkedEntityName,
   }) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     
@@ -41,6 +43,8 @@ class FollowUpsRepository {
         priority: drift.Value(priority.value),
         status: drift.Value(UnifiedStatus.newItem.value),
         assignedTo: drift.Value(assignedTo),
+        followupType: drift.Value(followupType.value),
+        linkedEntityLabel: drift.Value(linkedEntityName),
         createdAt: now,
         updatedAt: now,
       ),
@@ -101,6 +105,8 @@ class FollowUpsRepository {
         case FollowUpEntityType.other:
           // No linked entity to sync
           break;
+        default:
+          break;
       }
     } catch (e) {
       // Log but don't fail the main status update
@@ -117,10 +123,12 @@ class FollowUpsRepository {
     required String title,
     required FollowUpEntityType type,
     required Priority priority,
+    FollowupType followupType = FollowupType.followup,
     String? notes,
     String? targetDate,
     int? entityId,
     String? assignedTo,
+    String? linkedEntityName,
   }) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     
@@ -133,6 +141,8 @@ class FollowUpsRepository {
         targetDate: drift.Value(targetDate),
         entityId: drift.Value(entityId),
         assignedTo: drift.Value(assignedTo),
+        followupType: drift.Value(followupType.value),
+        linkedEntityLabel: drift.Value(linkedEntityName),
         updatedAt: drift.Value(now),
       ),
       id,

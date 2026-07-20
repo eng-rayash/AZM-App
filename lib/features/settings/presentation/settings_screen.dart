@@ -324,6 +324,51 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: NeuButton(
+                        label: 'تعبئة بيانات تجريبية (Demo)',
+                        icon: Icons.auto_awesome_rounded,
+                        variant: NeuButtonVariant.gold,
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('تأكيد تحميل البيانات التجريبية'),
+                              content: const Text(
+                                'سيتم إضافة مجموعة احترافية من البيانات التجريبية (اجتماعات، مهام، روتين، وثائق، جهات اتصال) لتبدو وكأن التطبيق مستخدم منذ أشهر. هل تريد المتابعة؟',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text('إلغاء'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text('تحميل البيانات'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            final success = await ref
+                                .read(backupServiceProvider)
+                                .seedDemoData();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(success
+                                      ? 'تمت تعبئة البيانات التجريبية بنجاح!'
+                                      : 'حدث خطأ أثناء تحميل البيانات.'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                    AppSpacing.gapMd,
+                    SizedBox(
+                      width: double.infinity,
+                      child: NeuButton(
                         label: 'تصدير التقرير اليومي',
                         icon: Icons.ios_share_rounded,
                         variant: NeuButtonVariant.secondary,

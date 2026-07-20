@@ -9,61 +9,80 @@ import '../../core/theme/neu_colors.dart';
 /// Dashboard FAB — Floating Action Button with animated bottom menu.
 ///
 /// Shows a (+) FAB at the bottom of the dashboard. On press, it opens
-/// an animated bottom sheet with 8 quick-add options:
-/// تحرك - لقاء - موعد - زائر - مهمة - توجيه - اتصال - ملاحظة
+/// an animated bottom sheet with quick-add options for all ERP modules:
+/// متابعة - اجتماع - عميل - مشروع - فاتورة - موظف - مصروف - إيراد - توجيه - موعد
 class DashboardFab extends StatelessWidget {
   const DashboardFab({super.key});
 
   static const List<_FabAction> _actions = [
     _FabAction(
-      label: 'تحرك',
-      icon: Icons.directions_walk_rounded,
-      color: NeuColors.navyMid,
-      route: RouteNames.movementsList,
+      label: 'متابعة',
+      icon: Icons.task_alt_rounded,
+      color: NeuColors.navyDeep,
+      route: RouteNames.followupCreate,
     ),
     _FabAction(
-      label: 'لقاء',
-      icon: Icons.handshake_rounded,
-      color: NeuColors.navyDeep,
-      route: RouteNames.encountersList,
+      label: 'اجتماع',
+      icon: Icons.groups_rounded,
+      color: NeuColors.navyMid,
+      route: RouteNames.meetingCreate,
+    ),
+    _FabAction(
+      label: 'عميل',
+      icon: Icons.supervisor_account_rounded,
+      color: Color(0xFF00B894),
+      route: RouteNames.clientCreate,
+    ),
+    _FabAction(
+      label: 'مشروع',
+      icon: Icons.work_rounded,
+      color: Color(0xFFE17055),
+      route: RouteNames.projectCreate,
+    ),
+    _FabAction(
+      label: 'فاتورة',
+      icon: Icons.receipt_long_rounded,
+      color: NeuColors.success,
+      route: RouteNames.invoiceCreate,
+    ),
+    _FabAction(
+      label: 'موظف',
+      icon: Icons.badge_rounded,
+      color: Color(0xFF6C5CE7),
+      route: RouteNames.employeeCreate,
+    ),
+    _FabAction(
+      label: 'مصروف',
+      icon: Icons.money_off_rounded,
+      color: NeuColors.danger,
+      route: RouteNames.expenseCreate,
+    ),
+    _FabAction(
+      label: 'إيراد',
+      icon: Icons.attach_money_rounded,
+      color: NeuColors.goldDark,
+      route: RouteNames.revenueCreate,
+    ),
+    _FabAction(
+      label: 'توجيه',
+      icon: Icons.assignment_rounded,
+      color: NeuColors.warning,
+      route: RouteNames.directiveCreate,
     ),
     _FabAction(
       label: 'موعد',
       icon: Icons.calendar_month_rounded,
       color: NeuColors.info,
-      route: RouteNames.appointmentsList,
-    ),
-    _FabAction(
-      label: 'زائر',
-      icon: Icons.person_add_alt_1_rounded,
-      color: NeuColors.success,
-      route: RouteNames.visitorsList,
-    ),
-    _FabAction(
-      label: 'مهمة',
-      icon: Icons.task_alt_rounded,
-      color: NeuColors.warning,
-      route: RouteNames.tasksListFull,
-    ),
-    _FabAction(
-      label: 'توجيه',
-      icon: Icons.assignment_rounded,
-      color: NeuColors.danger,
-      route: RouteNames.directivesList,
-    ),
-    _FabAction(
-      label: 'اتصال',
-      icon: Icons.phone_rounded,
-      color: NeuColors.goldAccent,
-      route: RouteNames.callsList,
+      route: RouteNames.appointmentCreate,
     ),
     _FabAction(
       label: 'ملاحظة',
       icon: Icons.note_add_rounded,
       color: NeuColors.navyLight,
-      route: RouteNames.notesList,
+      route: RouteNames.noteCreate,
     ),
   ];
+
 
   void _showMenu(BuildContext context) {
     HapticFeedback.lightImpact();

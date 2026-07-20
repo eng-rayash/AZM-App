@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/enums.dart';
-import '../../../core/database/app_database.dart';
+import '../../../core/database/app_database.dart' hide RoutineTask;
 import '../../tasks/domain/tasks_repository.dart';
 import '../../tasks/providers/tasks_provider.dart';
 import '../../routine_tasks/providers/routine_tasks_provider.dart';

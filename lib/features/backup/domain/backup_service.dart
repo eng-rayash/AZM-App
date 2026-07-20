@@ -12,6 +12,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/security/security_logger.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/database/demo_data_seeder.dart';
 
 /// Backup Service — handles encrypted database export and restore.
 ///
@@ -242,6 +243,30 @@ class BackupService {
                 await (_db.update(_db.movements)..where((t) => t.syncId.equals(item.syncId))).write(companion);
               }
             }
+
+            // 15. Routine Tasks
+            final backupRoutineTasks = await backupDb.select(backupDb.routineTasks).get();
+            for (final item in backupRoutineTasks) {
+              final existing = await (_db.select(_db.routineTasks)..where((t) => t.syncId.equals(item.syncId))).getSingleOrNull();
+              final companion = item.toCompanion(true).copyWith(id: const Value.absent());
+              if (existing == null) {
+                await _db.into(_db.routineTasks).insert(companion);
+              } else if (item.updatedAt > existing.updatedAt) {
+                await (_db.update(_db.routineTasks)..where((t) => t.syncId.equals(item.syncId))).write(companion);
+              }
+            }
+
+            // 16. Routine Completions
+            final backupRoutineCompletions = await backupDb.select(backupDb.routineCompletions).get();
+            for (final item in backupRoutineCompletions) {
+              final existing = await (_db.select(_db.routineCompletions)..where((t) => t.syncId.equals(item.syncId))).getSingleOrNull();
+              final companion = item.toCompanion(true).copyWith(id: const Value.absent());
+              if (existing == null) {
+                await _db.into(_db.routineCompletions).insert(companion);
+              } else if (item.updatedAt > existing.updatedAt) {
+                await (_db.update(_db.routineCompletions)..where((t) => t.syncId.equals(item.syncId))).write(companion);
+              }
+            }
           });
         } finally {
           await backupDb.close();
@@ -255,6 +280,16 @@ class BackupService {
     } catch (e) {
       return false;
     }
+  }
+
+  /// Load realistic executive demo data into database
+  Future<bool> seedDemoData() async {
+    final seeder = DemoDataSeeder(_db);
+    final success = await seeder.seedDemoData();
+    if (success) {
+      await _logger.logBackupRestored();
+    }
+    return success;
   }
 
   /// Get backup file size info for display

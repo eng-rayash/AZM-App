@@ -25,7 +25,7 @@ class RoutineTasksScreen extends ConsumerStatefulWidget {
 class _RoutineTasksScreenState extends ConsumerState<RoutineTasksScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  static const _tabCount = 3; // اليوم / الأسبوع / إدارة المهام
+  static const _tabCount = 4; // اليوم / الأسبوع / إدارة المهام / الإحصائيات
 
   @override
   void initState() {
@@ -72,6 +72,7 @@ class _RoutineTasksScreenState extends ConsumerState<RoutineTasksScreen>
                   _TodayTab(isDark: isDark),
                   _WeekTab(isDark: isDark),
                   _ManageTab(isDark: isDark),
+                  _AnalyticsTab(isDark: isDark),
                 ],
               ),
             ),
@@ -122,6 +123,7 @@ class _RoutineTasksScreenState extends ConsumerState<RoutineTasksScreen>
               _buildTab(isDark, 0, '☀️ اليوم'),
               _buildTab(isDark, 1, '📅 الأسبوع'),
               _buildTab(isDark, 2, '⚙️ الإدارة'),
+              _buildTab(isDark, 3, '📊 إحصائيات'),
             ],
           ),
         );
@@ -1653,5 +1655,336 @@ class _SectionLabel extends StatelessWidget {
         color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Analytics Tab — HeatMap + Streak + Weekly Bars
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _AnalyticsTab extends ConsumerWidget {
+  const _AnalyticsTab({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(routineTasksProvider);
+    final tasks = state.tasks;
+    final completions = state.completions;
+
+    // ── Compute streak ────────────────────────────────────────────────
+    final today = DateTime.now();
+    int streak = 0;
+    for (int d = 0; d <= 365; d++) {
+      final day = today.subtract(Duration(days: d));
+      final key = _dayKey(day);
+      final completedThatDay = completions.where((c) => c.dateKey == key).length;
+      if (completedThatDay > 0) {
+        streak++;
+      } else if (d > 0) {
+        break;
+      }
+    }
+
+    // ── 30-day completion map ─────────────────────────────────────────
+    final Map<String, int> heatMap = {};
+    for (int d = 29; d >= 0; d--) {
+      final day = today.subtract(Duration(days: d));
+      final key = _dayKey(day);
+      heatMap[key] = completions.where((c) => c.dateKey == key).length;
+    }
+
+    // ── Weekly bars (last 7 days) ─────────────────────────────────────
+    final weekData = List.generate(7, (i) {
+      final day = today.subtract(Duration(days: 6 - i));
+      final key = _dayKey(day);
+      final done = completions.where((c) => c.dateKey == key).length;
+      final total = tasks.length;
+      return (day, done, total);
+    });
+
+    final maxCompleted = weekData.map((e) => e.$2).fold(1, (a, b) => a > b ? a : b);
+
+    final textPrimary = isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary;
+    final textHint = isDark ? NeuColors.textHintDark : NeuColors.textHint;
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // ── Streak Card ──────────────────────────────────────────────
+        NeuCard(
+          isDark: isDark,
+          radius: 20,
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: streak >= 7
+                        ? [const Color(0xFFFF6B6B), const Color(0xFFE17055)]
+                        : [const Color(0xFF22549E), const Color(0xFF0984E3)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '🔥',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$streak يوم متتالي',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: textPrimary,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                    Text(
+                      streak == 0
+                          ? 'لم تكتمل أي مهمة اليوم بعد'
+                          : streak >= 7
+                              ? 'رائع! استمر في هذا الإنجاز 💪'
+                              : 'واصل الإنجاز لتكسب شارة الأسبوع!',
+                      style: TextStyle(fontSize: 13, color: textHint, fontFamily: 'Cairo'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Weekly Bars ──────────────────────────────────────────────
+        NeuCard(
+          isDark: isDark,
+          radius: 20,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'الأسبوع الأخير',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                  fontFamily: 'Cairo',
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: weekData.map((d) {
+                  final ratio = maxCompleted > 0 ? d.$2 / maxCompleted : 0.0;
+                  final isToday = _dayKey(d.$1) == _dayKey(today);
+                  final barColor = isToday
+                      ? (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)
+                      : (isDark ? const Color(0xFF2D4A6E) : const Color(0xFFBDD5F5));
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (d.$2 > 0)
+                            Text(
+                              '${d.$2}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: isToday
+                                    ? (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)
+                                    : textHint,
+                              ),
+                            ),
+                          const SizedBox(height: 4),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOut,
+                            height: (ratio * 80).clamp(4.0, 80.0),
+                            decoration: BoxDecoration(
+                              color: barColor,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _shortDayName(d.$1),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: isToday ? textPrimary : textHint,
+                              fontWeight: isToday ? FontWeight.w700 : FontWeight.normal,
+                              fontFamily: 'Cairo',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── HeatMap ──────────────────────────────────────────────────
+        NeuCard(
+          isDark: isDark,
+          radius: 20,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'خريطة الإنجاز (آخر 30 يوم)',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                  fontFamily: 'Cairo',
+                ),
+              ),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 10,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 1,
+                ),
+                itemCount: 30,
+                itemBuilder: (_, i) {
+                  final day = today.subtract(Duration(days: 29 - i));
+                  final key = _dayKey(day);
+                  final count = heatMap[key] ?? 0;
+                  final isToday = key == _dayKey(today);
+
+                  Color cellColor;
+                  if (count == 0) {
+                    cellColor = isDark
+                        ? const Color(0xFF1E2A3A)
+                        : const Color(0xFFE8EEF5);
+                  } else if (count == 1) {
+                    cellColor = const Color(0xFFBDD5F5);
+                  } else if (count == 2) {
+                    cellColor = const Color(0xFF6AAEE8);
+                  } else if (count <= 4) {
+                    cellColor = const Color(0xFF2278D4);
+                  } else {
+                    cellColor = const Color(0xFF22549E);
+                  }
+
+                  return Tooltip(
+                    message: '${day.day}/${day.month}: $count إتمام',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: cellColor,
+                        borderRadius: BorderRadius.circular(4),
+                        border: isToday
+                            ? Border.all(
+                                color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                                width: 1.5,
+                              )
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              // Legend
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('أقل', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Cairo')),
+                  const SizedBox(width: 4),
+                  for (final c in [
+                    const Color(0xFFE8EEF5),
+                    const Color(0xFFBDD5F5),
+                    const Color(0xFF6AAEE8),
+                    const Color(0xFF2278D4),
+                    const Color(0xFF22549E),
+                  ])
+                    Container(
+                      width: 14, height: 14,
+                      margin: const EdgeInsets.only(right: 3),
+                      decoration: BoxDecoration(
+                        color: c,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  const SizedBox(width: 4),
+                  Text('أكثر', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Cairo')),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Summary Stats ─────────────────────────────────────────────
+        Row(children: [
+          Expanded(
+            child: NeuCard(
+              isDark: isDark,
+              radius: 16,
+              padding: const EdgeInsets.all(16),
+              child: Column(children: [
+                Text('${tasks.length}',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800,
+                        color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                        fontFamily: 'Cairo')),
+                const SizedBox(height: 4),
+                Text('إجمالي المهام',
+                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Cairo')),
+              ]),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: NeuCard(
+              isDark: isDark,
+              radius: 16,
+              padding: const EdgeInsets.all(16),
+              child: Column(children: [
+                Text('${completions.length}',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800,
+                        color: NeuColors.success,
+                        fontFamily: 'Cairo')),
+                const SizedBox(height: 4),
+                Text('إجمالي الإتمام',
+                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Cairo')),
+              ]),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 80),
+      ],
+    );
+  }
+
+  static String _dayKey(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  static String _shortDayName(DateTime d) {
+    const days = ['الأح', 'الإث', 'الث', 'الأر', 'الخ', 'الج', 'الس'];
+    return days[d.weekday % 7];
   }
 }

@@ -168,4 +168,29 @@ class AppTypography {
       label.copyWith(color: NeuColors.textSecondaryDark);
   static TextStyle statNumberDark =
       statNumber.copyWith(color: NeuColors.goldAccent);
+
+  // ─────────────────────────────────────────────
+  // Aliases (for backward compatibility)
+  // ─────────────────────────────────────────────
+
+  /// Alias for h3 — used in dashboard/HRM cards
+  static TextStyle get headingMedium => h3;
+
+  /// Alias for h4 — used in section sub-titles
+  static TextStyle get headingSmall => h4;
+
+  /// Alias for button
+  static TextStyle get buttonLabel => button;
+
+  /// Alias for body
+  static TextStyle get bodyMedium => body;
+
+  /// Alias for bodySmall dark variant
+  static TextStyle get bodySmallMedium => bodySmall;
+
+  /// Alias for label (medium size)
+  static TextStyle get labelMedium => label;
+
+  /// Alias for caption (small label)
+  static TextStyle get labelSmall => caption;
 }

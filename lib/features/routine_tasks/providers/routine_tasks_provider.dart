@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../core/database/app_database.dart';
+import '../../../core/database/app_database.dart' as app_db;
 import '../../../core/database/providers/database_providers.dart';
 import '../domain/routine_task_model.dart';
 
 const _uuid = Uuid();
+// Aliases to keep code readable
+typedef _DbTask = app_db.RoutineTask;
+typedef _DbCompletion = app_db.RoutineCompletion;
 
 // ─────────────────────────────────────────────────────────────────
 // State
@@ -93,7 +96,7 @@ String _dateKey(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
 // Helpers: DB ↔ Domain conversion
 // ─────────────────────────────────────────────────────────────────
 
-RoutineTask _dbRowToModel(RoutineTaskData row) => RoutineTask(
+RoutineTask _dbRowToModel(_DbTask row) => RoutineTask(
       id: row.syncId,
       title: row.title,
       description: row.description,
@@ -129,7 +132,7 @@ List<int> _parseDaysOfWeek(String raw) {
 String _encodeDaysOfWeek(List<int> days) =>
     '[${days.join(',')}]';
 
-RoutineCompletion _completionRow(RoutineCompletionData row) =>
+RoutineCompletion _completionRow(_DbCompletion row) =>
     RoutineCompletion(taskId: row.routineTaskSyncId, dateKey: row.dateKey);
 
 // ─────────────────────────────────────────────────────────────────
@@ -178,7 +181,7 @@ class RoutineTasksNotifier extends StateNotifier<RoutineTasksState> {
     );
   }
 
-  Future<void> _seedDefaultTasks(AppDatabase db) async {
+  Future<void> _seedDefaultTasks(app_db.AppDatabase db) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final defaults = [
       (
@@ -217,7 +220,7 @@ class RoutineTasksNotifier extends StateNotifier<RoutineTasksState> {
 
     for (final d in defaults) {
       await db.routineTasksDao.insertRoutineTask(
-        RoutineTasksCompanion.insert(
+        app_db.RoutineTasksCompanion.insert(
           syncId: _uuid.v4(),
           title: d.title,
           description: Value(d.desc),
@@ -243,7 +246,7 @@ class RoutineTasksNotifier extends StateNotifier<RoutineTasksState> {
     final db = _ref.read(databaseProvider);
     final now = DateTime.now().millisecondsSinceEpoch;
     await db.routineTasksDao.insertRoutineTask(
-      RoutineTasksCompanion.insert(
+      app_db.RoutineTasksCompanion.insert(
         syncId: task.id,
         title: task.title,
         description: Value(task.description),
@@ -269,7 +272,7 @@ class RoutineTasksNotifier extends StateNotifier<RoutineTasksState> {
         orElse: () => throw StateError('Task not found: ${updated.id}'));
     await db.routineTasksDao.updateTask(
       row.id,
-      RoutineTasksCompanion(
+      app_db.RoutineTasksCompanion(
         title: Value(updated.title),
         description: Value(updated.description),
         category: Value(updated.category.name),
@@ -313,7 +316,7 @@ class RoutineTasksNotifier extends StateNotifier<RoutineTasksState> {
           .toList();
     } else {
       await db.routineTasksDao.insertCompletion(
-        RoutineCompletionsCompanion.insert(
+        app_db.RoutineCompletionsCompanion.insert(
           syncId: _uuid.v4(),
           routineTaskSyncId: taskId,
           dateKey: key,

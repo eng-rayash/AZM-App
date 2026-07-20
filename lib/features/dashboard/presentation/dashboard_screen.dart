@@ -20,6 +20,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/dashboard_fab.dart';
 import '../../notifications/domain/notification_service.dart';
 import '../../notifications/providers/smart_notifications_provider.dart';
+import '../../notifications/presentation/notification_center_screen.dart';
 import '../../../core/security/secure_storage_service.dart';
 
 /// Dashboard Screen — executive command center.
@@ -231,6 +232,81 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ],
                         ),
                       ),
+                      // ── Search Button ───────────────────────────────
+                      GestureDetector(
+                        onTap: () => context.push(RouteNames.globalSearch),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isDark ? NeuColors.shadowDarkDark : NeuColors.shadowDark,
+                                offset: const Offset(3, 3), blurRadius: 6,
+                              ),
+                              BoxShadow(
+                                color: isDark ? NeuColors.shadowLightDark : NeuColors.shadowLight,
+                                offset: const Offset(-3, -3), blurRadius: 6,
+                              ),
+                            ],
+                          ),
+                          child: Icon(Icons.search_rounded,
+                              color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                              size: 24),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // ── Notifications Button ─────────────────────────
+                      Consumer(
+                        builder: (_, ref, _) {
+                          final unreadCount = ref.watch(notificationsProvider
+                              .select((list) => list.where((n) => !n.isRead).length));
+                          return GestureDetector(
+                            onTap: () => context.push(RouteNames.notificationCenter),
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: isDark ? NeuColors.shadowDarkDark : NeuColors.shadowDark,
+                                        offset: const Offset(3, 3), blurRadius: 6,
+                                      ),
+                                      BoxShadow(
+                                        color: isDark ? NeuColors.shadowLightDark : NeuColors.shadowLight,
+                                        offset: const Offset(-3, -3), blurRadius: 6,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(Icons.notifications_rounded,
+                                      color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+                                      size: 24),
+                                ),
+                                if (unreadCount > 0)
+                                  Positioned(
+                                    top: -4, left: -4,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                          color: NeuColors.danger, shape: BoxShape.circle),
+                                      child: Text('$unreadCount',
+                                          style: const TextStyle(
+                                              color: Colors.white, fontSize: 9,
+                                              fontWeight: FontWeight.w800, fontFamily: 'Cairo')),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      // ── Settings Button ──────────────────────────────
                       GestureDetector(
                         onTap: () => context.push(RouteNames.settings),
                         child: Container(
@@ -268,6 +344,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Padding(
                   padding: AppSpacing.screenH,
                   child: _PeriodicTasksCard(),
+                ),
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+              // ── ERP Summary Strip ──────────────────────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: AppSpacing.screenH,
+                  child: _ErpSummaryStrip(isDark: isDark),
                 ),
               ),
 
@@ -1084,6 +1170,162 @@ class FollowUpDistributionChart extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── ERP Summary Strip ──────────────────────────────────────────────
+
+class _ErpSummaryStrip extends ConsumerWidget {
+  const _ErpSummaryStrip({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Container(
+            width: 4, height: 16,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [NeuColors.navyDeep, NeuColors.navyMid],
+                begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text('نظرة سريعة — ERP',
+              style: AppTypography.labelMedium.copyWith(
+                  color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
+                  fontWeight: FontWeight.w800)),
+        ]),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _ErpMiniCard(
+                icon: Icons.people_alt_rounded,
+                label: 'شؤون العاملين',
+                color: NeuColors.navyDeep,
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.hrmFull),
+              ),
+              const SizedBox(width: 10),
+              _ErpMiniCard(
+                icon: Icons.receipt_long_rounded,
+                label: 'الفواتير',
+                color: NeuColors.success,
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.invoicesList),
+              ),
+              const SizedBox(width: 10),
+              _ErpMiniCard(
+                icon: Icons.money_off_rounded,
+                label: 'المصروفات',
+                color: NeuColors.danger,
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.expensesList),
+              ),
+              const SizedBox(width: 10),
+              _ErpMiniCard(
+                icon: Icons.attach_money_rounded,
+                label: 'الإيرادات',
+                color: Color(0xFF00B894),
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.revenuesList),
+              ),
+              const SizedBox(width: 10),
+              _ErpMiniCard(
+                icon: Icons.work_rounded,
+                label: 'المشاريع',
+                color: Color(0xFFE17055),
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.projectsList),
+              ),
+              const SizedBox(width: 10),
+              _ErpMiniCard(
+                icon: Icons.supervisor_account_rounded,
+                label: 'العملاء',
+                color: Color(0xFF6C5CE7),
+                isDark: isDark,
+                onTap: () => context.push(RouteNames.clientsList),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ErpMiniCard extends StatelessWidget {
+  const _ErpMiniCard({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isDark,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 90,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? NeuColors.shadowDarkDark : NeuColors.shadowDark,
+              offset: const Offset(3, 3),
+              blurRadius: 6,
+            ),
+            BoxShadow(
+              color: isDark ? NeuColors.shadowLightDark : NeuColors.shadowLight,
+              offset: const Offset(-3, -3),
+              blurRadius: 6,
+            ),
+          ],
+          border: Border.all(color: color.withOpacity(0.15)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: AppTypography.labelSmall.copyWith(
+                color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ],
+        ),
       ),
     );
   }

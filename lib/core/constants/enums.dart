@@ -3,6 +3,8 @@
 /// Unified status and priority systems used across all features.
 library;
 
+import 'package:flutter/material.dart';
+
 // ─────────────────────────────────────────────
 // Meeting Status
 // ─────────────────────────────────────────────
@@ -189,12 +191,216 @@ enum FollowUpEntityType {
   meeting(0, 'اجتماع'),
   task(1, 'مهمة'),
   directive(2, 'توجيه'),
-  other(3, 'أخرى');
+  client(3, 'عميل'),
+  project(4, 'مشروع'),
+  employee(5, 'موظف'),
+  invoice(6, 'فاتورة'),
+  other(7, 'أخرى');
 
   const FollowUpEntityType(this.value, this.arabicLabel);
   final int value;
   final String arabicLabel;
 
   static FollowUpEntityType fromValue(int value) =>
-      FollowUpEntityType.values.firstWhere((e) => e.value == value);
+      FollowUpEntityType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => FollowUpEntityType.other,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Followup Type (ERP)
+// ─────────────────────────────────────────────
+
+/// نوع المتابعة في نظام ERP — يُميّز المتابعات عن المهام وغيرها
+enum FollowupType {
+  followup(0, 'متابعة'),
+  task(1, 'مهمة'),
+  clientFollowup(2, 'متابعة عميل'),
+  projectFollowup(3, 'متابعة مشروع'),
+  employeeFollowup(4, 'متابعة موظف'),
+  financeFollowup(5, 'متابعة مالية'),
+  other(6, 'أخرى');
+
+  const FollowupType(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static FollowupType fromValue(int value) =>
+      FollowupType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => FollowupType.followup,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Employee Status
+// ─────────────────────────────────────────────
+
+enum EmployeeStatus {
+  active(0, 'نشط'),
+  onLeave(1, 'في إجازة'),
+  suspended(2, 'موقوف'),
+  resigned(3, 'مستقيل'),
+  terminated(4, 'منهية خدمته'),
+  retired(5, 'متقاعد');
+
+  const EmployeeStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static EmployeeStatus fromValue(int value) =>
+      EmployeeStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => EmployeeStatus.active,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Contract Status
+// ─────────────────────────────────────────────
+
+enum ContractStatus {
+  active(0, 'ساري'),
+  expiringSoon(1, 'ينتهي قريباً'),
+  expired(2, 'منتهي'),
+  terminated(3, 'مُنهى');
+
+  const ContractStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static ContractStatus fromValue(int value) =>
+      ContractStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => ContractStatus.active,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Invoice Status
+// ─────────────────────────────────────────────
+
+enum InvoiceStatus {
+  draft(0, 'مسودة'),
+  sent(1, 'مُرسلة'),
+  paid(2, 'مدفوعة'),
+  partial(3, 'مدفوعة جزئياً'),
+  overdue(4, 'متأخرة'),
+  cancelled(5, 'ملغاة');
+
+  const InvoiceStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static InvoiceStatus fromValue(int value) =>
+      InvoiceStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => InvoiceStatus.draft,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Project Status
+// ─────────────────────────────────────────────
+
+enum ProjectStatus {
+  planning(0, 'تخطيط'),
+  active(1, 'نشط'),
+  onHold(2, 'متوقف'),
+  completed(3, 'مكتمل'),
+  cancelled(4, 'ملغي');
+
+  const ProjectStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static ProjectStatus fromValue(int value) =>
+      ProjectStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => ProjectStatus.planning,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Leave Type
+// ─────────────────────────────────────────────
+
+enum LeaveType {
+  annual(0, 'سنوية'),
+  sick(1, 'مرضية'),
+  emergency(2, 'طارئة'),
+  unpaid(3, 'بدون راتب'),
+  maternity(4, 'أمومة'),
+  hajj(5, 'حج'),
+  other(6, 'أخرى');
+
+  const LeaveType(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static LeaveType fromValue(int value) =>
+      LeaveType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => LeaveType.other,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Payment Method
+// ─────────────────────────────────────────────
+
+enum PaymentMethod {
+  cash(0, 'نقداً'),
+  bankTransfer(1, 'تحويل بنكي'),
+  creditCard(2, 'بطاقة ائتمانية'),
+  check(3, 'شيك');
+
+  const PaymentMethod(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static PaymentMethod fromValue(int value) =>
+      PaymentMethod.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => PaymentMethod.cash,
+      );
+}
+
+// ─── Status Color Extensions ───
+
+extension InvoiceStatusColor on InvoiceStatus {
+  Color get color {
+    switch (this) {
+      case InvoiceStatus.draft:
+        return Colors.grey;
+      case InvoiceStatus.sent:
+        return const Color(0xFF0984E3); // Sleek blue
+      case InvoiceStatus.paid:
+        return const Color(0xFF00B894); // Premium green
+      case InvoiceStatus.partial:
+        return const Color(0xFFF39C12); // Premium orange
+      case InvoiceStatus.overdue:
+        return const Color(0xFFD63031); // Premium red
+      case InvoiceStatus.cancelled:
+        return Colors.grey;
+    }
+  }
+}
+
+extension ProjectStatusColor on ProjectStatus {
+  Color get color {
+    switch (this) {
+      case ProjectStatus.planning:
+        return const Color(0xFF9B59B6); // Premium purple
+      case ProjectStatus.active:
+        return const Color(0xFF0984E3); // Sleek blue
+      case ProjectStatus.onHold:
+        return const Color(0xFFF1C40F); // Premium amber/yellow
+      case ProjectStatus.completed:
+        return const Color(0xFF00B894); // Premium green
+      case ProjectStatus.cancelled:
+        return Colors.grey;
+    }
+  }
 }

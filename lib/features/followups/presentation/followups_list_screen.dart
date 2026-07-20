@@ -33,6 +33,7 @@ class FollowupsListScreen extends ConsumerStatefulWidget {
 class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
   String _searchQuery = '';
   String _statusFilter = 'all';
+  int? _typeFilter; // null = all, int = FollowupType.value
   final Set<int> _selectedIds = {};
   int _selectedSortIndex = 0;
 
@@ -963,7 +964,13 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
               selectedFilter: _statusFilter,
               onFilterChanged: (v) => setState(() => _statusFilter = v),
             ),
-            AppSpacing.gapMd,
+
+            // FollowupType Filter Strip
+            _FollowupTypeFilterStrip(
+              selected: _typeFilter,
+              onSelect: (v) => setState(() => _typeFilter = v),
+            ),
+            AppSpacing.gapSm,
 
             // Follow-ups List
             Expanded(
@@ -979,6 +986,11 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                     if (statusVal != null) {
                       filtered = filtered.where((f) => f.status == statusVal).toList();
                     }
+                  }
+
+                  // FollowupType filter
+                  if (_typeFilter != null) {
+                    filtered = filtered.where((f) => f.followupType == _typeFilter).toList();
                   }
 
                   // Search filter
@@ -1286,6 +1298,86 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
               child: const Icon(Icons.add_rounded, color: Colors.white),
             )
           : null,
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FollowupType Filter Strip
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FollowupTypeFilterStrip extends StatelessWidget {
+  const _FollowupTypeFilterStrip({
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final int? selected;
+  final ValueChanged<int?> onSelect;
+
+  static const _types = [
+    (null, '📋', 'الكل', Color(0xFF636E72)),
+    (0, '🔁', 'متابعة', Color(0xFF22549E)),
+    (1, '✅', 'مهمة', Color(0xFF0984E3)),
+    (2, '👥', 'عميل', Color(0xFF00B894)),
+    (3, '🏗️', 'مشروع', Color(0xFFE17055)),
+    (4, '👤', 'موظف', Color(0xFF6C5CE7)),
+    (5, '💰', 'مالية', Color(0xFFFDCB6E)),
+    (6, '➕', 'أخرى', Color(0xFF636E72)),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return SizedBox(
+      height: 40,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
+          itemCount: _types.length,
+          itemBuilder: (_, i) {
+            final t = _types[i];
+            final isSelected = selected == t.$1;
+            return GestureDetector(
+              onTap: () => onSelect(t.$1),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? t.$4
+                      : (isDark ? const Color(0xFF1E2A3A) : const Color(0xFFF0F4F8)),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? t.$4 : t.$4.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(t.$2, style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 5),
+                    Text(
+                      t.$3,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected
+                            ? Colors.white
+                            : (isDark ? Colors.white70 : t.$4),
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

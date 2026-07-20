@@ -14,14 +14,14 @@ class RoutineTasksDao extends DatabaseAccessor<AppDatabase>
   // ─── Routine Tasks CRUD ───────────────────────────────────────
 
   /// Watch all active (non-deleted) routine tasks
-  Stream<List<RoutineTaskData>> watchAllActive() =>
+  Stream<List<RoutineTask>> watchAllActive() =>
       (select(routineTasks)
             ..where((t) => t.isDeleted.equals(false))
             ..orderBy([(t) => OrderingTerm.asc(t.priority)]))
           .watch();
 
   /// Get all active routine tasks (one-shot)
-  Future<List<RoutineTaskData>> getAllActive() =>
+  Future<List<RoutineTask>> getAllActive() =>
       (select(routineTasks)
             ..where((t) => t.isDeleted.equals(false))
             ..orderBy([(t) => OrderingTerm.asc(t.priority)]))
@@ -55,11 +55,11 @@ class RoutineTasksDao extends DatabaseAccessor<AppDatabase>
   // ─── Completions ─────────────────────────────────────────────
 
   /// Watch all completions
-  Stream<List<RoutineCompletionData>> watchAllCompletions() =>
+  Stream<List<RoutineCompletion>> watchAllCompletions() =>
       select(routineCompletions).watch();
 
   /// Get all completions (one-shot)
-  Future<List<RoutineCompletionData>> getAllCompletions() =>
+  Future<List<RoutineCompletion>> getAllCompletions() =>
       select(routineCompletions).get();
 
   /// Insert a completion record

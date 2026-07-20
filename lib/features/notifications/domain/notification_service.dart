@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../../core/database/app_database.dart';
+import '../../../core/database/app_database.dart' hide RoutineTask;
 import '../../../core/security/secure_storage_service.dart';
 import '../../routine_tasks/domain/routine_task_model.dart';
 
