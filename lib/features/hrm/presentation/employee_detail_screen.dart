@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -138,7 +138,7 @@ class _EmployeeDetailBody extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 3),
                               decoration: BoxDecoration(
-                                color: _empColor.withOpacity(0.25),
+                                color: _empColor.withValues(alpha: 0.25),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(color: Colors.white38),
                               ),
@@ -315,7 +315,7 @@ class _EmployeeDetailBody extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 7),
     child: Row(children: [
       Icon(icon, size: 17,
-          color: isDark ? NeuColors.goldAccent.withOpacity(0.7) : NeuColors.navyDeep.withOpacity(0.6)),
+          color: isDark ? NeuColors.goldAccent.withValues(alpha: 0.7) : NeuColors.navyDeep.withValues(alpha: 0.6)),
       const SizedBox(width: 10),
       Text('$label: ', style: AppTypography.caption.copyWith(
           color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),

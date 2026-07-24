@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -356,10 +356,10 @@ class _EmployeeCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: _statusColor.withOpacity(0.12),
+                    color: _statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: _statusColor.withOpacity(0.3)),
+                        color: _statusColor.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     EmployeeStatus.fromValue(employee.status).arabicLabel,
@@ -399,13 +399,13 @@ class _EmptyState extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: NeuColors.navyDeep.withOpacity(0.08),
+              color: NeuColors.navyDeep.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.badge_rounded,
               size: 56,
-              color: NeuColors.navyDeep.withOpacity(0.4),
+              color: NeuColors.navyDeep.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 20),

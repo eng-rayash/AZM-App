@@ -97,6 +97,113 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _firstNameMeta = const VerificationMeta(
+    'firstName',
+  );
+  @override
+  late final GeneratedColumn<String> firstName = GeneratedColumn<String>(
+    'first_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastNameMeta = const VerificationMeta(
+    'lastName',
+  );
+  @override
+  late final GeneratedColumn<String> lastName = GeneratedColumn<String>(
+    'last_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _usernameMeta = const VerificationMeta(
+    'username',
+  );
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+    'username',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _passwordHashMeta = const VerificationMeta(
+    'passwordHash',
+  );
+  @override
+  late final GeneratedColumn<String> passwordHash = GeneratedColumn<String>(
+    'password_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _accountTypeMeta = const VerificationMeta(
+    'accountType',
+  );
+  @override
+  late final GeneratedColumn<int> accountType = GeneratedColumn<int>(
+    'account_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _activeCompanySyncIdMeta =
+      const VerificationMeta('activeCompanySyncId');
+  @override
+  late final GeneratedColumn<String> activeCompanySyncId =
+      GeneratedColumn<String>(
+        'active_company_sync_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _employeeCodeMeta = const VerificationMeta(
+    'employeeCode',
+  );
+  @override
+  late final GeneratedColumn<String> employeeCode = GeneratedColumn<String>(
+    'employee_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _workspaceSlugMeta = const VerificationMeta(
+    'workspaceSlug',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceSlug = GeneratedColumn<String>(
+    'workspace_slug',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _pinHashMeta = const VerificationMeta(
     'pinHash',
   );
@@ -134,16 +241,6 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     ),
     defaultValue: const Constant(false),
   );
-  static const VerificationMeta _roleMeta = const VerificationMeta('role');
-  @override
-  late final GeneratedColumn<int> role = GeneratedColumn<int>(
-    'role',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
   static const VerificationMeta _avatarPathMeta = const VerificationMeta(
     'avatarPath',
   );
@@ -155,6 +252,102 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _avatarUrlMeta = const VerificationMeta(
+    'avatarUrl',
+  );
+  @override
+  late final GeneratedColumn<String> avatarUrl = GeneratedColumn<String>(
+    'avatar_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _languageMeta = const VerificationMeta(
+    'language',
+  );
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+    'language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ar'),
+  );
+  static const VerificationMeta _timezoneMeta = const VerificationMeta(
+    'timezone',
+  );
+  @override
+  late final GeneratedColumn<String> timezone = GeneratedColumn<String>(
+    'timezone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('Asia/Riyadh'),
+  );
+  static const VerificationMeta _countryMeta = const VerificationMeta(
+    'country',
+  );
+  @override
+  late final GeneratedColumn<String> country = GeneratedColumn<String>(
+    'country',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _onboardingCompletedMeta =
+      const VerificationMeta('onboardingCompleted');
+  @override
+  late final GeneratedColumn<bool> onboardingCompleted = GeneratedColumn<bool>(
+    'onboarding_completed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("onboarding_completed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _mustChangePasswordMeta =
+      const VerificationMeta('mustChangePassword');
+  @override
+  late final GeneratedColumn<bool> mustChangePassword = GeneratedColumn<bool>(
+    'must_change_password',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("must_change_password" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _supabaseUidMeta = const VerificationMeta(
+    'supabaseUid',
+  );
+  @override
+  late final GeneratedColumn<String> supabaseUid = GeneratedColumn<String>(
+    'supabase_uid',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -164,11 +357,28 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     isDeleted,
     createdBy,
     displayName,
+    firstName,
+    lastName,
+    username,
+    email,
+    passwordHash,
+    phone,
+    accountType,
+    activeCompanySyncId,
+    employeeCode,
+    workspaceSlug,
     pinHash,
     authMethod,
     isBiometricEnabled,
-    role,
     avatarPath,
+    avatarUrl,
+    language,
+    timezone,
+    country,
+    onboardingCompleted,
+    mustChangePassword,
+    supabaseUid,
+    lastSyncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -232,6 +442,81 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     } else if (isInserting) {
       context.missing(_displayNameMeta);
     }
+    if (data.containsKey('first_name')) {
+      context.handle(
+        _firstNameMeta,
+        firstName.isAcceptableOrUnknown(data['first_name']!, _firstNameMeta),
+      );
+    }
+    if (data.containsKey('last_name')) {
+      context.handle(
+        _lastNameMeta,
+        lastName.isAcceptableOrUnknown(data['last_name']!, _lastNameMeta),
+      );
+    }
+    if (data.containsKey('username')) {
+      context.handle(
+        _usernameMeta,
+        username.isAcceptableOrUnknown(data['username']!, _usernameMeta),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('password_hash')) {
+      context.handle(
+        _passwordHashMeta,
+        passwordHash.isAcceptableOrUnknown(
+          data['password_hash']!,
+          _passwordHashMeta,
+        ),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('account_type')) {
+      context.handle(
+        _accountTypeMeta,
+        accountType.isAcceptableOrUnknown(
+          data['account_type']!,
+          _accountTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('active_company_sync_id')) {
+      context.handle(
+        _activeCompanySyncIdMeta,
+        activeCompanySyncId.isAcceptableOrUnknown(
+          data['active_company_sync_id']!,
+          _activeCompanySyncIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('employee_code')) {
+      context.handle(
+        _employeeCodeMeta,
+        employeeCode.isAcceptableOrUnknown(
+          data['employee_code']!,
+          _employeeCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('workspace_slug')) {
+      context.handle(
+        _workspaceSlugMeta,
+        workspaceSlug.isAcceptableOrUnknown(
+          data['workspace_slug']!,
+          _workspaceSlugMeta,
+        ),
+      );
+    }
     if (data.containsKey('pin_hash')) {
       context.handle(
         _pinHashMeta,
@@ -253,16 +538,70 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
         ),
       );
     }
-    if (data.containsKey('role')) {
-      context.handle(
-        _roleMeta,
-        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
-      );
-    }
     if (data.containsKey('avatar_path')) {
       context.handle(
         _avatarPathMeta,
         avatarPath.isAcceptableOrUnknown(data['avatar_path']!, _avatarPathMeta),
+      );
+    }
+    if (data.containsKey('avatar_url')) {
+      context.handle(
+        _avatarUrlMeta,
+        avatarUrl.isAcceptableOrUnknown(data['avatar_url']!, _avatarUrlMeta),
+      );
+    }
+    if (data.containsKey('language')) {
+      context.handle(
+        _languageMeta,
+        language.isAcceptableOrUnknown(data['language']!, _languageMeta),
+      );
+    }
+    if (data.containsKey('timezone')) {
+      context.handle(
+        _timezoneMeta,
+        timezone.isAcceptableOrUnknown(data['timezone']!, _timezoneMeta),
+      );
+    }
+    if (data.containsKey('country')) {
+      context.handle(
+        _countryMeta,
+        country.isAcceptableOrUnknown(data['country']!, _countryMeta),
+      );
+    }
+    if (data.containsKey('onboarding_completed')) {
+      context.handle(
+        _onboardingCompletedMeta,
+        onboardingCompleted.isAcceptableOrUnknown(
+          data['onboarding_completed']!,
+          _onboardingCompletedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('must_change_password')) {
+      context.handle(
+        _mustChangePasswordMeta,
+        mustChangePassword.isAcceptableOrUnknown(
+          data['must_change_password']!,
+          _mustChangePasswordMeta,
+        ),
+      );
+    }
+    if (data.containsKey('supabase_uid')) {
+      context.handle(
+        _supabaseUidMeta,
+        supabaseUid.isAcceptableOrUnknown(
+          data['supabase_uid']!,
+          _supabaseUidMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
       );
     }
     return context;
@@ -302,6 +641,46 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
         DriftSqlType.string,
         data['${effectivePrefix}display_name'],
       )!,
+      firstName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}first_name'],
+      ),
+      lastName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_name'],
+      ),
+      username: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}username'],
+      ),
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      passwordHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}password_hash'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      accountType: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}account_type'],
+      )!,
+      activeCompanySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_company_sync_id'],
+      ),
+      employeeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}employee_code'],
+      ),
+      workspaceSlug: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_slug'],
+      ),
       pinHash: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}pin_hash'],
@@ -314,13 +693,41 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_biometric_enabled'],
       )!,
-      role: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}role'],
-      )!,
       avatarPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}avatar_path'],
+      ),
+      avatarUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}avatar_url'],
+      ),
+      language: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language'],
+      )!,
+      timezone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}timezone'],
+      )!,
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      ),
+      onboardingCompleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}onboarding_completed'],
+      )!,
+      mustChangePassword: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}must_change_password'],
+      )!,
+      supabaseUid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}supabase_uid'],
+      ),
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
       ),
     );
   }
@@ -353,20 +760,76 @@ class User extends DataClass implements Insertable<User> {
   /// Display name shown on dashboard
   final String displayName;
 
+  /// First name
+  final String? firstName;
+
+  /// Last name / family name
+  final String? lastName;
+
+  /// Username for login (unique, e.g. "ahmed.saleh")
+  final String? username;
+
+  /// Email address (used for cloud auth + invitations)
+  final String? email;
+
+  /// Hashed password for cloud authentication (bcrypt)
+  final String? passwordHash;
+
+  /// Phone number
+  final String? phone;
+
+  /// Account type:
+  ///   0 = free_personal
+  ///   1 = professional (solo business)
+  ///   2 = business (company owner/member)
+  ///   3 = enterprise
+  final int accountType;
+
+  /// The company this user currently operates in (FK → companies.sync_id)
+  /// Null for personal-only accounts
+  final String? activeCompanySyncId;
+
+  /// Employee code assigned by the company, e.g. "EMP-00215"
+  final String? employeeCode;
+
+  /// Workspace slug for quick login (matches companies.workspace_slug)
+  final String? workspaceSlug;
+
   /// Hashed PIN code (never stored in plain text)
   final String? pinHash;
 
-  /// Preferred authentication method (biometric=0, pin=1, pattern=2)
+  /// Preferred authentication method (biometric=0, pin=1, password=2)
   final int authMethod;
 
   /// Whether biometric authentication is enabled
   final bool isBiometricEnabled;
 
-  /// User role (for future multi-user: 0=admin, 1=secretary, 2=viewer)
-  final int role;
-
-  /// User avatar path (local file)
+  /// Local avatar image path (for offline/desktop)
   final String? avatarPath;
+
+  /// Cloud avatar URL (Supabase Storage / S3)
+  final String? avatarUrl;
+
+  /// User's preferred language ("ar" or "en")
+  final String language;
+
+  /// User's timezone (IANA, e.g. "Asia/Riyadh")
+  final String timezone;
+
+  /// User's country code (ISO 3166-1 alpha-2)
+  final String? country;
+
+  /// Whether the user completed the first-time setup wizard
+  final bool onboardingCompleted;
+
+  /// Whether the user must change their password on next login
+  final bool mustChangePassword;
+
+  /// Supabase Auth UID (from auth.users table)
+  final String? supabaseUid;
+
+  /// Last time this user's data was synced to the cloud
+  final DateTime? lastSyncedAt;
   const User({
     required this.id,
     required this.syncId,
@@ -375,11 +838,28 @@ class User extends DataClass implements Insertable<User> {
     required this.isDeleted,
     this.createdBy,
     required this.displayName,
+    this.firstName,
+    this.lastName,
+    this.username,
+    this.email,
+    this.passwordHash,
+    this.phone,
+    required this.accountType,
+    this.activeCompanySyncId,
+    this.employeeCode,
+    this.workspaceSlug,
     this.pinHash,
     required this.authMethod,
     required this.isBiometricEnabled,
-    required this.role,
     this.avatarPath,
+    this.avatarUrl,
+    required this.language,
+    required this.timezone,
+    this.country,
+    required this.onboardingCompleted,
+    required this.mustChangePassword,
+    this.supabaseUid,
+    this.lastSyncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -393,14 +873,57 @@ class User extends DataClass implements Insertable<User> {
       map['created_by'] = Variable<String>(createdBy);
     }
     map['display_name'] = Variable<String>(displayName);
+    if (!nullToAbsent || firstName != null) {
+      map['first_name'] = Variable<String>(firstName);
+    }
+    if (!nullToAbsent || lastName != null) {
+      map['last_name'] = Variable<String>(lastName);
+    }
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || passwordHash != null) {
+      map['password_hash'] = Variable<String>(passwordHash);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    map['account_type'] = Variable<int>(accountType);
+    if (!nullToAbsent || activeCompanySyncId != null) {
+      map['active_company_sync_id'] = Variable<String>(activeCompanySyncId);
+    }
+    if (!nullToAbsent || employeeCode != null) {
+      map['employee_code'] = Variable<String>(employeeCode);
+    }
+    if (!nullToAbsent || workspaceSlug != null) {
+      map['workspace_slug'] = Variable<String>(workspaceSlug);
+    }
     if (!nullToAbsent || pinHash != null) {
       map['pin_hash'] = Variable<String>(pinHash);
     }
     map['auth_method'] = Variable<int>(authMethod);
     map['is_biometric_enabled'] = Variable<bool>(isBiometricEnabled);
-    map['role'] = Variable<int>(role);
     if (!nullToAbsent || avatarPath != null) {
       map['avatar_path'] = Variable<String>(avatarPath);
+    }
+    if (!nullToAbsent || avatarUrl != null) {
+      map['avatar_url'] = Variable<String>(avatarUrl);
+    }
+    map['language'] = Variable<String>(language);
+    map['timezone'] = Variable<String>(timezone);
+    if (!nullToAbsent || country != null) {
+      map['country'] = Variable<String>(country);
+    }
+    map['onboarding_completed'] = Variable<bool>(onboardingCompleted);
+    map['must_change_password'] = Variable<bool>(mustChangePassword);
+    if (!nullToAbsent || supabaseUid != null) {
+      map['supabase_uid'] = Variable<String>(supabaseUid);
+    }
+    if (!nullToAbsent || lastSyncedAt != null) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
     }
     return map;
   }
@@ -416,15 +939,58 @@ class User extends DataClass implements Insertable<User> {
           ? const Value.absent()
           : Value(createdBy),
       displayName: Value(displayName),
+      firstName: firstName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstName),
+      lastName: lastName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastName),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      passwordHash: passwordHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(passwordHash),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      accountType: Value(accountType),
+      activeCompanySyncId: activeCompanySyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activeCompanySyncId),
+      employeeCode: employeeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(employeeCode),
+      workspaceSlug: workspaceSlug == null && nullToAbsent
+          ? const Value.absent()
+          : Value(workspaceSlug),
       pinHash: pinHash == null && nullToAbsent
           ? const Value.absent()
           : Value(pinHash),
       authMethod: Value(authMethod),
       isBiometricEnabled: Value(isBiometricEnabled),
-      role: Value(role),
       avatarPath: avatarPath == null && nullToAbsent
           ? const Value.absent()
           : Value(avatarPath),
+      avatarUrl: avatarUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(avatarUrl),
+      language: Value(language),
+      timezone: Value(timezone),
+      country: country == null && nullToAbsent
+          ? const Value.absent()
+          : Value(country),
+      onboardingCompleted: Value(onboardingCompleted),
+      mustChangePassword: Value(mustChangePassword),
+      supabaseUid: supabaseUid == null && nullToAbsent
+          ? const Value.absent()
+          : Value(supabaseUid),
+      lastSyncedAt: lastSyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSyncedAt),
     );
   }
 
@@ -441,11 +1007,32 @@ class User extends DataClass implements Insertable<User> {
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
       displayName: serializer.fromJson<String>(json['displayName']),
+      firstName: serializer.fromJson<String?>(json['firstName']),
+      lastName: serializer.fromJson<String?>(json['lastName']),
+      username: serializer.fromJson<String?>(json['username']),
+      email: serializer.fromJson<String?>(json['email']),
+      passwordHash: serializer.fromJson<String?>(json['passwordHash']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      accountType: serializer.fromJson<int>(json['accountType']),
+      activeCompanySyncId: serializer.fromJson<String?>(
+        json['activeCompanySyncId'],
+      ),
+      employeeCode: serializer.fromJson<String?>(json['employeeCode']),
+      workspaceSlug: serializer.fromJson<String?>(json['workspaceSlug']),
       pinHash: serializer.fromJson<String?>(json['pinHash']),
       authMethod: serializer.fromJson<int>(json['authMethod']),
       isBiometricEnabled: serializer.fromJson<bool>(json['isBiometricEnabled']),
-      role: serializer.fromJson<int>(json['role']),
       avatarPath: serializer.fromJson<String?>(json['avatarPath']),
+      avatarUrl: serializer.fromJson<String?>(json['avatarUrl']),
+      language: serializer.fromJson<String>(json['language']),
+      timezone: serializer.fromJson<String>(json['timezone']),
+      country: serializer.fromJson<String?>(json['country']),
+      onboardingCompleted: serializer.fromJson<bool>(
+        json['onboardingCompleted'],
+      ),
+      mustChangePassword: serializer.fromJson<bool>(json['mustChangePassword']),
+      supabaseUid: serializer.fromJson<String?>(json['supabaseUid']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
     );
   }
   @override
@@ -459,11 +1046,28 @@ class User extends DataClass implements Insertable<User> {
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
       'displayName': serializer.toJson<String>(displayName),
+      'firstName': serializer.toJson<String?>(firstName),
+      'lastName': serializer.toJson<String?>(lastName),
+      'username': serializer.toJson<String?>(username),
+      'email': serializer.toJson<String?>(email),
+      'passwordHash': serializer.toJson<String?>(passwordHash),
+      'phone': serializer.toJson<String?>(phone),
+      'accountType': serializer.toJson<int>(accountType),
+      'activeCompanySyncId': serializer.toJson<String?>(activeCompanySyncId),
+      'employeeCode': serializer.toJson<String?>(employeeCode),
+      'workspaceSlug': serializer.toJson<String?>(workspaceSlug),
       'pinHash': serializer.toJson<String?>(pinHash),
       'authMethod': serializer.toJson<int>(authMethod),
       'isBiometricEnabled': serializer.toJson<bool>(isBiometricEnabled),
-      'role': serializer.toJson<int>(role),
       'avatarPath': serializer.toJson<String?>(avatarPath),
+      'avatarUrl': serializer.toJson<String?>(avatarUrl),
+      'language': serializer.toJson<String>(language),
+      'timezone': serializer.toJson<String>(timezone),
+      'country': serializer.toJson<String?>(country),
+      'onboardingCompleted': serializer.toJson<bool>(onboardingCompleted),
+      'mustChangePassword': serializer.toJson<bool>(mustChangePassword),
+      'supabaseUid': serializer.toJson<String?>(supabaseUid),
+      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
     };
   }
 
@@ -475,11 +1079,28 @@ class User extends DataClass implements Insertable<User> {
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
     String? displayName,
+    Value<String?> firstName = const Value.absent(),
+    Value<String?> lastName = const Value.absent(),
+    Value<String?> username = const Value.absent(),
+    Value<String?> email = const Value.absent(),
+    Value<String?> passwordHash = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    int? accountType,
+    Value<String?> activeCompanySyncId = const Value.absent(),
+    Value<String?> employeeCode = const Value.absent(),
+    Value<String?> workspaceSlug = const Value.absent(),
     Value<String?> pinHash = const Value.absent(),
     int? authMethod,
     bool? isBiometricEnabled,
-    int? role,
     Value<String?> avatarPath = const Value.absent(),
+    Value<String?> avatarUrl = const Value.absent(),
+    String? language,
+    String? timezone,
+    Value<String?> country = const Value.absent(),
+    bool? onboardingCompleted,
+    bool? mustChangePassword,
+    Value<String?> supabaseUid = const Value.absent(),
+    Value<DateTime?> lastSyncedAt = const Value.absent(),
   }) => User(
     id: id ?? this.id,
     syncId: syncId ?? this.syncId,
@@ -488,11 +1109,32 @@ class User extends DataClass implements Insertable<User> {
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     displayName: displayName ?? this.displayName,
+    firstName: firstName.present ? firstName.value : this.firstName,
+    lastName: lastName.present ? lastName.value : this.lastName,
+    username: username.present ? username.value : this.username,
+    email: email.present ? email.value : this.email,
+    passwordHash: passwordHash.present ? passwordHash.value : this.passwordHash,
+    phone: phone.present ? phone.value : this.phone,
+    accountType: accountType ?? this.accountType,
+    activeCompanySyncId: activeCompanySyncId.present
+        ? activeCompanySyncId.value
+        : this.activeCompanySyncId,
+    employeeCode: employeeCode.present ? employeeCode.value : this.employeeCode,
+    workspaceSlug: workspaceSlug.present
+        ? workspaceSlug.value
+        : this.workspaceSlug,
     pinHash: pinHash.present ? pinHash.value : this.pinHash,
     authMethod: authMethod ?? this.authMethod,
     isBiometricEnabled: isBiometricEnabled ?? this.isBiometricEnabled,
-    role: role ?? this.role,
     avatarPath: avatarPath.present ? avatarPath.value : this.avatarPath,
+    avatarUrl: avatarUrl.present ? avatarUrl.value : this.avatarUrl,
+    language: language ?? this.language,
+    timezone: timezone ?? this.timezone,
+    country: country.present ? country.value : this.country,
+    onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+    mustChangePassword: mustChangePassword ?? this.mustChangePassword,
+    supabaseUid: supabaseUid.present ? supabaseUid.value : this.supabaseUid,
+    lastSyncedAt: lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
   );
   User copyWithCompanion(UsersCompanion data) {
     return User(
@@ -505,6 +1147,26 @@ class User extends DataClass implements Insertable<User> {
       displayName: data.displayName.present
           ? data.displayName.value
           : this.displayName,
+      firstName: data.firstName.present ? data.firstName.value : this.firstName,
+      lastName: data.lastName.present ? data.lastName.value : this.lastName,
+      username: data.username.present ? data.username.value : this.username,
+      email: data.email.present ? data.email.value : this.email,
+      passwordHash: data.passwordHash.present
+          ? data.passwordHash.value
+          : this.passwordHash,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      accountType: data.accountType.present
+          ? data.accountType.value
+          : this.accountType,
+      activeCompanySyncId: data.activeCompanySyncId.present
+          ? data.activeCompanySyncId.value
+          : this.activeCompanySyncId,
+      employeeCode: data.employeeCode.present
+          ? data.employeeCode.value
+          : this.employeeCode,
+      workspaceSlug: data.workspaceSlug.present
+          ? data.workspaceSlug.value
+          : this.workspaceSlug,
       pinHash: data.pinHash.present ? data.pinHash.value : this.pinHash,
       authMethod: data.authMethod.present
           ? data.authMethod.value
@@ -512,10 +1174,25 @@ class User extends DataClass implements Insertable<User> {
       isBiometricEnabled: data.isBiometricEnabled.present
           ? data.isBiometricEnabled.value
           : this.isBiometricEnabled,
-      role: data.role.present ? data.role.value : this.role,
       avatarPath: data.avatarPath.present
           ? data.avatarPath.value
           : this.avatarPath,
+      avatarUrl: data.avatarUrl.present ? data.avatarUrl.value : this.avatarUrl,
+      language: data.language.present ? data.language.value : this.language,
+      timezone: data.timezone.present ? data.timezone.value : this.timezone,
+      country: data.country.present ? data.country.value : this.country,
+      onboardingCompleted: data.onboardingCompleted.present
+          ? data.onboardingCompleted.value
+          : this.onboardingCompleted,
+      mustChangePassword: data.mustChangePassword.present
+          ? data.mustChangePassword.value
+          : this.mustChangePassword,
+      supabaseUid: data.supabaseUid.present
+          ? data.supabaseUid.value
+          : this.supabaseUid,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
     );
   }
 
@@ -529,17 +1206,34 @@ class User extends DataClass implements Insertable<User> {
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
           ..write('displayName: $displayName, ')
+          ..write('firstName: $firstName, ')
+          ..write('lastName: $lastName, ')
+          ..write('username: $username, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
+          ..write('phone: $phone, ')
+          ..write('accountType: $accountType, ')
+          ..write('activeCompanySyncId: $activeCompanySyncId, ')
+          ..write('employeeCode: $employeeCode, ')
+          ..write('workspaceSlug: $workspaceSlug, ')
           ..write('pinHash: $pinHash, ')
           ..write('authMethod: $authMethod, ')
           ..write('isBiometricEnabled: $isBiometricEnabled, ')
-          ..write('role: $role, ')
-          ..write('avatarPath: $avatarPath')
+          ..write('avatarPath: $avatarPath, ')
+          ..write('avatarUrl: $avatarUrl, ')
+          ..write('language: $language, ')
+          ..write('timezone: $timezone, ')
+          ..write('country: $country, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('mustChangePassword: $mustChangePassword, ')
+          ..write('supabaseUid: $supabaseUid, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     syncId,
     createdAt,
@@ -547,12 +1241,29 @@ class User extends DataClass implements Insertable<User> {
     isDeleted,
     createdBy,
     displayName,
+    firstName,
+    lastName,
+    username,
+    email,
+    passwordHash,
+    phone,
+    accountType,
+    activeCompanySyncId,
+    employeeCode,
+    workspaceSlug,
     pinHash,
     authMethod,
     isBiometricEnabled,
-    role,
     avatarPath,
-  );
+    avatarUrl,
+    language,
+    timezone,
+    country,
+    onboardingCompleted,
+    mustChangePassword,
+    supabaseUid,
+    lastSyncedAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -564,11 +1275,28 @@ class User extends DataClass implements Insertable<User> {
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
           other.displayName == this.displayName &&
+          other.firstName == this.firstName &&
+          other.lastName == this.lastName &&
+          other.username == this.username &&
+          other.email == this.email &&
+          other.passwordHash == this.passwordHash &&
+          other.phone == this.phone &&
+          other.accountType == this.accountType &&
+          other.activeCompanySyncId == this.activeCompanySyncId &&
+          other.employeeCode == this.employeeCode &&
+          other.workspaceSlug == this.workspaceSlug &&
           other.pinHash == this.pinHash &&
           other.authMethod == this.authMethod &&
           other.isBiometricEnabled == this.isBiometricEnabled &&
-          other.role == this.role &&
-          other.avatarPath == this.avatarPath);
+          other.avatarPath == this.avatarPath &&
+          other.avatarUrl == this.avatarUrl &&
+          other.language == this.language &&
+          other.timezone == this.timezone &&
+          other.country == this.country &&
+          other.onboardingCompleted == this.onboardingCompleted &&
+          other.mustChangePassword == this.mustChangePassword &&
+          other.supabaseUid == this.supabaseUid &&
+          other.lastSyncedAt == this.lastSyncedAt);
 }
 
 class UsersCompanion extends UpdateCompanion<User> {
@@ -579,11 +1307,28 @@ class UsersCompanion extends UpdateCompanion<User> {
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
   final Value<String> displayName;
+  final Value<String?> firstName;
+  final Value<String?> lastName;
+  final Value<String?> username;
+  final Value<String?> email;
+  final Value<String?> passwordHash;
+  final Value<String?> phone;
+  final Value<int> accountType;
+  final Value<String?> activeCompanySyncId;
+  final Value<String?> employeeCode;
+  final Value<String?> workspaceSlug;
   final Value<String?> pinHash;
   final Value<int> authMethod;
   final Value<bool> isBiometricEnabled;
-  final Value<int> role;
   final Value<String?> avatarPath;
+  final Value<String?> avatarUrl;
+  final Value<String> language;
+  final Value<String> timezone;
+  final Value<String?> country;
+  final Value<bool> onboardingCompleted;
+  final Value<bool> mustChangePassword;
+  final Value<String?> supabaseUid;
+  final Value<DateTime?> lastSyncedAt;
   const UsersCompanion({
     this.id = const Value.absent(),
     this.syncId = const Value.absent(),
@@ -592,11 +1337,28 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
     this.displayName = const Value.absent(),
+    this.firstName = const Value.absent(),
+    this.lastName = const Value.absent(),
+    this.username = const Value.absent(),
+    this.email = const Value.absent(),
+    this.passwordHash = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.accountType = const Value.absent(),
+    this.activeCompanySyncId = const Value.absent(),
+    this.employeeCode = const Value.absent(),
+    this.workspaceSlug = const Value.absent(),
     this.pinHash = const Value.absent(),
     this.authMethod = const Value.absent(),
     this.isBiometricEnabled = const Value.absent(),
-    this.role = const Value.absent(),
     this.avatarPath = const Value.absent(),
+    this.avatarUrl = const Value.absent(),
+    this.language = const Value.absent(),
+    this.timezone = const Value.absent(),
+    this.country = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.mustChangePassword = const Value.absent(),
+    this.supabaseUid = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
@@ -606,11 +1368,28 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
     required String displayName,
+    this.firstName = const Value.absent(),
+    this.lastName = const Value.absent(),
+    this.username = const Value.absent(),
+    this.email = const Value.absent(),
+    this.passwordHash = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.accountType = const Value.absent(),
+    this.activeCompanySyncId = const Value.absent(),
+    this.employeeCode = const Value.absent(),
+    this.workspaceSlug = const Value.absent(),
     this.pinHash = const Value.absent(),
     this.authMethod = const Value.absent(),
     this.isBiometricEnabled = const Value.absent(),
-    this.role = const Value.absent(),
     this.avatarPath = const Value.absent(),
+    this.avatarUrl = const Value.absent(),
+    this.language = const Value.absent(),
+    this.timezone = const Value.absent(),
+    this.country = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.mustChangePassword = const Value.absent(),
+    this.supabaseUid = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
   }) : syncId = Value(syncId),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -623,11 +1402,28 @@ class UsersCompanion extends UpdateCompanion<User> {
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
     Expression<String>? displayName,
+    Expression<String>? firstName,
+    Expression<String>? lastName,
+    Expression<String>? username,
+    Expression<String>? email,
+    Expression<String>? passwordHash,
+    Expression<String>? phone,
+    Expression<int>? accountType,
+    Expression<String>? activeCompanySyncId,
+    Expression<String>? employeeCode,
+    Expression<String>? workspaceSlug,
     Expression<String>? pinHash,
     Expression<int>? authMethod,
     Expression<bool>? isBiometricEnabled,
-    Expression<int>? role,
     Expression<String>? avatarPath,
+    Expression<String>? avatarUrl,
+    Expression<String>? language,
+    Expression<String>? timezone,
+    Expression<String>? country,
+    Expression<bool>? onboardingCompleted,
+    Expression<bool>? mustChangePassword,
+    Expression<String>? supabaseUid,
+    Expression<DateTime>? lastSyncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -637,12 +1433,32 @@ class UsersCompanion extends UpdateCompanion<User> {
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
       if (displayName != null) 'display_name': displayName,
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
+      if (username != null) 'username': username,
+      if (email != null) 'email': email,
+      if (passwordHash != null) 'password_hash': passwordHash,
+      if (phone != null) 'phone': phone,
+      if (accountType != null) 'account_type': accountType,
+      if (activeCompanySyncId != null)
+        'active_company_sync_id': activeCompanySyncId,
+      if (employeeCode != null) 'employee_code': employeeCode,
+      if (workspaceSlug != null) 'workspace_slug': workspaceSlug,
       if (pinHash != null) 'pin_hash': pinHash,
       if (authMethod != null) 'auth_method': authMethod,
       if (isBiometricEnabled != null)
         'is_biometric_enabled': isBiometricEnabled,
-      if (role != null) 'role': role,
       if (avatarPath != null) 'avatar_path': avatarPath,
+      if (avatarUrl != null) 'avatar_url': avatarUrl,
+      if (language != null) 'language': language,
+      if (timezone != null) 'timezone': timezone,
+      if (country != null) 'country': country,
+      if (onboardingCompleted != null)
+        'onboarding_completed': onboardingCompleted,
+      if (mustChangePassword != null)
+        'must_change_password': mustChangePassword,
+      if (supabaseUid != null) 'supabase_uid': supabaseUid,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
     });
   }
 
@@ -654,11 +1470,28 @@ class UsersCompanion extends UpdateCompanion<User> {
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
     Value<String>? displayName,
+    Value<String?>? firstName,
+    Value<String?>? lastName,
+    Value<String?>? username,
+    Value<String?>? email,
+    Value<String?>? passwordHash,
+    Value<String?>? phone,
+    Value<int>? accountType,
+    Value<String?>? activeCompanySyncId,
+    Value<String?>? employeeCode,
+    Value<String?>? workspaceSlug,
     Value<String?>? pinHash,
     Value<int>? authMethod,
     Value<bool>? isBiometricEnabled,
-    Value<int>? role,
     Value<String?>? avatarPath,
+    Value<String?>? avatarUrl,
+    Value<String>? language,
+    Value<String>? timezone,
+    Value<String?>? country,
+    Value<bool>? onboardingCompleted,
+    Value<bool>? mustChangePassword,
+    Value<String?>? supabaseUid,
+    Value<DateTime?>? lastSyncedAt,
   }) {
     return UsersCompanion(
       id: id ?? this.id,
@@ -668,11 +1501,28 @@ class UsersCompanion extends UpdateCompanion<User> {
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
       displayName: displayName ?? this.displayName,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      passwordHash: passwordHash ?? this.passwordHash,
+      phone: phone ?? this.phone,
+      accountType: accountType ?? this.accountType,
+      activeCompanySyncId: activeCompanySyncId ?? this.activeCompanySyncId,
+      employeeCode: employeeCode ?? this.employeeCode,
+      workspaceSlug: workspaceSlug ?? this.workspaceSlug,
       pinHash: pinHash ?? this.pinHash,
       authMethod: authMethod ?? this.authMethod,
       isBiometricEnabled: isBiometricEnabled ?? this.isBiometricEnabled,
-      role: role ?? this.role,
       avatarPath: avatarPath ?? this.avatarPath,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      language: language ?? this.language,
+      timezone: timezone ?? this.timezone,
+      country: country ?? this.country,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      mustChangePassword: mustChangePassword ?? this.mustChangePassword,
+      supabaseUid: supabaseUid ?? this.supabaseUid,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );
   }
 
@@ -700,6 +1550,38 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (displayName.present) {
       map['display_name'] = Variable<String>(displayName.value);
     }
+    if (firstName.present) {
+      map['first_name'] = Variable<String>(firstName.value);
+    }
+    if (lastName.present) {
+      map['last_name'] = Variable<String>(lastName.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (passwordHash.present) {
+      map['password_hash'] = Variable<String>(passwordHash.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (accountType.present) {
+      map['account_type'] = Variable<int>(accountType.value);
+    }
+    if (activeCompanySyncId.present) {
+      map['active_company_sync_id'] = Variable<String>(
+        activeCompanySyncId.value,
+      );
+    }
+    if (employeeCode.present) {
+      map['employee_code'] = Variable<String>(employeeCode.value);
+    }
+    if (workspaceSlug.present) {
+      map['workspace_slug'] = Variable<String>(workspaceSlug.value);
+    }
     if (pinHash.present) {
       map['pin_hash'] = Variable<String>(pinHash.value);
     }
@@ -709,11 +1591,32 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (isBiometricEnabled.present) {
       map['is_biometric_enabled'] = Variable<bool>(isBiometricEnabled.value);
     }
-    if (role.present) {
-      map['role'] = Variable<int>(role.value);
-    }
     if (avatarPath.present) {
       map['avatar_path'] = Variable<String>(avatarPath.value);
+    }
+    if (avatarUrl.present) {
+      map['avatar_url'] = Variable<String>(avatarUrl.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (timezone.present) {
+      map['timezone'] = Variable<String>(timezone.value);
+    }
+    if (country.present) {
+      map['country'] = Variable<String>(country.value);
+    }
+    if (onboardingCompleted.present) {
+      map['onboarding_completed'] = Variable<bool>(onboardingCompleted.value);
+    }
+    if (mustChangePassword.present) {
+      map['must_change_password'] = Variable<bool>(mustChangePassword.value);
+    }
+    if (supabaseUid.present) {
+      map['supabase_uid'] = Variable<String>(supabaseUid.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
     return map;
   }
@@ -728,11 +1631,28 @@ class UsersCompanion extends UpdateCompanion<User> {
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
           ..write('displayName: $displayName, ')
+          ..write('firstName: $firstName, ')
+          ..write('lastName: $lastName, ')
+          ..write('username: $username, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
+          ..write('phone: $phone, ')
+          ..write('accountType: $accountType, ')
+          ..write('activeCompanySyncId: $activeCompanySyncId, ')
+          ..write('employeeCode: $employeeCode, ')
+          ..write('workspaceSlug: $workspaceSlug, ')
           ..write('pinHash: $pinHash, ')
           ..write('authMethod: $authMethod, ')
           ..write('isBiometricEnabled: $isBiometricEnabled, ')
-          ..write('role: $role, ')
-          ..write('avatarPath: $avatarPath')
+          ..write('avatarPath: $avatarPath, ')
+          ..write('avatarUrl: $avatarUrl, ')
+          ..write('language: $language, ')
+          ..write('timezone: $timezone, ')
+          ..write('country: $country, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('mustChangePassword: $mustChangePassword, ')
+          ..write('supabaseUid: $supabaseUid, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
           ..write(')'))
         .toString();
   }
@@ -46136,6 +47056,4771 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
   }
 }
 
+class $CompaniesTable extends Companies
+    with TableInfo<$CompaniesTable, Company> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CompaniesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncIdMeta = const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyCodeMeta = const VerificationMeta(
+    'companyCode',
+  );
+  @override
+  late final GeneratedColumn<String> companyCode = GeneratedColumn<String>(
+    'company_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 20,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceSlugMeta = const VerificationMeta(
+    'workspaceSlug',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceSlug = GeneratedColumn<String>(
+    'workspace_slug',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 2,
+      maxTextLength: 50,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _planTypeMeta = const VerificationMeta(
+    'planType',
+  );
+  @override
+  late final GeneratedColumn<int> planType = GeneratedColumn<int>(
+    'plan_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _subscriptionStatusMeta =
+      const VerificationMeta('subscriptionStatus');
+  @override
+  late final GeneratedColumn<int> subscriptionStatus = GeneratedColumn<int>(
+    'subscription_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _trialEndsAtMeta = const VerificationMeta(
+    'trialEndsAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> trialEndsAt = GeneratedColumn<DateTime>(
+    'trial_ends_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _subscriptionEndsAtMeta =
+      const VerificationMeta('subscriptionEndsAt');
+  @override
+  late final GeneratedColumn<DateTime> subscriptionEndsAt =
+      GeneratedColumn<DateTime>(
+        'subscription_ends_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _ownerSyncIdMeta = const VerificationMeta(
+    'ownerSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerSyncId = GeneratedColumn<String>(
+    'owner_sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _countryMeta = const VerificationMeta(
+    'country',
+  );
+  @override
+  late final GeneratedColumn<String> country = GeneratedColumn<String>(
+    'country',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 2,
+      maxTextLength: 2,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _industryMeta = const VerificationMeta(
+    'industry',
+  );
+  @override
+  late final GeneratedColumn<String> industry = GeneratedColumn<String>(
+    'industry',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _expectedEmployeeCountMeta =
+      const VerificationMeta('expectedEmployeeCount');
+  @override
+  late final GeneratedColumn<int> expectedEmployeeCount = GeneratedColumn<int>(
+    'expected_employee_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _logoUrlMeta = const VerificationMeta(
+    'logoUrl',
+  );
+  @override
+  late final GeneratedColumn<String> logoUrl = GeneratedColumn<String>(
+    'logo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _websiteMeta = const VerificationMeta(
+    'website',
+  );
+  @override
+  late final GeneratedColumn<String> website = GeneratedColumn<String>(
+    'website',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
+  @override
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _taxNumberMeta = const VerificationMeta(
+    'taxNumber',
+  );
+  @override
+  late final GeneratedColumn<String> taxNumber = GeneratedColumn<String>(
+    'tax_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _commercialRegNumberMeta =
+      const VerificationMeta('commercialRegNumber');
+  @override
+  late final GeneratedColumn<String> commercialRegNumber =
+      GeneratedColumn<String>(
+        'commercial_reg_number',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _defaultLanguageMeta = const VerificationMeta(
+    'defaultLanguage',
+  );
+  @override
+  late final GeneratedColumn<String> defaultLanguage = GeneratedColumn<String>(
+    'default_language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ar'),
+  );
+  static const VerificationMeta _defaultTimezoneMeta = const VerificationMeta(
+    'defaultTimezone',
+  );
+  @override
+  late final GeneratedColumn<String> defaultTimezone = GeneratedColumn<String>(
+    'default_timezone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('Asia/Riyadh'),
+  );
+  static const VerificationMeta _settingsJsonMeta = const VerificationMeta(
+    'settingsJson',
+  );
+  @override
+  late final GeneratedColumn<String> settingsJson = GeneratedColumn<String>(
+    'settings_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companyCode,
+    name,
+    workspaceSlug,
+    planType,
+    subscriptionStatus,
+    trialEndsAt,
+    subscriptionEndsAt,
+    ownerSyncId,
+    country,
+    currency,
+    industry,
+    expectedEmployeeCount,
+    logoUrl,
+    website,
+    phone,
+    address,
+    taxNumber,
+    commercialRegNumber,
+    defaultLanguage,
+    defaultTimezone,
+    settingsJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'companies';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Company> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('sync_id')) {
+      context.handle(
+        _syncIdMeta,
+        syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_code')) {
+      context.handle(
+        _companyCodeMeta,
+        companyCode.isAcceptableOrUnknown(
+          data['company_code']!,
+          _companyCodeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_companyCodeMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('workspace_slug')) {
+      context.handle(
+        _workspaceSlugMeta,
+        workspaceSlug.isAcceptableOrUnknown(
+          data['workspace_slug']!,
+          _workspaceSlugMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_workspaceSlugMeta);
+    }
+    if (data.containsKey('plan_type')) {
+      context.handle(
+        _planTypeMeta,
+        planType.isAcceptableOrUnknown(data['plan_type']!, _planTypeMeta),
+      );
+    }
+    if (data.containsKey('subscription_status')) {
+      context.handle(
+        _subscriptionStatusMeta,
+        subscriptionStatus.isAcceptableOrUnknown(
+          data['subscription_status']!,
+          _subscriptionStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('trial_ends_at')) {
+      context.handle(
+        _trialEndsAtMeta,
+        trialEndsAt.isAcceptableOrUnknown(
+          data['trial_ends_at']!,
+          _trialEndsAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('subscription_ends_at')) {
+      context.handle(
+        _subscriptionEndsAtMeta,
+        subscriptionEndsAt.isAcceptableOrUnknown(
+          data['subscription_ends_at']!,
+          _subscriptionEndsAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('owner_sync_id')) {
+      context.handle(
+        _ownerSyncIdMeta,
+        ownerSyncId.isAcceptableOrUnknown(
+          data['owner_sync_id']!,
+          _ownerSyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerSyncIdMeta);
+    }
+    if (data.containsKey('country')) {
+      context.handle(
+        _countryMeta,
+        country.isAcceptableOrUnknown(data['country']!, _countryMeta),
+      );
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('industry')) {
+      context.handle(
+        _industryMeta,
+        industry.isAcceptableOrUnknown(data['industry']!, _industryMeta),
+      );
+    }
+    if (data.containsKey('expected_employee_count')) {
+      context.handle(
+        _expectedEmployeeCountMeta,
+        expectedEmployeeCount.isAcceptableOrUnknown(
+          data['expected_employee_count']!,
+          _expectedEmployeeCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('logo_url')) {
+      context.handle(
+        _logoUrlMeta,
+        logoUrl.isAcceptableOrUnknown(data['logo_url']!, _logoUrlMeta),
+      );
+    }
+    if (data.containsKey('website')) {
+      context.handle(
+        _websiteMeta,
+        website.isAcceptableOrUnknown(data['website']!, _websiteMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('address')) {
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    }
+    if (data.containsKey('tax_number')) {
+      context.handle(
+        _taxNumberMeta,
+        taxNumber.isAcceptableOrUnknown(data['tax_number']!, _taxNumberMeta),
+      );
+    }
+    if (data.containsKey('commercial_reg_number')) {
+      context.handle(
+        _commercialRegNumberMeta,
+        commercialRegNumber.isAcceptableOrUnknown(
+          data['commercial_reg_number']!,
+          _commercialRegNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_language')) {
+      context.handle(
+        _defaultLanguageMeta,
+        defaultLanguage.isAcceptableOrUnknown(
+          data['default_language']!,
+          _defaultLanguageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_timezone')) {
+      context.handle(
+        _defaultTimezoneMeta,
+        defaultTimezone.isAcceptableOrUnknown(
+          data['default_timezone']!,
+          _defaultTimezoneMeta,
+        ),
+      );
+    }
+    if (data.containsKey('settings_json')) {
+      context.handle(
+        _settingsJsonMeta,
+        settingsJson.isAcceptableOrUnknown(
+          data['settings_json']!,
+          _settingsJsonMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Company map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Company(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      syncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      companyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_code'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      workspaceSlug: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_slug'],
+      )!,
+      planType: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}plan_type'],
+      )!,
+      subscriptionStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}subscription_status'],
+      )!,
+      trialEndsAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}trial_ends_at'],
+      ),
+      subscriptionEndsAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}subscription_ends_at'],
+      ),
+      ownerSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_sync_id'],
+      )!,
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      ),
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      ),
+      industry: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}industry'],
+      ),
+      expectedEmployeeCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expected_employee_count'],
+      ),
+      logoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}logo_url'],
+      ),
+      website: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}website'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      ),
+      taxNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tax_number'],
+      ),
+      commercialRegNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}commercial_reg_number'],
+      ),
+      defaultLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_language'],
+      )!,
+      defaultTimezone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_timezone'],
+      )!,
+      settingsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}settings_json'],
+      ),
+    );
+  }
+
+  @override
+  $CompaniesTable createAlias(String alias) {
+    return $CompaniesTable(attachedDatabase, alias);
+  }
+}
+
+class Company extends DataClass implements Insertable<Company> {
+  /// Auto-increment primary key
+  final int id;
+
+  /// UUID for future cloud sync
+  final String syncId;
+
+  /// Unix timestamp (milliseconds) of creation
+  final int createdAt;
+
+  /// Unix timestamp (milliseconds) of last update
+  final int updatedAt;
+
+  /// Soft delete flag — records are never hard-deleted
+  final bool isDeleted;
+
+  /// Creator identifier (for multi-user support in the future)
+  final String? createdBy;
+
+  /// Human-readable code shown to users, e.g. "CMP-8X7Q2K"
+  final String companyCode;
+
+  /// Display name of the company
+  final String name;
+
+  /// Slug used for workspace URL: {slug}.rvios.com or app.rvios.com/{slug}
+  /// Unique, lowercase, URL-safe
+  final String workspaceSlug;
+
+  /// Plan type enum:
+  ///   0 = free_personal
+  ///   1 = professional
+  ///   2 = business
+  ///   3 = business_plus
+  ///   4 = enterprise
+  final int planType;
+
+  /// Subscription status:
+  ///   0 = trial
+  ///   1 = active
+  ///   2 = suspended
+  ///   3 = cancelled
+  final int subscriptionStatus;
+
+  /// When the trial period ends (nullable = no trial)
+  final DateTime? trialEndsAt;
+
+  /// When the current subscription period ends
+  final DateTime? subscriptionEndsAt;
+
+  /// syncId of the user who created/owns this company
+  final String ownerSyncId;
+
+  /// Country code (ISO 3166-1 alpha-2), e.g. "SA", "AE", "EG"
+  final String? country;
+
+  /// Currency code (ISO 4217), e.g. "SAR", "AED", "USD"
+  final String? currency;
+
+  /// Industry / sector
+  final String? industry;
+
+  /// Expected/actual number of employees (for plan sizing)
+  final int? expectedEmployeeCount;
+
+  /// Company logo URL (stored in cloud storage)
+  final String? logoUrl;
+
+  /// Official company website
+  final String? website;
+
+  /// Company phone
+  final String? phone;
+
+  /// Company address
+  final String? address;
+
+  /// Tax registration number
+  final String? taxNumber;
+
+  /// Commercial registration number
+  final String? commercialRegNumber;
+
+  /// Default language for this company workspace (e.g. "ar", "en")
+  final String defaultLanguage;
+
+  /// Default timezone (e.g. "Asia/Riyadh")
+  final String defaultTimezone;
+
+  /// JSON blob for workspace-level feature flags/settings
+  final String? settingsJson;
+  const Company({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.companyCode,
+    required this.name,
+    required this.workspaceSlug,
+    required this.planType,
+    required this.subscriptionStatus,
+    this.trialEndsAt,
+    this.subscriptionEndsAt,
+    required this.ownerSyncId,
+    this.country,
+    this.currency,
+    this.industry,
+    this.expectedEmployeeCount,
+    this.logoUrl,
+    this.website,
+    this.phone,
+    this.address,
+    this.taxNumber,
+    this.commercialRegNumber,
+    required this.defaultLanguage,
+    required this.defaultTimezone,
+    this.settingsJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['company_code'] = Variable<String>(companyCode);
+    map['name'] = Variable<String>(name);
+    map['workspace_slug'] = Variable<String>(workspaceSlug);
+    map['plan_type'] = Variable<int>(planType);
+    map['subscription_status'] = Variable<int>(subscriptionStatus);
+    if (!nullToAbsent || trialEndsAt != null) {
+      map['trial_ends_at'] = Variable<DateTime>(trialEndsAt);
+    }
+    if (!nullToAbsent || subscriptionEndsAt != null) {
+      map['subscription_ends_at'] = Variable<DateTime>(subscriptionEndsAt);
+    }
+    map['owner_sync_id'] = Variable<String>(ownerSyncId);
+    if (!nullToAbsent || country != null) {
+      map['country'] = Variable<String>(country);
+    }
+    if (!nullToAbsent || currency != null) {
+      map['currency'] = Variable<String>(currency);
+    }
+    if (!nullToAbsent || industry != null) {
+      map['industry'] = Variable<String>(industry);
+    }
+    if (!nullToAbsent || expectedEmployeeCount != null) {
+      map['expected_employee_count'] = Variable<int>(expectedEmployeeCount);
+    }
+    if (!nullToAbsent || logoUrl != null) {
+      map['logo_url'] = Variable<String>(logoUrl);
+    }
+    if (!nullToAbsent || website != null) {
+      map['website'] = Variable<String>(website);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || address != null) {
+      map['address'] = Variable<String>(address);
+    }
+    if (!nullToAbsent || taxNumber != null) {
+      map['tax_number'] = Variable<String>(taxNumber);
+    }
+    if (!nullToAbsent || commercialRegNumber != null) {
+      map['commercial_reg_number'] = Variable<String>(commercialRegNumber);
+    }
+    map['default_language'] = Variable<String>(defaultLanguage);
+    map['default_timezone'] = Variable<String>(defaultTimezone);
+    if (!nullToAbsent || settingsJson != null) {
+      map['settings_json'] = Variable<String>(settingsJson);
+    }
+    return map;
+  }
+
+  CompaniesCompanion toCompanion(bool nullToAbsent) {
+    return CompaniesCompanion(
+      id: Value(id),
+      syncId: Value(syncId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      companyCode: Value(companyCode),
+      name: Value(name),
+      workspaceSlug: Value(workspaceSlug),
+      planType: Value(planType),
+      subscriptionStatus: Value(subscriptionStatus),
+      trialEndsAt: trialEndsAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(trialEndsAt),
+      subscriptionEndsAt: subscriptionEndsAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subscriptionEndsAt),
+      ownerSyncId: Value(ownerSyncId),
+      country: country == null && nullToAbsent
+          ? const Value.absent()
+          : Value(country),
+      currency: currency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currency),
+      industry: industry == null && nullToAbsent
+          ? const Value.absent()
+          : Value(industry),
+      expectedEmployeeCount: expectedEmployeeCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expectedEmployeeCount),
+      logoUrl: logoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(logoUrl),
+      website: website == null && nullToAbsent
+          ? const Value.absent()
+          : Value(website),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      address: address == null && nullToAbsent
+          ? const Value.absent()
+          : Value(address),
+      taxNumber: taxNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(taxNumber),
+      commercialRegNumber: commercialRegNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(commercialRegNumber),
+      defaultLanguage: Value(defaultLanguage),
+      defaultTimezone: Value(defaultTimezone),
+      settingsJson: settingsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(settingsJson),
+    );
+  }
+
+  factory Company.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Company(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyCode: serializer.fromJson<String>(json['companyCode']),
+      name: serializer.fromJson<String>(json['name']),
+      workspaceSlug: serializer.fromJson<String>(json['workspaceSlug']),
+      planType: serializer.fromJson<int>(json['planType']),
+      subscriptionStatus: serializer.fromJson<int>(json['subscriptionStatus']),
+      trialEndsAt: serializer.fromJson<DateTime?>(json['trialEndsAt']),
+      subscriptionEndsAt: serializer.fromJson<DateTime?>(
+        json['subscriptionEndsAt'],
+      ),
+      ownerSyncId: serializer.fromJson<String>(json['ownerSyncId']),
+      country: serializer.fromJson<String?>(json['country']),
+      currency: serializer.fromJson<String?>(json['currency']),
+      industry: serializer.fromJson<String?>(json['industry']),
+      expectedEmployeeCount: serializer.fromJson<int?>(
+        json['expectedEmployeeCount'],
+      ),
+      logoUrl: serializer.fromJson<String?>(json['logoUrl']),
+      website: serializer.fromJson<String?>(json['website']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      address: serializer.fromJson<String?>(json['address']),
+      taxNumber: serializer.fromJson<String?>(json['taxNumber']),
+      commercialRegNumber: serializer.fromJson<String?>(
+        json['commercialRegNumber'],
+      ),
+      defaultLanguage: serializer.fromJson<String>(json['defaultLanguage']),
+      defaultTimezone: serializer.fromJson<String>(json['defaultTimezone']),
+      settingsJson: serializer.fromJson<String?>(json['settingsJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'companyCode': serializer.toJson<String>(companyCode),
+      'name': serializer.toJson<String>(name),
+      'workspaceSlug': serializer.toJson<String>(workspaceSlug),
+      'planType': serializer.toJson<int>(planType),
+      'subscriptionStatus': serializer.toJson<int>(subscriptionStatus),
+      'trialEndsAt': serializer.toJson<DateTime?>(trialEndsAt),
+      'subscriptionEndsAt': serializer.toJson<DateTime?>(subscriptionEndsAt),
+      'ownerSyncId': serializer.toJson<String>(ownerSyncId),
+      'country': serializer.toJson<String?>(country),
+      'currency': serializer.toJson<String?>(currency),
+      'industry': serializer.toJson<String?>(industry),
+      'expectedEmployeeCount': serializer.toJson<int?>(expectedEmployeeCount),
+      'logoUrl': serializer.toJson<String?>(logoUrl),
+      'website': serializer.toJson<String?>(website),
+      'phone': serializer.toJson<String?>(phone),
+      'address': serializer.toJson<String?>(address),
+      'taxNumber': serializer.toJson<String?>(taxNumber),
+      'commercialRegNumber': serializer.toJson<String?>(commercialRegNumber),
+      'defaultLanguage': serializer.toJson<String>(defaultLanguage),
+      'defaultTimezone': serializer.toJson<String>(defaultTimezone),
+      'settingsJson': serializer.toJson<String?>(settingsJson),
+    };
+  }
+
+  Company copyWith({
+    int? id,
+    String? syncId,
+    int? createdAt,
+    int? updatedAt,
+    bool? isDeleted,
+    Value<String?> createdBy = const Value.absent(),
+    String? companyCode,
+    String? name,
+    String? workspaceSlug,
+    int? planType,
+    int? subscriptionStatus,
+    Value<DateTime?> trialEndsAt = const Value.absent(),
+    Value<DateTime?> subscriptionEndsAt = const Value.absent(),
+    String? ownerSyncId,
+    Value<String?> country = const Value.absent(),
+    Value<String?> currency = const Value.absent(),
+    Value<String?> industry = const Value.absent(),
+    Value<int?> expectedEmployeeCount = const Value.absent(),
+    Value<String?> logoUrl = const Value.absent(),
+    Value<String?> website = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    Value<String?> address = const Value.absent(),
+    Value<String?> taxNumber = const Value.absent(),
+    Value<String?> commercialRegNumber = const Value.absent(),
+    String? defaultLanguage,
+    String? defaultTimezone,
+    Value<String?> settingsJson = const Value.absent(),
+  }) => Company(
+    id: id ?? this.id,
+    syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyCode: companyCode ?? this.companyCode,
+    name: name ?? this.name,
+    workspaceSlug: workspaceSlug ?? this.workspaceSlug,
+    planType: planType ?? this.planType,
+    subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
+    trialEndsAt: trialEndsAt.present ? trialEndsAt.value : this.trialEndsAt,
+    subscriptionEndsAt: subscriptionEndsAt.present
+        ? subscriptionEndsAt.value
+        : this.subscriptionEndsAt,
+    ownerSyncId: ownerSyncId ?? this.ownerSyncId,
+    country: country.present ? country.value : this.country,
+    currency: currency.present ? currency.value : this.currency,
+    industry: industry.present ? industry.value : this.industry,
+    expectedEmployeeCount: expectedEmployeeCount.present
+        ? expectedEmployeeCount.value
+        : this.expectedEmployeeCount,
+    logoUrl: logoUrl.present ? logoUrl.value : this.logoUrl,
+    website: website.present ? website.value : this.website,
+    phone: phone.present ? phone.value : this.phone,
+    address: address.present ? address.value : this.address,
+    taxNumber: taxNumber.present ? taxNumber.value : this.taxNumber,
+    commercialRegNumber: commercialRegNumber.present
+        ? commercialRegNumber.value
+        : this.commercialRegNumber,
+    defaultLanguage: defaultLanguage ?? this.defaultLanguage,
+    defaultTimezone: defaultTimezone ?? this.defaultTimezone,
+    settingsJson: settingsJson.present ? settingsJson.value : this.settingsJson,
+  );
+  Company copyWithCompanion(CompaniesCompanion data) {
+    return Company(
+      id: data.id.present ? data.id.value : this.id,
+      syncId: data.syncId.present ? data.syncId.value : this.syncId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyCode: data.companyCode.present
+          ? data.companyCode.value
+          : this.companyCode,
+      name: data.name.present ? data.name.value : this.name,
+      workspaceSlug: data.workspaceSlug.present
+          ? data.workspaceSlug.value
+          : this.workspaceSlug,
+      planType: data.planType.present ? data.planType.value : this.planType,
+      subscriptionStatus: data.subscriptionStatus.present
+          ? data.subscriptionStatus.value
+          : this.subscriptionStatus,
+      trialEndsAt: data.trialEndsAt.present
+          ? data.trialEndsAt.value
+          : this.trialEndsAt,
+      subscriptionEndsAt: data.subscriptionEndsAt.present
+          ? data.subscriptionEndsAt.value
+          : this.subscriptionEndsAt,
+      ownerSyncId: data.ownerSyncId.present
+          ? data.ownerSyncId.value
+          : this.ownerSyncId,
+      country: data.country.present ? data.country.value : this.country,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      industry: data.industry.present ? data.industry.value : this.industry,
+      expectedEmployeeCount: data.expectedEmployeeCount.present
+          ? data.expectedEmployeeCount.value
+          : this.expectedEmployeeCount,
+      logoUrl: data.logoUrl.present ? data.logoUrl.value : this.logoUrl,
+      website: data.website.present ? data.website.value : this.website,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      address: data.address.present ? data.address.value : this.address,
+      taxNumber: data.taxNumber.present ? data.taxNumber.value : this.taxNumber,
+      commercialRegNumber: data.commercialRegNumber.present
+          ? data.commercialRegNumber.value
+          : this.commercialRegNumber,
+      defaultLanguage: data.defaultLanguage.present
+          ? data.defaultLanguage.value
+          : this.defaultLanguage,
+      defaultTimezone: data.defaultTimezone.present
+          ? data.defaultTimezone.value
+          : this.defaultTimezone,
+      settingsJson: data.settingsJson.present
+          ? data.settingsJson.value
+          : this.settingsJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Company(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companyCode: $companyCode, ')
+          ..write('name: $name, ')
+          ..write('workspaceSlug: $workspaceSlug, ')
+          ..write('planType: $planType, ')
+          ..write('subscriptionStatus: $subscriptionStatus, ')
+          ..write('trialEndsAt: $trialEndsAt, ')
+          ..write('subscriptionEndsAt: $subscriptionEndsAt, ')
+          ..write('ownerSyncId: $ownerSyncId, ')
+          ..write('country: $country, ')
+          ..write('currency: $currency, ')
+          ..write('industry: $industry, ')
+          ..write('expectedEmployeeCount: $expectedEmployeeCount, ')
+          ..write('logoUrl: $logoUrl, ')
+          ..write('website: $website, ')
+          ..write('phone: $phone, ')
+          ..write('address: $address, ')
+          ..write('taxNumber: $taxNumber, ')
+          ..write('commercialRegNumber: $commercialRegNumber, ')
+          ..write('defaultLanguage: $defaultLanguage, ')
+          ..write('defaultTimezone: $defaultTimezone, ')
+          ..write('settingsJson: $settingsJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companyCode,
+    name,
+    workspaceSlug,
+    planType,
+    subscriptionStatus,
+    trialEndsAt,
+    subscriptionEndsAt,
+    ownerSyncId,
+    country,
+    currency,
+    industry,
+    expectedEmployeeCount,
+    logoUrl,
+    website,
+    phone,
+    address,
+    taxNumber,
+    commercialRegNumber,
+    defaultLanguage,
+    defaultTimezone,
+    settingsJson,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Company &&
+          other.id == this.id &&
+          other.syncId == this.syncId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted &&
+          other.createdBy == this.createdBy &&
+          other.companyCode == this.companyCode &&
+          other.name == this.name &&
+          other.workspaceSlug == this.workspaceSlug &&
+          other.planType == this.planType &&
+          other.subscriptionStatus == this.subscriptionStatus &&
+          other.trialEndsAt == this.trialEndsAt &&
+          other.subscriptionEndsAt == this.subscriptionEndsAt &&
+          other.ownerSyncId == this.ownerSyncId &&
+          other.country == this.country &&
+          other.currency == this.currency &&
+          other.industry == this.industry &&
+          other.expectedEmployeeCount == this.expectedEmployeeCount &&
+          other.logoUrl == this.logoUrl &&
+          other.website == this.website &&
+          other.phone == this.phone &&
+          other.address == this.address &&
+          other.taxNumber == this.taxNumber &&
+          other.commercialRegNumber == this.commercialRegNumber &&
+          other.defaultLanguage == this.defaultLanguage &&
+          other.defaultTimezone == this.defaultTimezone &&
+          other.settingsJson == this.settingsJson);
+}
+
+class CompaniesCompanion extends UpdateCompanion<Company> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> companyCode;
+  final Value<String> name;
+  final Value<String> workspaceSlug;
+  final Value<int> planType;
+  final Value<int> subscriptionStatus;
+  final Value<DateTime?> trialEndsAt;
+  final Value<DateTime?> subscriptionEndsAt;
+  final Value<String> ownerSyncId;
+  final Value<String?> country;
+  final Value<String?> currency;
+  final Value<String?> industry;
+  final Value<int?> expectedEmployeeCount;
+  final Value<String?> logoUrl;
+  final Value<String?> website;
+  final Value<String?> phone;
+  final Value<String?> address;
+  final Value<String?> taxNumber;
+  final Value<String?> commercialRegNumber;
+  final Value<String> defaultLanguage;
+  final Value<String> defaultTimezone;
+  final Value<String?> settingsJson;
+  const CompaniesCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.companyCode = const Value.absent(),
+    this.name = const Value.absent(),
+    this.workspaceSlug = const Value.absent(),
+    this.planType = const Value.absent(),
+    this.subscriptionStatus = const Value.absent(),
+    this.trialEndsAt = const Value.absent(),
+    this.subscriptionEndsAt = const Value.absent(),
+    this.ownerSyncId = const Value.absent(),
+    this.country = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.industry = const Value.absent(),
+    this.expectedEmployeeCount = const Value.absent(),
+    this.logoUrl = const Value.absent(),
+    this.website = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.address = const Value.absent(),
+    this.taxNumber = const Value.absent(),
+    this.commercialRegNumber = const Value.absent(),
+    this.defaultLanguage = const Value.absent(),
+    this.defaultTimezone = const Value.absent(),
+    this.settingsJson = const Value.absent(),
+  });
+  CompaniesCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String companyCode,
+    required String name,
+    required String workspaceSlug,
+    this.planType = const Value.absent(),
+    this.subscriptionStatus = const Value.absent(),
+    this.trialEndsAt = const Value.absent(),
+    this.subscriptionEndsAt = const Value.absent(),
+    required String ownerSyncId,
+    this.country = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.industry = const Value.absent(),
+    this.expectedEmployeeCount = const Value.absent(),
+    this.logoUrl = const Value.absent(),
+    this.website = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.address = const Value.absent(),
+    this.taxNumber = const Value.absent(),
+    this.commercialRegNumber = const Value.absent(),
+    this.defaultLanguage = const Value.absent(),
+    this.defaultTimezone = const Value.absent(),
+    this.settingsJson = const Value.absent(),
+  }) : syncId = Value(syncId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       companyCode = Value(companyCode),
+       name = Value(name),
+       workspaceSlug = Value(workspaceSlug),
+       ownerSyncId = Value(ownerSyncId);
+  static Insertable<Company> custom({
+    Expression<int>? id,
+    Expression<String>? syncId,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<bool>? isDeleted,
+    Expression<String>? createdBy,
+    Expression<String>? companyCode,
+    Expression<String>? name,
+    Expression<String>? workspaceSlug,
+    Expression<int>? planType,
+    Expression<int>? subscriptionStatus,
+    Expression<DateTime>? trialEndsAt,
+    Expression<DateTime>? subscriptionEndsAt,
+    Expression<String>? ownerSyncId,
+    Expression<String>? country,
+    Expression<String>? currency,
+    Expression<String>? industry,
+    Expression<int>? expectedEmployeeCount,
+    Expression<String>? logoUrl,
+    Expression<String>? website,
+    Expression<String>? phone,
+    Expression<String>? address,
+    Expression<String>? taxNumber,
+    Expression<String>? commercialRegNumber,
+    Expression<String>? defaultLanguage,
+    Expression<String>? defaultTimezone,
+    Expression<String>? settingsJson,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (syncId != null) 'sync_id': syncId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (createdBy != null) 'created_by': createdBy,
+      if (companyCode != null) 'company_code': companyCode,
+      if (name != null) 'name': name,
+      if (workspaceSlug != null) 'workspace_slug': workspaceSlug,
+      if (planType != null) 'plan_type': planType,
+      if (subscriptionStatus != null) 'subscription_status': subscriptionStatus,
+      if (trialEndsAt != null) 'trial_ends_at': trialEndsAt,
+      if (subscriptionEndsAt != null)
+        'subscription_ends_at': subscriptionEndsAt,
+      if (ownerSyncId != null) 'owner_sync_id': ownerSyncId,
+      if (country != null) 'country': country,
+      if (currency != null) 'currency': currency,
+      if (industry != null) 'industry': industry,
+      if (expectedEmployeeCount != null)
+        'expected_employee_count': expectedEmployeeCount,
+      if (logoUrl != null) 'logo_url': logoUrl,
+      if (website != null) 'website': website,
+      if (phone != null) 'phone': phone,
+      if (address != null) 'address': address,
+      if (taxNumber != null) 'tax_number': taxNumber,
+      if (commercialRegNumber != null)
+        'commercial_reg_number': commercialRegNumber,
+      if (defaultLanguage != null) 'default_language': defaultLanguage,
+      if (defaultTimezone != null) 'default_timezone': defaultTimezone,
+      if (settingsJson != null) 'settings_json': settingsJson,
+    });
+  }
+
+  CompaniesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? syncId,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<bool>? isDeleted,
+    Value<String?>? createdBy,
+    Value<String>? companyCode,
+    Value<String>? name,
+    Value<String>? workspaceSlug,
+    Value<int>? planType,
+    Value<int>? subscriptionStatus,
+    Value<DateTime?>? trialEndsAt,
+    Value<DateTime?>? subscriptionEndsAt,
+    Value<String>? ownerSyncId,
+    Value<String?>? country,
+    Value<String?>? currency,
+    Value<String?>? industry,
+    Value<int?>? expectedEmployeeCount,
+    Value<String?>? logoUrl,
+    Value<String?>? website,
+    Value<String?>? phone,
+    Value<String?>? address,
+    Value<String?>? taxNumber,
+    Value<String?>? commercialRegNumber,
+    Value<String>? defaultLanguage,
+    Value<String>? defaultTimezone,
+    Value<String?>? settingsJson,
+  }) {
+    return CompaniesCompanion(
+      id: id ?? this.id,
+      syncId: syncId ?? this.syncId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      createdBy: createdBy ?? this.createdBy,
+      companyCode: companyCode ?? this.companyCode,
+      name: name ?? this.name,
+      workspaceSlug: workspaceSlug ?? this.workspaceSlug,
+      planType: planType ?? this.planType,
+      subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
+      trialEndsAt: trialEndsAt ?? this.trialEndsAt,
+      subscriptionEndsAt: subscriptionEndsAt ?? this.subscriptionEndsAt,
+      ownerSyncId: ownerSyncId ?? this.ownerSyncId,
+      country: country ?? this.country,
+      currency: currency ?? this.currency,
+      industry: industry ?? this.industry,
+      expectedEmployeeCount:
+          expectedEmployeeCount ?? this.expectedEmployeeCount,
+      logoUrl: logoUrl ?? this.logoUrl,
+      website: website ?? this.website,
+      phone: phone ?? this.phone,
+      address: address ?? this.address,
+      taxNumber: taxNumber ?? this.taxNumber,
+      commercialRegNumber: commercialRegNumber ?? this.commercialRegNumber,
+      defaultLanguage: defaultLanguage ?? this.defaultLanguage,
+      defaultTimezone: defaultTimezone ?? this.defaultTimezone,
+      settingsJson: settingsJson ?? this.settingsJson,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (syncId.present) {
+      map['sync_id'] = Variable<String>(syncId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyCode.present) {
+      map['company_code'] = Variable<String>(companyCode.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (workspaceSlug.present) {
+      map['workspace_slug'] = Variable<String>(workspaceSlug.value);
+    }
+    if (planType.present) {
+      map['plan_type'] = Variable<int>(planType.value);
+    }
+    if (subscriptionStatus.present) {
+      map['subscription_status'] = Variable<int>(subscriptionStatus.value);
+    }
+    if (trialEndsAt.present) {
+      map['trial_ends_at'] = Variable<DateTime>(trialEndsAt.value);
+    }
+    if (subscriptionEndsAt.present) {
+      map['subscription_ends_at'] = Variable<DateTime>(
+        subscriptionEndsAt.value,
+      );
+    }
+    if (ownerSyncId.present) {
+      map['owner_sync_id'] = Variable<String>(ownerSyncId.value);
+    }
+    if (country.present) {
+      map['country'] = Variable<String>(country.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (industry.present) {
+      map['industry'] = Variable<String>(industry.value);
+    }
+    if (expectedEmployeeCount.present) {
+      map['expected_employee_count'] = Variable<int>(
+        expectedEmployeeCount.value,
+      );
+    }
+    if (logoUrl.present) {
+      map['logo_url'] = Variable<String>(logoUrl.value);
+    }
+    if (website.present) {
+      map['website'] = Variable<String>(website.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
+    if (taxNumber.present) {
+      map['tax_number'] = Variable<String>(taxNumber.value);
+    }
+    if (commercialRegNumber.present) {
+      map['commercial_reg_number'] = Variable<String>(
+        commercialRegNumber.value,
+      );
+    }
+    if (defaultLanguage.present) {
+      map['default_language'] = Variable<String>(defaultLanguage.value);
+    }
+    if (defaultTimezone.present) {
+      map['default_timezone'] = Variable<String>(defaultTimezone.value);
+    }
+    if (settingsJson.present) {
+      map['settings_json'] = Variable<String>(settingsJson.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompaniesCompanion(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companyCode: $companyCode, ')
+          ..write('name: $name, ')
+          ..write('workspaceSlug: $workspaceSlug, ')
+          ..write('planType: $planType, ')
+          ..write('subscriptionStatus: $subscriptionStatus, ')
+          ..write('trialEndsAt: $trialEndsAt, ')
+          ..write('subscriptionEndsAt: $subscriptionEndsAt, ')
+          ..write('ownerSyncId: $ownerSyncId, ')
+          ..write('country: $country, ')
+          ..write('currency: $currency, ')
+          ..write('industry: $industry, ')
+          ..write('expectedEmployeeCount: $expectedEmployeeCount, ')
+          ..write('logoUrl: $logoUrl, ')
+          ..write('website: $website, ')
+          ..write('phone: $phone, ')
+          ..write('address: $address, ')
+          ..write('taxNumber: $taxNumber, ')
+          ..write('commercialRegNumber: $commercialRegNumber, ')
+          ..write('defaultLanguage: $defaultLanguage, ')
+          ..write('defaultTimezone: $defaultTimezone, ')
+          ..write('settingsJson: $settingsJson')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CompanyMembersTable extends CompanyMembers
+    with TableInfo<$CompanyMembersTable, CompanyMember> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CompanyMembersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncIdMeta = const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companySyncIdMeta = const VerificationMeta(
+    'companySyncId',
+  );
+  @override
+  late final GeneratedColumn<String> companySyncId = GeneratedColumn<String>(
+    'company_sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userSyncIdMeta = const VerificationMeta(
+    'userSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> userSyncId = GeneratedColumn<String>(
+    'user_sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _employeeSyncIdMeta = const VerificationMeta(
+    'employeeSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> employeeSyncId = GeneratedColumn<String>(
+    'employee_sync_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<int> role = GeneratedColumn<int>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(8),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _joinedAtMeta = const VerificationMeta(
+    'joinedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> joinedAt = GeneratedColumn<DateTime>(
+    'joined_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _onboardingCompletedMeta =
+      const VerificationMeta('onboardingCompleted');
+  @override
+  late final GeneratedColumn<bool> onboardingCompleted = GeneratedColumn<bool>(
+    'onboarding_completed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("onboarding_completed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _permissionsJsonMeta = const VerificationMeta(
+    'permissionsJson',
+  );
+  @override
+  late final GeneratedColumn<String> permissionsJson = GeneratedColumn<String>(
+    'permissions_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _enabledModulesMeta = const VerificationMeta(
+    'enabledModules',
+  );
+  @override
+  late final GeneratedColumn<String> enabledModules = GeneratedColumn<String>(
+    'enabled_modules',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companySyncId,
+    userSyncId,
+    employeeSyncId,
+    role,
+    isActive,
+    joinedAt,
+    onboardingCompleted,
+    permissionsJson,
+    enabledModules,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'company_members';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CompanyMember> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('sync_id')) {
+      context.handle(
+        _syncIdMeta,
+        syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_sync_id')) {
+      context.handle(
+        _companySyncIdMeta,
+        companySyncId.isAcceptableOrUnknown(
+          data['company_sync_id']!,
+          _companySyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_companySyncIdMeta);
+    }
+    if (data.containsKey('user_sync_id')) {
+      context.handle(
+        _userSyncIdMeta,
+        userSyncId.isAcceptableOrUnknown(
+          data['user_sync_id']!,
+          _userSyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userSyncIdMeta);
+    }
+    if (data.containsKey('employee_sync_id')) {
+      context.handle(
+        _employeeSyncIdMeta,
+        employeeSyncId.isAcceptableOrUnknown(
+          data['employee_sync_id']!,
+          _employeeSyncIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('joined_at')) {
+      context.handle(
+        _joinedAtMeta,
+        joinedAt.isAcceptableOrUnknown(data['joined_at']!, _joinedAtMeta),
+      );
+    }
+    if (data.containsKey('onboarding_completed')) {
+      context.handle(
+        _onboardingCompletedMeta,
+        onboardingCompleted.isAcceptableOrUnknown(
+          data['onboarding_completed']!,
+          _onboardingCompletedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('permissions_json')) {
+      context.handle(
+        _permissionsJsonMeta,
+        permissionsJson.isAcceptableOrUnknown(
+          data['permissions_json']!,
+          _permissionsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('enabled_modules')) {
+      context.handle(
+        _enabledModulesMeta,
+        enabledModules.isAcceptableOrUnknown(
+          data['enabled_modules']!,
+          _enabledModulesMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CompanyMember map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CompanyMember(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      syncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      companySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_sync_id'],
+      )!,
+      userSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_sync_id'],
+      )!,
+      employeeSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}employee_sync_id'],
+      ),
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}role'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      joinedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}joined_at'],
+      ),
+      onboardingCompleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}onboarding_completed'],
+      )!,
+      permissionsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}permissions_json'],
+      ),
+      enabledModules: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}enabled_modules'],
+      ),
+    );
+  }
+
+  @override
+  $CompanyMembersTable createAlias(String alias) {
+    return $CompanyMembersTable(attachedDatabase, alias);
+  }
+}
+
+class CompanyMember extends DataClass implements Insertable<CompanyMember> {
+  /// Auto-increment primary key
+  final int id;
+
+  /// UUID for future cloud sync
+  final String syncId;
+
+  /// Unix timestamp (milliseconds) of creation
+  final int createdAt;
+
+  /// Unix timestamp (milliseconds) of last update
+  final int updatedAt;
+
+  /// Soft delete flag — records are never hard-deleted
+  final bool isDeleted;
+
+  /// Creator identifier (for multi-user support in the future)
+  final String? createdBy;
+
+  /// The company this membership belongs to (FK → companies.sync_id)
+  final String companySyncId;
+
+  /// The user this membership belongs to (FK → users.sync_id)
+  final String userSyncId;
+
+  /// Corresponding employee record (FK → employees.sync_id), if any
+  final String? employeeSyncId;
+
+  /// Role within the company:
+  ///   0 = owner
+  ///   1 = super_admin
+  ///   2 = admin
+  ///   3 = executive_manager
+  ///   4 = hr_manager
+  ///   5 = finance_manager
+  ///   6 = department_manager
+  ///   7 = team_leader
+  ///   8 = employee
+  ///   9 = guest
+  final int role;
+
+  /// Whether this membership is currently active
+  final bool isActive;
+
+  /// When the user first joined/activated their account
+  final DateTime? joinedAt;
+
+  /// Whether the user has completed first-time onboarding wizard
+  final bool onboardingCompleted;
+
+  /// JSON blob for fine-grained module permissions override
+  /// e.g. {"finance": {"read": true, "write": false}}
+  final String? permissionsJson;
+
+  /// List of enabled modules for this user (comma-separated keys)
+  /// Overrides company-level defaults if set
+  final String? enabledModules;
+  const CompanyMember({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.companySyncId,
+    required this.userSyncId,
+    this.employeeSyncId,
+    required this.role,
+    required this.isActive,
+    this.joinedAt,
+    required this.onboardingCompleted,
+    this.permissionsJson,
+    this.enabledModules,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['company_sync_id'] = Variable<String>(companySyncId);
+    map['user_sync_id'] = Variable<String>(userSyncId);
+    if (!nullToAbsent || employeeSyncId != null) {
+      map['employee_sync_id'] = Variable<String>(employeeSyncId);
+    }
+    map['role'] = Variable<int>(role);
+    map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || joinedAt != null) {
+      map['joined_at'] = Variable<DateTime>(joinedAt);
+    }
+    map['onboarding_completed'] = Variable<bool>(onboardingCompleted);
+    if (!nullToAbsent || permissionsJson != null) {
+      map['permissions_json'] = Variable<String>(permissionsJson);
+    }
+    if (!nullToAbsent || enabledModules != null) {
+      map['enabled_modules'] = Variable<String>(enabledModules);
+    }
+    return map;
+  }
+
+  CompanyMembersCompanion toCompanion(bool nullToAbsent) {
+    return CompanyMembersCompanion(
+      id: Value(id),
+      syncId: Value(syncId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      companySyncId: Value(companySyncId),
+      userSyncId: Value(userSyncId),
+      employeeSyncId: employeeSyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(employeeSyncId),
+      role: Value(role),
+      isActive: Value(isActive),
+      joinedAt: joinedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(joinedAt),
+      onboardingCompleted: Value(onboardingCompleted),
+      permissionsJson: permissionsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(permissionsJson),
+      enabledModules: enabledModules == null && nullToAbsent
+          ? const Value.absent()
+          : Value(enabledModules),
+    );
+  }
+
+  factory CompanyMember.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CompanyMember(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companySyncId: serializer.fromJson<String>(json['companySyncId']),
+      userSyncId: serializer.fromJson<String>(json['userSyncId']),
+      employeeSyncId: serializer.fromJson<String?>(json['employeeSyncId']),
+      role: serializer.fromJson<int>(json['role']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      joinedAt: serializer.fromJson<DateTime?>(json['joinedAt']),
+      onboardingCompleted: serializer.fromJson<bool>(
+        json['onboardingCompleted'],
+      ),
+      permissionsJson: serializer.fromJson<String?>(json['permissionsJson']),
+      enabledModules: serializer.fromJson<String?>(json['enabledModules']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'companySyncId': serializer.toJson<String>(companySyncId),
+      'userSyncId': serializer.toJson<String>(userSyncId),
+      'employeeSyncId': serializer.toJson<String?>(employeeSyncId),
+      'role': serializer.toJson<int>(role),
+      'isActive': serializer.toJson<bool>(isActive),
+      'joinedAt': serializer.toJson<DateTime?>(joinedAt),
+      'onboardingCompleted': serializer.toJson<bool>(onboardingCompleted),
+      'permissionsJson': serializer.toJson<String?>(permissionsJson),
+      'enabledModules': serializer.toJson<String?>(enabledModules),
+    };
+  }
+
+  CompanyMember copyWith({
+    int? id,
+    String? syncId,
+    int? createdAt,
+    int? updatedAt,
+    bool? isDeleted,
+    Value<String?> createdBy = const Value.absent(),
+    String? companySyncId,
+    String? userSyncId,
+    Value<String?> employeeSyncId = const Value.absent(),
+    int? role,
+    bool? isActive,
+    Value<DateTime?> joinedAt = const Value.absent(),
+    bool? onboardingCompleted,
+    Value<String?> permissionsJson = const Value.absent(),
+    Value<String?> enabledModules = const Value.absent(),
+  }) => CompanyMember(
+    id: id ?? this.id,
+    syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companySyncId: companySyncId ?? this.companySyncId,
+    userSyncId: userSyncId ?? this.userSyncId,
+    employeeSyncId: employeeSyncId.present
+        ? employeeSyncId.value
+        : this.employeeSyncId,
+    role: role ?? this.role,
+    isActive: isActive ?? this.isActive,
+    joinedAt: joinedAt.present ? joinedAt.value : this.joinedAt,
+    onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+    permissionsJson: permissionsJson.present
+        ? permissionsJson.value
+        : this.permissionsJson,
+    enabledModules: enabledModules.present
+        ? enabledModules.value
+        : this.enabledModules,
+  );
+  CompanyMember copyWithCompanion(CompanyMembersCompanion data) {
+    return CompanyMember(
+      id: data.id.present ? data.id.value : this.id,
+      syncId: data.syncId.present ? data.syncId.value : this.syncId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companySyncId: data.companySyncId.present
+          ? data.companySyncId.value
+          : this.companySyncId,
+      userSyncId: data.userSyncId.present
+          ? data.userSyncId.value
+          : this.userSyncId,
+      employeeSyncId: data.employeeSyncId.present
+          ? data.employeeSyncId.value
+          : this.employeeSyncId,
+      role: data.role.present ? data.role.value : this.role,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      joinedAt: data.joinedAt.present ? data.joinedAt.value : this.joinedAt,
+      onboardingCompleted: data.onboardingCompleted.present
+          ? data.onboardingCompleted.value
+          : this.onboardingCompleted,
+      permissionsJson: data.permissionsJson.present
+          ? data.permissionsJson.value
+          : this.permissionsJson,
+      enabledModules: data.enabledModules.present
+          ? data.enabledModules.value
+          : this.enabledModules,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanyMember(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('userSyncId: $userSyncId, ')
+          ..write('employeeSyncId: $employeeSyncId, ')
+          ..write('role: $role, ')
+          ..write('isActive: $isActive, ')
+          ..write('joinedAt: $joinedAt, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('permissionsJson: $permissionsJson, ')
+          ..write('enabledModules: $enabledModules')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companySyncId,
+    userSyncId,
+    employeeSyncId,
+    role,
+    isActive,
+    joinedAt,
+    onboardingCompleted,
+    permissionsJson,
+    enabledModules,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CompanyMember &&
+          other.id == this.id &&
+          other.syncId == this.syncId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted &&
+          other.createdBy == this.createdBy &&
+          other.companySyncId == this.companySyncId &&
+          other.userSyncId == this.userSyncId &&
+          other.employeeSyncId == this.employeeSyncId &&
+          other.role == this.role &&
+          other.isActive == this.isActive &&
+          other.joinedAt == this.joinedAt &&
+          other.onboardingCompleted == this.onboardingCompleted &&
+          other.permissionsJson == this.permissionsJson &&
+          other.enabledModules == this.enabledModules);
+}
+
+class CompanyMembersCompanion extends UpdateCompanion<CompanyMember> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> companySyncId;
+  final Value<String> userSyncId;
+  final Value<String?> employeeSyncId;
+  final Value<int> role;
+  final Value<bool> isActive;
+  final Value<DateTime?> joinedAt;
+  final Value<bool> onboardingCompleted;
+  final Value<String?> permissionsJson;
+  final Value<String?> enabledModules;
+  const CompanyMembersCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.companySyncId = const Value.absent(),
+    this.userSyncId = const Value.absent(),
+    this.employeeSyncId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.joinedAt = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.permissionsJson = const Value.absent(),
+    this.enabledModules = const Value.absent(),
+  });
+  CompanyMembersCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String companySyncId,
+    required String userSyncId,
+    this.employeeSyncId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.joinedAt = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.permissionsJson = const Value.absent(),
+    this.enabledModules = const Value.absent(),
+  }) : syncId = Value(syncId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       companySyncId = Value(companySyncId),
+       userSyncId = Value(userSyncId);
+  static Insertable<CompanyMember> custom({
+    Expression<int>? id,
+    Expression<String>? syncId,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<bool>? isDeleted,
+    Expression<String>? createdBy,
+    Expression<String>? companySyncId,
+    Expression<String>? userSyncId,
+    Expression<String>? employeeSyncId,
+    Expression<int>? role,
+    Expression<bool>? isActive,
+    Expression<DateTime>? joinedAt,
+    Expression<bool>? onboardingCompleted,
+    Expression<String>? permissionsJson,
+    Expression<String>? enabledModules,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (syncId != null) 'sync_id': syncId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (createdBy != null) 'created_by': createdBy,
+      if (companySyncId != null) 'company_sync_id': companySyncId,
+      if (userSyncId != null) 'user_sync_id': userSyncId,
+      if (employeeSyncId != null) 'employee_sync_id': employeeSyncId,
+      if (role != null) 'role': role,
+      if (isActive != null) 'is_active': isActive,
+      if (joinedAt != null) 'joined_at': joinedAt,
+      if (onboardingCompleted != null)
+        'onboarding_completed': onboardingCompleted,
+      if (permissionsJson != null) 'permissions_json': permissionsJson,
+      if (enabledModules != null) 'enabled_modules': enabledModules,
+    });
+  }
+
+  CompanyMembersCompanion copyWith({
+    Value<int>? id,
+    Value<String>? syncId,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<bool>? isDeleted,
+    Value<String?>? createdBy,
+    Value<String>? companySyncId,
+    Value<String>? userSyncId,
+    Value<String?>? employeeSyncId,
+    Value<int>? role,
+    Value<bool>? isActive,
+    Value<DateTime?>? joinedAt,
+    Value<bool>? onboardingCompleted,
+    Value<String?>? permissionsJson,
+    Value<String?>? enabledModules,
+  }) {
+    return CompanyMembersCompanion(
+      id: id ?? this.id,
+      syncId: syncId ?? this.syncId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      createdBy: createdBy ?? this.createdBy,
+      companySyncId: companySyncId ?? this.companySyncId,
+      userSyncId: userSyncId ?? this.userSyncId,
+      employeeSyncId: employeeSyncId ?? this.employeeSyncId,
+      role: role ?? this.role,
+      isActive: isActive ?? this.isActive,
+      joinedAt: joinedAt ?? this.joinedAt,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      permissionsJson: permissionsJson ?? this.permissionsJson,
+      enabledModules: enabledModules ?? this.enabledModules,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (syncId.present) {
+      map['sync_id'] = Variable<String>(syncId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companySyncId.present) {
+      map['company_sync_id'] = Variable<String>(companySyncId.value);
+    }
+    if (userSyncId.present) {
+      map['user_sync_id'] = Variable<String>(userSyncId.value);
+    }
+    if (employeeSyncId.present) {
+      map['employee_sync_id'] = Variable<String>(employeeSyncId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<int>(role.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (joinedAt.present) {
+      map['joined_at'] = Variable<DateTime>(joinedAt.value);
+    }
+    if (onboardingCompleted.present) {
+      map['onboarding_completed'] = Variable<bool>(onboardingCompleted.value);
+    }
+    if (permissionsJson.present) {
+      map['permissions_json'] = Variable<String>(permissionsJson.value);
+    }
+    if (enabledModules.present) {
+      map['enabled_modules'] = Variable<String>(enabledModules.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanyMembersCompanion(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('userSyncId: $userSyncId, ')
+          ..write('employeeSyncId: $employeeSyncId, ')
+          ..write('role: $role, ')
+          ..write('isActive: $isActive, ')
+          ..write('joinedAt: $joinedAt, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('permissionsJson: $permissionsJson, ')
+          ..write('enabledModules: $enabledModules')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InvitationsTable extends Invitations
+    with TableInfo<$InvitationsTable, Invitation> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InvitationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncIdMeta = const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companySyncIdMeta = const VerificationMeta(
+    'companySyncId',
+  );
+  @override
+  late final GeneratedColumn<String> companySyncId = GeneratedColumn<String>(
+    'company_sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _invitedBySyncIdMeta = const VerificationMeta(
+    'invitedBySyncId',
+  );
+  @override
+  late final GeneratedColumn<String> invitedBySyncId = GeneratedColumn<String>(
+    'invited_by_sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tokenMeta = const VerificationMeta('token');
+  @override
+  late final GeneratedColumn<String> token = GeneratedColumn<String>(
+    'token',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _preAssignedUsernameMeta =
+      const VerificationMeta('preAssignedUsername');
+  @override
+  late final GeneratedColumn<String> preAssignedUsername =
+      GeneratedColumn<String>(
+        'pre_assigned_username',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _tempPasswordHashMeta = const VerificationMeta(
+    'tempPasswordHash',
+  );
+  @override
+  late final GeneratedColumn<String> tempPasswordHash = GeneratedColumn<String>(
+    'temp_password_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _employeeCodeMeta = const VerificationMeta(
+    'employeeCode',
+  );
+  @override
+  late final GeneratedColumn<String> employeeCode = GeneratedColumn<String>(
+    'employee_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<int> role = GeneratedColumn<int>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(8),
+  );
+  static const VerificationMeta _departmentSyncIdMeta = const VerificationMeta(
+    'departmentSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> departmentSyncId = GeneratedColumn<String>(
+    'department_sync_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _positionSyncIdMeta = const VerificationMeta(
+    'positionSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> positionSyncId = GeneratedColumn<String>(
+    'position_sync_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<int> status = GeneratedColumn<int>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _usedAtMeta = const VerificationMeta('usedAt');
+  @override
+  late final GeneratedColumn<DateTime> usedAt = GeneratedColumn<DateTime>(
+    'used_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resultingUserSyncIdMeta =
+      const VerificationMeta('resultingUserSyncId');
+  @override
+  late final GeneratedColumn<String> resultingUserSyncId =
+      GeneratedColumn<String>(
+        'resulting_user_sync_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companySyncId,
+    invitedBySyncId,
+    token,
+    email,
+    preAssignedUsername,
+    tempPasswordHash,
+    employeeCode,
+    role,
+    departmentSyncId,
+    positionSyncId,
+    status,
+    expiresAt,
+    usedAt,
+    resultingUserSyncId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'invitations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Invitation> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('sync_id')) {
+      context.handle(
+        _syncIdMeta,
+        syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_sync_id')) {
+      context.handle(
+        _companySyncIdMeta,
+        companySyncId.isAcceptableOrUnknown(
+          data['company_sync_id']!,
+          _companySyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_companySyncIdMeta);
+    }
+    if (data.containsKey('invited_by_sync_id')) {
+      context.handle(
+        _invitedBySyncIdMeta,
+        invitedBySyncId.isAcceptableOrUnknown(
+          data['invited_by_sync_id']!,
+          _invitedBySyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_invitedBySyncIdMeta);
+    }
+    if (data.containsKey('token')) {
+      context.handle(
+        _tokenMeta,
+        token.isAcceptableOrUnknown(data['token']!, _tokenMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tokenMeta);
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('pre_assigned_username')) {
+      context.handle(
+        _preAssignedUsernameMeta,
+        preAssignedUsername.isAcceptableOrUnknown(
+          data['pre_assigned_username']!,
+          _preAssignedUsernameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('temp_password_hash')) {
+      context.handle(
+        _tempPasswordHashMeta,
+        tempPasswordHash.isAcceptableOrUnknown(
+          data['temp_password_hash']!,
+          _tempPasswordHashMeta,
+        ),
+      );
+    }
+    if (data.containsKey('employee_code')) {
+      context.handle(
+        _employeeCodeMeta,
+        employeeCode.isAcceptableOrUnknown(
+          data['employee_code']!,
+          _employeeCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('department_sync_id')) {
+      context.handle(
+        _departmentSyncIdMeta,
+        departmentSyncId.isAcceptableOrUnknown(
+          data['department_sync_id']!,
+          _departmentSyncIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('position_sync_id')) {
+      context.handle(
+        _positionSyncIdMeta,
+        positionSyncId.isAcceptableOrUnknown(
+          data['position_sync_id']!,
+          _positionSyncIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('used_at')) {
+      context.handle(
+        _usedAtMeta,
+        usedAt.isAcceptableOrUnknown(data['used_at']!, _usedAtMeta),
+      );
+    }
+    if (data.containsKey('resulting_user_sync_id')) {
+      context.handle(
+        _resultingUserSyncIdMeta,
+        resultingUserSyncId.isAcceptableOrUnknown(
+          data['resulting_user_sync_id']!,
+          _resultingUserSyncIdMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Invitation map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Invitation(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      syncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      companySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_sync_id'],
+      )!,
+      invitedBySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}invited_by_sync_id'],
+      )!,
+      token: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}token'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      preAssignedUsername: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pre_assigned_username'],
+      ),
+      tempPasswordHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}temp_password_hash'],
+      ),
+      employeeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}employee_code'],
+      ),
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}role'],
+      )!,
+      departmentSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}department_sync_id'],
+      ),
+      positionSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}position_sync_id'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}status'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      usedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}used_at'],
+      ),
+      resultingUserSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resulting_user_sync_id'],
+      ),
+    );
+  }
+
+  @override
+  $InvitationsTable createAlias(String alias) {
+    return $InvitationsTable(attachedDatabase, alias);
+  }
+}
+
+class Invitation extends DataClass implements Insertable<Invitation> {
+  /// Auto-increment primary key
+  final int id;
+
+  /// UUID for future cloud sync
+  final String syncId;
+
+  /// Unix timestamp (milliseconds) of creation
+  final int createdAt;
+
+  /// Unix timestamp (milliseconds) of last update
+  final int updatedAt;
+
+  /// Soft delete flag — records are never hard-deleted
+  final bool isDeleted;
+
+  /// Creator identifier (for multi-user support in the future)
+  final String? createdBy;
+
+  /// The company sending this invitation (FK → companies.sync_id)
+  final String companySyncId;
+
+  /// Who sent the invitation (FK → users.sync_id)
+  final String invitedBySyncId;
+
+  /// Unique token for the invitation link (UUID v4)
+  final String token;
+
+  /// Target employee email (for email-based invitations)
+  final String? email;
+
+  /// Pre-assigned username (for code-based onboarding)
+  final String? preAssignedUsername;
+
+  /// Pre-assigned temporary password (hashed, for code-based onboarding)
+  final String? tempPasswordHash;
+
+  /// Human-readable Employee Code generated at invite time, e.g. "EMP-00215"
+  final String? employeeCode;
+
+  /// Role to assign when invitation is accepted (mirrors CompanyMembers.role)
+  final int role;
+
+  /// Department (FK → departments.sync_id), optional
+  final String? departmentSyncId;
+
+  /// Position (FK → positions.sync_id), optional
+  final String? positionSyncId;
+
+  /// Status:
+  ///   0 = pending
+  ///   1 = accepted
+  ///   2 = expired
+  ///   3 = cancelled
+  final int status;
+
+  /// When this invitation expires
+  final DateTime expiresAt;
+
+  /// When the invitation was accepted/used
+  final DateTime? usedAt;
+
+  /// The user account created from this invitation (FK → users.sync_id)
+  final String? resultingUserSyncId;
+  const Invitation({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.companySyncId,
+    required this.invitedBySyncId,
+    required this.token,
+    this.email,
+    this.preAssignedUsername,
+    this.tempPasswordHash,
+    this.employeeCode,
+    required this.role,
+    this.departmentSyncId,
+    this.positionSyncId,
+    required this.status,
+    required this.expiresAt,
+    this.usedAt,
+    this.resultingUserSyncId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['company_sync_id'] = Variable<String>(companySyncId);
+    map['invited_by_sync_id'] = Variable<String>(invitedBySyncId);
+    map['token'] = Variable<String>(token);
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || preAssignedUsername != null) {
+      map['pre_assigned_username'] = Variable<String>(preAssignedUsername);
+    }
+    if (!nullToAbsent || tempPasswordHash != null) {
+      map['temp_password_hash'] = Variable<String>(tempPasswordHash);
+    }
+    if (!nullToAbsent || employeeCode != null) {
+      map['employee_code'] = Variable<String>(employeeCode);
+    }
+    map['role'] = Variable<int>(role);
+    if (!nullToAbsent || departmentSyncId != null) {
+      map['department_sync_id'] = Variable<String>(departmentSyncId);
+    }
+    if (!nullToAbsent || positionSyncId != null) {
+      map['position_sync_id'] = Variable<String>(positionSyncId);
+    }
+    map['status'] = Variable<int>(status);
+    map['expires_at'] = Variable<DateTime>(expiresAt);
+    if (!nullToAbsent || usedAt != null) {
+      map['used_at'] = Variable<DateTime>(usedAt);
+    }
+    if (!nullToAbsent || resultingUserSyncId != null) {
+      map['resulting_user_sync_id'] = Variable<String>(resultingUserSyncId);
+    }
+    return map;
+  }
+
+  InvitationsCompanion toCompanion(bool nullToAbsent) {
+    return InvitationsCompanion(
+      id: Value(id),
+      syncId: Value(syncId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      companySyncId: Value(companySyncId),
+      invitedBySyncId: Value(invitedBySyncId),
+      token: Value(token),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      preAssignedUsername: preAssignedUsername == null && nullToAbsent
+          ? const Value.absent()
+          : Value(preAssignedUsername),
+      tempPasswordHash: tempPasswordHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tempPasswordHash),
+      employeeCode: employeeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(employeeCode),
+      role: Value(role),
+      departmentSyncId: departmentSyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(departmentSyncId),
+      positionSyncId: positionSyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(positionSyncId),
+      status: Value(status),
+      expiresAt: Value(expiresAt),
+      usedAt: usedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usedAt),
+      resultingUserSyncId: resultingUserSyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resultingUserSyncId),
+    );
+  }
+
+  factory Invitation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Invitation(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companySyncId: serializer.fromJson<String>(json['companySyncId']),
+      invitedBySyncId: serializer.fromJson<String>(json['invitedBySyncId']),
+      token: serializer.fromJson<String>(json['token']),
+      email: serializer.fromJson<String?>(json['email']),
+      preAssignedUsername: serializer.fromJson<String?>(
+        json['preAssignedUsername'],
+      ),
+      tempPasswordHash: serializer.fromJson<String?>(json['tempPasswordHash']),
+      employeeCode: serializer.fromJson<String?>(json['employeeCode']),
+      role: serializer.fromJson<int>(json['role']),
+      departmentSyncId: serializer.fromJson<String?>(json['departmentSyncId']),
+      positionSyncId: serializer.fromJson<String?>(json['positionSyncId']),
+      status: serializer.fromJson<int>(json['status']),
+      expiresAt: serializer.fromJson<DateTime>(json['expiresAt']),
+      usedAt: serializer.fromJson<DateTime?>(json['usedAt']),
+      resultingUserSyncId: serializer.fromJson<String?>(
+        json['resultingUserSyncId'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'companySyncId': serializer.toJson<String>(companySyncId),
+      'invitedBySyncId': serializer.toJson<String>(invitedBySyncId),
+      'token': serializer.toJson<String>(token),
+      'email': serializer.toJson<String?>(email),
+      'preAssignedUsername': serializer.toJson<String?>(preAssignedUsername),
+      'tempPasswordHash': serializer.toJson<String?>(tempPasswordHash),
+      'employeeCode': serializer.toJson<String?>(employeeCode),
+      'role': serializer.toJson<int>(role),
+      'departmentSyncId': serializer.toJson<String?>(departmentSyncId),
+      'positionSyncId': serializer.toJson<String?>(positionSyncId),
+      'status': serializer.toJson<int>(status),
+      'expiresAt': serializer.toJson<DateTime>(expiresAt),
+      'usedAt': serializer.toJson<DateTime?>(usedAt),
+      'resultingUserSyncId': serializer.toJson<String?>(resultingUserSyncId),
+    };
+  }
+
+  Invitation copyWith({
+    int? id,
+    String? syncId,
+    int? createdAt,
+    int? updatedAt,
+    bool? isDeleted,
+    Value<String?> createdBy = const Value.absent(),
+    String? companySyncId,
+    String? invitedBySyncId,
+    String? token,
+    Value<String?> email = const Value.absent(),
+    Value<String?> preAssignedUsername = const Value.absent(),
+    Value<String?> tempPasswordHash = const Value.absent(),
+    Value<String?> employeeCode = const Value.absent(),
+    int? role,
+    Value<String?> departmentSyncId = const Value.absent(),
+    Value<String?> positionSyncId = const Value.absent(),
+    int? status,
+    DateTime? expiresAt,
+    Value<DateTime?> usedAt = const Value.absent(),
+    Value<String?> resultingUserSyncId = const Value.absent(),
+  }) => Invitation(
+    id: id ?? this.id,
+    syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companySyncId: companySyncId ?? this.companySyncId,
+    invitedBySyncId: invitedBySyncId ?? this.invitedBySyncId,
+    token: token ?? this.token,
+    email: email.present ? email.value : this.email,
+    preAssignedUsername: preAssignedUsername.present
+        ? preAssignedUsername.value
+        : this.preAssignedUsername,
+    tempPasswordHash: tempPasswordHash.present
+        ? tempPasswordHash.value
+        : this.tempPasswordHash,
+    employeeCode: employeeCode.present ? employeeCode.value : this.employeeCode,
+    role: role ?? this.role,
+    departmentSyncId: departmentSyncId.present
+        ? departmentSyncId.value
+        : this.departmentSyncId,
+    positionSyncId: positionSyncId.present
+        ? positionSyncId.value
+        : this.positionSyncId,
+    status: status ?? this.status,
+    expiresAt: expiresAt ?? this.expiresAt,
+    usedAt: usedAt.present ? usedAt.value : this.usedAt,
+    resultingUserSyncId: resultingUserSyncId.present
+        ? resultingUserSyncId.value
+        : this.resultingUserSyncId,
+  );
+  Invitation copyWithCompanion(InvitationsCompanion data) {
+    return Invitation(
+      id: data.id.present ? data.id.value : this.id,
+      syncId: data.syncId.present ? data.syncId.value : this.syncId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companySyncId: data.companySyncId.present
+          ? data.companySyncId.value
+          : this.companySyncId,
+      invitedBySyncId: data.invitedBySyncId.present
+          ? data.invitedBySyncId.value
+          : this.invitedBySyncId,
+      token: data.token.present ? data.token.value : this.token,
+      email: data.email.present ? data.email.value : this.email,
+      preAssignedUsername: data.preAssignedUsername.present
+          ? data.preAssignedUsername.value
+          : this.preAssignedUsername,
+      tempPasswordHash: data.tempPasswordHash.present
+          ? data.tempPasswordHash.value
+          : this.tempPasswordHash,
+      employeeCode: data.employeeCode.present
+          ? data.employeeCode.value
+          : this.employeeCode,
+      role: data.role.present ? data.role.value : this.role,
+      departmentSyncId: data.departmentSyncId.present
+          ? data.departmentSyncId.value
+          : this.departmentSyncId,
+      positionSyncId: data.positionSyncId.present
+          ? data.positionSyncId.value
+          : this.positionSyncId,
+      status: data.status.present ? data.status.value : this.status,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      usedAt: data.usedAt.present ? data.usedAt.value : this.usedAt,
+      resultingUserSyncId: data.resultingUserSyncId.present
+          ? data.resultingUserSyncId.value
+          : this.resultingUserSyncId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Invitation(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('invitedBySyncId: $invitedBySyncId, ')
+          ..write('token: $token, ')
+          ..write('email: $email, ')
+          ..write('preAssignedUsername: $preAssignedUsername, ')
+          ..write('tempPasswordHash: $tempPasswordHash, ')
+          ..write('employeeCode: $employeeCode, ')
+          ..write('role: $role, ')
+          ..write('departmentSyncId: $departmentSyncId, ')
+          ..write('positionSyncId: $positionSyncId, ')
+          ..write('status: $status, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('usedAt: $usedAt, ')
+          ..write('resultingUserSyncId: $resultingUserSyncId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    companySyncId,
+    invitedBySyncId,
+    token,
+    email,
+    preAssignedUsername,
+    tempPasswordHash,
+    employeeCode,
+    role,
+    departmentSyncId,
+    positionSyncId,
+    status,
+    expiresAt,
+    usedAt,
+    resultingUserSyncId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Invitation &&
+          other.id == this.id &&
+          other.syncId == this.syncId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted &&
+          other.createdBy == this.createdBy &&
+          other.companySyncId == this.companySyncId &&
+          other.invitedBySyncId == this.invitedBySyncId &&
+          other.token == this.token &&
+          other.email == this.email &&
+          other.preAssignedUsername == this.preAssignedUsername &&
+          other.tempPasswordHash == this.tempPasswordHash &&
+          other.employeeCode == this.employeeCode &&
+          other.role == this.role &&
+          other.departmentSyncId == this.departmentSyncId &&
+          other.positionSyncId == this.positionSyncId &&
+          other.status == this.status &&
+          other.expiresAt == this.expiresAt &&
+          other.usedAt == this.usedAt &&
+          other.resultingUserSyncId == this.resultingUserSyncId);
+}
+
+class InvitationsCompanion extends UpdateCompanion<Invitation> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> companySyncId;
+  final Value<String> invitedBySyncId;
+  final Value<String> token;
+  final Value<String?> email;
+  final Value<String?> preAssignedUsername;
+  final Value<String?> tempPasswordHash;
+  final Value<String?> employeeCode;
+  final Value<int> role;
+  final Value<String?> departmentSyncId;
+  final Value<String?> positionSyncId;
+  final Value<int> status;
+  final Value<DateTime> expiresAt;
+  final Value<DateTime?> usedAt;
+  final Value<String?> resultingUserSyncId;
+  const InvitationsCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.companySyncId = const Value.absent(),
+    this.invitedBySyncId = const Value.absent(),
+    this.token = const Value.absent(),
+    this.email = const Value.absent(),
+    this.preAssignedUsername = const Value.absent(),
+    this.tempPasswordHash = const Value.absent(),
+    this.employeeCode = const Value.absent(),
+    this.role = const Value.absent(),
+    this.departmentSyncId = const Value.absent(),
+    this.positionSyncId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.usedAt = const Value.absent(),
+    this.resultingUserSyncId = const Value.absent(),
+  });
+  InvitationsCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String companySyncId,
+    required String invitedBySyncId,
+    required String token,
+    this.email = const Value.absent(),
+    this.preAssignedUsername = const Value.absent(),
+    this.tempPasswordHash = const Value.absent(),
+    this.employeeCode = const Value.absent(),
+    this.role = const Value.absent(),
+    this.departmentSyncId = const Value.absent(),
+    this.positionSyncId = const Value.absent(),
+    this.status = const Value.absent(),
+    required DateTime expiresAt,
+    this.usedAt = const Value.absent(),
+    this.resultingUserSyncId = const Value.absent(),
+  }) : syncId = Value(syncId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       companySyncId = Value(companySyncId),
+       invitedBySyncId = Value(invitedBySyncId),
+       token = Value(token),
+       expiresAt = Value(expiresAt);
+  static Insertable<Invitation> custom({
+    Expression<int>? id,
+    Expression<String>? syncId,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<bool>? isDeleted,
+    Expression<String>? createdBy,
+    Expression<String>? companySyncId,
+    Expression<String>? invitedBySyncId,
+    Expression<String>? token,
+    Expression<String>? email,
+    Expression<String>? preAssignedUsername,
+    Expression<String>? tempPasswordHash,
+    Expression<String>? employeeCode,
+    Expression<int>? role,
+    Expression<String>? departmentSyncId,
+    Expression<String>? positionSyncId,
+    Expression<int>? status,
+    Expression<DateTime>? expiresAt,
+    Expression<DateTime>? usedAt,
+    Expression<String>? resultingUserSyncId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (syncId != null) 'sync_id': syncId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (createdBy != null) 'created_by': createdBy,
+      if (companySyncId != null) 'company_sync_id': companySyncId,
+      if (invitedBySyncId != null) 'invited_by_sync_id': invitedBySyncId,
+      if (token != null) 'token': token,
+      if (email != null) 'email': email,
+      if (preAssignedUsername != null)
+        'pre_assigned_username': preAssignedUsername,
+      if (tempPasswordHash != null) 'temp_password_hash': tempPasswordHash,
+      if (employeeCode != null) 'employee_code': employeeCode,
+      if (role != null) 'role': role,
+      if (departmentSyncId != null) 'department_sync_id': departmentSyncId,
+      if (positionSyncId != null) 'position_sync_id': positionSyncId,
+      if (status != null) 'status': status,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (usedAt != null) 'used_at': usedAt,
+      if (resultingUserSyncId != null)
+        'resulting_user_sync_id': resultingUserSyncId,
+    });
+  }
+
+  InvitationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? syncId,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<bool>? isDeleted,
+    Value<String?>? createdBy,
+    Value<String>? companySyncId,
+    Value<String>? invitedBySyncId,
+    Value<String>? token,
+    Value<String?>? email,
+    Value<String?>? preAssignedUsername,
+    Value<String?>? tempPasswordHash,
+    Value<String?>? employeeCode,
+    Value<int>? role,
+    Value<String?>? departmentSyncId,
+    Value<String?>? positionSyncId,
+    Value<int>? status,
+    Value<DateTime>? expiresAt,
+    Value<DateTime?>? usedAt,
+    Value<String?>? resultingUserSyncId,
+  }) {
+    return InvitationsCompanion(
+      id: id ?? this.id,
+      syncId: syncId ?? this.syncId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      createdBy: createdBy ?? this.createdBy,
+      companySyncId: companySyncId ?? this.companySyncId,
+      invitedBySyncId: invitedBySyncId ?? this.invitedBySyncId,
+      token: token ?? this.token,
+      email: email ?? this.email,
+      preAssignedUsername: preAssignedUsername ?? this.preAssignedUsername,
+      tempPasswordHash: tempPasswordHash ?? this.tempPasswordHash,
+      employeeCode: employeeCode ?? this.employeeCode,
+      role: role ?? this.role,
+      departmentSyncId: departmentSyncId ?? this.departmentSyncId,
+      positionSyncId: positionSyncId ?? this.positionSyncId,
+      status: status ?? this.status,
+      expiresAt: expiresAt ?? this.expiresAt,
+      usedAt: usedAt ?? this.usedAt,
+      resultingUserSyncId: resultingUserSyncId ?? this.resultingUserSyncId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (syncId.present) {
+      map['sync_id'] = Variable<String>(syncId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companySyncId.present) {
+      map['company_sync_id'] = Variable<String>(companySyncId.value);
+    }
+    if (invitedBySyncId.present) {
+      map['invited_by_sync_id'] = Variable<String>(invitedBySyncId.value);
+    }
+    if (token.present) {
+      map['token'] = Variable<String>(token.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (preAssignedUsername.present) {
+      map['pre_assigned_username'] = Variable<String>(
+        preAssignedUsername.value,
+      );
+    }
+    if (tempPasswordHash.present) {
+      map['temp_password_hash'] = Variable<String>(tempPasswordHash.value);
+    }
+    if (employeeCode.present) {
+      map['employee_code'] = Variable<String>(employeeCode.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<int>(role.value);
+    }
+    if (departmentSyncId.present) {
+      map['department_sync_id'] = Variable<String>(departmentSyncId.value);
+    }
+    if (positionSyncId.present) {
+      map['position_sync_id'] = Variable<String>(positionSyncId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<int>(status.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    if (usedAt.present) {
+      map['used_at'] = Variable<DateTime>(usedAt.value);
+    }
+    if (resultingUserSyncId.present) {
+      map['resulting_user_sync_id'] = Variable<String>(
+        resultingUserSyncId.value,
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvitationsCompanion(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('invitedBySyncId: $invitedBySyncId, ')
+          ..write('token: $token, ')
+          ..write('email: $email, ')
+          ..write('preAssignedUsername: $preAssignedUsername, ')
+          ..write('tempPasswordHash: $tempPasswordHash, ')
+          ..write('employeeCode: $employeeCode, ')
+          ..write('role: $role, ')
+          ..write('departmentSyncId: $departmentSyncId, ')
+          ..write('positionSyncId: $positionSyncId, ')
+          ..write('status: $status, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('usedAt: $usedAt, ')
+          ..write('resultingUserSyncId: $resultingUserSyncId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AuditLogsTable extends AuditLogs
+    with TableInfo<$AuditLogsTable, AuditLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AuditLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncIdMeta = const VerificationMeta('syncId');
+  @override
+  late final GeneratedColumn<String> syncId = GeneratedColumn<String>(
+    'sync_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _actorSyncIdMeta = const VerificationMeta(
+    'actorSyncId',
+  );
+  @override
+  late final GeneratedColumn<String> actorSyncId = GeneratedColumn<String>(
+    'actor_sync_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _companySyncIdMeta = const VerificationMeta(
+    'companySyncId',
+  );
+  @override
+  late final GeneratedColumn<String> companySyncId = GeneratedColumn<String>(
+    'company_sync_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionMeta = const VerificationMeta('action');
+  @override
+  late final GeneratedColumn<String> action = GeneratedColumn<String>(
+    'action',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _entitySyncIdMeta = const VerificationMeta(
+    'entitySyncId',
+  );
+  @override
+  late final GeneratedColumn<String> entitySyncId = GeneratedColumn<String>(
+    'entity_sync_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _oldValueJsonMeta = const VerificationMeta(
+    'oldValueJson',
+  );
+  @override
+  late final GeneratedColumn<String> oldValueJson = GeneratedColumn<String>(
+    'old_value_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _newValueJsonMeta = const VerificationMeta(
+    'newValueJson',
+  );
+  @override
+  late final GeneratedColumn<String> newValueJson = GeneratedColumn<String>(
+    'new_value_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ipAddressMeta = const VerificationMeta(
+    'ipAddress',
+  );
+  @override
+  late final GeneratedColumn<String> ipAddress = GeneratedColumn<String>(
+    'ip_address',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deviceInfoMeta = const VerificationMeta(
+    'deviceInfo',
+  );
+  @override
+  late final GeneratedColumn<String> deviceInfo = GeneratedColumn<String>(
+    'device_info',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _platformMeta = const VerificationMeta(
+    'platform',
+  );
+  @override
+  late final GeneratedColumn<String> platform = GeneratedColumn<String>(
+    'platform',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _severityMeta = const VerificationMeta(
+    'severity',
+  );
+  @override
+  late final GeneratedColumn<int> severity = GeneratedColumn<int>(
+    'severity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    actorSyncId,
+    companySyncId,
+    action,
+    entityType,
+    entitySyncId,
+    description,
+    oldValueJson,
+    newValueJson,
+    ipAddress,
+    deviceInfo,
+    platform,
+    severity,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'audit_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AuditLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('sync_id')) {
+      context.handle(
+        _syncIdMeta,
+        syncId.isAcceptableOrUnknown(data['sync_id']!, _syncIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('actor_sync_id')) {
+      context.handle(
+        _actorSyncIdMeta,
+        actorSyncId.isAcceptableOrUnknown(
+          data['actor_sync_id']!,
+          _actorSyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_actorSyncIdMeta);
+    }
+    if (data.containsKey('company_sync_id')) {
+      context.handle(
+        _companySyncIdMeta,
+        companySyncId.isAcceptableOrUnknown(
+          data['company_sync_id']!,
+          _companySyncIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_companySyncIdMeta);
+    }
+    if (data.containsKey('action')) {
+      context.handle(
+        _actionMeta,
+        action.isAcceptableOrUnknown(data['action']!, _actionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionMeta);
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    }
+    if (data.containsKey('entity_sync_id')) {
+      context.handle(
+        _entitySyncIdMeta,
+        entitySyncId.isAcceptableOrUnknown(
+          data['entity_sync_id']!,
+          _entitySyncIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('old_value_json')) {
+      context.handle(
+        _oldValueJsonMeta,
+        oldValueJson.isAcceptableOrUnknown(
+          data['old_value_json']!,
+          _oldValueJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('new_value_json')) {
+      context.handle(
+        _newValueJsonMeta,
+        newValueJson.isAcceptableOrUnknown(
+          data['new_value_json']!,
+          _newValueJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ip_address')) {
+      context.handle(
+        _ipAddressMeta,
+        ipAddress.isAcceptableOrUnknown(data['ip_address']!, _ipAddressMeta),
+      );
+    }
+    if (data.containsKey('device_info')) {
+      context.handle(
+        _deviceInfoMeta,
+        deviceInfo.isAcceptableOrUnknown(data['device_info']!, _deviceInfoMeta),
+      );
+    }
+    if (data.containsKey('platform')) {
+      context.handle(
+        _platformMeta,
+        platform.isAcceptableOrUnknown(data['platform']!, _platformMeta),
+      );
+    }
+    if (data.containsKey('severity')) {
+      context.handle(
+        _severityMeta,
+        severity.isAcceptableOrUnknown(data['severity']!, _severityMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AuditLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AuditLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      syncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      actorSyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}actor_sync_id'],
+      )!,
+      companySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_sync_id'],
+      )!,
+      action: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action'],
+      )!,
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      ),
+      entitySyncId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_sync_id'],
+      ),
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      oldValueJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}old_value_json'],
+      ),
+      newValueJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}new_value_json'],
+      ),
+      ipAddress: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ip_address'],
+      ),
+      deviceInfo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_info'],
+      ),
+      platform: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform'],
+      ),
+      severity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}severity'],
+      )!,
+    );
+  }
+
+  @override
+  $AuditLogsTable createAlias(String alias) {
+    return $AuditLogsTable(attachedDatabase, alias);
+  }
+}
+
+class AuditLog extends DataClass implements Insertable<AuditLog> {
+  /// Auto-increment primary key
+  final int id;
+
+  /// UUID for future cloud sync
+  final String syncId;
+
+  /// Unix timestamp (milliseconds) of creation
+  final int createdAt;
+
+  /// Unix timestamp (milliseconds) of last update
+  final int updatedAt;
+
+  /// Soft delete flag — records are never hard-deleted
+  final bool isDeleted;
+
+  /// Creator identifier (for multi-user support in the future)
+  final String? createdBy;
+
+  /// Actor: user who performed the action (FK → users.sync_id)
+  final String actorSyncId;
+
+  /// Tenant: company context (FK → companies.sync_id)
+  final String companySyncId;
+
+  /// Action category, e.g. "user.login", "invoice.created", "employee.deleted"
+  final String action;
+
+  /// Entity type affected, e.g. "invoice", "employee", "meeting"
+  final String? entityType;
+
+  /// Entity ID (sync_id of the affected record)
+  final String? entitySyncId;
+
+  /// Human-readable description of what changed
+  final String? description;
+
+  /// Previous state (JSON) — for update/delete actions
+  final String? oldValueJson;
+
+  /// New state (JSON) — for create/update actions
+  final String? newValueJson;
+
+  /// IP address of the request (stored as text for IPv4 + IPv6 support)
+  final String? ipAddress;
+
+  /// Device / user agent info
+  final String? deviceInfo;
+
+  /// Platform: "web", "android", "ios", "windows"
+  final String? platform;
+
+  /// Severity:
+  ///   0 = info
+  ///   1 = warning
+  ///   2 = critical
+  final int severity;
+  const AuditLog({
+    required this.id,
+    required this.syncId,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDeleted,
+    this.createdBy,
+    required this.actorSyncId,
+    required this.companySyncId,
+    required this.action,
+    this.entityType,
+    this.entitySyncId,
+    this.description,
+    this.oldValueJson,
+    this.newValueJson,
+    this.ipAddress,
+    this.deviceInfo,
+    this.platform,
+    required this.severity,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['sync_id'] = Variable<String>(syncId);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['actor_sync_id'] = Variable<String>(actorSyncId);
+    map['company_sync_id'] = Variable<String>(companySyncId);
+    map['action'] = Variable<String>(action);
+    if (!nullToAbsent || entityType != null) {
+      map['entity_type'] = Variable<String>(entityType);
+    }
+    if (!nullToAbsent || entitySyncId != null) {
+      map['entity_sync_id'] = Variable<String>(entitySyncId);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || oldValueJson != null) {
+      map['old_value_json'] = Variable<String>(oldValueJson);
+    }
+    if (!nullToAbsent || newValueJson != null) {
+      map['new_value_json'] = Variable<String>(newValueJson);
+    }
+    if (!nullToAbsent || ipAddress != null) {
+      map['ip_address'] = Variable<String>(ipAddress);
+    }
+    if (!nullToAbsent || deviceInfo != null) {
+      map['device_info'] = Variable<String>(deviceInfo);
+    }
+    if (!nullToAbsent || platform != null) {
+      map['platform'] = Variable<String>(platform);
+    }
+    map['severity'] = Variable<int>(severity);
+    return map;
+  }
+
+  AuditLogsCompanion toCompanion(bool nullToAbsent) {
+    return AuditLogsCompanion(
+      id: Value(id),
+      syncId: Value(syncId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      actorSyncId: Value(actorSyncId),
+      companySyncId: Value(companySyncId),
+      action: Value(action),
+      entityType: entityType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(entityType),
+      entitySyncId: entitySyncId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(entitySyncId),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      oldValueJson: oldValueJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oldValueJson),
+      newValueJson: newValueJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(newValueJson),
+      ipAddress: ipAddress == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ipAddress),
+      deviceInfo: deviceInfo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deviceInfo),
+      platform: platform == null && nullToAbsent
+          ? const Value.absent()
+          : Value(platform),
+      severity: Value(severity),
+    );
+  }
+
+  factory AuditLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AuditLog(
+      id: serializer.fromJson<int>(json['id']),
+      syncId: serializer.fromJson<String>(json['syncId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      actorSyncId: serializer.fromJson<String>(json['actorSyncId']),
+      companySyncId: serializer.fromJson<String>(json['companySyncId']),
+      action: serializer.fromJson<String>(json['action']),
+      entityType: serializer.fromJson<String?>(json['entityType']),
+      entitySyncId: serializer.fromJson<String?>(json['entitySyncId']),
+      description: serializer.fromJson<String?>(json['description']),
+      oldValueJson: serializer.fromJson<String?>(json['oldValueJson']),
+      newValueJson: serializer.fromJson<String?>(json['newValueJson']),
+      ipAddress: serializer.fromJson<String?>(json['ipAddress']),
+      deviceInfo: serializer.fromJson<String?>(json['deviceInfo']),
+      platform: serializer.fromJson<String?>(json['platform']),
+      severity: serializer.fromJson<int>(json['severity']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'syncId': serializer.toJson<String>(syncId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'actorSyncId': serializer.toJson<String>(actorSyncId),
+      'companySyncId': serializer.toJson<String>(companySyncId),
+      'action': serializer.toJson<String>(action),
+      'entityType': serializer.toJson<String?>(entityType),
+      'entitySyncId': serializer.toJson<String?>(entitySyncId),
+      'description': serializer.toJson<String?>(description),
+      'oldValueJson': serializer.toJson<String?>(oldValueJson),
+      'newValueJson': serializer.toJson<String?>(newValueJson),
+      'ipAddress': serializer.toJson<String?>(ipAddress),
+      'deviceInfo': serializer.toJson<String?>(deviceInfo),
+      'platform': serializer.toJson<String?>(platform),
+      'severity': serializer.toJson<int>(severity),
+    };
+  }
+
+  AuditLog copyWith({
+    int? id,
+    String? syncId,
+    int? createdAt,
+    int? updatedAt,
+    bool? isDeleted,
+    Value<String?> createdBy = const Value.absent(),
+    String? actorSyncId,
+    String? companySyncId,
+    String? action,
+    Value<String?> entityType = const Value.absent(),
+    Value<String?> entitySyncId = const Value.absent(),
+    Value<String?> description = const Value.absent(),
+    Value<String?> oldValueJson = const Value.absent(),
+    Value<String?> newValueJson = const Value.absent(),
+    Value<String?> ipAddress = const Value.absent(),
+    Value<String?> deviceInfo = const Value.absent(),
+    Value<String?> platform = const Value.absent(),
+    int? severity,
+  }) => AuditLog(
+    id: id ?? this.id,
+    syncId: syncId ?? this.syncId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    actorSyncId: actorSyncId ?? this.actorSyncId,
+    companySyncId: companySyncId ?? this.companySyncId,
+    action: action ?? this.action,
+    entityType: entityType.present ? entityType.value : this.entityType,
+    entitySyncId: entitySyncId.present ? entitySyncId.value : this.entitySyncId,
+    description: description.present ? description.value : this.description,
+    oldValueJson: oldValueJson.present ? oldValueJson.value : this.oldValueJson,
+    newValueJson: newValueJson.present ? newValueJson.value : this.newValueJson,
+    ipAddress: ipAddress.present ? ipAddress.value : this.ipAddress,
+    deviceInfo: deviceInfo.present ? deviceInfo.value : this.deviceInfo,
+    platform: platform.present ? platform.value : this.platform,
+    severity: severity ?? this.severity,
+  );
+  AuditLog copyWithCompanion(AuditLogsCompanion data) {
+    return AuditLog(
+      id: data.id.present ? data.id.value : this.id,
+      syncId: data.syncId.present ? data.syncId.value : this.syncId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      actorSyncId: data.actorSyncId.present
+          ? data.actorSyncId.value
+          : this.actorSyncId,
+      companySyncId: data.companySyncId.present
+          ? data.companySyncId.value
+          : this.companySyncId,
+      action: data.action.present ? data.action.value : this.action,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entitySyncId: data.entitySyncId.present
+          ? data.entitySyncId.value
+          : this.entitySyncId,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      oldValueJson: data.oldValueJson.present
+          ? data.oldValueJson.value
+          : this.oldValueJson,
+      newValueJson: data.newValueJson.present
+          ? data.newValueJson.value
+          : this.newValueJson,
+      ipAddress: data.ipAddress.present ? data.ipAddress.value : this.ipAddress,
+      deviceInfo: data.deviceInfo.present
+          ? data.deviceInfo.value
+          : this.deviceInfo,
+      platform: data.platform.present ? data.platform.value : this.platform,
+      severity: data.severity.present ? data.severity.value : this.severity,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AuditLog(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('actorSyncId: $actorSyncId, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('action: $action, ')
+          ..write('entityType: $entityType, ')
+          ..write('entitySyncId: $entitySyncId, ')
+          ..write('description: $description, ')
+          ..write('oldValueJson: $oldValueJson, ')
+          ..write('newValueJson: $newValueJson, ')
+          ..write('ipAddress: $ipAddress, ')
+          ..write('deviceInfo: $deviceInfo, ')
+          ..write('platform: $platform, ')
+          ..write('severity: $severity')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    syncId,
+    createdAt,
+    updatedAt,
+    isDeleted,
+    createdBy,
+    actorSyncId,
+    companySyncId,
+    action,
+    entityType,
+    entitySyncId,
+    description,
+    oldValueJson,
+    newValueJson,
+    ipAddress,
+    deviceInfo,
+    platform,
+    severity,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AuditLog &&
+          other.id == this.id &&
+          other.syncId == this.syncId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted &&
+          other.createdBy == this.createdBy &&
+          other.actorSyncId == this.actorSyncId &&
+          other.companySyncId == this.companySyncId &&
+          other.action == this.action &&
+          other.entityType == this.entityType &&
+          other.entitySyncId == this.entitySyncId &&
+          other.description == this.description &&
+          other.oldValueJson == this.oldValueJson &&
+          other.newValueJson == this.newValueJson &&
+          other.ipAddress == this.ipAddress &&
+          other.deviceInfo == this.deviceInfo &&
+          other.platform == this.platform &&
+          other.severity == this.severity);
+}
+
+class AuditLogsCompanion extends UpdateCompanion<AuditLog> {
+  final Value<int> id;
+  final Value<String> syncId;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<String?> createdBy;
+  final Value<String> actorSyncId;
+  final Value<String> companySyncId;
+  final Value<String> action;
+  final Value<String?> entityType;
+  final Value<String?> entitySyncId;
+  final Value<String?> description;
+  final Value<String?> oldValueJson;
+  final Value<String?> newValueJson;
+  final Value<String?> ipAddress;
+  final Value<String?> deviceInfo;
+  final Value<String?> platform;
+  final Value<int> severity;
+  const AuditLogsCompanion({
+    this.id = const Value.absent(),
+    this.syncId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.actorSyncId = const Value.absent(),
+    this.companySyncId = const Value.absent(),
+    this.action = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entitySyncId = const Value.absent(),
+    this.description = const Value.absent(),
+    this.oldValueJson = const Value.absent(),
+    this.newValueJson = const Value.absent(),
+    this.ipAddress = const Value.absent(),
+    this.deviceInfo = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.severity = const Value.absent(),
+  });
+  AuditLogsCompanion.insert({
+    this.id = const Value.absent(),
+    required String syncId,
+    required int createdAt,
+    required int updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String actorSyncId,
+    required String companySyncId,
+    required String action,
+    this.entityType = const Value.absent(),
+    this.entitySyncId = const Value.absent(),
+    this.description = const Value.absent(),
+    this.oldValueJson = const Value.absent(),
+    this.newValueJson = const Value.absent(),
+    this.ipAddress = const Value.absent(),
+    this.deviceInfo = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.severity = const Value.absent(),
+  }) : syncId = Value(syncId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       actorSyncId = Value(actorSyncId),
+       companySyncId = Value(companySyncId),
+       action = Value(action);
+  static Insertable<AuditLog> custom({
+    Expression<int>? id,
+    Expression<String>? syncId,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<bool>? isDeleted,
+    Expression<String>? createdBy,
+    Expression<String>? actorSyncId,
+    Expression<String>? companySyncId,
+    Expression<String>? action,
+    Expression<String>? entityType,
+    Expression<String>? entitySyncId,
+    Expression<String>? description,
+    Expression<String>? oldValueJson,
+    Expression<String>? newValueJson,
+    Expression<String>? ipAddress,
+    Expression<String>? deviceInfo,
+    Expression<String>? platform,
+    Expression<int>? severity,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (syncId != null) 'sync_id': syncId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (createdBy != null) 'created_by': createdBy,
+      if (actorSyncId != null) 'actor_sync_id': actorSyncId,
+      if (companySyncId != null) 'company_sync_id': companySyncId,
+      if (action != null) 'action': action,
+      if (entityType != null) 'entity_type': entityType,
+      if (entitySyncId != null) 'entity_sync_id': entitySyncId,
+      if (description != null) 'description': description,
+      if (oldValueJson != null) 'old_value_json': oldValueJson,
+      if (newValueJson != null) 'new_value_json': newValueJson,
+      if (ipAddress != null) 'ip_address': ipAddress,
+      if (deviceInfo != null) 'device_info': deviceInfo,
+      if (platform != null) 'platform': platform,
+      if (severity != null) 'severity': severity,
+    });
+  }
+
+  AuditLogsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? syncId,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<bool>? isDeleted,
+    Value<String?>? createdBy,
+    Value<String>? actorSyncId,
+    Value<String>? companySyncId,
+    Value<String>? action,
+    Value<String?>? entityType,
+    Value<String?>? entitySyncId,
+    Value<String?>? description,
+    Value<String?>? oldValueJson,
+    Value<String?>? newValueJson,
+    Value<String?>? ipAddress,
+    Value<String?>? deviceInfo,
+    Value<String?>? platform,
+    Value<int>? severity,
+  }) {
+    return AuditLogsCompanion(
+      id: id ?? this.id,
+      syncId: syncId ?? this.syncId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      createdBy: createdBy ?? this.createdBy,
+      actorSyncId: actorSyncId ?? this.actorSyncId,
+      companySyncId: companySyncId ?? this.companySyncId,
+      action: action ?? this.action,
+      entityType: entityType ?? this.entityType,
+      entitySyncId: entitySyncId ?? this.entitySyncId,
+      description: description ?? this.description,
+      oldValueJson: oldValueJson ?? this.oldValueJson,
+      newValueJson: newValueJson ?? this.newValueJson,
+      ipAddress: ipAddress ?? this.ipAddress,
+      deviceInfo: deviceInfo ?? this.deviceInfo,
+      platform: platform ?? this.platform,
+      severity: severity ?? this.severity,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (syncId.present) {
+      map['sync_id'] = Variable<String>(syncId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (actorSyncId.present) {
+      map['actor_sync_id'] = Variable<String>(actorSyncId.value);
+    }
+    if (companySyncId.present) {
+      map['company_sync_id'] = Variable<String>(companySyncId.value);
+    }
+    if (action.present) {
+      map['action'] = Variable<String>(action.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entitySyncId.present) {
+      map['entity_sync_id'] = Variable<String>(entitySyncId.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (oldValueJson.present) {
+      map['old_value_json'] = Variable<String>(oldValueJson.value);
+    }
+    if (newValueJson.present) {
+      map['new_value_json'] = Variable<String>(newValueJson.value);
+    }
+    if (ipAddress.present) {
+      map['ip_address'] = Variable<String>(ipAddress.value);
+    }
+    if (deviceInfo.present) {
+      map['device_info'] = Variable<String>(deviceInfo.value);
+    }
+    if (platform.present) {
+      map['platform'] = Variable<String>(platform.value);
+    }
+    if (severity.present) {
+      map['severity'] = Variable<int>(severity.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AuditLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('syncId: $syncId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('actorSyncId: $actorSyncId, ')
+          ..write('companySyncId: $companySyncId, ')
+          ..write('action: $action, ')
+          ..write('entityType: $entityType, ')
+          ..write('entitySyncId: $entitySyncId, ')
+          ..write('description: $description, ')
+          ..write('oldValueJson: $oldValueJson, ')
+          ..write('newValueJson: $newValueJson, ')
+          ..write('ipAddress: $ipAddress, ')
+          ..write('deviceInfo: $deviceInfo, ')
+          ..write('platform: $platform, ')
+          ..write('severity: $severity')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -46199,6 +51884,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ChecksTable checks = $ChecksTable(this);
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $EntityLinksTable entityLinks = $EntityLinksTable(this);
+  late final $CompaniesTable companies = $CompaniesTable(this);
+  late final $CompanyMembersTable companyMembers = $CompanyMembersTable(this);
+  late final $InvitationsTable invitations = $InvitationsTable(this);
+  late final $AuditLogsTable auditLogs = $AuditLogsTable(this);
   late final UsersDao usersDao = UsersDao(this as AppDatabase);
   late final MeetingsDao meetingsDao = MeetingsDao(this as AppDatabase);
   late final TasksDao tasksDao = TasksDao(this as AppDatabase);
@@ -46225,6 +51914,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final EmployeesDao employeesDao = EmployeesDao(this as AppDatabase);
   late final HrmDao hrmDao = HrmDao(this as AppDatabase);
   late final FinanceDao financeDao = FinanceDao(this as AppDatabase);
+  late final CompaniesDao companiesDao = CompaniesDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -46274,6 +51964,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     checks,
     projects,
     entityLinks,
+    companies,
+    companyMembers,
+    invitations,
+    auditLogs,
   ];
 }
 
@@ -46286,11 +51980,28 @@ typedef $$UsersTableCreateCompanionBuilder =
       Value<bool> isDeleted,
       Value<String?> createdBy,
       required String displayName,
+      Value<String?> firstName,
+      Value<String?> lastName,
+      Value<String?> username,
+      Value<String?> email,
+      Value<String?> passwordHash,
+      Value<String?> phone,
+      Value<int> accountType,
+      Value<String?> activeCompanySyncId,
+      Value<String?> employeeCode,
+      Value<String?> workspaceSlug,
       Value<String?> pinHash,
       Value<int> authMethod,
       Value<bool> isBiometricEnabled,
-      Value<int> role,
       Value<String?> avatarPath,
+      Value<String?> avatarUrl,
+      Value<String> language,
+      Value<String> timezone,
+      Value<String?> country,
+      Value<bool> onboardingCompleted,
+      Value<bool> mustChangePassword,
+      Value<String?> supabaseUid,
+      Value<DateTime?> lastSyncedAt,
     });
 typedef $$UsersTableUpdateCompanionBuilder =
     UsersCompanion Function({
@@ -46301,11 +52012,28 @@ typedef $$UsersTableUpdateCompanionBuilder =
       Value<bool> isDeleted,
       Value<String?> createdBy,
       Value<String> displayName,
+      Value<String?> firstName,
+      Value<String?> lastName,
+      Value<String?> username,
+      Value<String?> email,
+      Value<String?> passwordHash,
+      Value<String?> phone,
+      Value<int> accountType,
+      Value<String?> activeCompanySyncId,
+      Value<String?> employeeCode,
+      Value<String?> workspaceSlug,
       Value<String?> pinHash,
       Value<int> authMethod,
       Value<bool> isBiometricEnabled,
-      Value<int> role,
       Value<String?> avatarPath,
+      Value<String?> avatarUrl,
+      Value<String> language,
+      Value<String> timezone,
+      Value<String?> country,
+      Value<bool> onboardingCompleted,
+      Value<bool> mustChangePassword,
+      Value<String?> supabaseUid,
+      Value<DateTime?> lastSyncedAt,
     });
 
 class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
@@ -46351,6 +52079,56 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get firstName => $composableBuilder(
+    column: $table.firstName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastName => $composableBuilder(
+    column: $table.lastName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get accountType => $composableBuilder(
+    column: $table.accountType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeCompanySyncId => $composableBuilder(
+    column: $table.activeCompanySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get pinHash => $composableBuilder(
     column: $table.pinHash,
     builder: (column) => ColumnFilters(column),
@@ -46366,13 +52144,48 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get role => $composableBuilder(
-    column: $table.role,
+  ColumnFilters<String> get avatarPath => $composableBuilder(
+    column: $table.avatarPath,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get avatarPath => $composableBuilder(
-    column: $table.avatarPath,
+  ColumnFilters<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get timezone => $composableBuilder(
+    column: $table.timezone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get mustChangePassword => $composableBuilder(
+    column: $table.mustChangePassword,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get supabaseUid => $composableBuilder(
+    column: $table.supabaseUid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -46421,6 +52234,56 @@ class $$UsersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get firstName => $composableBuilder(
+    column: $table.firstName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastName => $composableBuilder(
+    column: $table.lastName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get accountType => $composableBuilder(
+    column: $table.accountType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get activeCompanySyncId => $composableBuilder(
+    column: $table.activeCompanySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get pinHash => $composableBuilder(
     column: $table.pinHash,
     builder: (column) => ColumnOrderings(column),
@@ -46436,13 +52299,48 @@ class $$UsersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get role => $composableBuilder(
-    column: $table.role,
+  ColumnOrderings<String> get avatarPath => $composableBuilder(
+    column: $table.avatarPath,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get avatarPath => $composableBuilder(
-    column: $table.avatarPath,
+  ColumnOrderings<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get timezone => $composableBuilder(
+    column: $table.timezone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get mustChangePassword => $composableBuilder(
+    column: $table.mustChangePassword,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get supabaseUid => $composableBuilder(
+    column: $table.supabaseUid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -46479,6 +52377,46 @@ class $$UsersTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get firstName =>
+      $composableBuilder(column: $table.firstName, builder: (column) => column);
+
+  GeneratedColumn<String> get lastName =>
+      $composableBuilder(column: $table.lastName, builder: (column) => column);
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<int> get accountType => $composableBuilder(
+    column: $table.accountType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get activeCompanySyncId => $composableBuilder(
+    column: $table.activeCompanySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get pinHash =>
       $composableBuilder(column: $table.pinHash, builder: (column) => column);
 
@@ -46492,11 +52430,40 @@ class $$UsersTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get role =>
-      $composableBuilder(column: $table.role, builder: (column) => column);
-
   GeneratedColumn<String> get avatarPath => $composableBuilder(
     column: $table.avatarPath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get avatarUrl =>
+      $composableBuilder(column: $table.avatarUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
+
+  GeneratedColumn<String> get timezone =>
+      $composableBuilder(column: $table.timezone, builder: (column) => column);
+
+  GeneratedColumn<String> get country =>
+      $composableBuilder(column: $table.country, builder: (column) => column);
+
+  GeneratedColumn<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get mustChangePassword => $composableBuilder(
+    column: $table.mustChangePassword,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get supabaseUid => $composableBuilder(
+    column: $table.supabaseUid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
     builder: (column) => column,
   );
 }
@@ -46536,11 +52503,28 @@ class $$UsersTableTableManager
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 Value<String> displayName = const Value.absent(),
+                Value<String?> firstName = const Value.absent(),
+                Value<String?> lastName = const Value.absent(),
+                Value<String?> username = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> passwordHash = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<int> accountType = const Value.absent(),
+                Value<String?> activeCompanySyncId = const Value.absent(),
+                Value<String?> employeeCode = const Value.absent(),
+                Value<String?> workspaceSlug = const Value.absent(),
                 Value<String?> pinHash = const Value.absent(),
                 Value<int> authMethod = const Value.absent(),
                 Value<bool> isBiometricEnabled = const Value.absent(),
-                Value<int> role = const Value.absent(),
                 Value<String?> avatarPath = const Value.absent(),
+                Value<String?> avatarUrl = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<String> timezone = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<bool> onboardingCompleted = const Value.absent(),
+                Value<bool> mustChangePassword = const Value.absent(),
+                Value<String?> supabaseUid = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => UsersCompanion(
                 id: id,
                 syncId: syncId,
@@ -46549,11 +52533,28 @@ class $$UsersTableTableManager
                 isDeleted: isDeleted,
                 createdBy: createdBy,
                 displayName: displayName,
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                passwordHash: passwordHash,
+                phone: phone,
+                accountType: accountType,
+                activeCompanySyncId: activeCompanySyncId,
+                employeeCode: employeeCode,
+                workspaceSlug: workspaceSlug,
                 pinHash: pinHash,
                 authMethod: authMethod,
                 isBiometricEnabled: isBiometricEnabled,
-                role: role,
                 avatarPath: avatarPath,
+                avatarUrl: avatarUrl,
+                language: language,
+                timezone: timezone,
+                country: country,
+                onboardingCompleted: onboardingCompleted,
+                mustChangePassword: mustChangePassword,
+                supabaseUid: supabaseUid,
+                lastSyncedAt: lastSyncedAt,
               ),
           createCompanionCallback:
               ({
@@ -46564,11 +52565,28 @@ class $$UsersTableTableManager
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 required String displayName,
+                Value<String?> firstName = const Value.absent(),
+                Value<String?> lastName = const Value.absent(),
+                Value<String?> username = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> passwordHash = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<int> accountType = const Value.absent(),
+                Value<String?> activeCompanySyncId = const Value.absent(),
+                Value<String?> employeeCode = const Value.absent(),
+                Value<String?> workspaceSlug = const Value.absent(),
                 Value<String?> pinHash = const Value.absent(),
                 Value<int> authMethod = const Value.absent(),
                 Value<bool> isBiometricEnabled = const Value.absent(),
-                Value<int> role = const Value.absent(),
                 Value<String?> avatarPath = const Value.absent(),
+                Value<String?> avatarUrl = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<String> timezone = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<bool> onboardingCompleted = const Value.absent(),
+                Value<bool> mustChangePassword = const Value.absent(),
+                Value<String?> supabaseUid = const Value.absent(),
+                Value<DateTime?> lastSyncedAt = const Value.absent(),
               }) => UsersCompanion.insert(
                 id: id,
                 syncId: syncId,
@@ -46577,11 +52595,28 @@ class $$UsersTableTableManager
                 isDeleted: isDeleted,
                 createdBy: createdBy,
                 displayName: displayName,
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                passwordHash: passwordHash,
+                phone: phone,
+                accountType: accountType,
+                activeCompanySyncId: activeCompanySyncId,
+                employeeCode: employeeCode,
+                workspaceSlug: workspaceSlug,
                 pinHash: pinHash,
                 authMethod: authMethod,
                 isBiometricEnabled: isBiometricEnabled,
-                role: role,
                 avatarPath: avatarPath,
+                avatarUrl: avatarUrl,
+                language: language,
+                timezone: timezone,
+                country: country,
+                onboardingCompleted: onboardingCompleted,
+                mustChangePassword: mustChangePassword,
+                supabaseUid: supabaseUid,
+                lastSyncedAt: lastSyncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -66464,6 +72499,1978 @@ typedef $$EntityLinksTableProcessedTableManager =
       EntityLink,
       PrefetchHooks Function()
     >;
+typedef $$CompaniesTableCreateCompanionBuilder =
+    CompaniesCompanion Function({
+      Value<int> id,
+      required String syncId,
+      required int createdAt,
+      required int updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      required String companyCode,
+      required String name,
+      required String workspaceSlug,
+      Value<int> planType,
+      Value<int> subscriptionStatus,
+      Value<DateTime?> trialEndsAt,
+      Value<DateTime?> subscriptionEndsAt,
+      required String ownerSyncId,
+      Value<String?> country,
+      Value<String?> currency,
+      Value<String?> industry,
+      Value<int?> expectedEmployeeCount,
+      Value<String?> logoUrl,
+      Value<String?> website,
+      Value<String?> phone,
+      Value<String?> address,
+      Value<String?> taxNumber,
+      Value<String?> commercialRegNumber,
+      Value<String> defaultLanguage,
+      Value<String> defaultTimezone,
+      Value<String?> settingsJson,
+    });
+typedef $$CompaniesTableUpdateCompanionBuilder =
+    CompaniesCompanion Function({
+      Value<int> id,
+      Value<String> syncId,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      Value<String> companyCode,
+      Value<String> name,
+      Value<String> workspaceSlug,
+      Value<int> planType,
+      Value<int> subscriptionStatus,
+      Value<DateTime?> trialEndsAt,
+      Value<DateTime?> subscriptionEndsAt,
+      Value<String> ownerSyncId,
+      Value<String?> country,
+      Value<String?> currency,
+      Value<String?> industry,
+      Value<int?> expectedEmployeeCount,
+      Value<String?> logoUrl,
+      Value<String?> website,
+      Value<String?> phone,
+      Value<String?> address,
+      Value<String?> taxNumber,
+      Value<String?> commercialRegNumber,
+      Value<String> defaultLanguage,
+      Value<String> defaultTimezone,
+      Value<String?> settingsJson,
+    });
+
+class $$CompaniesTableFilterComposer
+    extends Composer<_$AppDatabase, $CompaniesTable> {
+  $$CompaniesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyCode => $composableBuilder(
+    column: $table.companyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get planType => $composableBuilder(
+    column: $table.planType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get subscriptionStatus => $composableBuilder(
+    column: $table.subscriptionStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get trialEndsAt => $composableBuilder(
+    column: $table.trialEndsAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get subscriptionEndsAt => $composableBuilder(
+    column: $table.subscriptionEndsAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerSyncId => $composableBuilder(
+    column: $table.ownerSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get industry => $composableBuilder(
+    column: $table.industry,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expectedEmployeeCount => $composableBuilder(
+    column: $table.expectedEmployeeCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get logoUrl => $composableBuilder(
+    column: $table.logoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get taxNumber => $composableBuilder(
+    column: $table.taxNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get commercialRegNumber => $composableBuilder(
+    column: $table.commercialRegNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultLanguage => $composableBuilder(
+    column: $table.defaultLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultTimezone => $composableBuilder(
+    column: $table.defaultTimezone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get settingsJson => $composableBuilder(
+    column: $table.settingsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CompaniesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CompaniesTable> {
+  $$CompaniesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companyCode => $composableBuilder(
+    column: $table.companyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get planType => $composableBuilder(
+    column: $table.planType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get subscriptionStatus => $composableBuilder(
+    column: $table.subscriptionStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get trialEndsAt => $composableBuilder(
+    column: $table.trialEndsAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get subscriptionEndsAt => $composableBuilder(
+    column: $table.subscriptionEndsAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerSyncId => $composableBuilder(
+    column: $table.ownerSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get industry => $composableBuilder(
+    column: $table.industry,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get expectedEmployeeCount => $composableBuilder(
+    column: $table.expectedEmployeeCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get logoUrl => $composableBuilder(
+    column: $table.logoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get taxNumber => $composableBuilder(
+    column: $table.taxNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get commercialRegNumber => $composableBuilder(
+    column: $table.commercialRegNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultLanguage => $composableBuilder(
+    column: $table.defaultLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultTimezone => $composableBuilder(
+    column: $table.defaultTimezone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get settingsJson => $composableBuilder(
+    column: $table.settingsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CompaniesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CompaniesTable> {
+  $$CompaniesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get syncId =>
+      $composableBuilder(column: $table.syncId, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyCode => $composableBuilder(
+    column: $table.companyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceSlug => $composableBuilder(
+    column: $table.workspaceSlug,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get planType =>
+      $composableBuilder(column: $table.planType, builder: (column) => column);
+
+  GeneratedColumn<int> get subscriptionStatus => $composableBuilder(
+    column: $table.subscriptionStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get trialEndsAt => $composableBuilder(
+    column: $table.trialEndsAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get subscriptionEndsAt => $composableBuilder(
+    column: $table.subscriptionEndsAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get ownerSyncId => $composableBuilder(
+    column: $table.ownerSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get country =>
+      $composableBuilder(column: $table.country, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<String> get industry =>
+      $composableBuilder(column: $table.industry, builder: (column) => column);
+
+  GeneratedColumn<int> get expectedEmployeeCount => $composableBuilder(
+    column: $table.expectedEmployeeCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get logoUrl =>
+      $composableBuilder(column: $table.logoUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get website =>
+      $composableBuilder(column: $table.website, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
+
+  GeneratedColumn<String> get taxNumber =>
+      $composableBuilder(column: $table.taxNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get commercialRegNumber => $composableBuilder(
+    column: $table.commercialRegNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get defaultLanguage => $composableBuilder(
+    column: $table.defaultLanguage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get defaultTimezone => $composableBuilder(
+    column: $table.defaultTimezone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get settingsJson => $composableBuilder(
+    column: $table.settingsJson,
+    builder: (column) => column,
+  );
+}
+
+class $$CompaniesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CompaniesTable,
+          Company,
+          $$CompaniesTableFilterComposer,
+          $$CompaniesTableOrderingComposer,
+          $$CompaniesTableAnnotationComposer,
+          $$CompaniesTableCreateCompanionBuilder,
+          $$CompaniesTableUpdateCompanionBuilder,
+          (Company, BaseReferences<_$AppDatabase, $CompaniesTable, Company>),
+          Company,
+          PrefetchHooks Function()
+        > {
+  $$CompaniesTableTableManager(_$AppDatabase db, $CompaniesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CompaniesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CompaniesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CompaniesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> syncId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> companyCode = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> workspaceSlug = const Value.absent(),
+                Value<int> planType = const Value.absent(),
+                Value<int> subscriptionStatus = const Value.absent(),
+                Value<DateTime?> trialEndsAt = const Value.absent(),
+                Value<DateTime?> subscriptionEndsAt = const Value.absent(),
+                Value<String> ownerSyncId = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<String?> industry = const Value.absent(),
+                Value<int?> expectedEmployeeCount = const Value.absent(),
+                Value<String?> logoUrl = const Value.absent(),
+                Value<String?> website = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> address = const Value.absent(),
+                Value<String?> taxNumber = const Value.absent(),
+                Value<String?> commercialRegNumber = const Value.absent(),
+                Value<String> defaultLanguage = const Value.absent(),
+                Value<String> defaultTimezone = const Value.absent(),
+                Value<String?> settingsJson = const Value.absent(),
+              }) => CompaniesCompanion(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companyCode: companyCode,
+                name: name,
+                workspaceSlug: workspaceSlug,
+                planType: planType,
+                subscriptionStatus: subscriptionStatus,
+                trialEndsAt: trialEndsAt,
+                subscriptionEndsAt: subscriptionEndsAt,
+                ownerSyncId: ownerSyncId,
+                country: country,
+                currency: currency,
+                industry: industry,
+                expectedEmployeeCount: expectedEmployeeCount,
+                logoUrl: logoUrl,
+                website: website,
+                phone: phone,
+                address: address,
+                taxNumber: taxNumber,
+                commercialRegNumber: commercialRegNumber,
+                defaultLanguage: defaultLanguage,
+                defaultTimezone: defaultTimezone,
+                settingsJson: settingsJson,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String syncId,
+                required int createdAt,
+                required int updatedAt,
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String companyCode,
+                required String name,
+                required String workspaceSlug,
+                Value<int> planType = const Value.absent(),
+                Value<int> subscriptionStatus = const Value.absent(),
+                Value<DateTime?> trialEndsAt = const Value.absent(),
+                Value<DateTime?> subscriptionEndsAt = const Value.absent(),
+                required String ownerSyncId,
+                Value<String?> country = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<String?> industry = const Value.absent(),
+                Value<int?> expectedEmployeeCount = const Value.absent(),
+                Value<String?> logoUrl = const Value.absent(),
+                Value<String?> website = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> address = const Value.absent(),
+                Value<String?> taxNumber = const Value.absent(),
+                Value<String?> commercialRegNumber = const Value.absent(),
+                Value<String> defaultLanguage = const Value.absent(),
+                Value<String> defaultTimezone = const Value.absent(),
+                Value<String?> settingsJson = const Value.absent(),
+              }) => CompaniesCompanion.insert(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companyCode: companyCode,
+                name: name,
+                workspaceSlug: workspaceSlug,
+                planType: planType,
+                subscriptionStatus: subscriptionStatus,
+                trialEndsAt: trialEndsAt,
+                subscriptionEndsAt: subscriptionEndsAt,
+                ownerSyncId: ownerSyncId,
+                country: country,
+                currency: currency,
+                industry: industry,
+                expectedEmployeeCount: expectedEmployeeCount,
+                logoUrl: logoUrl,
+                website: website,
+                phone: phone,
+                address: address,
+                taxNumber: taxNumber,
+                commercialRegNumber: commercialRegNumber,
+                defaultLanguage: defaultLanguage,
+                defaultTimezone: defaultTimezone,
+                settingsJson: settingsJson,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CompaniesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CompaniesTable,
+      Company,
+      $$CompaniesTableFilterComposer,
+      $$CompaniesTableOrderingComposer,
+      $$CompaniesTableAnnotationComposer,
+      $$CompaniesTableCreateCompanionBuilder,
+      $$CompaniesTableUpdateCompanionBuilder,
+      (Company, BaseReferences<_$AppDatabase, $CompaniesTable, Company>),
+      Company,
+      PrefetchHooks Function()
+    >;
+typedef $$CompanyMembersTableCreateCompanionBuilder =
+    CompanyMembersCompanion Function({
+      Value<int> id,
+      required String syncId,
+      required int createdAt,
+      required int updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      required String companySyncId,
+      required String userSyncId,
+      Value<String?> employeeSyncId,
+      Value<int> role,
+      Value<bool> isActive,
+      Value<DateTime?> joinedAt,
+      Value<bool> onboardingCompleted,
+      Value<String?> permissionsJson,
+      Value<String?> enabledModules,
+    });
+typedef $$CompanyMembersTableUpdateCompanionBuilder =
+    CompanyMembersCompanion Function({
+      Value<int> id,
+      Value<String> syncId,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      Value<String> companySyncId,
+      Value<String> userSyncId,
+      Value<String?> employeeSyncId,
+      Value<int> role,
+      Value<bool> isActive,
+      Value<DateTime?> joinedAt,
+      Value<bool> onboardingCompleted,
+      Value<String?> permissionsJson,
+      Value<String?> enabledModules,
+    });
+
+class $$CompanyMembersTableFilterComposer
+    extends Composer<_$AppDatabase, $CompanyMembersTable> {
+  $$CompanyMembersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userSyncId => $composableBuilder(
+    column: $table.userSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get employeeSyncId => $composableBuilder(
+    column: $table.employeeSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get joinedAt => $composableBuilder(
+    column: $table.joinedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get permissionsJson => $composableBuilder(
+    column: $table.permissionsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get enabledModules => $composableBuilder(
+    column: $table.enabledModules,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CompanyMembersTableOrderingComposer
+    extends Composer<_$AppDatabase, $CompanyMembersTable> {
+  $$CompanyMembersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userSyncId => $composableBuilder(
+    column: $table.userSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get employeeSyncId => $composableBuilder(
+    column: $table.employeeSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get joinedAt => $composableBuilder(
+    column: $table.joinedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get permissionsJson => $composableBuilder(
+    column: $table.permissionsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get enabledModules => $composableBuilder(
+    column: $table.enabledModules,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CompanyMembersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CompanyMembersTable> {
+  $$CompanyMembersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get syncId =>
+      $composableBuilder(column: $table.syncId, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get userSyncId => $composableBuilder(
+    column: $table.userSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get employeeSyncId => $composableBuilder(
+    column: $table.employeeSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get joinedAt =>
+      $composableBuilder(column: $table.joinedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get onboardingCompleted => $composableBuilder(
+    column: $table.onboardingCompleted,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get permissionsJson => $composableBuilder(
+    column: $table.permissionsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get enabledModules => $composableBuilder(
+    column: $table.enabledModules,
+    builder: (column) => column,
+  );
+}
+
+class $$CompanyMembersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CompanyMembersTable,
+          CompanyMember,
+          $$CompanyMembersTableFilterComposer,
+          $$CompanyMembersTableOrderingComposer,
+          $$CompanyMembersTableAnnotationComposer,
+          $$CompanyMembersTableCreateCompanionBuilder,
+          $$CompanyMembersTableUpdateCompanionBuilder,
+          (
+            CompanyMember,
+            BaseReferences<_$AppDatabase, $CompanyMembersTable, CompanyMember>,
+          ),
+          CompanyMember,
+          PrefetchHooks Function()
+        > {
+  $$CompanyMembersTableTableManager(
+    _$AppDatabase db,
+    $CompanyMembersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CompanyMembersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CompanyMembersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CompanyMembersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> syncId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> companySyncId = const Value.absent(),
+                Value<String> userSyncId = const Value.absent(),
+                Value<String?> employeeSyncId = const Value.absent(),
+                Value<int> role = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime?> joinedAt = const Value.absent(),
+                Value<bool> onboardingCompleted = const Value.absent(),
+                Value<String?> permissionsJson = const Value.absent(),
+                Value<String?> enabledModules = const Value.absent(),
+              }) => CompanyMembersCompanion(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companySyncId: companySyncId,
+                userSyncId: userSyncId,
+                employeeSyncId: employeeSyncId,
+                role: role,
+                isActive: isActive,
+                joinedAt: joinedAt,
+                onboardingCompleted: onboardingCompleted,
+                permissionsJson: permissionsJson,
+                enabledModules: enabledModules,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String syncId,
+                required int createdAt,
+                required int updatedAt,
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String companySyncId,
+                required String userSyncId,
+                Value<String?> employeeSyncId = const Value.absent(),
+                Value<int> role = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime?> joinedAt = const Value.absent(),
+                Value<bool> onboardingCompleted = const Value.absent(),
+                Value<String?> permissionsJson = const Value.absent(),
+                Value<String?> enabledModules = const Value.absent(),
+              }) => CompanyMembersCompanion.insert(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companySyncId: companySyncId,
+                userSyncId: userSyncId,
+                employeeSyncId: employeeSyncId,
+                role: role,
+                isActive: isActive,
+                joinedAt: joinedAt,
+                onboardingCompleted: onboardingCompleted,
+                permissionsJson: permissionsJson,
+                enabledModules: enabledModules,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CompanyMembersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CompanyMembersTable,
+      CompanyMember,
+      $$CompanyMembersTableFilterComposer,
+      $$CompanyMembersTableOrderingComposer,
+      $$CompanyMembersTableAnnotationComposer,
+      $$CompanyMembersTableCreateCompanionBuilder,
+      $$CompanyMembersTableUpdateCompanionBuilder,
+      (
+        CompanyMember,
+        BaseReferences<_$AppDatabase, $CompanyMembersTable, CompanyMember>,
+      ),
+      CompanyMember,
+      PrefetchHooks Function()
+    >;
+typedef $$InvitationsTableCreateCompanionBuilder =
+    InvitationsCompanion Function({
+      Value<int> id,
+      required String syncId,
+      required int createdAt,
+      required int updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      required String companySyncId,
+      required String invitedBySyncId,
+      required String token,
+      Value<String?> email,
+      Value<String?> preAssignedUsername,
+      Value<String?> tempPasswordHash,
+      Value<String?> employeeCode,
+      Value<int> role,
+      Value<String?> departmentSyncId,
+      Value<String?> positionSyncId,
+      Value<int> status,
+      required DateTime expiresAt,
+      Value<DateTime?> usedAt,
+      Value<String?> resultingUserSyncId,
+    });
+typedef $$InvitationsTableUpdateCompanionBuilder =
+    InvitationsCompanion Function({
+      Value<int> id,
+      Value<String> syncId,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      Value<String> companySyncId,
+      Value<String> invitedBySyncId,
+      Value<String> token,
+      Value<String?> email,
+      Value<String?> preAssignedUsername,
+      Value<String?> tempPasswordHash,
+      Value<String?> employeeCode,
+      Value<int> role,
+      Value<String?> departmentSyncId,
+      Value<String?> positionSyncId,
+      Value<int> status,
+      Value<DateTime> expiresAt,
+      Value<DateTime?> usedAt,
+      Value<String?> resultingUserSyncId,
+    });
+
+class $$InvitationsTableFilterComposer
+    extends Composer<_$AppDatabase, $InvitationsTable> {
+  $$InvitationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get invitedBySyncId => $composableBuilder(
+    column: $table.invitedBySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get token => $composableBuilder(
+    column: $table.token,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preAssignedUsername => $composableBuilder(
+    column: $table.preAssignedUsername,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tempPasswordHash => $composableBuilder(
+    column: $table.tempPasswordHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get departmentSyncId => $composableBuilder(
+    column: $table.departmentSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get positionSyncId => $composableBuilder(
+    column: $table.positionSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get usedAt => $composableBuilder(
+    column: $table.usedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get resultingUserSyncId => $composableBuilder(
+    column: $table.resultingUserSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$InvitationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $InvitationsTable> {
+  $$InvitationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get invitedBySyncId => $composableBuilder(
+    column: $table.invitedBySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get token => $composableBuilder(
+    column: $table.token,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get preAssignedUsername => $composableBuilder(
+    column: $table.preAssignedUsername,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tempPasswordHash => $composableBuilder(
+    column: $table.tempPasswordHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get departmentSyncId => $composableBuilder(
+    column: $table.departmentSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get positionSyncId => $composableBuilder(
+    column: $table.positionSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get usedAt => $composableBuilder(
+    column: $table.usedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resultingUserSyncId => $composableBuilder(
+    column: $table.resultingUserSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$InvitationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InvitationsTable> {
+  $$InvitationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get syncId =>
+      $composableBuilder(column: $table.syncId, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get invitedBySyncId => $composableBuilder(
+    column: $table.invitedBySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get token =>
+      $composableBuilder(column: $table.token, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get preAssignedUsername => $composableBuilder(
+    column: $table.preAssignedUsername,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tempPasswordHash => $composableBuilder(
+    column: $table.tempPasswordHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get employeeCode => $composableBuilder(
+    column: $table.employeeCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get departmentSyncId => $composableBuilder(
+    column: $table.departmentSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get positionSyncId => $composableBuilder(
+    column: $table.positionSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get usedAt =>
+      $composableBuilder(column: $table.usedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get resultingUserSyncId => $composableBuilder(
+    column: $table.resultingUserSyncId,
+    builder: (column) => column,
+  );
+}
+
+class $$InvitationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $InvitationsTable,
+          Invitation,
+          $$InvitationsTableFilterComposer,
+          $$InvitationsTableOrderingComposer,
+          $$InvitationsTableAnnotationComposer,
+          $$InvitationsTableCreateCompanionBuilder,
+          $$InvitationsTableUpdateCompanionBuilder,
+          (
+            Invitation,
+            BaseReferences<_$AppDatabase, $InvitationsTable, Invitation>,
+          ),
+          Invitation,
+          PrefetchHooks Function()
+        > {
+  $$InvitationsTableTableManager(_$AppDatabase db, $InvitationsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InvitationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InvitationsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$InvitationsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> syncId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> companySyncId = const Value.absent(),
+                Value<String> invitedBySyncId = const Value.absent(),
+                Value<String> token = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> preAssignedUsername = const Value.absent(),
+                Value<String?> tempPasswordHash = const Value.absent(),
+                Value<String?> employeeCode = const Value.absent(),
+                Value<int> role = const Value.absent(),
+                Value<String?> departmentSyncId = const Value.absent(),
+                Value<String?> positionSyncId = const Value.absent(),
+                Value<int> status = const Value.absent(),
+                Value<DateTime> expiresAt = const Value.absent(),
+                Value<DateTime?> usedAt = const Value.absent(),
+                Value<String?> resultingUserSyncId = const Value.absent(),
+              }) => InvitationsCompanion(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companySyncId: companySyncId,
+                invitedBySyncId: invitedBySyncId,
+                token: token,
+                email: email,
+                preAssignedUsername: preAssignedUsername,
+                tempPasswordHash: tempPasswordHash,
+                employeeCode: employeeCode,
+                role: role,
+                departmentSyncId: departmentSyncId,
+                positionSyncId: positionSyncId,
+                status: status,
+                expiresAt: expiresAt,
+                usedAt: usedAt,
+                resultingUserSyncId: resultingUserSyncId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String syncId,
+                required int createdAt,
+                required int updatedAt,
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String companySyncId,
+                required String invitedBySyncId,
+                required String token,
+                Value<String?> email = const Value.absent(),
+                Value<String?> preAssignedUsername = const Value.absent(),
+                Value<String?> tempPasswordHash = const Value.absent(),
+                Value<String?> employeeCode = const Value.absent(),
+                Value<int> role = const Value.absent(),
+                Value<String?> departmentSyncId = const Value.absent(),
+                Value<String?> positionSyncId = const Value.absent(),
+                Value<int> status = const Value.absent(),
+                required DateTime expiresAt,
+                Value<DateTime?> usedAt = const Value.absent(),
+                Value<String?> resultingUserSyncId = const Value.absent(),
+              }) => InvitationsCompanion.insert(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                companySyncId: companySyncId,
+                invitedBySyncId: invitedBySyncId,
+                token: token,
+                email: email,
+                preAssignedUsername: preAssignedUsername,
+                tempPasswordHash: tempPasswordHash,
+                employeeCode: employeeCode,
+                role: role,
+                departmentSyncId: departmentSyncId,
+                positionSyncId: positionSyncId,
+                status: status,
+                expiresAt: expiresAt,
+                usedAt: usedAt,
+                resultingUserSyncId: resultingUserSyncId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$InvitationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $InvitationsTable,
+      Invitation,
+      $$InvitationsTableFilterComposer,
+      $$InvitationsTableOrderingComposer,
+      $$InvitationsTableAnnotationComposer,
+      $$InvitationsTableCreateCompanionBuilder,
+      $$InvitationsTableUpdateCompanionBuilder,
+      (
+        Invitation,
+        BaseReferences<_$AppDatabase, $InvitationsTable, Invitation>,
+      ),
+      Invitation,
+      PrefetchHooks Function()
+    >;
+typedef $$AuditLogsTableCreateCompanionBuilder =
+    AuditLogsCompanion Function({
+      Value<int> id,
+      required String syncId,
+      required int createdAt,
+      required int updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      required String actorSyncId,
+      required String companySyncId,
+      required String action,
+      Value<String?> entityType,
+      Value<String?> entitySyncId,
+      Value<String?> description,
+      Value<String?> oldValueJson,
+      Value<String?> newValueJson,
+      Value<String?> ipAddress,
+      Value<String?> deviceInfo,
+      Value<String?> platform,
+      Value<int> severity,
+    });
+typedef $$AuditLogsTableUpdateCompanionBuilder =
+    AuditLogsCompanion Function({
+      Value<int> id,
+      Value<String> syncId,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<bool> isDeleted,
+      Value<String?> createdBy,
+      Value<String> actorSyncId,
+      Value<String> companySyncId,
+      Value<String> action,
+      Value<String?> entityType,
+      Value<String?> entitySyncId,
+      Value<String?> description,
+      Value<String?> oldValueJson,
+      Value<String?> newValueJson,
+      Value<String?> ipAddress,
+      Value<String?> deviceInfo,
+      Value<String?> platform,
+      Value<int> severity,
+    });
+
+class $$AuditLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $AuditLogsTable> {
+  $$AuditLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actorSyncId => $composableBuilder(
+    column: $table.actorSyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get action => $composableBuilder(
+    column: $table.action,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entitySyncId => $composableBuilder(
+    column: $table.entitySyncId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get oldValueJson => $composableBuilder(
+    column: $table.oldValueJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get newValueJson => $composableBuilder(
+    column: $table.newValueJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ipAddress => $composableBuilder(
+    column: $table.ipAddress,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceInfo => $composableBuilder(
+    column: $table.deviceInfo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get severity => $composableBuilder(
+    column: $table.severity,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AuditLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AuditLogsTable> {
+  $$AuditLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncId => $composableBuilder(
+    column: $table.syncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actorSyncId => $composableBuilder(
+    column: $table.actorSyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get action => $composableBuilder(
+    column: $table.action,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entitySyncId => $composableBuilder(
+    column: $table.entitySyncId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get oldValueJson => $composableBuilder(
+    column: $table.oldValueJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get newValueJson => $composableBuilder(
+    column: $table.newValueJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ipAddress => $composableBuilder(
+    column: $table.ipAddress,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceInfo => $composableBuilder(
+    column: $table.deviceInfo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get severity => $composableBuilder(
+    column: $table.severity,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AuditLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AuditLogsTable> {
+  $$AuditLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get syncId =>
+      $composableBuilder(column: $table.syncId, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get actorSyncId => $composableBuilder(
+    column: $table.actorSyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get companySyncId => $composableBuilder(
+    column: $table.companySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get action =>
+      $composableBuilder(column: $table.action, builder: (column) => column);
+
+  GeneratedColumn<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entitySyncId => $composableBuilder(
+    column: $table.entitySyncId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get oldValueJson => $composableBuilder(
+    column: $table.oldValueJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get newValueJson => $composableBuilder(
+    column: $table.newValueJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get ipAddress =>
+      $composableBuilder(column: $table.ipAddress, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceInfo => $composableBuilder(
+    column: $table.deviceInfo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get platform =>
+      $composableBuilder(column: $table.platform, builder: (column) => column);
+
+  GeneratedColumn<int> get severity =>
+      $composableBuilder(column: $table.severity, builder: (column) => column);
+}
+
+class $$AuditLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AuditLogsTable,
+          AuditLog,
+          $$AuditLogsTableFilterComposer,
+          $$AuditLogsTableOrderingComposer,
+          $$AuditLogsTableAnnotationComposer,
+          $$AuditLogsTableCreateCompanionBuilder,
+          $$AuditLogsTableUpdateCompanionBuilder,
+          (AuditLog, BaseReferences<_$AppDatabase, $AuditLogsTable, AuditLog>),
+          AuditLog,
+          PrefetchHooks Function()
+        > {
+  $$AuditLogsTableTableManager(_$AppDatabase db, $AuditLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AuditLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AuditLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AuditLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> syncId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> actorSyncId = const Value.absent(),
+                Value<String> companySyncId = const Value.absent(),
+                Value<String> action = const Value.absent(),
+                Value<String?> entityType = const Value.absent(),
+                Value<String?> entitySyncId = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> oldValueJson = const Value.absent(),
+                Value<String?> newValueJson = const Value.absent(),
+                Value<String?> ipAddress = const Value.absent(),
+                Value<String?> deviceInfo = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<int> severity = const Value.absent(),
+              }) => AuditLogsCompanion(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                actorSyncId: actorSyncId,
+                companySyncId: companySyncId,
+                action: action,
+                entityType: entityType,
+                entitySyncId: entitySyncId,
+                description: description,
+                oldValueJson: oldValueJson,
+                newValueJson: newValueJson,
+                ipAddress: ipAddress,
+                deviceInfo: deviceInfo,
+                platform: platform,
+                severity: severity,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String syncId,
+                required int createdAt,
+                required int updatedAt,
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String actorSyncId,
+                required String companySyncId,
+                required String action,
+                Value<String?> entityType = const Value.absent(),
+                Value<String?> entitySyncId = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> oldValueJson = const Value.absent(),
+                Value<String?> newValueJson = const Value.absent(),
+                Value<String?> ipAddress = const Value.absent(),
+                Value<String?> deviceInfo = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<int> severity = const Value.absent(),
+              }) => AuditLogsCompanion.insert(
+                id: id,
+                syncId: syncId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                createdBy: createdBy,
+                actorSyncId: actorSyncId,
+                companySyncId: companySyncId,
+                action: action,
+                entityType: entityType,
+                entitySyncId: entitySyncId,
+                description: description,
+                oldValueJson: oldValueJson,
+                newValueJson: newValueJson,
+                ipAddress: ipAddress,
+                deviceInfo: deviceInfo,
+                platform: platform,
+                severity: severity,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AuditLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AuditLogsTable,
+      AuditLog,
+      $$AuditLogsTableFilterComposer,
+      $$AuditLogsTableOrderingComposer,
+      $$AuditLogsTableAnnotationComposer,
+      $$AuditLogsTableCreateCompanionBuilder,
+      $$AuditLogsTableUpdateCompanionBuilder,
+      (AuditLog, BaseReferences<_$AppDatabase, $AuditLogsTable, AuditLog>),
+      AuditLog,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -66559,4 +74566,12 @@ class $AppDatabaseManager {
       $$ProjectsTableTableManager(_db, _db.projects);
   $$EntityLinksTableTableManager get entityLinks =>
       $$EntityLinksTableTableManager(_db, _db.entityLinks);
+  $$CompaniesTableTableManager get companies =>
+      $$CompaniesTableTableManager(_db, _db.companies);
+  $$CompanyMembersTableTableManager get companyMembers =>
+      $$CompanyMembersTableTableManager(_db, _db.companyMembers);
+  $$InvitationsTableTableManager get invitations =>
+      $$InvitationsTableTableManager(_db, _db.invitations);
+  $$AuditLogsTableTableManager get auditLogs =>
+      $$AuditLogsTableTableManager(_db, _db.auditLogs);
 }

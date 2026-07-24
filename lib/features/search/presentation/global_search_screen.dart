@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -401,7 +401,7 @@ class _FilterChip extends StatelessWidget {
           color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-              color: selected ? color : color.withOpacity(0.3), width: 1.2),
+              color: selected ? color : color.withValues(alpha: 0.3), width: 1.2),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 14, color: selected ? Colors.white : color),
@@ -447,7 +447,7 @@ class _ResultTile extends StatelessWidget {
           Container(
             width: 44, height: 44,
             decoration: BoxDecoration(
-              color: result.color.withOpacity(0.12),
+              color: result.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(result.icon, color: result.color, size: 22),
@@ -507,7 +507,7 @@ class _HighlightedText extends StatelessWidget {
             style: style.copyWith(
               color: highlightColor,
               fontWeight: FontWeight.w800,
-              backgroundColor: highlightColor.withOpacity(0.12),
+              backgroundColor: highlightColor.withValues(alpha: 0.12),
             ),
           ),
           if (index + query.length < text.length)
@@ -532,7 +532,7 @@ class _EmptyState extends StatelessWidget {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
     return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
       Icon(Icons.manage_search_rounded, size: 64,
-          color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withOpacity(0.3)),
+          color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withValues(alpha: 0.3)),
       const SizedBox(height: 16),
       Text('ابدأ الكتابة للبحث', style: AppTypography.bodySmall.copyWith(color: th)),
       const SizedBox(height: 6),
@@ -552,7 +552,7 @@ class _NoResults extends StatelessWidget {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
     return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
       Icon(Icons.search_off_rounded, size: 64,
-          color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withOpacity(0.3)),
+          color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withValues(alpha: 0.3)),
       const SizedBox(height: 16),
       Text('لا توجد نتائج لـ "$query"',
           style: AppTypography.bodySmall.copyWith(color: th)),

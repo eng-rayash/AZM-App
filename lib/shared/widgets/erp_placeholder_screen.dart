@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/neu_colors.dart';
@@ -79,7 +79,7 @@ class ErpPlaceholderScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
-                        color: NeuColors.navyDeep.withOpacity(0.3),
+                        color: NeuColors.navyDeep.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -129,13 +129,13 @@ class ErpPlaceholderScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: comingSoon
-                        ? NeuColors.warning.withOpacity(0.12)
-                        : NeuColors.success.withOpacity(0.12),
+                        ? NeuColors.warning.withValues(alpha: 0.12)
+                        : NeuColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: comingSoon
-                          ? NeuColors.warning.withOpacity(0.3)
-                          : NeuColors.success.withOpacity(0.3),
+                          ? NeuColors.warning.withValues(alpha: 0.3)
+                          : NeuColors.success.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(

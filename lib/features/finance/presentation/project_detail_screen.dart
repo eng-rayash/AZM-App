@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -99,7 +99,7 @@ class _ProjectDetailBody extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _statusColor.withOpacity(0.25),
+                            color: _statusColor.withValues(alpha: 0.25),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Colors.white54),
                           ),

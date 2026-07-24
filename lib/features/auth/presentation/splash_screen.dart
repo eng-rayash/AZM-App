@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,12 +11,12 @@ import '../../../core/theme/neu_colors.dart';
 import '../providers/auth_providers.dart';
 import '../../../core/services/remote_config_service.dart';
 
-/// Splash Screen — app entry point.
+/// RVIOS Splash Screen — app entry point.
 ///
-/// Displays the Mudiri logo for 1.5 seconds, then routes to:
-/// - Login Screen (if not logged in & not guest)
-/// - PIN Setup (first launch)
-/// - Lock Screen (returning user)
+/// Displays the RVIOS logo for 1.5 seconds, then routes to:
+/// - /onboarding (first launch — no account)
+/// - Lock Screen (returning user with PIN)
+/// - Dashboard (returning user, PIN disabled)
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -84,8 +84,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
 
     if (!isGuest && !isLoggedIn) {
-      // User must log in or choose guest mode first
-      context.go(RouteNames.login);
+      // First time — send to RVIOS Welcome/Onboarding screen
+      context.go('/onboarding');
       return;
     }
 
@@ -120,7 +120,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NeuColors.navyDeep,
+      backgroundColor: NeuColors.primary, // RVIOS Crimson Red
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -129,7 +129,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // App Icon
+                // RVIOS Official Logo Mark
                 Container(
                   width: 110,
                   height: 110,
@@ -139,49 +139,55 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 24,
+                        blurRadius: 30,
                         offset: const Offset(0, 10),
-                        spreadRadius: 2,
-                      ),
-                      BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        blurRadius: 12,
-                        offset: const Offset(-4, -4),
                       ),
                     ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(28),
-                    child: Image.asset(
-                      'assets/icon.png',
-                      width: 110,
-                      height: 110,
-                      fit: BoxFit.cover,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Image.asset(
+                        'assets/images/logo_icon.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
 
-                // App Name
+                // English App Title (Yapari Bold)
                 const Text(
-                  AppConstants.appName,
+                  'RVIOS',
                   style: TextStyle(
-                    fontFamily: AppTypography.fontFamilyHeading,
-                    fontSize: 36,
+                    fontFamily: 'Yapari',
+                    fontSize: 38,
                     fontWeight: FontWeight.w700,
-                    color: NeuColors.textOnDark,
-                    letterSpacing: 2,
+                    color: Colors.white,
+                    letterSpacing: 4,
+                  ),
+                ),
+
+                // Arabic App Title (RTL Maghfira)
+                const Text(
+                  'ريفيوس',
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamilyRTLMaghfira,
+                    fontSize: 36,
+                    color: NeuColors.gold,
                   ),
                 ),
                 const SizedBox(height: 8),
 
-                // Tagline
+                // Tagline (Panorama / Givonic)
                 Text(
                   AppConstants.appDescription,
                   style: TextStyle(
-                    fontFamily: AppTypography.fontFamilyBody,
-                    fontSize: 14,
-                    color: NeuColors.textOnDark.withValues(alpha: 0.7),
+                    fontFamily: AppTypography.fontFamilyPanorama,
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.75),
+                    letterSpacing: 1,
                   ),
                 ),
 

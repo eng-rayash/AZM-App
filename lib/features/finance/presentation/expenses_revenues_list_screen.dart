@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -312,7 +312,7 @@ class _TransactionCard extends StatelessWidget {
           Container(
             width: 42, height: 42,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -372,7 +372,7 @@ class _CatChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
         borderRadius: BorderRadius.circular(16),
-        border: selected ? null : Border.all(color: color.withOpacity(0.3)),
+        border: selected ? null : Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(label,
           style: AppTypography.labelSmall.copyWith(
@@ -397,10 +397,10 @@ class _EmptyList extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(color: color.withOpacity(0.08), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
             child: Icon(
               isExpense ? Icons.money_off_rounded : Icons.attach_money_rounded,
-              size: 56, color: color.withOpacity(0.4),
+              size: 56, color: color.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 20),

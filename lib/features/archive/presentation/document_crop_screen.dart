@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:isolate';
@@ -369,7 +369,7 @@ class _DocumentCropScreenState extends State<DocumentCropScreen> {
                             children: [
                               _buildToolbarButton(
                                 icon: Icons.rotate_right_rounded,
-                                label: 'تدوير 90°',
+                                label: 'تدوير 90آ°',
                                 onTap: _rotateImage,
                                 isDark: isDark,
                               ),
@@ -432,7 +432,7 @@ class _DocumentCropScreenState extends State<DocumentCropScreen> {
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'Tajawal',
+                fontFamily: 'Panorama',
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,

@@ -1,4 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
+﻿import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -241,7 +241,7 @@ class HrmReportsScreen extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(4),
                                       child: LinearProgressIndicator(
                                         value: e.value / leaves.length,
-                                        backgroundColor: color.withOpacity(0.12),
+                                        backgroundColor: color.withValues(alpha: 0.12),
                                         valueColor: AlwaysStoppedAnimation(color),
                                         minHeight: 10,
                                       ),

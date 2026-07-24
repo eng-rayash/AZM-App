@@ -307,7 +307,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                             fontSize: 10,
                                             fontWeight: FontWeight.bold,
                                             color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                                            fontFamily: 'Tajawal',
+                                            fontFamily: 'Panorama',
                                           ),
                                         ),
                                       ),
@@ -623,7 +623,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
             color: color,
             fontWeight: FontWeight.bold,
             fontSize: 12,
-            fontFamily: 'Tajawal',
+            fontFamily: 'Panorama',
           ),
         ),
       );
@@ -1211,7 +1211,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                                     'ملاحظات',
                                                     style: TextStyle(
                                                       fontSize: 10,
-                                                      fontFamily: 'Tajawal',
+                                                      fontFamily: 'Panorama',
                                                       color: isDark ? NeuColors.goldAccent : NeuColors.navyMid,
                                                     ),
                                                   ),
@@ -1238,7 +1238,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                                     'إنجازات',
                                                     style: TextStyle(
                                                       fontSize: 10,
-                                                      fontFamily: 'Tajawal',
+                                                      fontFamily: 'Panorama',
                                                       color: NeuColors.success,
                                                     ),
                                                   ),
@@ -1265,7 +1265,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                                     'عوائق',
                                                     style: TextStyle(
                                                       fontSize: 10,
-                                                      fontFamily: 'Tajawal',
+                                                      fontFamily: 'Panorama',
                                                       color: NeuColors.priorityCritical,
                                                     ),
                                                   ),
@@ -1302,9 +1302,9 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // FollowupType Filter Strip
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _FollowupTypeFilterStrip extends StatelessWidget {
   const _FollowupTypeFilterStrip({
@@ -1316,14 +1316,14 @@ class _FollowupTypeFilterStrip extends StatelessWidget {
   final ValueChanged<int?> onSelect;
 
   static const _types = [
-    (null, '📋', 'الكل', Color(0xFF636E72)),
-    (0, '🔁', 'متابعة', Color(0xFF22549E)),
-    (1, '✅', 'مهمة', Color(0xFF0984E3)),
-    (2, '👥', 'عميل', Color(0xFF00B894)),
-    (3, '🏗️', 'مشروع', Color(0xFFE17055)),
-    (4, '👤', 'موظف', Color(0xFF6C5CE7)),
-    (5, '💰', 'مالية', Color(0xFFFDCB6E)),
-    (6, '➕', 'أخرى', Color(0xFF636E72)),
+    (null, Icons.list_alt_rounded, 'الكل', Color(0xFF636E72)),
+    (0, Icons.sync_rounded, 'متابعة', Color(0xFF22549E)),
+    (1, Icons.task_alt_rounded, 'مهمة', Color(0xFF0984E3)),
+    (2, Icons.people_rounded, 'عميل', Color(0xFF00B894)),
+    (3, Icons.apartment_rounded, 'مشروع', Color(0xFFE17055)),
+    (4, Icons.badge_rounded, 'موظف', Color(0xFF6C5CE7)),
+    (5, Icons.account_balance_wallet_rounded, 'مالية', Color(0xFFFDCB6E)),
+    (6, Icons.more_horiz_rounded, 'أخرى', Color(0xFF636E72)),
   ];
 
   @override
@@ -1352,13 +1352,19 @@ class _FollowupTypeFilterStrip extends StatelessWidget {
                       : (isDark ? const Color(0xFF1E2A3A) : const Color(0xFFF0F4F8)),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? t.$4 : t.$4.withOpacity(0.3),
+                    color: isSelected ? t.$4 : t.$4.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(t.$2, style: const TextStyle(fontSize: 14)),
+                    Icon(
+                      t.$2,
+                      size: 15,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : t.$4),
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       t.$3,
@@ -1368,7 +1374,7 @@ class _FollowupTypeFilterStrip extends StatelessWidget {
                         color: isSelected
                             ? Colors.white
                             : (isDark ? Colors.white70 : t.$4),
-                        fontFamily: 'Cairo',
+                        fontFamily: 'Panorama',
                       ),
                     ),
                   ],

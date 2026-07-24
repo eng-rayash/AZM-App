@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -148,10 +148,10 @@ class FinanceScreen extends ConsumerWidget {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: NeuColors.warning.withOpacity(0.12),
+                    color: NeuColors.warning.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: NeuColors.warning.withOpacity(0.3),
+                      color: NeuColors.warning.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -269,7 +269,7 @@ class FinanceScreen extends ConsumerWidget {
                     title: 'الحسابات البنكية',
                     subtitle: 'الأرصدة البنكية',
                     icon: Icons.account_balance_rounded,
-                    color: const Color(0xFF55EFC4).withOpacity(0.8),
+                    color: const Color(0xFF55EFC4).withValues(alpha: 0.8),
                     onTap: () => context.push(RouteNames.bankAccountsList),
                     isDark: isDark,
                   ),
@@ -405,7 +405,7 @@ class _FinModuleCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 20),

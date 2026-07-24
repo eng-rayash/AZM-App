@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -212,7 +212,7 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
                         decoration: BoxDecoration(
                           color: selected ? s.$3 : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: selected ? s.$3 : s.$3.withOpacity(0.3)),
+                          border: Border.all(color: selected ? s.$3 : s.$3.withValues(alpha: 0.3)),
                         ),
                         child: Text(s.$2,
                             style: AppTypography.bodySmall.copyWith(
@@ -346,8 +346,8 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: accent,
                         thumbColor: accent,
-                        inactiveTrackColor: accent.withOpacity(0.2),
-                        overlayColor: accent.withOpacity(0.15),
+                        inactiveTrackColor: accent.withValues(alpha: 0.2),
+                        overlayColor: accent.withValues(alpha: 0.15),
                       ),
                       child: Slider(
                         value: _progress,

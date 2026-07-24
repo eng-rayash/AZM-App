@@ -404,3 +404,224 @@ extension ProjectStatusColor on ProjectStatus {
     }
   }
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// RVIOS Platform Enums — Multi-Tenant, Accounts, Modules
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ─────────────────────────────────────────────
+// Account Type
+// ─────────────────────────────────────────────
+
+/// نوع حساب المستخدم في منصة RVIOS
+enum AccountType {
+  /// شخصي مجاني — Free Personal (tasks, meetings, notes only)
+  freePersonal(0, 'شخصي مجاني', 'Free'),
+
+  /// محترف — Professional (solo business, finance, projects)
+  professional(1, 'محترف', 'Professional'),
+
+  /// أعمال — Business (company, employees, HRM)
+  business(2, 'أعمال', 'Business'),
+
+  /// مؤسسي — Enterprise (multi-branch, API, SSO)
+  enterprise(3, 'مؤسسي', 'Enterprise');
+
+  const AccountType(this.value, this.arabicLabel, this.englishLabel);
+  final int value;
+  final String arabicLabel;
+  final String englishLabel;
+
+  static AccountType fromValue(int value) =>
+      AccountType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => AccountType.freePersonal,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Plan Type (for Companies)
+// ─────────────────────────────────────────────
+
+/// نوع باقة الشركة على المنصة
+enum PlanType {
+  freePersonal(0, 'مجاني', 1),
+  professional(1, 'محترف', 1),
+  business(2, 'أعمال', 20),
+  businessPlus(3, 'أعمال بلس', 100),
+  enterprise(4, 'مؤسسي', -1); // -1 = unlimited
+
+  const PlanType(this.value, this.arabicLabel, this.maxUsers);
+  final int value;
+  final String arabicLabel;
+  final int maxUsers; // -1 = unlimited
+
+  bool get isUnlimited => maxUsers == -1;
+
+  static PlanType fromValue(int value) =>
+      PlanType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => PlanType.freePersonal,
+      );
+}
+
+// ─────────────────────────────────────────────
+// Subscription Status
+// ─────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  trial(0, 'تجريبي'),
+  active(1, 'نشط'),
+  suspended(2, 'موقوف'),
+  cancelled(3, 'ملغي');
+
+  const SubscriptionStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static SubscriptionStatus fromValue(int value) =>
+      SubscriptionStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => SubscriptionStatus.trial,
+      );
+}
+
+// ─────────────────────────────────────────────
+// User Role (in a Company)
+// ─────────────────────────────────────────────
+
+/// دور المستخدم داخل الشركة
+enum UserRole {
+  /// مالك الشركة — Owner (all permissions, cannot be removed)
+  owner(0, 'المالك', 'Owner'),
+
+  /// مدير عام — Super Admin
+  superAdmin(1, 'مدير عام', 'Super Admin'),
+
+  /// مدير — Admin
+  admin(2, 'مدير', 'Admin'),
+
+  /// مدير تنفيذي — Executive Manager
+  executive(3, 'مدير تنفيذي', 'Executive'),
+
+  /// مدير موارد بشرية — HR Manager
+  hrManager(4, 'مدير الموارد البشرية', 'HR Manager'),
+
+  /// مدير مالي — Finance Manager
+  financeManager(5, 'المدير المالي', 'Finance Manager'),
+
+  /// مدير قسم — Department Manager
+  deptManager(6, 'مدير القسم', 'Dept. Manager'),
+
+  /// قائد فريق — Team Leader
+  teamLeader(7, 'قائد الفريق', 'Team Leader'),
+
+  /// موظف — Employee
+  employee(8, 'موظف', 'Employee'),
+
+  /// زائر — Guest (read-only)
+  guest(9, 'زائر', 'Guest');
+
+  const UserRole(this.value, this.arabicLabel, this.englishLabel);
+  final int value;
+  final String arabicLabel;
+  final String englishLabel;
+
+  /// Whether this role can manage other users
+  bool get canManageUsers => value <= 2;
+
+  /// Whether this role has HR module access
+  bool get hasHrAccess => value <= 4;
+
+  /// Whether this role has Finance module access
+  bool get hasFinanceAccess => value <= 5 && value != 4;
+
+  /// Whether this role is a company owner
+  bool get isOwner => value == 0;
+
+  /// Role level — same as value; lower = higher privilege (0=owner, 9=guest)
+  int get level => value;
+
+  static UserRole fromValue(int value) =>
+      UserRole.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => UserRole.employee,
+      );
+}
+
+// ─────────────────────────────────────────────
+// App Modules
+// ─────────────────────────────────────────────
+
+/// وحدات منصة RVIOS — يمكن تفعيل/تعطيل كل وحدة حسب الباقة والصلاحية
+enum AppModule {
+  // ── Free Personal ─────────────────────────
+  dashboard('dashboard', 'لوحة التحكم', 0),
+  tasks('tasks', 'المهام', 0),
+  meetings('meetings', 'الاجتماعات', 0),
+  calendar('calendar', 'التقويم', 0),
+  notes('notes', 'الملاحظات', 0),
+  archive('archive', 'الأرشيف', 0),
+  reminders('reminders', 'التذكيرات', 0),
+
+  // ── Professional ──────────────────────────
+  finance('finance', 'الشؤون المالية', 1),
+  projects('projects', 'المشاريع', 1),
+  clients('clients', 'العملاء', 1),
+  invoices('invoices', 'الفواتير', 1),
+  reports('reports', 'التقارير', 1),
+
+  // ── Business ──────────────────────────────
+  hrm('hrm', 'الموارد البشرية', 2),
+  payroll('payroll', 'الرواتب', 2),
+  attendance('attendance', 'الحضور والانصراف', 2),
+  followUps('follow_ups', 'المتابعات', 2),
+  directives('directives', 'التوجيهات', 2),
+  approvals('approvals', 'الموافقات', 2),
+  contacts('contacts', 'جهات الاتصال', 2),
+
+  // ── Enterprise ────────────────────────────
+  branches('branches', 'الفروع', 3),
+  auditLogs('audit_logs', 'سجلات التدقيق', 3),
+  api('api', 'API', 3),
+  sso('sso', 'SSO', 3);
+
+  const AppModule(this.key, this.arabicLabel, this.minPlanIndex);
+  final String key;
+  final String arabicLabel;
+
+  /// Minimum plan index required (0=Free, 1=Pro, 2=Business, 3=Enterprise)
+  final int minPlanIndex;
+
+  /// Whether this module is available for the given plan
+  bool isAvailableFor(PlanType plan) => plan.value >= minPlanIndex;
+
+  static AppModule? fromKey(String key) {
+    try {
+      return AppModule.values.firstWhere((m) => m.key == key);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// Invitation Status
+// ─────────────────────────────────────────────
+
+enum InvitationStatus {
+  pending(0, 'معلق'),
+  accepted(1, 'مقبول'),
+  expired(2, 'منتهي الصلاحية'),
+  cancelled(3, 'ملغي');
+
+  const InvitationStatus(this.value, this.arabicLabel);
+  final int value;
+  final String arabicLabel;
+
+  static InvitationStatus fromValue(int value) =>
+      InvitationStatus.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => InvitationStatus.pending,
+      );
+}

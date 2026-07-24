@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -384,7 +384,7 @@ class _NotifTile extends StatelessWidget {
         alignment: AlignmentDirectional.centerStart,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: NeuColors.danger.withOpacity(0.15),
+          color: NeuColors.danger.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete_rounded, color: NeuColors.danger),
@@ -403,7 +403,7 @@ class _NotifTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               color: notif.isRead
                   ? Colors.transparent
-                  : notif.color.withOpacity(isDark ? 0.06 : 0.04),
+                  : notif.color.withValues(alpha: isDark ? 0.06 : 0.04),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +413,7 @@ class _NotifTile extends StatelessWidget {
                   Container(
                     width: 44, height: 44,
                     decoration: BoxDecoration(
-                      color: notif.color.withOpacity(0.12),
+                      color: notif.color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(notif.icon, color: notif.color, size: 22),
@@ -443,7 +443,7 @@ class _NotifTile extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: notif.color.withOpacity(0.12),
+                          color: notif.color.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(notif.categoryLabel,
@@ -501,7 +501,7 @@ class _CatChip extends StatelessWidget {
         color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-            color: selected ? color : color.withOpacity(0.3), width: 1.2),
+            color: selected ? color : color.withValues(alpha: 0.3), width: 1.2),
       ),
       child: Text(label, style: TextStyle(
         fontSize: 12, fontFamily: 'Cairo',
@@ -523,7 +523,7 @@ class _EmptyNotifications extends StatelessWidget {
       Icon(
         isUnread ? Icons.notifications_off_rounded : Icons.notifications_none_rounded,
         size: 64,
-        color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withOpacity(0.25),
+        color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withValues(alpha: 0.25),
       ),
       const SizedBox(height: 16),
       Text(isUnread ? 'لا توجد إشعارات جديدة ✓' : 'لا توجد إشعارات',

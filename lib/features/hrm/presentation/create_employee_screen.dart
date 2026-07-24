@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -412,7 +412,7 @@ class _SectionHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Divider(
-            color: NeuColors.navyDeep.withOpacity(0.2),
+            color: NeuColors.navyDeep.withValues(alpha: 0.2),
             thickness: 1,
           ),
         ),

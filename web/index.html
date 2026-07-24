@@ -1,38 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+  <!-- Base href — replaced by flutter build -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- iOS meta tags & icons -->
+  <!-- ═══ SEO & Description ═══════════════════════════════════════ -->
+  <title>RVIOS — One Platform. Complete Business Management.</title>
+  <meta name="description" content="RVIOS — منصة إدارة الأعمال المتكاملة. نظام ERP + HRM + Finance + Projects في منصة واحدة. للشركات والأفراد والمؤسسات.">
+  <meta name="keywords" content="RVIOS, منصة إدارة, ERP, موارد بشرية, نظام مالي, إدارة مشاريع, business management, HR system">
+  <meta name="author" content="RVIOS Platform">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://rvios.com/">
+
+  <!-- ═══ Open Graph (Social Media) ═══════════════════════════════ -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rvios.com/">
+  <meta property="og:title" content="RVIOS — One Platform. Complete Business Management.">
+  <meta property="og:description" content="منصة إدارة الأعمال المتكاملة — ERP, HRM, Finance, Projects في مكان واحد.">
+  <meta property="og:image" content="https://rvios.com/icons/Icon-512.png">
+  <meta property="og:locale" content="ar_SA">
+  <meta property="og:site_name" content="RVIOS">
+
+  <!-- ═══ Twitter Card ═════════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@rvios">
+  <meta name="twitter:title" content="RVIOS — Business Operating System">
+  <meta name="twitter:description" content="One Platform. Complete Business Management.">
+  <meta name="twitter:image" content="https://rvios.com/icons/Icon-512.png">
+
+  <!-- ═══ PWA / Mobile ════════════════════════════════════════════ -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="mudiri">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script>
+    (function() {
+      var tc = document.createElement('meta');
+      tc.name = 'theme-color';
+      tc.content = '#9E2226';
+      document.head.appendChild(tc);
+    })();
+  </script>
+  <meta name="msapplication-TileColor" content="#9E2226">
+  <meta name="msapplication-navbutton-color" content="#9E2226">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- ═══ Icons ════════════════════════════════════════════════════ -->
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/Icon-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
 
-  <title>mudiri</title>
+  <!-- ═══ PWA Manifest ════════════════════════════════════════════ -->
   <link rel="manifest" href="manifest.json">
+
+  <!-- ═══ Font Face ═════════════════════════════════════════════════ -->
+  <style>
+    @font-face {
+      font-family: 'majallab';
+      src: url('assets/fonts/majallab.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #171717;
+      font-family: 'majallab', 'Panorama', 'Tajawal', 'Segoe UI', sans-serif;
+    }
+
+    #rvios-splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #171717 0%, #1a0a0b 50%, #171717 100%);
+      color: #FAF8ED;
+      gap: 16px;
+    }
+
+    #rvios-splash .logo-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    #rvios-splash .logo-text {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: #FAF8ED;
+      text-shadow: 0 0 30px rgba(158, 34, 38, 0.6);
+    }
+
+    #rvios-splash .logo-text span {
+      color: #9E2226;
+    }
+
+    #rvios-splash .tagline {
+      font-size: 0.9rem;
+      color: #C8A45D;
+      letter-spacing: 0.15em;
+    }
+
+    #rvios-splash .loader {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(158, 34, 38, 0.2);
+      border-top: 3px solid #9E2226;
+      border-radius: 50%;
+      animation: rvios-spin 0.8s linear infinite;
+      margin-top: 12px;
+    }
+
+    @keyframes rvios-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Splash shown before Flutter loads -->
+  <div id="rvios-splash">
+    <img src="icons/Icon-192.png" alt="RVIOS" class="logo-img" />
+    <div class="logo-text">RVI<span>OS</span></div>
+    <div class="tagline">One Platform. Complete Business Management.</div>
+    <div class="loader"></div>
+  </div>
+
+  <!-- Flutter app bootstrapper -->
+  <script>
+    // Hide splash when Flutter is ready
+    window.addEventListener('flutter-first-frame', function () {
+      const splash = document.getElementById('rvios-splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.4s ease';
+        setTimeout(function () { splash.remove(); }, 400);
+      }
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
+
 </body>
 </html>

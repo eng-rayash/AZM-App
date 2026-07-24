@@ -92,4 +92,3 @@ class Meetings extends Table with BaseTableMixin {
   BoolColumn get migratedFromEncounter =>
       boolean().withDefault(const Constant(false))();
 }
-

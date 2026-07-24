@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -276,10 +276,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: NeuColors.success.withOpacity(0.08),
+                    color: NeuColors.success.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: NeuColors.success.withOpacity(0.3),
+                      color: NeuColors.success.withValues(alpha: 0.3),
                       style: BorderStyle.solid,
                     ),
                   ),
@@ -433,7 +433,7 @@ class _SectionTitle extends StatelessWidget {
                 color: NeuColors.navyDeep, fontWeight: FontWeight.w700)),
         const SizedBox(width: 12),
         Expanded(
-          child: Divider(color: NeuColors.navyDeep.withOpacity(0.2), thickness: 1),
+          child: Divider(color: NeuColors.navyDeep.withValues(alpha: 0.2), thickness: 1),
         ),
       ],
     );

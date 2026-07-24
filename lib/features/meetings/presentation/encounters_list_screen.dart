@@ -418,4 +418,3 @@ class _EncountersListScreenState extends ConsumerState<EncountersListScreen> {
     }
   }
 }
-

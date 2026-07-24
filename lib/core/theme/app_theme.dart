@@ -5,10 +5,11 @@ import 'app_spacing.dart';
 import 'app_typography.dart';
 import 'neu_colors.dart';
 
-/// Executive Neumorphism Theme — Material 3 ThemeData
+/// RVIOS Platform Theme — Material 3 ThemeData
 ///
-/// Centralized theme definition for the entire application.
-/// Provides both Light and Dark themes.
+/// Centralized theme definition for RVIOS Platform.
+/// Primary: #9E2226 Crimson | Background: #FAF8ED Ivory | Accent: #C8A45D Gold
+/// Provides both Light (Ivory) and Dark (Graphite) themes.
 class AppTheme {
   AppTheme._();
 
@@ -21,16 +22,17 @@ class AppTheme {
         brightness: Brightness.light,
         fontFamily: AppTypography.fontFamilyBody,
 
-        // Color Scheme
+        // Color Scheme — RVIOS Light (Ivory)
         colorScheme: const ColorScheme.light(
-          primary: NeuColors.navyDeep,
+          primary: NeuColors.primary,
           onPrimary: NeuColors.textOnDark,
-          primaryContainer: NeuColors.navyMid,
-          onPrimaryContainer: NeuColors.textOnDark,
-          secondary: NeuColors.goldDark,
+          primaryContainer: NeuColors.primaryTint,
+          onPrimaryContainer: NeuColors.primaryDark,
+          secondary: NeuColors.gold,
           onSecondary: NeuColors.textOnDark,
           secondaryContainer: NeuColors.goldLight,
-          onSecondaryContainer: NeuColors.textPrimary,
+          onSecondaryContainer: NeuColors.goldDark,
+          tertiary: NeuColors.primaryLight,
           surface: NeuColors.bgColor,
           onSurface: NeuColors.textPrimary,
           onSurfaceVariant: NeuColors.textSecondary,
@@ -51,7 +53,7 @@ class AppTheme {
           centerTitle: true,
           titleTextStyle: AppTypography.h3,
           iconTheme: IconThemeData(
-            color: NeuColors.navyDeep,
+            color: NeuColors.primary,
             size: 24,
           ),
         ),
@@ -59,7 +61,7 @@ class AppTheme {
         // Bottom Navigation
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: NeuColors.bgColor,
-          selectedItemColor: NeuColors.navyDeep,
+          selectedItemColor: NeuColors.primary,
           unselectedItemColor: NeuColors.textHint,
           selectedLabelStyle: AppTypography.navLabel,
           unselectedLabelStyle: AppTypography.navLabel,
@@ -83,7 +85,7 @@ class AppTheme {
         // Elevated Button
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: NeuColors.navyDeep,
+            backgroundColor: NeuColors.primary,
             foregroundColor: NeuColors.textOnDark,
             textStyle: AppTypography.button,
             padding: AppSpacing.button,
@@ -98,9 +100,9 @@ class AppTheme {
         // Text Button
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: NeuColors.navyDeep,
+            foregroundColor: NeuColors.primary,
             textStyle: AppTypography.button.copyWith(
-              color: NeuColors.navyDeep,
+              color: NeuColors.primary,
             ),
             padding: AppSpacing.button,
             shape: RoundedRectangleBorder(
@@ -112,10 +114,10 @@ class AppTheme {
         // Outlined Button
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            foregroundColor: NeuColors.navyDeep,
-            side: const BorderSide(color: NeuColors.navyDeep, width: 1.5),
+            foregroundColor: NeuColors.primary,
+            side: const BorderSide(color: NeuColors.primary, width: 1.5),
             textStyle: AppTypography.button.copyWith(
-              color: NeuColors.navyDeep,
+              color: NeuColors.primary,
             ),
             padding: AppSpacing.button,
             shape: RoundedRectangleBorder(
@@ -140,7 +142,7 @@ class AppTheme {
           focusedBorder: OutlineInputBorder(
             borderRadius: AppRadius.input,
             borderSide: const BorderSide(
-              color: NeuColors.navyDeep,
+              color: NeuColors.primary,
               width: 2,
             ),
           ),
@@ -159,15 +161,15 @@ class AppTheme {
             color: NeuColors.danger,
           ),
           floatingLabelStyle: AppTypography.label.copyWith(
-            color: NeuColors.navyDeep,
+            color: NeuColors.primary,
             fontWeight: FontWeight.w600,
           ),
         ),
 
         // Floating Action Button
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: NeuColors.bgColor,
-          foregroundColor: NeuColors.navyDeep,
+          backgroundColor: NeuColors.primary,
+          foregroundColor: NeuColors.textOnDark,
           elevation: 0,
           shape: CircleBorder(),
         ),
@@ -215,7 +217,7 @@ class AppTheme {
 
         // Snackbar
         snackBarTheme: SnackBarThemeData(
-          backgroundColor: NeuColors.navyDeep,
+          backgroundColor: NeuColors.primary,
           contentTextStyle: AppTypography.body.copyWith(
             color: NeuColors.textOnDark,
           ),
@@ -235,15 +237,17 @@ class AppTheme {
         brightness: Brightness.dark,
         fontFamily: AppTypography.fontFamilyBody,
 
+        // Color Scheme — RVIOS Dark (Graphite)
         colorScheme: const ColorScheme.dark(
-          primary: NeuColors.navyLight,
+          primary: NeuColors.primary,
           onPrimary: NeuColors.textOnDark,
-          primaryContainer: NeuColors.navyDeep,
-          onPrimaryContainer: NeuColors.textOnDark,
-          secondary: NeuColors.goldAccent,
+          primaryContainer: NeuColors.primaryDark,
+          onPrimaryContainer: NeuColors.primaryTint,
+          secondary: NeuColors.gold,
           onSecondary: NeuColors.textPrimary,
           secondaryContainer: NeuColors.goldDark,
-          onSecondaryContainer: NeuColors.textOnDark,
+          onSecondaryContainer: NeuColors.goldLight,
+          tertiary: NeuColors.primaryLight,
           surface: NeuColors.bgColorDark,
           onSurface: NeuColors.textPrimaryDark,
           onSurfaceVariant: NeuColors.textSecondaryDark,
@@ -262,14 +266,14 @@ class AppTheme {
           centerTitle: true,
           titleTextStyle: AppTypography.h3Dark,
           iconTheme: const IconThemeData(
-            color: NeuColors.goldAccent,
+            color: NeuColors.gold,
             size: 24,
           ),
         ),
 
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: NeuColors.bgColorDark,
-          selectedItemColor: NeuColors.goldAccent,
+          selectedItemColor: NeuColors.primary,
           unselectedItemColor: NeuColors.textHintDark,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
@@ -285,7 +289,7 @@ class AppTheme {
 
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: NeuColors.navyDeep,
+            backgroundColor: NeuColors.primary,
             foregroundColor: NeuColors.textOnDark,
             textStyle: AppTypography.button,
             padding: AppSpacing.button,
@@ -299,9 +303,9 @@ class AppTheme {
 
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: NeuColors.goldAccent,
+            foregroundColor: NeuColors.gold,
             textStyle: AppTypography.button.copyWith(
-              color: NeuColors.goldAccent,
+              color: NeuColors.gold,
             ),
             padding: AppSpacing.button,
             shape: RoundedRectangleBorder(
@@ -339,7 +343,7 @@ class AppTheme {
           focusedBorder: OutlineInputBorder(
             borderRadius: AppRadius.input,
             borderSide: const BorderSide(
-              color: NeuColors.goldAccent,
+              color: NeuColors.primary,
               width: 2,
             ),
           ),
@@ -350,8 +354,8 @@ class AppTheme {
         ),
 
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: NeuColors.bgColorDark,
-          foregroundColor: NeuColors.goldAccent,
+          backgroundColor: NeuColors.primary,
+          foregroundColor: NeuColors.textOnDark,
           elevation: 0,
           shape: CircleBorder(),
         ),

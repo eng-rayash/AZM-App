@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -299,7 +299,7 @@ class _CreateExpenseRevenueScreenState
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color:
-                              selected ? accentColor : accentColor.withOpacity(0.3),
+                              selected ? accentColor : accentColor.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(cat,

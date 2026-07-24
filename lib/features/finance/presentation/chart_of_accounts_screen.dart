@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' hide Column;
+﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -119,7 +119,7 @@ class ChartOfAccountsScreen extends ConsumerWidget {
                               color: (entry.key < _typeColors.length
                                       ? _typeColors[entry.key]
                                       : NeuColors.navyDeep)
-                                  .withOpacity(0.12),
+                                  .withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(a.code,

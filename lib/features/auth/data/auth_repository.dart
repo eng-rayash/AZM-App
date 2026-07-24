@@ -1,70 +1,139 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/security/secure_storage_service.dart';
 
+/// RVIOS — Auth Repository (Supabase-backed)
+///
+/// Bridges the existing AuthNotifier (auth_providers.dart) with Supabase Auth.
+/// Adds guest mode via SharedPreferences for offline-first support.
 class AuthRepository {
-  final SupabaseClient _supabase = Supabase.instance.client;
-  final SecureStorageService _secureStorage = SecureStorageService.instance;
+  static const _guestKey = 'rvios_guest_mode';
 
-  static const String guestModeKey = 'auth_guest_mode_enabled';
+  SupabaseClient get _client => Supabase.instance.client;
 
-  /// Check if the user is logged in with Supabase
-  User? get currentUser => _supabase.auth.currentUser;
+  // ─────────────────────────────────────────────
+  // Guest Mode (offline-first)
+  // ─────────────────────────────────────────────
 
-  /// Check if session exists
-  bool get isLoggedIn => currentUser != null;
-
-  /// Check if guest mode is enabled
   Future<bool> isGuestModeEnabled() async {
-    final val = await _secureStorage.read(guestModeKey);
-    return val == 'true';
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_guestKey) ?? false;
   }
 
-  /// Set guest mode
-  Future<void> setGuestMode(bool enabled) async {
-    await _secureStorage.write(guestModeKey, enabled.toString());
+  Future<void> setGuestMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_guestKey, value);
   }
 
-  /// Sign In with Email & Password
-  Future<AuthResponse> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    // Disable guest mode on successful login
-    await setGuestMode(false);
-    return response;
-  }
+  // ─────────────────────────────────────────────
+  // State
+  // ─────────────────────────────────────────────
 
-  /// Sign Up with Email & Password
+  bool get isLoggedIn => _client.auth.currentUser != null;
+
+  User? get currentUser => _client.auth.currentUser;
+
+  String? get currentUserId => _client.auth.currentUser?.id;
+
+  String? get currentUserEmail => _client.auth.currentUser?.email;
+
+  String? get displayName =>
+      _client.auth.currentUser?.userMetadata?['display_name'] as String?;
+
+  Stream<AuthState> get authStateStream => _client.auth.onAuthStateChange;
+
+  // ─────────────────────────────────────────────
+  // Sign Up
+  // ─────────────────────────────────────────────
+
   Future<AuthResponse> signUpWithEmail({
     required String email,
     required String password,
     String? fullName,
+    String? displayName,
   }) async {
-    final response = await _supabase.auth.signUp(
+    final response = await _client.auth.signUp(
       email: email,
       password: password,
-      data: fullName != null ? {'full_name': fullName} : null,
+      data: {
+        'full_name': ?fullName,
+        'display_name': ?displayName,
+        if (fullName != null && displayName == null) 'display_name': fullName,
+      },
     );
-    // Disable guest mode on successful signup
-    await setGuestMode(false);
     return response;
   }
 
-  /// Sign Out
-  Future<void> signOut() async {
-    await _supabase.auth.signOut();
-    await setGuestMode(false);
+  // ─────────────────────────────────────────────
+  // Sign In
+  // ─────────────────────────────────────────────
+
+  Future<AuthResponse> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    return _client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
   }
 
-  /// Send password reset email
+  // ─────────────────────────────────────────────
+  // OTP / Magic Link
+  // ─────────────────────────────────────────────
+
+  Future<void> sendOtp({required String email}) async {
+    await _client.auth.signInWithOtp(
+      email: email,
+      emailRedirectTo: 'https://rvios.com/auth/callback',
+    );
+  }
+
+  Future<AuthResponse> verifyOtp({
+    required String email,
+    required String token,
+  }) async {
+    return _client.auth.verifyOTP(
+      email: email,
+      token: token,
+      type: OtpType.magiclink,
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // Sign Out
+  // ─────────────────────────────────────────────
+
+  Future<void> signOut() async {
+    await setGuestMode(false);
+    await _client.auth.signOut();
+  }
+
+  // ─────────────────────────────────────────────
+  // Password Reset
+  // ─────────────────────────────────────────────
+
   Future<void> sendPasswordReset(String email) async {
-    await _supabase.auth.resetPasswordForEmail(
+    await _client.auth.resetPasswordForEmail(
       email,
-      redirectTo: 'io.supabase.mudiri://login-callback',
+      redirectTo: 'https://rvios.com/auth/reset-password',
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // Update Profile
+  // ─────────────────────────────────────────────
+
+  Future<UserResponse> updateProfile({
+    String? displayName,
+    String? avatarUrl,
+  }) async {
+    return _client.auth.updateUser(
+      UserAttributes(
+        data: {
+          'display_name': ?displayName,
+          'avatar_url': ?avatarUrl,
+        },
+      ),
     );
   }
 }

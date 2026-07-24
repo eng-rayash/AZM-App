@@ -87,6 +87,17 @@ import '../../features/finance/presentation/journal_entries_screen.dart';
 import '../../features/finance/presentation/payment_vouchers_screen.dart';
 import '../../features/finance/presentation/finance_reports_screen.dart';
 
+// ── RVIOS Onboarding ───────────────────────────────────────────────────
+import '../../features/onboarding/presentation/welcome_screen.dart';
+import '../../features/onboarding/presentation/create_company_wizard.dart';
+import '../../features/onboarding/presentation/join_company_screen.dart';
+import '../../features/company/presentation/company_management_screen.dart';
+
+// ── RVIOS Platform Screens ────────────────────────────────────────
+import '../../features/settings/presentation/modules_management_screen.dart';
+import '../../features/subscription/presentation/pricing_screen.dart';
+import '../../features/approvals/presentation/approvals_screen.dart';
+
 import '../../shared/widgets/app_scaffold.dart';
 import 'route_names.dart';
 
@@ -111,10 +122,30 @@ class AppRouter {
     initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
     routes: [
-      // ─── Splash ───────────────────────────────────────────────────
+      // ─── Splash ───────────────────────────────────────────────
       GoRoute(
         path: RouteNames.splash,
         builder: (context, state) => const SplashScreen(),
+      ),
+
+      // ─── RVIOS Onboarding ──────────────────────────────────────────
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const WelcomeScreen(),
+        routes: [
+          GoRoute(
+            path: 'create-company',
+            builder: (context, state) => const CreateCompanyWizard(),
+          ),
+          GoRoute(
+            path: 'join-company',
+            builder: (context, state) => const JoinCompanyScreen(),
+          ),
+          GoRoute(
+            path: 'register-personal',
+            builder: (context, state) => const RegisterScreen(),
+          ),
+        ],
       ),
 
       // ─── Auth ─────────────────────────────────────────────────────
@@ -137,6 +168,29 @@ class AppRouter {
       GoRoute(
         path: RouteNames.account,
         builder: (context, state) => const AccountScreen(),
+      ),
+      // RVIOS — Company Management
+      GoRoute(
+        path: '/company/manage',
+        builder: (context, state) => const CompanyManagementScreen(),
+      ),
+
+      // RVIOS — Modules Management (Phase 5)
+      GoRoute(
+        path: '/settings/modules',
+        builder: (context, state) => const ModulesManagementScreen(),
+      ),
+
+      // RVIOS — Subscription Pricing (Phase 7)
+      GoRoute(
+        path: '/subscription/pricing',
+        builder: (context, state) => const PricingScreen(),
+      ),
+
+      // RVIOS — Approvals System (Phase 8)
+      GoRoute(
+        path: '/approvals',
+        builder: (context, state) => const ApprovalsScreen(),
       ),
       GoRoute(
         path: RouteNames.privacyPolicy,

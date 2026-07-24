@@ -10,22 +10,22 @@ import 'core/theme/app_theme.dart';
 import 'features/notifications/domain/notification_service.dart';
 import 'features/notifications/providers/smart_notifications_provider.dart';
 
-/// Mudiri Application Root Widget.
+/// RVIOS Application Root Widget.
 ///
 /// Configures:
-/// - Material 3 theme (Neumorphism)
+/// - Material 3 theme (RVIOS Branding — Crimson/Gold/Ivory)
 /// - Arabic locale (RTL-first)
-/// - GoRouter navigation
+/// - GoRouter navigation with Onboarding flow
 /// - Riverpod state management
 /// - Dynamic theme mode via ThemeNotifier
-class MudiriApp extends ConsumerStatefulWidget {
-  const MudiriApp({super.key});
+class RviosApp extends ConsumerStatefulWidget {
+  const RviosApp({super.key});
 
   @override
-  ConsumerState<MudiriApp> createState() => _MudiriAppState();
+  ConsumerState<RviosApp> createState() => _RviosAppState();
 }
 
-class _MudiriAppState extends ConsumerState<MudiriApp> {
+class _RviosAppState extends ConsumerState<RviosApp> {
   @override
   void initState() {
     super.initState();

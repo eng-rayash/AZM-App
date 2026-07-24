@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -73,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // App Logo
+                    // App Logo Icon
                     Container(
                       width: 90,
                       height: 90,
@@ -90,9 +89,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(22),
-                        child: Image.asset(
-                          'assets/icon.png',
-                          fit: BoxFit.cover,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Image.asset(
+                            'assets/images/logo_icon.png',
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),
@@ -100,8 +102,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Title
                     Text(
-                      AppConstants.appName,
-                      style: isDark ? AppTypography.h1Dark : AppTypography.h1,
+                      'RVIOS',
+                      style: TextStyle(
+                        fontFamily: 'Yapari',
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                        color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
+                      ),
+                    ),
+                    Text(
+                      'ريفيوس',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamilyRTLMaghfira,
+                        fontSize: 28,
+                        color: isDark ? NeuColors.gold : NeuColors.primaryDark,
+                      ),
                     ),
                     AppSpacing.gapXs,
                     Text(

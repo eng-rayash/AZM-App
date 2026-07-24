@@ -1,10 +1,12 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+// Platform-conditional connection:
+//   web    → connection/web.dart    (drift/wasm.dart — no dart:ffi)
+//   native → connection/native.dart (drift_flutter   — uses sqlite3)
+import 'connection/shared.dart'
+    if (dart.library.html) 'connection/web.dart'
+    if (dart.library.io)   'connection/native.dart';
 
 import '../constants/app_constants.dart';
 
@@ -53,13 +55,20 @@ import 'tables/hrm/performance_training_tables.dart';
 import 'dao/employees_dao.dart';
 import 'dao/hrm_dao.dart';
 
-// ── Phase 7 — Finance ─────────────────────────────────────────────
+// ── Phase 7b — Finance ───────────────────────────────────────────────
 import 'tables/finance/parties_tables.dart';
 import 'tables/finance/transactions_tables.dart';
 import 'tables/finance/accounting_tables.dart';
 import 'tables/projects_table.dart';
 import 'tables/entity_links_table.dart';
 import 'dao/finance_dao.dart';
+
+// ── Phase 8 — RVIOS Multi-Tenant ───────────────────────────────────
+import 'tables/tenant/companies_table.dart';
+import 'tables/tenant/company_members_table.dart';
+import 'tables/tenant/invitations_table.dart';
+import 'tables/tenant/audit_logs_table.dart';
+import 'dao/companies_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -72,20 +81,13 @@ part 'app_database.g.dart';
 /// v3  — Archive columns (hijriDate, documentDate, directedEntity, notes)
 /// v4  — Meetings.customMeetingType
 /// v5  — Phase 5: RoutineTasks, RoutineCompletions
-/// v6  — Phase 6a: FollowUps new columns (followupType, linkedEntity*, etc.)
-///        Meetings new columns (meetingCategory, linkedClient*, linkedProject*, etc.)
-/// v7  — Phase 6b: HRM tables
-///        (Employees, Departments, Branches, Positions, EmployeeContracts,
-///         SalaryRecords, SalaryAllowanceTypes, SalaryDeductionTypes,
-///         AttendanceRecords, LeaveRequests, LeaveBalances, EmployeeAdvances)
-/// v8  — Phase 6c: HRM continued
-///        (PerformanceEvaluations, TrainingRecords, EmployeeAssets,
-///         RewardsPenalties)
+/// v6  — Phase 6a: FollowUps new columns, Meetings new columns
+/// v7  — Phase 6b: HRM core tables
+/// v8  — Phase 6c: HRM extended tables
 /// v9  — Phase 7: Finance tables
-///        (Clients, Suppliers, Invoices, Expenses, Revenues,
-///         ChartOfAccounts, JournalEntries, BankAccounts,
-///         PaymentVouchers, Checks)
 /// v10 — Phase 7b: Projects, EntityLinks
+/// v11 — RVIOS Platform: Companies, CompanyMembers, Invitations, AuditLogs
+///        Users table extended (accountType, employeeCode, email, username...)
 @DriftDatabase(
   tables: [
     // ── Existing ─────────────────────────────────────
@@ -133,9 +135,14 @@ part 'app_database.g.dart';
     BankAccounts,
     PaymentVouchers,
     Checks,
-    // ── Projects & Links ─────────────────────────────
+    // ── Projects & Links ───────────────────────────────────────────
     Projects,
     EntityLinks,
+    // ── RVIOS Multi-Tenant ──────────────────────────────────────────
+    Companies,
+    CompanyMembers,
+    Invitations,
+    AuditLogs,
   ],
   daos: [
     UsersDao,
@@ -158,6 +165,8 @@ part 'app_database.g.dart';
     HrmDao,
     // Finance
     FinanceDao,
+    // RVIOS Multi-Tenant
+    CompaniesDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -168,7 +177,7 @@ class AppDatabase extends _$AppDatabase {
 
 
   @override
-  int get schemaVersion => AppConstants.dbVersion; // 10
+  int get schemaVersion => 11; // RVIOS v11
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -292,10 +301,37 @@ class AppDatabase extends _$AppDatabase {
             try { await m.createTable(paymentVouchers); } catch (_) {}
             try { await m.createTable(checks); } catch (_) {}
           }
-          // ── v9 → v10: Projects + Entity Links ────────────────────
+          // ── v9 → v10: Projects + Entity Links ────────────────────────
           if (from < 10) {
             try { await m.createTable(projects); } catch (_) {}
             try { await m.createTable(entityLinks); } catch (_) {}
+          }
+          // ── v10 → v11: RVIOS Multi-Tenant ────────────────────────
+          if (from < 11) {
+            // New tenant tables
+            try { await m.createTable(companies); } catch (_) {}
+            try { await m.createTable(companyMembers); } catch (_) {}
+            try { await m.createTable(invitations); } catch (_) {}
+            try { await m.createTable(auditLogs); } catch (_) {}
+            // Users table extended columns
+            try { await m.addColumn(users, users.firstName); } catch (_) {}
+            try { await m.addColumn(users, users.lastName); } catch (_) {}
+            try { await m.addColumn(users, users.username); } catch (_) {}
+            try { await m.addColumn(users, users.email); } catch (_) {}
+            try { await m.addColumn(users, users.passwordHash); } catch (_) {}
+            try { await m.addColumn(users, users.phone); } catch (_) {}
+            try { await m.addColumn(users, users.accountType); } catch (_) {}
+            try { await m.addColumn(users, users.activeCompanySyncId); } catch (_) {}
+            try { await m.addColumn(users, users.employeeCode); } catch (_) {}
+            try { await m.addColumn(users, users.workspaceSlug); } catch (_) {}
+            try { await m.addColumn(users, users.avatarUrl); } catch (_) {}
+            try { await m.addColumn(users, users.language); } catch (_) {}
+            try { await m.addColumn(users, users.timezone); } catch (_) {}
+            try { await m.addColumn(users, users.country); } catch (_) {}
+            try { await m.addColumn(users, users.onboardingCompleted); } catch (_) {}
+            try { await m.addColumn(users, users.mustChangePassword); } catch (_) {}
+            try { await m.addColumn(users, users.supabaseUid); } catch (_) {}
+            try { await m.addColumn(users, users.lastSyncedAt); } catch (_) {}
           }
         },
         beforeOpen: (details) async {
@@ -356,11 +392,9 @@ class AppDatabase extends _$AppDatabase {
   }
 }
 
-/// Opens a connection to the SQLite database file.
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, AppConstants.dbName));
-    return NativeDatabase.createInBackground(file);
-  });
+/// Opens a platform-appropriate database connection.
+/// - Web builds: uses WasmDatabase.inMemory() — no dart:ffi
+/// - Native builds: uses drift_flutter (sqlite3 file) — works on Android/iOS/Desktop
+QueryExecutor _openConnection() {
+  return connectDb(AppConstants.dbName);
 }

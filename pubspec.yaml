@@ -1,7 +1,7 @@
-name: mudiri
-description: "مديري — نظام إدارة تنفيذي احترافي"
+name: rvios
+description: "RVIOS — One Platform. Complete Business Management."
 publish_to: 'none'
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.10.0
@@ -14,9 +14,9 @@ dependencies:
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
 
-  # Database
+  # Database — drift_flutter handles web (WASM) + native (SQLite) automatically
   drift: ^2.22.1
-  sqlite3_flutter_libs: ^0.5.28
+  drift_flutter: ^0.2.4
 
   # Security
   flutter_secure_storage: ^9.2.4
@@ -56,6 +56,7 @@ dependencies:
   supabase_flutter: ^2.8.0
   url_launcher: ^6.3.0
 
+  http: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,39 +74,39 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon.png
+    - assets/images/logo_icon.png
+    - assets/images/logo_full.png
 
   fonts:
-    - family: Tajawal
+    - family: Panorama
       fonts:
-        - asset: assets/fonts/Tajawal-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Tajawal-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Tajawal-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Tajawal-Bold.ttf
+        - asset: assets/fonts/majallab.ttf
+
+    - family: majallab
+      fonts:
+        - asset: assets/fonts/majallab.ttf
+
+    - family: Givonic
+      fonts:
+        - asset: assets/fonts/Givonic-Regular.otf
+
+    - family: Yapari
+      fonts:
+        - asset: assets/fonts/YapariTrial-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Tajawal-ExtraBold.ttf
+        - asset: assets/fonts/YapariTrial-ExtraBold.ttf
           weight: 800
 
-    - family: IBMPlexSansArabic
+    - family: RTLMaghfira
       fonts:
-        - asset: assets/fonts/IBMPlexSansArabic-Light.ttf
-          weight: 300
-        - asset: assets/fonts/IBMPlexSansArabic-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/IBMPlexSansArabic-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/IBMPlexSansArabic-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/IBMPlexSansArabic-Bold.ttf
-          weight: 700
+        - asset: assets/fonts/rtl-maghfira-ramadan.ttf
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon.png"
   remove_alpha_ios: true
-  background_color: "#ffffff"
-  adaptive_icon_background: "#ffffff"
+  background_color: "#8c1d24"
+  adaptive_icon_background: "#8c1d24"
   adaptive_icon_foreground: "assets/icon.png"
+

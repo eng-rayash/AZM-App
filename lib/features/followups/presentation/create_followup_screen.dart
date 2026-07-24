@@ -52,10 +52,10 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
 
   // ── Priority metadata ──────────────────────────────────────────────
   static const _priorityMeta = [
-    (Priority.critical, '🔴', NeuColors.priorityCritical),
-    (Priority.high, '🟠', NeuColors.priorityHigh),
-    (Priority.medium, '🟡', NeuColors.priorityMedium),
-    (Priority.low, '🟢', NeuColors.priorityLow),
+    (Priority.critical, Icons.error_rounded, NeuColors.priorityCritical),
+    (Priority.high, Icons.warning_amber_rounded, NeuColors.priorityHigh),
+    (Priority.medium, Icons.info_outline_rounded, NeuColors.priorityMedium),
+    (Priority.low, Icons.check_circle_outline_rounded, NeuColors.priorityLow),
   ];
 
   @override
@@ -364,7 +364,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color:
-                              selected ? _typeColor : _typeColor.withOpacity(0.3),
+                              selected ? _typeColor : _typeColor.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -396,7 +396,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         color: selected
-                            ? m.$3.withOpacity(0.15)
+                            ? m.$3.withValues(alpha: 0.15)
                             : (isDark
                                 ? NeuColors.surfaceDark
                                 : NeuColors.surface),
@@ -407,7 +407,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                         ),
                       ),
                       child: Column(children: [
-                        Text(m.$2, style: const TextStyle(fontSize: 18)),
+                        Icon(m.$2, size: 20, color: m.$3),
                         const SizedBox(height: 4),
                         Text(
                           m.$1.arabicLabel,
@@ -503,11 +503,11 @@ class _FollowupTypeGrid extends StatelessWidget {
                   : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: isSelected ? m.$3 : m.$3.withOpacity(0.25),
+                color: isSelected ? m.$3 : m.$3.withValues(alpha: 0.25),
                 width: isSelected ? 0 : 1,
               ),
               boxShadow: isSelected
-                  ? [BoxShadow(color: m.$3.withOpacity(0.35), blurRadius: 8, offset: const Offset(0, 3))]
+                  ? [BoxShadow(color: m.$3.withValues(alpha: 0.35), blurRadius: 8, offset: const Offset(0, 3))]
                   : [],
             ),
             child: Column(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -151,7 +151,7 @@ class _PayrollScreenState extends ConsumerState<PayrollScreen> {
   void _exportPdf(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('جارٍ تصدير كشف الرواتب PDF...',
+        content: const Text('جارف تصدير كشف الرواتب PDF...',
             textDirection: TextDirection.rtl),
         backgroundColor: NeuColors.navyDeep,
         behavior: SnackBarBehavior.floating,
@@ -197,7 +197,7 @@ class _PayrollRow extends StatelessWidget {
           Row(children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: NeuColors.navyDeep.withOpacity(0.15),
+              backgroundColor: NeuColors.navyDeep.withValues(alpha: 0.15),
               child: Text(employee.name[0], style: const TextStyle(
                   color: NeuColors.navyDeep, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
             ),
@@ -273,7 +273,7 @@ class _SummaryCard extends StatelessWidget {
       Container(
         width: 40, height: 40,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
+          color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: color, size: 20),

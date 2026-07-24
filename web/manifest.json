@@ -1,13 +1,35 @@
 {
-    "name": "mudiri",
-    "short_name": "mudiri",
-    "start_url": ".",
+    "name": "RVIOS — Business Operating System",
+    "short_name": "RVIOS",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "display_override": ["window-controls-overlay", "standalone", "browser"],
+    "background_color": "#171717",
+    "theme_color": "#9E2226",
+    "description": "RVIOS — منصة إدارة الأعمال المتكاملة. ERP + HRM + Finance + Projects في منصة واحدة. One Platform. Complete Business Management.",
+    "lang": "ar",
+    "dir": "rtl",
+    "orientation": "any",
     "prefer_related_applications": false,
+    "categories": ["business", "productivity", "utilities"],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "لوحة التحكم",
+            "short_name": "Dashboard",
+            "description": "افتح لوحة التحكم الرئيسية",
+            "url": "/dashboard",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "المهام",
+            "short_name": "Tasks",
+            "description": "إدارة المهام",
+            "url": "/tasks",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        }
+    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",

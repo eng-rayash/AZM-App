@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/database/app_database.dart';
@@ -129,7 +129,7 @@ class DirectiveCard extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: _priorityColor(priority),
-          fontFamily: 'Tajawal',
+          fontFamily: 'Panorama',
         ),
       ),
     );
@@ -148,7 +148,7 @@ class DirectiveCard extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: _statusColor(status),
-          fontFamily: 'Tajawal',
+          fontFamily: 'Panorama',
         ),
       ),
     );

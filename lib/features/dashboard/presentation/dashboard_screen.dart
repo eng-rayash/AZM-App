@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -22,6 +22,8 @@ import '../../notifications/domain/notification_service.dart';
 import '../../notifications/providers/smart_notifications_provider.dart';
 import '../../notifications/presentation/notification_center_screen.dart';
 import '../../../core/security/secure_storage_service.dart';
+import '../../company/providers/company_providers.dart';
+import '../../company/presentation/company_switcher.dart';
 
 /// Dashboard Screen — executive command center.
 ///
@@ -64,7 +66,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       final notificationService = ref.read(notificationServiceProvider);
       await notificationService.showNotification(
         id: 999,
-        title: 'صباح الخير سعادة المدير! ☀️',
+        title: 'صباح الخير سعادة المدير! âک€ï¸ڈ',
         body: 'لديك اليوم $todayMeetings اجتماعات، و ${analytics.totalTasks} مهام، و ${analytics.upcomingAppointments} مواعيد قادمة.',
       );
 
@@ -212,10 +214,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'مرحبًا، سعادة المدير',
-                              style: isDark ? AppTypography.h3Dark : AppTypography.h3,
-                            ),
+                            // â”€â”€ Company Switcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                            const CompanySwitcher(),
                             AppSpacing.gapXs,
                             Text(
                               '$dateStr | $hijriStr',
@@ -232,7 +232,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ],
                         ),
                       ),
-                      // ── Search Button ───────────────────────────────
+                      // â”€â”€ Search Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                       GestureDetector(
                         onTap: () => context.push(RouteNames.globalSearch),
                         child: Container(
@@ -257,7 +257,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // ── Notifications Button ─────────────────────────
+                      // â”€â”€ Notifications Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                       Consumer(
                         builder: (_, ref, _) {
                           final unreadCount = ref.watch(notificationsProvider
@@ -306,7 +306,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         },
                       ),
                       const SizedBox(width: 8),
-                      // ── Settings Button ──────────────────────────────
+                      // â”€â”€ Settings Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                       GestureDetector(
                         onTap: () => context.push(RouteNames.settings),
                         child: Container(
@@ -339,6 +339,68 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ),
 
+              // â”€â”€ Company Context Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final company = ref.watch(activeCompanyProvider);
+                    if (company == null) return const SizedBox.shrink();
+                    final role = ref.watch(activeMemberRoleProvider);
+                    return Padding(
+                      padding: AppSpacing.screenH.copyWith(bottom: 12),
+                      child: GestureDetector(
+                        onTap: () => context.push('/company/manage'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [NeuColors.primary, NeuColors.primaryDark],
+                              begin: Alignment.centerRight,
+                              end: Alignment.centerLeft,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.business_rounded,
+                                  color: Colors.white, size: 18),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      company.name,
+                                      style: const TextStyle(
+                                        fontFamily: 'Panorama',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      role.arabicLabel,
+                                      style: TextStyle(
+                                        fontFamily: 'Panorama',
+                                        fontSize: 11,
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.settings_outlined,
+                                  color: Colors.white54, size: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
               // Periodic Tasks System Card (replaces Today Summary)
               SliverToBoxAdapter(
                 child: Padding(
@@ -349,7 +411,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-              // ── ERP Summary Strip ──────────────────────────────────
+              // â”€â”€ ERP Summary Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               SliverToBoxAdapter(
                 child: Padding(
                   padding: AppSpacing.screenH,
@@ -644,9 +706,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 }
 
-// ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Periodic Tasks Card Widget
-// ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _PeriodicTasksCard extends ConsumerWidget {
   const _PeriodicTasksCard();
@@ -742,7 +804,7 @@ class _PeriodicTasksCard extends ConsumerWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 12,
-                        fontFamily: 'Tajawal',
+                        fontFamily: 'Panorama',
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isSelected
                             ? (isDark ? Colors.black : Colors.white)
@@ -845,7 +907,7 @@ class _PeriodicTasksCard extends ConsumerWidget {
                     '+${periodicState.items.length - 5} مهام أخرى',
                     style: TextStyle(
                       color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                      fontFamily: 'Tajawal',
+                      fontFamily: 'Panorama',
                     ),
                   ),
                 ),
@@ -955,7 +1017,7 @@ class _PeriodicTaskTile extends StatelessWidget {
               item.isRoutine ? '🔄 روتيني' : '⭐ عملي',
               style: TextStyle(
                 fontSize: 10,
-                fontFamily: 'Tajawal',
+                fontFamily: 'Panorama',
                 color: item.isRoutine ? NeuColors.info : NeuColors.goldAccent,
                 fontWeight: FontWeight.bold,
               ),
@@ -1052,7 +1114,7 @@ class FollowUpDistributionChart extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontFamily: 'Tajawal',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                           PieChartSectionData(
@@ -1064,7 +1126,7 @@ class FollowUpDistributionChart extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontFamily: 'Tajawal',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                           PieChartSectionData(
@@ -1076,7 +1138,7 @@ class FollowUpDistributionChart extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.black : Colors.white,
-                              fontFamily: 'Tajawal',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                           PieChartSectionData(
@@ -1088,7 +1150,7 @@ class FollowUpDistributionChart extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontFamily: 'Tajawal',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                           PieChartSectionData(
@@ -1100,7 +1162,7 @@ class FollowUpDistributionChart extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontFamily: 'Tajawal',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                         ],
@@ -1154,7 +1216,7 @@ class FollowUpDistributionChart extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 12,
-                fontFamily: 'Tajawal',
+                fontFamily: 'Panorama',
                 color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
@@ -1165,7 +1227,7 @@ class FollowUpDistributionChart extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              fontFamily: 'IBMPlexSansArabic',
+              fontFamily: 'Panorama',
               color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
             ),
           ),
@@ -1175,7 +1237,7 @@ class FollowUpDistributionChart extends StatelessWidget {
   }
 }
 
-// ── ERP Summary Strip ──────────────────────────────────────────────
+// â”€â”€ ERP Summary Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _ErpSummaryStrip extends ConsumerWidget {
   const _ErpSummaryStrip({required this.isDark});
@@ -1251,7 +1313,7 @@ class _ErpSummaryStrip extends ConsumerWidget {
               const SizedBox(width: 10),
               _ErpMiniCard(
                 icon: Icons.supervisor_account_rounded,
-                label: 'العملاء',
+                label: 'العملا،',
                 color: Color(0xFF6C5CE7),
                 isDark: isDark,
                 onTap: () => context.push(RouteNames.clientsList),
@@ -1301,7 +1363,7 @@ class _ErpMiniCard extends StatelessWidget {
               blurRadius: 6,
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.15)),
+          border: Border.all(color: color.withValues(alpha: 0.15)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1309,7 +1371,7 @@ class _ErpMiniCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),

@@ -51,7 +51,7 @@ void main() async {
 
   runApp(
     const ProviderScope(
-      child: MudiriApp(),
+      child: RviosApp(),
     ),
   );
 }

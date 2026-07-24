@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+﻿// ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
 import 'dart:io';
@@ -513,7 +513,7 @@ class ExportService {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('فشل تصدير البيانات، الرجاء المحاولة لاحقاً')),
+          const SnackBar(content: Text('فشل تصدير البيانات، الرجا، المحاولة لاحقاً')),
         );
       }
     }

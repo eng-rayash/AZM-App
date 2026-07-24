@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -151,6 +151,35 @@ class MoreScreen extends ConsumerWidget {
             icon: Icons.local_shipping_rounded,
             color: const Color(0xFFE17055),
             route: RouteNames.suppliersList,
+          ),
+        ],
+      ),
+      _MoreSection(
+        title: 'منصة RVIOS',
+        items: [
+          _MoreItem(
+            title: 'نظام الموافقات',
+            icon: Icons.approval_rounded,
+            color: NeuColors.primary,
+            route: '/approvals',
+          ),
+          _MoreItem(
+            title: 'إدارة الشركة',
+            icon: Icons.business_rounded,
+            color: NeuColors.primaryMid,
+            route: '/company/manage',
+          ),
+          _MoreItem(
+            title: 'إدارة الوحدات',
+            icon: Icons.layers_rounded,
+            color: NeuColors.gold,
+            route: '/settings/modules',
+          ),
+          _MoreItem(
+            title: 'باقات الاشتراك',
+            icon: Icons.workspace_premium_rounded,
+            color: NeuColors.goldDark,
+            route: '/subscription/pricing',
           ),
         ],
       ),
@@ -314,7 +343,7 @@ class _MoreTile extends StatelessWidget {
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: item.color.withOpacity(0.12),
+              color: item.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(item.icon, color: item.color, size: 20),

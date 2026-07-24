@@ -1,100 +1,113 @@
 import 'package:flutter/material.dart';
 
-/// Executive Neumorphism Design System — Color Tokens
+/// RVIOS Design System — Color Tokens
 ///
-/// Primary: #22549e (Royal Blue)
-/// Secondary: #e0f2aa (Lime Cream)
+/// Primary   #9E2226  (Crimson Red — Executive Identity)
+/// Ivory     #FAF8ED  (Light Background)
+/// Graphite  #171717  (Dark Background)
+/// Gray      #6B6B6B  (Secondary Text)
+/// Gold      #C8A45D  (Premium Accent)
 ///
 /// All colors are centralized here. No hardcoded colors anywhere else.
-/// The system supports Light and Dark themes with matching Neumorphism shadows.
+/// The system supports Light and Dark themes.
 class NeuColors {
   NeuColors._();
 
   // ─────────────────────────────────────────────
-  // Brand / Primary — Royal Blue Family
+  // Brand / Primary — Crimson Red Family (RVIOS Identity)
   // ─────────────────────────────────────────────
 
-  /// Primary — Royal Blue (executive identity)
-  static const Color navyDeep = Color(0xFF22549E);
+  /// Primary — Crimson Red (RVIOS executive identity)
+  static const Color primary = Color(0xFF9E2226);
 
-  /// Secondary primary
-  static const Color navyMid = Color(0xFF3468B0);
+  /// Primary dark (pressed states, deep accents)
+  static const Color primaryDark = Color(0xFF7A1A1D);
 
-  /// Light primary (for text on dark backgrounds, accents)
-  static const Color navyLight = Color(0xFF6B9AD6);
+  /// Primary mid (hover, secondary states)
+  static const Color primaryMid = Color(0xFFB52A2E);
 
-  /// Very light primary (tints, subtle backgrounds)
-  static const Color navyTint = Color(0xFFD6E4F5);
+  /// Primary light (tints, subtle highlights)
+  static const Color primaryLight = Color(0xFFD45558);
 
-  /// Extra dark primary (pressed states)
-  static const Color navyDark = Color(0xFF183D75);
+  /// Primary tint (very subtle backgrounds, tags)
+  static const Color primaryTint = Color(0xFFF5E0E1);
 
-  // ─────────────────────────────────────────────
-  // Brand / Secondary — Lime Cream Family
-  // ─────────────────────────────────────────────
-
-  /// Secondary accent — Lime Cream (use sparingly, 1 per screen max)
-  static const Color goldAccent = Color(0xFFCCE88F);
-
-  /// Light variant
-  static const Color goldLight = Color(0xFFE0F2AA);
-
-  /// Dark variant (for text/icons on light backgrounds)
-  static const Color goldDark = Color(0xFF8DB33A);
-
-  /// Tint variant (very subtle backgrounds)
-  static const Color goldTint = Color(0xFFF3FACF);
+  // Legacy aliases — kept for backward compat during migration
+  static const Color navyDeep = primary;
+  static const Color navyMid = primaryMid;
+  static const Color navyLight = primaryLight;
+  static const Color navyTint = primaryTint;
+  static const Color navyDark = primaryDark;
 
   // ─────────────────────────────────────────────
-  // Light Theme Colors
+  // Brand / Gold — Premium Accent Family
   // ─────────────────────────────────────────────
 
-  /// Main background — the foundation of Neumorphism
-  static const Color bgColor = Color(0xFFECF0F6);
+  /// Gold — Premium accent (use sparingly, 1 per screen max)
+  static const Color gold = Color(0xFFC8A45D);
 
-  /// Dark shadow (bottom-right)
-  static const Color shadowDark = Color(0xFFCDD2DC);
+  /// Gold light (backgrounds, subtle tints)
+  static const Color goldLight = Color(0xFFE8D4A8);
 
-  /// Light shadow (top-left)
-  static const Color shadowLight = Color(0xFFFFFFFF);
+  /// Gold dark (text on light backgrounds)
+  static const Color goldDark = Color(0xFF9E7E3A);
 
-  /// Card/component surface
-  static const Color surface = Color(0xFFF2F5FA);
+  /// Gold tint (very subtle fills)
+  static const Color goldTint = Color(0xFFFAF3E3);
 
-  /// Elevated surface (modals, sheets)
+  // Legacy alias
+  static const Color goldAccent = gold;
+
+  // ─────────────────────────────────────────────
+  // Light Theme Colors — Ivory Foundation
+  // ─────────────────────────────────────────────
+
+  /// Main background — Ivory (RVIOS light foundation)
+  static const Color bgColor = Color(0xFFF5F3E8);
+
+  /// Card / surface — Lighter ivory
+  static const Color surface = Color(0xFFFAF8ED);
+
+  /// Elevated surface (modals, sheets, dialogs)
   static const Color surfaceElevated = Color(0xFFFFFFFF);
 
+  /// Soft elevation border & shadow
+  static const Color shadowDark = Color(0xFFE0DDD0);
+
+  /// Light shadow (top-left — highlight)
+  static const Color shadowLight = Color(0xFFFFFFFF);
+
   // ─────────────────────────────────────────────
-  // Dark Theme Colors
+  // Dark Theme Colors — Graphite Foundation
   // ─────────────────────────────────────────────
 
-  /// Dark theme background
-  static const Color bgColorDark = Color(0xFF141C28);
+  /// Dark theme background — Graphite
+  static const Color bgColorDark = Color(0xFF111315);
 
-  /// Dark theme dark shadow
-  static const Color shadowDarkDark = Color(0xFF0E1420);
-
-  /// Dark theme light shadow
-  static const Color shadowLightDark = Color(0xFF1E2838);
-
-  /// Dark theme surface
-  static const Color surfaceDark = Color(0xFF1A2436);
+  /// Dark theme surface — Graphite Card
+  static const Color surfaceDark = Color(0xFF1A1D20);
 
   /// Dark theme elevated surface
-  static const Color surfaceElevatedDark = Color(0xFF1F2D42);
+  static const Color surfaceElevatedDark = Color(0xFF24272C);
+
+  /// Dark theme dark shadow
+  static const Color shadowDarkDark = Color(0xFF08090A);
+
+  /// Dark theme light shadow
+  static const Color shadowLightDark = Color(0xFF22262B);
 
   // ─────────────────────────────────────────────
   // Status Colors
   // ─────────────────────────────────────────────
 
   /// Success / Completed
-  static const Color success = Color(0xFF2E8B57);
+  static const Color success = Color(0xFF10B981);
 
   /// Warning / Pending / In Progress
-  static const Color warning = Color(0xFFF4A261);
+  static const Color warning = Color(0xFFF59E0B);
 
   /// Danger / Overdue / Cancelled
-  static const Color danger = Color(0xFFD62828);
+  static const Color danger = Color(0xFFEF4444);
 
   /// Info / Scheduled / New
   static const Color info = Color(0xFF3B82F6);
@@ -104,16 +117,16 @@ class NeuColors {
   // ─────────────────────────────────────────────
 
   /// Primary text (headings, important content)
-  static const Color textPrimary = Color(0xFF14202E);
+  static const Color textPrimary = Color(0xFF111315);
 
-  /// Secondary text (body, descriptions)
-  static const Color textSecondary = Color(0xFF506070);
+  /// Secondary text — Gray
+  static const Color textSecondary = Color(0xFF6B6B6B);
 
   /// Hint / placeholder text
-  static const Color textHint = Color(0xFF8C9AAB);
+  static const Color textHint = Color(0xFF9E9E9E);
 
-  /// Text on dark backgrounds
-  static const Color textOnDark = Color(0xFFF5F7FA);
+  /// Text on dark/colored backgrounds
+  static const Color textOnDark = Color(0xFFFAF8ED);
 
   /// Text on accent backgrounds
   static const Color textOnAccent = Color(0xFFFFFFFF);
@@ -122,34 +135,34 @@ class NeuColors {
   // Text Colors — Dark Theme
   // ─────────────────────────────────────────────
 
-  static const Color textPrimaryDark = Color(0xFFE8EDF4);
-  static const Color textSecondaryDark = Color(0xFF8E9AAD);
-  static const Color textHintDark = Color(0xFF566778);
+  static const Color textPrimaryDark = Color(0xFFFAF8ED);
+  static const Color textSecondaryDark = Color(0xFFA0A5AC);
+  static const Color textHintDark = Color(0xFF6C727E);
 
   // ─────────────────────────────────────────────
   // Priority Colors
   // ─────────────────────────────────────────────
 
   /// عاجل جدًا — Critical
-  static const Color priorityCritical = Color(0xFFD62828);
+  static const Color priorityCritical = Color(0xFF9E2226);
 
   /// عالي — High
-  static const Color priorityHigh = Color(0xFFF4A261);
+  static const Color priorityHigh = Color(0xFFF59E0B);
 
   /// متوسط — Medium
   static const Color priorityMedium = Color(0xFF3B82F6);
 
   /// منخفض — Low
-  static const Color priorityLow = Color(0xFF8E9AAD);
+  static const Color priorityLow = Color(0xFF9E9E9E);
 
   // ─────────────────────────────────────────────
   // Divider & Border
   // ─────────────────────────────────────────────
 
-  static const Color divider = Color(0xFFD8DEE8);
-  static const Color dividerDark = Color(0xFF243040);
-  static const Color border = Color(0xFFD1D9E6);
-  static const Color borderDark = Color(0xFF2A3850);
+  static const Color divider = Color(0xFFE0DDD0);
+  static const Color dividerDark = Color(0xFF2E2E2E);
+  static const Color border = Color(0xFFE0DDD0);
+  static const Color borderDark = Color(0xFF2E2E2E);
 
   // ─────────────────────────────────────────────
   // Helper — Get color by brightness
@@ -179,7 +192,6 @@ class NeuColors {
   static Color textSecondaryFor(Brightness brightness) =>
       brightness == Brightness.dark ? textSecondaryDark : textSecondary;
 
-  /// Returns the appropriate accent color for the theme
+  /// Returns the accent color for the theme
   static Color accentFor(Brightness brightness) =>
-      brightness == Brightness.dark ? goldAccent : navyDeep;
-}
+      brightness == Brightness.dark ? gold : primar

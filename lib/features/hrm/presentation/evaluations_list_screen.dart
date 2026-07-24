@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' hide Column;
+﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,7 @@ import '../../../core/database/providers/database_providers.dart';
 class EvaluationsListScreen extends ConsumerWidget {
   const EvaluationsListScreen({super.key});
 
-  static const _gradeNames = ['استثنائي', 'ممتاز', 'جيد', 'مرضٍ', 'يحتاج تحسين'];
+  static const _gradeNames = ['استثنائي', 'ممتاز', 'جيد', 'مرضف', 'يحتاج تحسين'];
   static const _statusNames = ['مسودة', 'مقدمة', 'معترف بها'];
 
   Color _gradeColor(int? g) {
@@ -87,7 +87,7 @@ class EvaluationsListScreen extends ConsumerWidget {
                           width: 60,
                           height: 60,
                           decoration: BoxDecoration(
-                            color: _gradeColor(e.grade).withOpacity(0.12),
+                            color: _gradeColor(e.grade).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Column(
@@ -120,7 +120,7 @@ class EvaluationsListScreen extends ConsumerWidget {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: _gradeColor(e.grade).withOpacity(0.12),
+                                      color: _gradeColor(e.grade).withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(gradeName,

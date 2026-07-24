@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' hide Column;
+﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +87,7 @@ class JournalEntriesScreen extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: _statusColor(e.status).withOpacity(0.12),
+                                color: _statusColor(e.status).withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(Icons.receipt_long_rounded,
@@ -112,7 +112,7 @@ class JournalEntriesScreen extends ConsumerWidget {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                         decoration: BoxDecoration(
-                                          color: _statusColor(e.status).withOpacity(0.12),
+                                          color: _statusColor(e.status).withValues(alpha: 0.12),
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Text(statusName,

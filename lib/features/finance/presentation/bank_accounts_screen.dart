@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -259,7 +259,7 @@ class _BankAccountsTab extends ConsumerWidget {
                                         colors: [
                                           _bankColor(acc.bankName),
                                           _bankColor(acc.bankName)
-                                              .withOpacity(0.7),
+                                              .withValues(alpha: 0.7),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(12),
@@ -615,7 +615,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
                                     color: (isIncoming
                                             ? NeuColors.success
                                             : NeuColors.danger)
-                                        .withOpacity(0.15),
+                                        .withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -651,7 +651,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: statusColor.withOpacity(0.15),
+                                    color: statusColor.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -1144,7 +1144,7 @@ class _AddCheckSheetState extends ConsumerState<_AddCheckSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
                           color: _type == 0
-                              ? NeuColors.success.withOpacity(0.15)
+                              ? NeuColors.success.withValues(alpha: 0.15)
                               : (isDark
                                   ? NeuColors.surfaceDark
                                   : NeuColors.surface),
@@ -1183,7 +1183,7 @@ class _AddCheckSheetState extends ConsumerState<_AddCheckSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
                           color: _type == 1
-                              ? NeuColors.danger.withOpacity(0.15)
+                              ? NeuColors.danger.withValues(alpha: 0.15)
                               : (isDark
                                   ? NeuColors.surfaceDark
                                   : NeuColors.surface),
@@ -1402,7 +1402,7 @@ class _MiniStat extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 18),
@@ -1456,7 +1456,7 @@ class _FilterChip extends StatelessWidget {
               : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? color : color.withOpacity(0.3),
+            color: selected ? color : color.withValues(alpha: 0.3),
           ),
         ),
         child: Text(

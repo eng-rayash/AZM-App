@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -104,7 +104,7 @@ class _InvoiceDetailBody extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: _statusColor.withOpacity(0.2),
+                              color: _statusColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: _statusColor),
                             ),
@@ -282,7 +282,7 @@ class _InvoiceItemsTable extends StatelessWidget {
             decoration: BoxDecoration(
               color: i % 2 == 0
                   ? Colors.transparent
-                  : (isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02)),
+                  : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
               border: i < items.length - 1
                   ? Border(bottom: BorderSide(
                       color: isDark ? NeuColors.dividerDark : NeuColors.divider))

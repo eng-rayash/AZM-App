@@ -1,4 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
+﻿import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +48,7 @@ class ReportsPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ─── Quick Stats ───
+              // â”€â”€â”€ Quick Stats â”€â”€â”€
               _buildSectionTitle(
                   'إحصائيات سريعة', Icons.insights_rounded, isDark),
               AppSpacing.gapMd,
@@ -103,7 +103,7 @@ class ReportsPage extends ConsumerWidget {
 
               AppSpacing.gapXxl,
 
-              // ─── Task Completion Pie Chart ───
+              // â”€â”€â”€ Task Completion Pie Chart â”€â”€â”€
               _buildSectionTitle(
                   'توزيع حالات المهام', Icons.pie_chart_rounded, isDark),
               AppSpacing.gapMd,
@@ -128,7 +128,7 @@ class ReportsPage extends ConsumerWidget {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
-                                  fontFamily: 'Tajawal',
+                                  fontFamily: 'Panorama',
                                 ),
                               ),
                               PieChartSectionData(
@@ -142,7 +142,7 @@ class ReportsPage extends ConsumerWidget {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
-                                  fontFamily: 'Tajawal',
+                                  fontFamily: 'Panorama',
                                 ),
                               ),
                             ],
@@ -161,7 +161,7 @@ class ReportsPage extends ConsumerWidget {
 
               AppSpacing.gapXxl,
 
-              // ─── Meetings Bar Chart ───
+              // â”€â”€â”€ Meetings Bar Chart â”€â”€â”€
               _buildSectionTitle(
                   'الاجتماعات (الأسبوع)', Icons.bar_chart_rounded, isDark),
               AppSpacing.gapMd,
@@ -184,8 +184,8 @@ class ReportsPage extends ConsumerWidget {
                               final days = [
                                 'أحد',
                                 'إثنين',
-                                'ثلاثاء',
-                                'أربعاء',
+                                'ثلاثا،',
+                                'أربعا،',
                                 'خميس',
                               ];
                               if (value.toInt() < days.length) {
@@ -193,7 +193,7 @@ class ReportsPage extends ConsumerWidget {
                                   days[value.toInt()],
                                   style: TextStyle(
                                     fontSize: 10,
-                                    fontFamily: 'Tajawal',
+                                    fontFamily: 'Panorama',
                                     color: isDark
                                         ? NeuColors.textHintDark
                                         : NeuColors.textHint,
@@ -244,7 +244,7 @@ class ReportsPage extends ConsumerWidget {
 
               AppSpacing.gapXxl,
 
-              // ─── Exportable Reports ───
+              // â”€â”€â”€ Exportable Reports â”€â”€â”€
               _buildSectionTitle(
                   'تقارير جاهزة', Icons.description_rounded, isDark),
               AppSpacing.gapMd,

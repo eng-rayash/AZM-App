@@ -352,7 +352,7 @@ class _CreateMovementScreenState
 
               // Save Button
               NeuButton(
-                label: _isSaving ? 'جارٍ الحفظ...' : (widget.movementId != null ? 'حفظ التعديلات' : 'حفظ التحرك'),
+                label: _isSaving ? 'جارف الحفظ...' : (widget.movementId != null ? 'حفظ التعديلات' : 'حفظ التحرك'),
                 icon: _isSaving
                     ? null
                     : Icons.save_rounded,

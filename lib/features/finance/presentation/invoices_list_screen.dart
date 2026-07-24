@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -254,7 +254,7 @@ class _InvoiceCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: status.color.withOpacity(0.12),
+                    color: status.color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.receipt_long_rounded,
@@ -292,9 +292,9 @@ class _InvoiceCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: status.color.withOpacity(0.12),
+                        color: status.color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: status.color.withOpacity(0.3)),
+                        border: Border.all(color: status.color.withValues(alpha: 0.3)),
                       ),
                       child: Text(status.arabicLabel,
                           style: AppTypography.labelSmall.copyWith(
@@ -323,7 +323,7 @@ class _InvoiceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: invoice.paidAmount / (invoice.total == 0 ? 1 : invoice.total),
-                    backgroundColor: NeuColors.danger.withOpacity(0.2),
+                    backgroundColor: NeuColors.danger.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(NeuColors.success),
                     borderRadius: BorderRadius.circular(4),
                     minHeight: 6,
@@ -363,7 +363,7 @@ class _StatusChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
           borderRadius: BorderRadius.circular(16),
-          border: selected ? null : Border.all(color: color.withOpacity(0.3)),
+          border: selected ? null : Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Text(label,
             style: AppTypography.labelSmall.copyWith(
@@ -387,11 +387,11 @@ class _EmptyInvoices extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: NeuColors.success.withOpacity(0.08),
+            color: NeuColors.success.withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
           child: Icon(Icons.receipt_long_rounded,
-              size: 56, color: NeuColors.success.withOpacity(0.4)),
+              size: 56, color: NeuColors.success.withValues(alpha: 0.4)),
         ),
         const SizedBox(height: 20),
         Text('لا توجد فواتير',

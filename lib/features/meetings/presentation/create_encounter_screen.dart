@@ -307,7 +307,7 @@ class _CreateEncounterScreenState
 
               // ── Submit Button ──────────────────────────────────
               NeuButton(
-                label: _isSubmitting ? 'جارٍ الحفظ...' : 'حفظ اللقاء',
+                label: _isSubmitting ? 'جارف الحفظ...' : 'حفظ اللقاء',
                 onPressed: _isSubmitting ? null : _submit,
                 isLoading: _isSubmitting,
                 icon: Icons.check_rounded,

@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' show Value;
+﻿import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -159,7 +159,7 @@ class _RelatedEntitiesWidgetState
                   Container(
                     width: 36, height: 36,
                     decoration: BoxDecoration(
-                      color: widget.sourceType.color.withOpacity(0.15),
+                      color: widget.sourceType.color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(Icons.hub_rounded, color: widget.sourceType.color, size: 20),
@@ -316,7 +316,7 @@ class _LinkTile extends StatelessWidget {
       leading: Container(
         width: 40, height: 40,
         decoration: BoxDecoration(
-          color: type.color.withOpacity(0.12),
+          color: type.color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(type.icon, color: type.color, size: 20),
@@ -334,7 +334,7 @@ class _LinkTile extends StatelessWidget {
                   .copyWith(color: isDark ? NeuColors.textHintDark : NeuColors.textHint))
           : Text(type.label,
               style: AppTypography.caption
-                  .copyWith(color: type.color.withOpacity(0.8))),
+                  .copyWith(color: type.color.withValues(alpha: 0.8))),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -467,7 +467,7 @@ class _AddLinkSheetState extends State<_AddLinkSheet> {
                       color: sel ? t.color : surface,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: sel ? t.color : t.color.withOpacity(0.3)),
+                          color: sel ? t.color : t.color.withValues(alpha: 0.3)),
                     ),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Icon(t.icon, size: 14,

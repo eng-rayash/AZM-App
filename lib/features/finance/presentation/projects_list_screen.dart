@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -145,7 +145,7 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
         decoration: BoxDecoration(
           color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
           borderRadius: BorderRadius.circular(16),
-          border: selected ? null : Border.all(color: color.withOpacity(0.3)),
+          border: selected ? null : Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Text(label,
             style: AppTypography.labelSmall.copyWith(
@@ -185,7 +185,7 @@ class _ProjectCard extends StatelessWidget {
                 Container(
                   width: 42, height: 42,
                   decoration: BoxDecoration(
-                    color: status.color.withOpacity(0.12),
+                    color: status.color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.work_rounded, color: status.color, size: 22),
@@ -210,9 +210,9 @@ class _ProjectCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: status.color.withOpacity(0.12),
+                        color: status.color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: status.color.withOpacity(0.3)),
+                        border: Border.all(color: status.color.withValues(alpha: 0.3)),
                       ),
                       child: Text(status.arabicLabel,
                           style: AppTypography.labelSmall.copyWith(
@@ -247,7 +247,7 @@ class _ProjectCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: progress / 100,
-                  backgroundColor: status.color.withOpacity(0.12),
+                  backgroundColor: status.color.withValues(alpha: 0.12),
                   valueColor: AlwaysStoppedAnimation<Color>(status.color),
                   minHeight: 6,
                 ),
@@ -316,11 +316,11 @@ class _EmptyProjects extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: const Color(0xFFE17055).withOpacity(0.08),
+            color: const Color(0xFFE17055).withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
           child: Icon(Icons.work_rounded, size: 56,
-              color: const Color(0xFFE17055).withOpacity(0.4)),
+              color: const Color(0xFFE17055).withValues(alpha: 0.4)),
         ),
         const SizedBox(height: 20),
         Text('لا توجد مشاريع',

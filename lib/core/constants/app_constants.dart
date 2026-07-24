@@ -1,4 +1,4 @@
-/// App-wide constants for the Mudiri Application
+/// App-wide constants for the RVIOS Platform
 ///
 /// Centralized configuration values — no magic numbers.
 class AppConstants {
@@ -8,10 +8,15 @@ class AppConstants {
   // App Info
   // ─────────────────────────────────────────────
 
-  static const String appName = 'مديري';
-  static const String appNameEn = 'Mudiri';
-  static const String appVersion = '0.1.0';
-  static const String appDescription = 'نظام إدارة تنفيذي احترافي';
+  static const String appName = 'RVIOS';
+  static const String appNameAr = 'منصة أعمال';
+  static const String appNameEn = 'RVIOS';
+  static const String appVersion = '1.0.0';
+  static const String appDescription = 'One Platform. Complete Business Management.';
+  static const String appDescriptionAr = 'منصة إدارة الأعمال المتكاملة';
+  static const String appDomain = 'rvios.com';
+  static const String appWebUrl = 'https://app.rvios.com';
+  static const String appSupportEmail = 'support@rvios.com';
 
   // ─────────────────────────────────────────────
   // Security
@@ -48,7 +53,7 @@ class AppConstants {
   // Database
   // ─────────────────────────────────────────────
 
-  static const String dbName = 'mudiri.db';
+  static const String dbName = 'rvios.db';
   static const int dbVersion = 10;
 
 
@@ -73,4 +78,26 @@ class AppConstants {
   static const Duration shortAnimation = Duration(milliseconds: 150);
   static const Duration mediumAnimation = Duration(milliseconds: 300);
   static const Duration longAnimation = Duration(milliseconds: 500);
+
+  // ─────────────────────────────────────────────
+  // RVIOS — Multi-Tenant & Accounts
+  // ─────────────────────────────────────────────
+
+  /// Prefix for generated Company IDs  e.g. CMP-8X7Q2K
+  static const String companyIdPrefix = 'CMP';
+
+  /// Prefix for generated Employee IDs  e.g. EMP-00215
+  static const String employeeIdPrefix = 'EMP';
+
+  /// Length of random part in Company/Employee codes
+  static const int codeRandomLength = 6;
+
+  /// Trial period in days for new companies
+  static const int trialDays = 30;
+
+  /// Max users per Business plan
+  static const int businessPlanMaxUsers = 20;
+
+  /// Max users per Business Plus plan
+  static const int businessPlusPlanMaxUsers = 100;
 }

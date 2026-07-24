@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -236,7 +236,7 @@ class _LeavesTab extends StatelessWidget {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.beach_access_rounded, size: 64,
-              color: NeuColors.navyDeep.withOpacity(0.25)),
+              color: NeuColors.navyDeep.withValues(alpha: 0.25)),
           const SizedBox(height: 12),
           Text('لا توجد طلبات إجازة معلقة',
               style: AppTypography.bodySmall.copyWith(
@@ -291,7 +291,7 @@ class _AttendanceTile extends StatelessWidget {
         child: Row(children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor: color.withOpacity(0.15),
+            backgroundColor: color.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: TextStyle(
                 color: color, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
           ),
@@ -309,7 +309,7 @@ class _AttendanceTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(statusText, style: TextStyle(
@@ -339,7 +339,7 @@ class _LeaveCard extends StatelessWidget {
         Row(children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: NeuColors.warning.withOpacity(0.15),
+            backgroundColor: NeuColors.warning.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: const TextStyle(
                 color: NeuColors.warning, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
           ),
@@ -353,7 +353,7 @@ class _LeaveCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: NeuColors.warning.withOpacity(0.12),
+              color: NeuColors.warning.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Text('معلق', style: TextStyle(
@@ -419,9 +419,9 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: color.withOpacity(0.12),
+      color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: color.withOpacity(0.3)),
+      border: Border.all(color: color.withValues(alpha: 0.3)),
     ),
     child: Row(mainAxisSize: MainAxisSize.min, children: [
       Container(width: 8, height: 8,

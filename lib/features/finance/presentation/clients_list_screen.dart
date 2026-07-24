@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -305,11 +305,11 @@ class _EmptyClients extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF00B894).withOpacity(0.08),
+              color: const Color(0xFF00B894).withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.supervisor_account_rounded,
-                size: 56, color: const Color(0xFF00B894).withOpacity(0.4)),
+                size: 56, color: const Color(0xFF00B894).withValues(alpha: 0.4)),
           ),
           const SizedBox(height: 20),
           Text('لا يوجد عملاء',

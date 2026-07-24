@@ -303,7 +303,7 @@ class DirectiveDetailPage extends ConsumerWidget {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: color,
-          fontFamily: 'Tajawal',
+          fontFamily: 'Panorama',
         ),
       ),
     );

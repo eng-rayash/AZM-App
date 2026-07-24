@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -127,7 +127,7 @@ class DepartmentsScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: NeuColors.navyDeep.withOpacity(0.1),
+                    color: NeuColors.navyDeep.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text('${deptEmployees.length} موظف',
@@ -152,7 +152,7 @@ class DepartmentsScreen extends ConsumerWidget {
                         final emp = deptEmployees[i];
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: NeuColors.navyDeep.withOpacity(0.15),
+                            backgroundColor: NeuColors.navyDeep.withValues(alpha: 0.15),
                             child: Text(emp.name[0],
                                 style: const TextStyle(
                                     color: NeuColors.navyDeep,
@@ -247,7 +247,7 @@ class _EmptyDepts extends StatelessWidget {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
     return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
       Icon(Icons.domain_rounded, size: 64,
-          color: NeuColors.navyDeep.withOpacity(0.25)),
+          color: NeuColors.navyDeep.withValues(alpha: 0.25)),
       const SizedBox(height: 16),
       Text('لا توجد أقسام بعد', style: AppTypography.bodySmall.copyWith(color: th)),
       const SizedBox(height: 8),

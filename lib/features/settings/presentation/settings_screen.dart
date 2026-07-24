@@ -140,7 +140,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ─── Section 0: Account & Verification (Top) ───
+              // â”€â”€â”€ Section 0: Account & Verification (Top) â”€â”€â”€
               _buildSectionTitle(
                   'الحساب والتحقق', Icons.cloud_done_rounded, isDark),
               AppSpacing.gapMd,
@@ -155,7 +155,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 1: Security ───
+              // â”€â”€â”€ Section 1: Security â”€â”€â”€
               _buildSectionTitle(
                   'الحماية والأمان', Icons.shield_rounded, isDark),
               AppSpacing.gapMd,
@@ -199,7 +199,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 2: Appearance ───
+              // â”€â”€â”€ Section 2: Appearance â”€â”€â”€
               _buildSectionTitle(
                   'المظهر', Icons.palette_rounded, isDark),
               AppSpacing.gapMd,
@@ -255,7 +255,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 3: Data & Export ───
+              // â”€â”€â”€ Section 3: Data & Export â”€â”€â”€
               _buildSectionTitle(
                   'البيانات والتصدير', Icons.storage_rounded, isDark),
               AppSpacing.gapMd,
@@ -399,7 +399,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 4: Notifications ───
+              // â”€â”€â”€ Section 4: Notifications â”€â”€â”€
               _buildSectionTitle(
                   'الإشعارات', Icons.notifications_rounded, isDark),
               AppSpacing.gapMd,
@@ -424,7 +424,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // ─── Section 5: About (Bottom) ───
+              // â”€â”€â”€ Section 5: About (Bottom) â”€â”€â”€
               _buildSectionTitle(
                   'عن التطبيق', Icons.info_rounded, isDark),
               AppSpacing.gapMd,
@@ -494,7 +494,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       'تطوير المهندس: Eng: Rayash Albureihi',
                       style: TextStyle(
-                        fontFamily: 'Tajawal',
+                        fontFamily: 'Panorama',
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
@@ -687,7 +687,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         : (isDark
                             ? NeuColors.textHintDark
                             : NeuColors.textHint),
-                    fontFamily: 'Tajawal',
+                    fontFamily: 'Panorama',
                   )),
             ],
           ),

@@ -2,24 +2,54 @@ import 'package:flutter/material.dart';
 
 import 'neu_colors.dart';
 
-/// Executive Neumorphism Design System — Typography
+/// RVIOS Brand Typography System
 ///
-/// Tajawal: General text, body content, daily interfaces
-/// IBM Plex Sans Arabic: Headings, executive elements, professional content
-///
-/// Arabic-first, RTL-optimized line heights.
+/// Fonts:
+/// - Yapari: English Brand Title (RVIOS)
+/// - RTLMaghfira: Arabic Brand Title (ريفيوس)
+/// - Givonic: English Body & Subtitles
+/// - Panorama: Arabic Body & UI Text
 class AppTypography {
   AppTypography._();
 
   // ─────────────────────────────────────────────
-  // Font Families
+  // Font Family Constants
   // ─────────────────────────────────────────────
 
-  static const String fontFamilyBody = 'Tajawal';
-  static const String fontFamilyHeading = 'IBMPlexSansArabic';
+  static const String fontFamilyMajallab = 'majallab';
+  static const String fontFamilyPanorama = 'Panorama';
+  static const String fontFamilyGivonic = 'Givonic';
+  static const String fontFamilyYapari = 'Yapari';
+  static const String fontFamilyRTLMaghfira = 'RTLMaghfira';
+
+  // Default font families for body and headings
+  static const String fontFamilyBody = fontFamilyMajallab;
+  static const String fontFamilyHeading = fontFamilyMajallab;
 
   // ─────────────────────────────────────────────
-  // Heading Styles (IBM Plex Sans Arabic)
+  // Brand Specific Styles (Logo & Headers)
+  // ─────────────────────────────────────────────
+
+  /// English Logo/Brand Title (RVIOS) — Yapari Bold
+  static const TextStyle brandTitleEn = TextStyle(
+    fontFamily: fontFamilyYapari,
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 2.0,
+    color: NeuColors.primary,
+  );
+
+  /// Arabic Logo/Brand Title (ريفيوس) — RTL Maghfira
+  static const TextStyle brandTitleAr = TextStyle(
+    fontFamily: fontFamilyRTLMaghfira,
+    fontSize: 28,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: NeuColors.primary,
+  );
+
+  // ─────────────────────────────────────────────
+  // Heading Styles (Panorama)
   // ─────────────────────────────────────────────
 
   /// Page title — large, bold
@@ -59,7 +89,7 @@ class AppTypography {
   );
 
   // ─────────────────────────────────────────────
-  // Body Styles (Tajawal)
+  // Body Styles (Panorama & Givonic)
   // ─────────────────────────────────────────────
 
   /// Large body text
@@ -87,6 +117,15 @@ class AppTypography {
     fontWeight: FontWeight.w400,
     height: 1.5,
     color: NeuColors.textSecondary,
+  );
+
+  /// English body text (Givonic)
+  static const TextStyle bodyEn = TextStyle(
+    fontFamily: fontFamilyGivonic,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: NeuColors.textPrimary,
   );
 
   // ─────────────────────────────────────────────
@@ -173,24 +212,11 @@ class AppTypography {
   // Aliases (for backward compatibility)
   // ─────────────────────────────────────────────
 
-  /// Alias for h3 — used in dashboard/HRM cards
   static TextStyle get headingMedium => h3;
-
-  /// Alias for h4 — used in section sub-titles
   static TextStyle get headingSmall => h4;
-
-  /// Alias for button
   static TextStyle get buttonLabel => button;
-
-  /// Alias for body
   static TextStyle get bodyMedium => body;
-
-  /// Alias for bodySmall dark variant
   static TextStyle get bodySmallMedium => bodySmall;
-
-  /// Alias for label (medium size)
   static TextStyle get labelMedium => label;
-
-  /// Alias for caption (small label)
   static TextStyle get labelSmall => caption;
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/route_names.dart';
@@ -100,7 +100,7 @@ class _ERPBottomNav extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: NeuColors.darkShadow(isDark ? Brightness.dark : Brightness.light)
-                .withOpacity(0.3),
+                .withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, -2),
           ),
