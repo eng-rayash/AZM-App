@@ -262,6 +262,38 @@ class AzmElevation {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Breakpoints
+// ─────────────────────────────────────────────────────────────
+
+/// نقاط قياس التخطيط.
+///
+/// مركزية عمدًا: قيمة مبثوثة في الهيكل تنحرف عن قيمة في شاشة أخرى بلا
+/// أن يلاحظ أحد. نُقلت هنا من `ResponsiveLayout` عند حذفه بعد أن حلّ
+/// [AzmSidebar] محلّه.
+class AzmBreakpoint {
+  AzmBreakpoint._();
+
+  /// دونها: جوال — درج وشريط سفلي
+  static const double mobile = 600;
+
+  /// عندها فأعلى: لوح جانبي ثابت بدل الدرج
+  static const double sidebar = 900;
+
+  /// عندها فأعلى: سطح مكتب
+  static const double desktop = 1200;
+
+  static bool isMobile(BuildContext context) =>
+      MediaQuery.sizeOf(context).width < mobile;
+
+  /// هل يتّسع العرض للوح جانبي ثابت؟
+  static bool hasSidebar(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= sidebar;
+
+  static bool isDesktop(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= desktop;
+}
+
+// ─────────────────────────────────────────────────────────────
 // Motion
 // ─────────────────────────────────────────────────────────────
 

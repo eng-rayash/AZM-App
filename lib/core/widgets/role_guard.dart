@@ -1,10 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../constants/enums.dart';
 import '../../features/company/providers/company_providers.dart';
 
-/// RVIOS — Role Guard Widget
+/// AZM — Role Guard Widget
+///
+/// ⚠ غير مستدعى في أي شاشة بعد — أُبقي عمدًا لا سهوًا.
+///
+/// نموذج الأدوار العشرة مكتمل وصحيح، وهذه الأدوات جاهزة للتفعيل. تفعيلها
+/// مؤجَّل إلى المرحلة ٣ حيث ينتقل قرار الصلاحية إلى الخادم: إخفاء عنصر
+/// في Flutter ليس حماية، والحارس هنا طبقة عرض تكمّل التخويل ولا تحلّ
+/// محلّه. حذفه اليوم يعني إعادة كتابته بعد أسابيع.
 ///
 /// Wraps UI elements that should only be visible to users
 /// with a specific role or module access.

@@ -20,7 +20,7 @@ import 'dashboard_fab.dart';
 ///
 /// وهذا ما ألغى تبويب «المزيد»: كان يخلط القصدين في قائمة واحدة مسطّحة.
 ///
-/// على الشاشات العريضة (≥٩٠٠) يصير الجانبي لوحًا ثابتًا ويختفي السفلي —
+/// عند [AzmBreakpoint.sidebar] فأعلى يصير الجانبي لوحًا ثابتًا ويختفي السفلي —
 /// فالإبهام لم يعد قيدًا، والشجرة المرئية دائمًا أسرع.
 class AppShellScaffold extends StatelessWidget {
   const AppShellScaffold({
@@ -29,9 +29,6 @@ class AppShellScaffold extends StatelessWidget {
   });
 
   final Widget child;
-
-  /// عرض الشاشة الذي يصير عنده اللوح الثابت أفضل من الدرج.
-  static const double _sidebarBreakpoint = 900;
 
   static const _tabs = <_Tab>[
     _Tab(
@@ -64,7 +61,7 @@ class AppShellScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = AzmPalette.of(context);
     final location = GoRouterState.of(context).uri.path;
-    final wide = MediaQuery.sizeOf(context).width >= _sidebarBreakpoint;
+    final wide = AzmBreakpoint.hasSidebar(context);
 
     return PopScope(
       canPop: location == RouteNames.dashboardFull,
