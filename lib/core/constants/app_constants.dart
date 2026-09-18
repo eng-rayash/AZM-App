@@ -1,4 +1,4 @@
-/// App-wide constants for the RVIOS Platform
+/// App-wide constants for AZM — عزم
 ///
 /// Centralized configuration values — no magic numbers.
 class AppConstants {
@@ -7,13 +7,31 @@ class AppConstants {
   // ─────────────────────────────────────────────
   // App Info
   // ─────────────────────────────────────────────
+  //
+  // عزم منتج مستقل تحت مظلة RVIOS Technologies. اسم المنتج هو ما يراه
+  // المستخدم؛ واسم الشركة يظهر في الحقوق والوثائق القانونية وحدها.
 
-  static const String appName = 'RVIOS';
-  static const String appNameAr = 'منصة أعمال';
-  static const String appNameEn = 'RVIOS';
+  /// اسم المنتج كما يُعرض للمستخدم
+  static const String appName = 'عزم';
+
+  static const String appNameAr = 'عزم';
+  static const String appNameEn = 'AZM';
+
+  /// الشركة المالكة — المظلة، لا المنتج
+  static const String companyName = 'RVIOS Technologies';
+
   static const String appVersion = '1.0.0';
-  static const String appDescription = 'One Platform. Complete Business Management.';
-  static const String appDescriptionAr = 'منصة إدارة الأعمال المتكاملة';
+
+  /// الفلسفة الداخلية للمنتج — دورة: فهم ← قرار ← تنفيذ
+  static const String appDescription = 'Understand. Decide. Execute.';
+  static const String appDescriptionAr = 'نظام تشغيل الأعمال الذكي';
+
+  /// سطر العلامة الكامل
+  static const String appTagline = 'افهم عملك · احسم ما يهم · نفّذ بعزم';
+
+  /// النطاق والدعم — بنية RVIOS Technologies القائمة.
+  /// نطاق خاص بـعزم قرارُ منتج لم يُحسم بعد؛ حتى ذلك الحين تبقى هذه
+  /// القيم كما هي لأنها تشير إلى بنية تعمل فعلًا.
   static const String appDomain = 'rvios.com';
   static const String appWebUrl = 'https://app.rvios.com';
   static const String appSupportEmail = 'support@rvios.com';

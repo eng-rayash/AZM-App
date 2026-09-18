@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/hrm_repository.dart';
 
 /// Rewards & Penalties Screen — employee rewards and disciplinary actions.
 class RewardsPenaltiesScreen extends ConsumerStatefulWidget {
@@ -78,7 +76,6 @@ class _RewardsPenaltiesScreenState extends ConsumerState<RewardsPenaltiesScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateDialog(context, isDark),
-        backgroundColor: const Color(0xFFFDCB6E),
         foregroundColor: Colors.black87,
         icon: const Icon(Icons.add_rounded),
         label: Text('إضافة',
@@ -141,16 +138,18 @@ class _RewardsPenaltiesScreenState extends ConsumerState<RewardsPenaltiesScreen>
               ElevatedButton(
                 onPressed: () async {
                   if (empCtrl.text.isEmpty || reasonCtrl.text.isEmpty) return;
-                  final db = ref.read(databaseProvider);
-                  await db.hrmDao.insertRewardPenalty(RewardsPenaltiesCompanion(
-                    employeeId: const Value(1),
-                    employeeName: Value(empCtrl.text),
-                    type: Value(type),
-                    reason: Value(reasonCtrl.text),
-                    amount: Value(double.tryParse(amountCtrl.text)),
-                    date: Value(DateTime.now().toIso8601String().substring(0, 10)),
-                    status: const Value(0),
-                  ));
+                  await ref
+                      .read(hrmRepositoryProvider)
+                      .createRewardPenalty(
+                        employeeId: 1,
+                        employeeName: empCtrl.text,
+                        type: type,
+                        reason: reasonCtrl.text,
+                        amount: double.tryParse(amountCtrl.text),
+                        date: DateTime.now()
+                            .toIso8601String()
+                            .substring(0, 10),
+                      );
                   if (ctx.mounted) ctx.pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -177,7 +176,7 @@ class _RPContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_rewardsPenaltiesStreamProvider);
+    final async = ref.watch(rewardsPenaltiesListProvider);
 
     return async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -278,9 +277,3 @@ class _RPContent extends ConsumerWidget {
   }
 }
 
-final _rewardsPenaltiesStreamProvider = StreamProvider<List<RewardsPenalty>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.rewardsPenalties)
-        ..orderBy([(r) => OrderingTerm.desc(r.date)]))
-      .watch();
-});

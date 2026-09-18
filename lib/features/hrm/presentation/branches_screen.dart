@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -72,7 +72,7 @@ class BranchesScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: b.isMainBranch == true
-                                  ? [NeuColors.goldDark, NeuColors.goldAccent]
+                                  ? [NeuColors.goldDark, NeuColors.accentMuted]
                                   : [NeuColors.navyDeep, NeuColors.navyMid],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -161,7 +161,6 @@ class BranchesScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateBranchDialog(context, isDark, ref),
-        backgroundColor: const Color(0xFF74B9FF),
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: Text('فرع جديد',

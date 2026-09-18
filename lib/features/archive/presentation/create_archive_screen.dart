@@ -756,7 +756,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                                   .copyWith(
                                     color: isSelected
                                         ? (isDark
-                                              ? NeuColors.goldAccent
+                                              ? NeuColors.accentMuted
                                               : NeuColors.navyDeep)
                                         : (isDark
                                               ? NeuColors.textSecondaryDark
@@ -868,7 +868,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                                 'عدد الصفحات: ${_capturedImages.length}',
                                 style: TextStyle(
                                   color: isDark
-                                      ? NeuColors.goldAccent
+                                      ? NeuColors.accentMuted
                                       : NeuColors.navyDeep,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -939,7 +939,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                               label: const Text('تصوير بالكاميرا'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: isDark
-                                    ? NeuColors.goldAccent
+                                    ? NeuColors.accentMuted
                                     : NeuColors.navyDeep,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
@@ -949,7 +949,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                                 ),
                                 side: BorderSide(
                                   color: isDark
-                                      ? NeuColors.goldAccent.withValues(
+                                      ? NeuColors.accentMuted.withValues(
                                           alpha: 0.5,
                                         )
                                       : NeuColors.navyDeep.withValues(
@@ -967,7 +967,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                               label: const Text('المعرض (الألبوم)'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: isDark
-                                    ? NeuColors.goldAccent
+                                    ? NeuColors.accentMuted
                                     : NeuColors.navyDeep,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
@@ -977,7 +977,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                                 ),
                                 side: BorderSide(
                                   color: isDark
-                                      ? NeuColors.goldAccent.withValues(
+                                      ? NeuColors.accentMuted.withValues(
                                           alpha: 0.5,
                                         )
                                       : NeuColors.navyDeep.withValues(
@@ -998,7 +998,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                           label: const Text('إرفاق مستند من الهاتف (PDF/DOC)'),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: isDark
-                                ? NeuColors.goldAccent
+                                ? NeuColors.accentMuted
                                 : NeuColors.navyDeep,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -1006,7 +1006,7 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
                             ),
                             side: BorderSide(
                               color: isDark
-                                  ? NeuColors.goldAccent.withAlpha(128)
+                                  ? NeuColors.accentMuted.withAlpha(128)
                                   : NeuColors.navyDeep.withAlpha(128),
                             ),
                           ),

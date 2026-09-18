@@ -1,4 +1,4 @@
-﻿// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
 import 'dart:io';
@@ -17,6 +17,7 @@ import '../../../core/security/security_logger.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../providers/reports_provider.dart';
 import '../../../core/services/file_storage_service.dart';
+import '../../../core/theme/neu_colors.dart';
 
 /// Export format options centrally defined
 enum ExportFormat {
@@ -56,7 +57,7 @@ class ExportService {
       final dateStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
       
       final StringBuffer sb = StringBuffer();
-      sb.writeln('تقرير مديري اليومي - $dateStr');
+      sb.writeln('تقرير عزم اليومي - $dateStr');
       sb.writeln('-----------------------------------');
       sb.writeln('الاجتماعات: ${analytics.totalMeetings}');
       sb.writeln('المهام الإجمالية: ${analytics.totalTasks}');
@@ -65,7 +66,7 @@ class ExportService {
       sb.writeln('مواعيد اليوم: ${analytics.upcomingAppointments}');
       sb.writeln('نسبة إنجاز المهام: ${(analytics.taskCompletionRate * 100).toStringAsFixed(1)}%');
       sb.writeln('-----------------------------------');
-      sb.writeln('تم إنشاؤه عبر تطبيق مديري للإدارة التنفيذية.');
+      sb.writeln('تم إنشاؤه عبر تطبيق عزم لإدارة الأعمال.');
 
       // Write to temp file
       final tempDir = await getTemporaryDirectory();
@@ -78,7 +79,7 @@ class ExportService {
 
       await _logger.logDataExport('تقرير يومي (نص)');
 
-      await Share.shareXFiles([XFile(tempFile.path)], text: 'تقرير مديري اليومي');
+      await Share.shareXFiles([XFile(tempFile.path)], text: 'تقرير عزم اليومي');
     } catch (e) {
       // Handle error
     }
@@ -100,7 +101,7 @@ class ExportService {
       if (format == ExportFormat.text) {
         // 1. Export as Text
         final StringBuffer sb = StringBuffer();
-        sb.writeln('تقرير مديري رسمي - $title');
+        sb.writeln('تقرير عزم رسمي - $title');
         sb.writeln('تاريخ التصدير: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}');
         sb.writeln('--------------------------------------------------');
         for (var i = 0; i < mappedRows.length; i++) {
@@ -110,7 +111,7 @@ class ExportService {
           }
           sb.writeln('--------------------------------------------------');
         }
-        sb.writeln('تم التصدير عبر نظام مديري للإدارة التنفيذية.');
+        sb.writeln('تم التصدير عبر نظام عزم لإدارة الأعمال.');
 
         final tempDir = await getTemporaryDirectory();
         final filename = 'mudiri_export_$dateStr.txt';
@@ -122,7 +123,7 @@ class ExportService {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('تم حفظ التصدير في مجلد التطبيق: $filename', textDirection: TextDirection.rtl),
-              backgroundColor: const Color(0xFF1B2A4A),
+              backgroundColor: NeuColors.primary,
             ),
           );
         }
@@ -238,7 +239,7 @@ class ExportService {
         sheet.merge(
           exc.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
           exc.CellIndex.indexByColumnRow(columnIndex: headers.length - 1, rowIndex: 0),
-          customValue: exc.TextCellValue('$title - تم التصدير من تطبيق مديري للإدارة التنفيذية'),
+          customValue: exc.TextCellValue('$title - تم التصدير من تطبيق عزم لإدارة الأعمال'),
         );
         
         // Apply title style to all cells in the title row range to display borders/colors correctly
@@ -309,7 +310,7 @@ class ExportService {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('تم حفظ التصدير في مجلد التطبيق: $filename', textDirection: TextDirection.rtl),
-              backgroundColor: const Color(0xFF1B2A4A),
+              backgroundColor: NeuColors.primary,
             ),
           );
         }
@@ -396,7 +397,7 @@ class ExportService {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(
-                          adjustArabicTextForPdf('تم التصدير عبر نظام مديري للإدارة التنفيذية'),
+                          adjustArabicTextForPdf('تم التصدير عبر نظام عزم لإدارة الأعمال'),
                           style: pw.TextStyle(font: arabicFont, fontSize: 8, color: PdfColor.fromHex('#999999')),
                         ),
                         pw.Text(
@@ -502,7 +503,7 @@ class ExportService {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('تم حفظ التصدير في مجلد التطبيق: $filename', textDirection: TextDirection.rtl),
-              backgroundColor: const Color(0xFF1B2A4A),
+              backgroundColor: NeuColors.primary,
             ),
           );
         }

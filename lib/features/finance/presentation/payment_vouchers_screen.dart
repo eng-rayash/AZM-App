@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/finance_repository.dart';
 
 /// Payment Vouchers Screen — سندات القبض والصرف.
 class PaymentVouchersScreen extends ConsumerStatefulWidget {
@@ -163,16 +161,19 @@ class _PaymentVouchersScreenState extends ConsumerState<PaymentVouchersScreen>
                 onPressed: () async {
                   final amount = double.tryParse(amountCtrl.text) ?? 0;
                   if (amount <= 0) return;
-                  final db = ref.read(databaseProvider);
-                  await db.financeDao.insertVoucher(PaymentVouchersCompanion(
-                    type: Value(voucherType),
-                    date: Value(DateTime.now().toIso8601String().substring(0, 10)),
-                    amount: Value(amount),
-                    partyName: Value(partyCtrl.text.isEmpty ? null : partyCtrl.text),
-                    description: Value(descCtrl.text.isEmpty ? null : descCtrl.text),
-                    paymentMethod: Value(paymentMethod),
-                    status: const Value(0),
-                  ));
+                  await ref.read(financeRepositoryProvider).createVoucher(
+                        type: voucherType,
+                        date: DateTime.now()
+                            .toIso8601String()
+                            .substring(0, 10),
+                        amount: amount,
+                        partyName: partyCtrl.text.isEmpty
+                            ? null
+                            : partyCtrl.text,
+                        description:
+                            descCtrl.text.isEmpty ? null : descCtrl.text,
+                        paymentMethod: paymentMethod,
+                      );
                   if (ctx.mounted) ctx.pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -208,7 +209,7 @@ class _VouchersContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_vouchersProvider);
+    final async = ref.watch(vouchersProvider);
 
     return async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -314,8 +315,3 @@ class _VouchersContent extends ConsumerWidget {
     );
   }
 }
-
-final _vouchersProvider = StreamProvider<List<PaymentVoucher>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.financeDao.watchVouchers();
-});

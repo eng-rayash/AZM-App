@@ -1,9 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/neu_colors.dart';
 
-/// RVIOS Official Brand Logo & Typography Component
+/// Official Brand Logo & Typography Component
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,
@@ -11,6 +11,7 @@ class AppLogo extends StatelessWidget {
     this.showText = true,
     this.isDark = false,
     this.useFullBanner = false,
+    this.showTagline = false,
   });
 
   /// Logo Icon Size
@@ -24,6 +25,9 @@ class AppLogo extends StatelessWidget {
 
   /// Whether to use full logo banner image asset
   final bool useFullBanner;
+
+  /// Whether to show the tagline line under the wordmark
+  final bool showTagline;
 
   @override
   Widget build(BuildContext context) {
@@ -40,57 +44,47 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Brand Logo Icon
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(size * 0.24),
-            boxShadow: [
-              BoxShadow(
-                color: NeuColors.primary.withValues(alpha: 0.3),
-                blurRadius: size * 0.25,
-                offset: Offset(0, size * 0.1),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(size * 0.24),
-            child: Image.asset(
-              'assets/images/logo_icon.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Image.asset(
-                'assets/icon.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
+        AppLogoMark(size: size, isDark: isDark),
 
         if (showText) ...[
           SizedBox(height: size * 0.2),
 
           // English Title (Yapari Bold)
           Text(
-            'RVIOS',
+            'عزم',
             style: TextStyle(
-              fontFamily: 'Yapari',
-              fontSize: size * 0.42,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.0,
+              fontFamily: AppTypography.fontFamilyRTLMaghfira,
+              fontSize: size * 0.46,
               color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
             ),
           ),
 
-          // Arabic Title (RTL Maghfira)
           Text(
-            'ريفيوس',
+            'AZM',
             style: TextStyle(
-              fontFamily: AppTypography.fontFamilyRTLMaghfira,
-              fontSize: size * 0.38,
-              fontWeight: FontWeight.w400,
+              fontFamily: AppTypography.fontFamilyYapari,
+              fontSize: size * 0.3,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 3.0,
               color: isDark ? NeuColors.gold : NeuColors.primaryDark,
             ),
           ),
+
+          if (showTagline) ...[
+            SizedBox(height: size * 0.18),
+            Text(
+              'افهم عملك · احسم ما يهم · نفّذ بعزم',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamilyPanorama,
+                fontSize: size * 0.15,
+                height: 1.5,
+                letterSpacing: 0.8,
+                color:
+                    isDark ? NeuColors.textHintDark : NeuColors.textSecondary,
+              ),
+            ),
+          ],
         ],
       ],
     );
@@ -101,19 +95,20 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'RVIOS',
+          'عزم',
           style: TextStyle(
-            fontFamily: 'Yapari',
+            fontFamily: AppTypography.fontFamilyRTLMaghfira,
             fontSize: size * 0.5,
-            fontWeight: FontWeight.w700,
             color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
           ),
         ),
         Text(
-          'ريفيوس',
+          'AZM',
           style: TextStyle(
-            fontFamily: AppTypography.fontFamilyRTLMaghfira,
-            fontSize: size * 0.45,
+            fontFamily: AppTypography.fontFamilyYapari,
+            fontSize: size * 0.32,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 3.0,
             color: isDark ? NeuColors.gold : NeuColors.primaryDark,
           ),
         ),
@@ -121,3 +116,50 @@ class AppLogo extends StatelessWidget {
     );
   }
 }
+
+/// علامة التطبيق المربّعة — الشعار الرسمي من الأصول.
+///
+/// تُستخدم حيث تلزم أيقونة مربعة: شاشة البداية، القفل، الترحيب،
+/// الإعدادات، والشريط الجانبي.
+class AppLogoMark extends StatelessWidget {
+  const AppLogoMark({
+    super.key,
+    this.size = 64,
+    this.isDark = false,
+  });
+
+  final double size;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.24),
+        boxShadow: [
+          BoxShadow(
+            color: NeuColors.primary.withValues(alpha: 0.3),
+            blurRadius: size * 0.25,
+            offset: Offset(0, size * 0.1),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.24),
+        child: Image.asset(
+          'assets/images/logo_icon.png',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Image.asset(
+            'assets/icon.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// اسم بديل مُبقى للتوافق مع مواضع الاستدعاء القائمة.
+typedef AzmMark = AppLogoMark;

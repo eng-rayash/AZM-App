@@ -256,7 +256,7 @@ class _CreateTaskScreenState extends ConsumerState<CreateTaskScreen> {
                     Switch(
                       value: _promoteToFollowUp,
                       onChanged: (val) => setState(() => _promoteToFollowUp = val),
-                      activeTrackColor: NeuColors.goldAccent,
+                      activeTrackColor: NeuColors.accentMuted,
                       activeThumbColor: NeuColors.navyDeep,
                     ),
                   ],

@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/finance_repository.dart';
 
 /// Journal Entries Screen — القيود اليومية المحاسبية.
 class JournalEntriesScreen extends ConsumerWidget {
@@ -31,7 +29,7 @@ class JournalEntriesScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_journalEntriesProvider);
+    final async = ref.watch(journalEntriesProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -162,7 +160,6 @@ class JournalEntriesScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateDialog(context, isDark, ref),
-        backgroundColor: NeuColors.navyDeep,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('قيد جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -216,16 +213,16 @@ class JournalEntriesScreen extends ConsumerWidget {
                 if (descCtrl.text.isEmpty) return;
                 final debit = double.tryParse(debitCtrl.text) ?? 0;
                 final credit = double.tryParse(creditCtrl.text) ?? 0;
-                final db = ref.read(databaseProvider);
-                await db.financeDao.insertJournalEntry(JournalEntriesCompanion(
-                  date: Value(DateTime.now().toIso8601String().substring(0, 10)),
-                  description: Value(descCtrl.text),
-                  lines: const Value('[]'),
-                  totalDebit: Value(debit),
-                  totalCredit: Value(credit),
-                  type: const Value(0),
-                  status: const Value(0),
-                ));
+                await ref
+                    .read(financeRepositoryProvider)
+                    .createJournalEntry(
+                      date: DateTime.now()
+                          .toIso8601String()
+                          .substring(0, 10),
+                      description: descCtrl.text,
+                      totalDebit: debit,
+                      totalCredit: credit,
+                    );
                 if (ctx.mounted) ctx.pop();
               },
               style: ElevatedButton.styleFrom(
@@ -259,8 +256,3 @@ class _LedgerAmount extends StatelessWidget {
     );
   }
 }
-
-final _journalEntriesProvider = StreamProvider<List<JournalEntry>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.financeDao.watchJournalEntries();
-});

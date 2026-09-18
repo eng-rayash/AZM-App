@@ -1,0 +1,18 @@
+# توقيع إصدار أندرويد — نموذج
+#
+# انسخ هذا الملف إلى android/key.properties واملأه بقيمك.
+# الملف الحقيقي مستثنى في .gitignore ولا يدخل المستودع أبدًا:
+# من يملك ملف المفتاح وكلمته يستطيع نشر تحديث ينتحل التطبيق.
+#
+# لإنشاء ملف المفتاح (مرة واحدة، واحتفظ به وبنسخة احتياطية منه —
+# فقدانه يعني تعذّر تحديث التطبيق على Google Play إلى الأبد):
+#
+#   keytool -genkey -v -keystore azm-release.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias azm
+#
+# ثم ضع المسار المطلق للملف أدناه.
+
+storeFile=C:\\path\\to\\azm-release.jks
+storePassword=
+keyAlias=azm
+keyPassword=

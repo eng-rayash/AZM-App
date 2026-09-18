@@ -392,7 +392,7 @@ class _ContactsListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -512,6 +512,7 @@ class _ContactsListScreenState
       ),
       floatingActionButton: _selectedIds.isEmpty
           ? FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () =>
                   context.push(RouteNames.contactCreate),
               backgroundColor: NeuColors.navyDeep,

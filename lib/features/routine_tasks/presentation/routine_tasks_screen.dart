@@ -4,15 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
 import '../../../core/theme/neu_colors.dart';
+import '../../../core/theme/neu_decorations.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../domain/routine_task_model.dart';
 import '../providers/routine_tasks_provider.dart';
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Main Screen
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class RoutineTasksScreen extends ConsumerStatefulWidget {
   const RoutineTasksScreen({super.key});
@@ -58,13 +59,13 @@ class _RoutineTasksScreenState extends ConsumerState<RoutineTasksScreen>
         textDirection: TextDirection.rtl,
         child: Column(
           children: [
-            // â”€â”€ Header â”€â”€
+            // ── Header ──
             _RoutineHeader(isDark: isDark),
 
-            // â”€â”€ Tab Bar â”€â”€
+            // ── Tab Bar ──
             _buildTabBar(isDark),
 
-            // â”€â”€ Tab Views â”€â”€
+            // ── Tab Views ──
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -179,9 +180,9 @@ class _RoutineTasksScreenState extends ConsumerState<RoutineTasksScreen>
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Header
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _RoutineHeader extends ConsumerWidget {
   final bool isDark;
@@ -203,14 +204,18 @@ class _RoutineHeader extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            // Was crimson-to-navy: `navyDeep` is an alias of the crimson
+            // primary since the rebrand, but the second stop was still a
+            // literal blue, so the header faded from the brand colour into
+            // the old identity.
             colors: isDark
                 ? [
-                    const Color(0xFF1A1A2E),
-                    const Color(0xFF16213E),
+                    const Color(0xFF241416),
+                    const Color(0xFF1A1012),
                   ]
                 : [
-                    NeuColors.navyDeep,
-                    const Color(0xFF1A3A6B),
+                    NeuColors.primary,
+                    NeuColors.primaryDark,
                   ],
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
@@ -385,9 +390,9 @@ class _RoutineHeader extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Today Tab
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _TodayTab extends ConsumerWidget {
   final bool isDark;
@@ -435,9 +440,9 @@ class _TodayTab extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Week Tab
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _WeekTab extends ConsumerStatefulWidget {
   final bool isDark;
@@ -491,7 +496,7 @@ class _WeekTabState extends ConsumerState<_WeekTab> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? (isDark
-                              ? NeuColors.goldAccent
+                              ? NeuColors.accentMuted
                               : NeuColors.navyDeep)
                           : (isDark
                               ? NeuColors.surfaceDark
@@ -500,7 +505,7 @@ class _WeekTabState extends ConsumerState<_WeekTab> {
                       border: isToday && !isSelected
                           ? Border.all(
                               color: isDark
-                                  ? NeuColors.goldAccent
+                                  ? NeuColors.accentMuted
                                   : NeuColors.navyDeep,
                               width: 1.5)
                           : null,
@@ -595,9 +600,9 @@ class _WeekTabState extends ConsumerState<_WeekTab> {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Manage Tab
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _ManageTab extends ConsumerWidget {
   final bool isDark;
@@ -639,9 +644,9 @@ class _ManageTab extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Task Tile (Today & Week tabs)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _RoutineTaskTile extends ConsumerWidget {
   final RoutineTask task;
@@ -660,13 +665,18 @@ class _RoutineTaskTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final priorityColor = _priorityColor(task.priority);
 
+    final stripeColor =
+        isCompleted ? const Color(0xFF4CAF50) : priorityColor;
+
     return GestureDetector(
       onTap: () =>
           ref.read(routineTasksProvider.notifier).toggleTask(task.id, date),
-      child: AnimatedContainer(
+      child: Stack(
+        children: [
+          AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 14, 14),
         decoration: BoxDecoration(
           color: isCompleted
               ? (isDark
@@ -692,14 +702,6 @@ class _RoutineTaskTile extends ConsumerWidget {
                     offset: const Offset(-2, -2),
                   ),
                 ],
-          border: Border(
-            right: BorderSide(
-              color: isCompleted
-                  ? const Color(0xFF4CAF50)
-                  : priorityColor,
-              width: 3,
-            ),
-          ),
         ),
         child: Row(
           children: [
@@ -779,7 +781,7 @@ class _RoutineTaskTile extends ConsumerWidget {
                       fontSize: 11,
                       fontFamily: 'Panorama',
                       color: isDark
-                          ? NeuColors.goldAccent
+                          ? NeuColors.accentMuted
                           : NeuColors.navyMid,
                       fontWeight: FontWeight.bold,
                     ),
@@ -793,6 +795,14 @@ class _RoutineTaskTile extends ConsumerWidget {
             ),
           ],
         ),
+          ),
+          // Priority edge — an overlay, because a single thick border side
+          // cannot be combined with the card's borderRadius.
+          Positioned.fill(
+            bottom: 8,
+            child: Stack(children: [AccentStripe(color: stripeColor)]),
+          ),
+        ],
       ),
     );
   }
@@ -811,9 +821,9 @@ class _RoutineTaskTile extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Manage Task Tile
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _ManageTaskTile extends ConsumerWidget {
   final RoutineTask task;
@@ -1013,9 +1023,9 @@ class _SmallBadge extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Category Header
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _CategoryHeader extends StatelessWidget {
   final RoutineCategory category;
@@ -1052,9 +1062,9 @@ class _CategoryHeader extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Empty State
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _EmptyRoutineState extends StatelessWidget {
   final bool isDark;
@@ -1107,9 +1117,9 @@ class _EmptyRoutineState extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Add / Edit Task Sheet
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _AddRoutineTaskSheet extends ConsumerStatefulWidget {
   final bool isDark;
@@ -1232,7 +1242,7 @@ class _AddRoutineTaskSheetState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? (isDark
-                                ? NeuColors.goldAccent
+                                ? NeuColors.accentMuted
                                 : NeuColors.navyDeep)
                             : (isDark
                                 ? NeuColors.surfaceDark
@@ -1358,7 +1368,7 @@ class _AddRoutineTaskSheetState
                         Icons.access_time_rounded,
                         size: 18,
                         color: isDark
-                            ? NeuColors.goldAccent
+                            ? NeuColors.accentMuted
                             : NeuColors.navyMid,
                       ),
                       const SizedBox(width: 8),
@@ -1562,9 +1572,9 @@ class _AddRoutineTaskSheetState
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Week Day Picker
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _WeekDayPicker extends StatelessWidget {
   final List<int> selected;
@@ -1634,9 +1644,9 @@ class _WeekDayPicker extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 // Section Label
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────
 
 class _SectionLabel extends StatelessWidget {
   final String label;
@@ -1658,9 +1668,9 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Analytics Tab — HeatMap + Streak + Weekly Bars
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _AnalyticsTab extends ConsumerWidget {
   const _AnalyticsTab({required this.isDark});
@@ -1672,7 +1682,7 @@ class _AnalyticsTab extends ConsumerWidget {
     final tasks = state.tasks;
     final completions = state.completions;
 
-    // â”€â”€ Compute streak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Compute streak ────────────────────────────────────────────────
     final today = DateTime.now();
     int streak = 0;
     for (int d = 0; d <= 365; d++) {
@@ -1686,7 +1696,7 @@ class _AnalyticsTab extends ConsumerWidget {
       }
     }
 
-    // â”€â”€ 30-day completion map â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── 30-day completion map ─────────────────────────────────────────
     final Map<String, int> heatMap = {};
     for (int d = 29; d >= 0; d--) {
       final day = today.subtract(Duration(days: d));
@@ -1694,7 +1704,7 @@ class _AnalyticsTab extends ConsumerWidget {
       heatMap[key] = completions.where((c) => c.dateKey == key).length;
     }
 
-    // â”€â”€ Weekly bars (last 7 days) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Weekly bars (last 7 days) ─────────────────────────────────────
     final weekData = List.generate(7, (i) {
       final day = today.subtract(Duration(days: 6 - i));
       final key = _dayKey(day);
@@ -1711,7 +1721,7 @@ class _AnalyticsTab extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // â”€â”€ Streak Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Streak Card ──────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
           radius: 20,
@@ -1725,7 +1735,7 @@ class _AnalyticsTab extends ConsumerWidget {
                   gradient: LinearGradient(
                     colors: streak >= 7
                         ? [const Color(0xFFFF6B6B), const Color(0xFFE17055)]
-                        : [const Color(0xFF22549E), const Color(0xFF0984E3)],
+                        : [NeuColors.primary, NeuColors.primaryMid],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -1749,7 +1759,7 @@ class _AnalyticsTab extends ConsumerWidget {
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
                         color: textPrimary,
-                        fontFamily: 'Cairo',
+                        fontFamily: 'Panorama',
                       ),
                     ),
                     Text(
@@ -1758,7 +1768,7 @@ class _AnalyticsTab extends ConsumerWidget {
                           : streak >= 7
                               ? 'رائع! استمر في هذا الإنجاز 💪'
                               : 'واصل الإنجاز لتكسب شارة الأسبوع!',
-                      style: TextStyle(fontSize: 13, color: textHint, fontFamily: 'Cairo'),
+                      style: TextStyle(fontSize: 13, color: textHint, fontFamily: 'Panorama'),
                     ),
                   ],
                 ),
@@ -1768,7 +1778,7 @@ class _AnalyticsTab extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
-        // â”€â”€ Weekly Bars â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Weekly Bars ──────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
           radius: 20,
@@ -1782,7 +1792,7 @@ class _AnalyticsTab extends ConsumerWidget {
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
-                  fontFamily: 'Cairo',
+                  fontFamily: 'Panorama',
                 ),
               ),
               const SizedBox(height: 16),
@@ -1793,7 +1803,8 @@ class _AnalyticsTab extends ConsumerWidget {
                   final isToday = _dayKey(d.$1) == _dayKey(today);
                   final barColor = isToday
                       ? (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)
-                      : (isDark ? const Color(0xFF2D4A6E) : const Color(0xFFBDD5F5));
+                      : (isDark ? NeuColors.intensityRampDark[2]
+                              : NeuColors.intensityRampLight[1]);
                   return Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -1828,7 +1839,7 @@ class _AnalyticsTab extends ConsumerWidget {
                               fontSize: 10,
                               color: isToday ? textPrimary : textHint,
                               fontWeight: isToday ? FontWeight.w700 : FontWeight.normal,
-                              fontFamily: 'Cairo',
+                              fontFamily: 'Panorama',
                             ),
                           ),
                         ],
@@ -1842,7 +1853,7 @@ class _AnalyticsTab extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
-        // â”€â”€ HeatMap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── HeatMap ──────────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
           radius: 20,
@@ -1856,7 +1867,7 @@ class _AnalyticsTab extends ConsumerWidget {
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
-                  fontFamily: 'Cairo',
+                  fontFamily: 'Panorama',
                 ),
               ),
               const SizedBox(height: 12),
@@ -1876,20 +1887,19 @@ class _AnalyticsTab extends ConsumerWidget {
                   final count = heatMap[key] ?? 0;
                   final isToday = key == _dayKey(today);
 
-                  Color cellColor;
-                  if (count == 0) {
-                    cellColor = isDark
-                        ? const Color(0xFF1E2A3A)
-                        : const Color(0xFFE8EEF5);
-                  } else if (count == 1) {
-                    cellColor = const Color(0xFFBDD5F5);
-                  } else if (count == 2) {
-                    cellColor = const Color(0xFF6AAEE8);
-                  } else if (count <= 4) {
-                    cellColor = const Color(0xFF2278D4);
-                  } else {
-                    cellColor = const Color(0xFF22549E);
-                  }
+                  // Brand crimson ramp — the old blue scale was a leftover
+                  // from the pre-RVIOS identity.
+                  final ramp = NeuColors.intensityRamp(
+                      isDark ? Brightness.dark : Brightness.light);
+                  final Color cellColor = count == 0
+                      ? ramp[0]
+                      : count == 1
+                          ? ramp[1]
+                          : count == 2
+                              ? ramp[2]
+                              : count <= 4
+                                  ? ramp[3]
+                                  : ramp[4];
 
                   return Tooltip(
                     message: '${day.day}/${day.month}: $count إتمام',
@@ -1913,15 +1923,10 @@ class _AnalyticsTab extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('أقل', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Cairo')),
+                  Text('أقل', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Panorama')),
                   const SizedBox(width: 4),
-                  for (final c in [
-                    const Color(0xFFE8EEF5),
-                    const Color(0xFFBDD5F5),
-                    const Color(0xFF6AAEE8),
-                    const Color(0xFF2278D4),
-                    const Color(0xFF22549E),
-                  ])
+                  for (final c in NeuColors.intensityRamp(
+                      isDark ? Brightness.dark : Brightness.light))
                     Container(
                       width: 14, height: 14,
                       margin: const EdgeInsets.only(right: 3),
@@ -1931,7 +1936,7 @@ class _AnalyticsTab extends ConsumerWidget {
                       ),
                     ),
                   const SizedBox(width: 4),
-                  Text('أكثر', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Cairo')),
+                  Text('أكثر', style: TextStyle(fontSize: 11, color: textHint, fontFamily: 'Panorama')),
                 ],
               ),
             ],
@@ -1939,7 +1944,7 @@ class _AnalyticsTab extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
-        // â”€â”€ Summary Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Summary Stats ─────────────────────────────────────────────
         Row(children: [
           Expanded(
             child: NeuCard(
@@ -1950,10 +1955,10 @@ class _AnalyticsTab extends ConsumerWidget {
                 Text('${tasks.length}',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800,
                         color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                        fontFamily: 'Cairo')),
+                        fontFamily: 'Panorama')),
                 const SizedBox(height: 4),
                 Text('إجمالي المهام',
-                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Cairo')),
+                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Panorama')),
               ]),
             ),
           ),
@@ -1967,10 +1972,10 @@ class _AnalyticsTab extends ConsumerWidget {
                 Text('${completions.length}',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800,
                         color: NeuColors.success,
-                        fontFamily: 'Cairo')),
+                        fontFamily: 'Panorama')),
                 const SizedBox(height: 4),
                 Text('إجمالي الإتمام',
-                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Cairo')),
+                    style: TextStyle(fontSize: 12, color: textHint, fontFamily: 'Panorama')),
               ]),
             ),
           ),

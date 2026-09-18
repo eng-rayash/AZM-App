@@ -228,7 +228,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: NeuColors.goldAccent, width: 1.5),
+                        color: NeuColors.accentMuted, width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 12),
@@ -255,7 +255,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: NeuColors.goldAccent, width: 1.5),
+                        color: NeuColors.accentMuted, width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 12),
@@ -328,7 +328,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                    color: NeuColors.goldAccent, width: 1.5),
+                    color: NeuColors.accentMuted, width: 1.5),
               ),
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: 14, vertical: 12),
@@ -735,7 +735,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                     ),
                     isDark: isDark,
                     isNumbered: true,
-                    accentColor: NeuColors.goldAccent,
+                    accentColor: NeuColors.accentMuted,
                   ),
                   AppSpacing.gapXxl,
 
@@ -768,7 +768,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                         Switch(
                           value: _promoteToFollowUp,
                           onChanged: (val) => setState(() => _promoteToFollowUp = val),
-                          activeTrackColor: NeuColors.goldAccent,
+                          activeTrackColor: NeuColors.accentMuted,
                           activeThumbColor: NeuColors.navyDeep,
                         ),
                       ],

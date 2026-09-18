@@ -10,12 +10,14 @@ import '../../../core/security/auth_service.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../backup/domain/backup_service.dart';
 import '../../reports/domain/export_service.dart';
 import '../../reports/providers/reports_provider.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 /// Advanced Settings Screen — comprehensive settings organized in sections.
 ///
@@ -140,7 +142,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // â”€â”€â”€ Section 0: Account & Verification (Top) â”€â”€â”€
+              // ─── Section 0: Account & Verification (Top) ───
               _buildSectionTitle(
                   'الحساب والتحقق', Icons.cloud_done_rounded, isDark),
               AppSpacing.gapMd,
@@ -155,7 +157,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // â”€â”€â”€ Section 1: Security â”€â”€â”€
+              // ─── Section 1: Security ───
               _buildSectionTitle(
                   'الحماية والأمان', Icons.shield_rounded, isDark),
               AppSpacing.gapMd,
@@ -199,7 +201,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // â”€â”€â”€ Section 2: Appearance â”€â”€â”€
+              // ─── Section 2: Appearance ───
               _buildSectionTitle(
                   'المظهر', Icons.palette_rounded, isDark),
               AppSpacing.gapMd,
@@ -255,7 +257,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // â”€â”€â”€ Section 3: Data & Export â”€â”€â”€
+              // ─── Section 3: Data & Export ───
               _buildSectionTitle(
                   'البيانات والتصدير', Icons.storage_rounded, isDark),
               AppSpacing.gapMd,
@@ -302,19 +304,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             icon: Icons.restore_rounded,
                             variant: NeuButtonVariant.gold,
                             onPressed: () async {
-                              final success = await ref
+                              final result = await ref
                                   .read(backupServiceProvider)
                                   .restoreBackup();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  SnackBar(
-                                    content: Text(success
-                                        ? 'تمت الاستعادة بنجاح. أعد تشغيل التطبيق.'
-                                        : 'فشلت عملية الاستعادة.'),
-                                  ),
-                                );
+                              // الإلغاء ليس فشلًا ولا يستحق رسالة
+                              if (!context.mounted || result.isCancelled) {
+                                return;
                               }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(result.displayMessage),
+                                  duration: const Duration(seconds: 6),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -399,7 +401,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // â”€â”€â”€ Section 4: Notifications â”€â”€â”€
+              // ─── Section 4: Notifications ───
               _buildSectionTitle(
                   'الإشعارات', Icons.notifications_rounded, isDark),
               AppSpacing.gapMd,
@@ -424,7 +426,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               AppSpacing.gapXxl,
 
-              // â”€â”€â”€ Section 5: About (Bottom) â”€â”€â”€
+              // ─── Section 5: About (Bottom) ───
               _buildSectionTitle(
                   'عن التطبيق', Icons.info_rounded, isDark),
               AppSpacing.gapMd,
@@ -442,31 +444,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       width: 72,
                       height: 72,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.18),
-                            blurRadius: 14,
-                            offset: const Offset(0, 5),
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.asset(
-                          'assets/icon.png',
-                          width: 72,
-                          height: 72,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      alignment: Alignment.center,
+                      child: AzmMark(size: 72, isDark: isDark),
                     ),
                     AppSpacing.gapMd,
                     Text(
-                      'مديري',
+                      'عزم',
                       style: isDark
                           ? AppTypography.h3Dark
                           : AppTypography.h3,
@@ -480,7 +463,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     AppSpacing.gapSm,
                     Text(
-                      'الإصدار 0.1.0 • بناء 1',
+                      'الإصدار ${AppConstants.appVersion} • بناء 1',
                       style: isDark
                           ? AppTypography.captionDark
                           : AppTypography.caption,
@@ -586,7 +569,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeTrackColor: NeuColors.goldAccent,
+            activeTrackColor: NeuColors.accentMuted,
             activeThumbColor: NeuColors.navyDeep,
           ),
         ],
@@ -668,7 +651,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Icon(icon,
                   color: isSelected
                       ? (isDark
-                          ? NeuColors.goldAccent
+                          ? NeuColors.accentMuted
                           : NeuColors.navyDeep)
                       : (isDark
                           ? NeuColors.textHintDark
@@ -682,7 +665,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         isSelected ? FontWeight.w700 : FontWeight.w400,
                     color: isSelected
                         ? (isDark
-                            ? NeuColors.goldAccent
+                            ? NeuColors.accentMuted
                             : NeuColors.navyDeep)
                         : (isDark
                             ? NeuColors.textHintDark
@@ -851,7 +834,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'أنت تستخدم أحدث إصدار من تطبيق "مديري" (0.1.0). شكراً لك لاستخدامك النظام التنفيذي.',
+                    'أنت تستخدم أحدث إصدار من تطبيق "عزم" (${AppConstants.appVersion}).',
                     style: isDark ? AppTypography.bodyDark : AppTypography.body,
                     textAlign: TextAlign.center,
                   ),

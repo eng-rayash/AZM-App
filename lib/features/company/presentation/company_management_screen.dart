@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/enums.dart';
@@ -7,6 +7,7 @@ import '../../../core/services/code_generator_service.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../providers/company_providers.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// RVIOS — Company Management Screen
 ///
@@ -96,14 +97,14 @@ class _CompanyManagementScreenState
       body: TabBarView(
         controller: _tabCtrl,
         children: [
-          // â”€â”€ Tab 1: Company Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Tab 1: Company Info ───────────────────────────────────
           _CompanyInfoTab(
               company: company, plan: plan, subsStatus: subsStatus),
 
-          // â”€â”€ Tab 2: Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Tab 2: Members ────────────────────────────────────────
           _MembersTab(company: company, currentRole: role),
 
-          // â”€â”€ Tab 3: Invitations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Tab 3: Invitations ────────────────────────────────────
           _InvitationsTab(company: company),
         ],
       ),
@@ -121,9 +122,9 @@ class _CompanyManagementScreenState
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Tab 1: Company Info
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _CompanyInfoTab extends ConsumerWidget {
   const _CompanyInfoTab({
@@ -142,7 +143,7 @@ class _CompanyInfoTab extends ConsumerWidget {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // â”€â”€ Company Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Company Header ─────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -226,7 +227,7 @@ class _CompanyInfoTab extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          // â”€â”€ Info Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Info Grid ─────────────────────────────────────────
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -260,19 +261,19 @@ class _CompanyInfoTab extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          // â”€â”€ Company Code Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Company Code Card ─────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: NeuColors.goldTint,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: NeuColors.gold.withValues(alpha: 0.4)),
+              border: Border.all(color: NeuColors.accentMuted.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
                 const Icon(Icons.vpn_key_outlined,
-                    color: NeuColors.gold, size: 20),
+                    color: NeuColors.accentMuted, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -301,7 +302,7 @@ class _CompanyInfoTab extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.copy_rounded,
-                      color: NeuColors.gold, size: 20),
+                      color: NeuColors.accentMuted, size: 20),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -320,9 +321,9 @@ class _CompanyInfoTab extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Tab 2: Members
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _MembersTab extends ConsumerWidget {
   const _MembersTab({required this.company, required this.currentRole});
@@ -336,7 +337,7 @@ class _MembersTab extends ConsumerWidget {
     return membersAsync.when(
       loading: () => const Center(
           child: CircularProgressIndicator(color: NeuColors.primary)),
-      error: (e, _) => Center(child: Text('خطأ: $e')),
+      error: (e, _) => ErrorState(error: e),
       data: (members) => members.isEmpty
           ? _EmptyState(
               icon: Icons.people_outline,
@@ -361,9 +362,9 @@ class _MembersTab extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Tab 3: Invitations
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _InvitationsTab extends ConsumerWidget {
   const _InvitationsTab({required this.company});
@@ -376,7 +377,7 @@ class _InvitationsTab extends ConsumerWidget {
     return invitationsAsync.when(
       loading: () => const Center(
           child: CircularProgressIndicator(color: NeuColors.primary)),
-      error: (e, _) => Center(child: Text('خطأ: $e')),
+      error: (e, _) => ErrorState(error: e),
       data: (invitations) => invitations.isEmpty
           ? _EmptyState(
               icon: Icons.mail_outline_rounded,
@@ -396,9 +397,9 @@ class _InvitationsTab extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Invite Employee Bottom Sheet
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _InviteEmployeeSheet extends ConsumerStatefulWidget {
   const _InviteEmployeeSheet({required this.company});
@@ -624,9 +625,9 @@ class _InviteEmployeeSheetState
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Helper Widgets
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _PlanChip extends StatelessWidget {
   const _PlanChip({required this.plan});
@@ -644,7 +645,7 @@ class _PlanChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star_rounded, color: NeuColors.gold, size: 14),
+          const Icon(Icons.star_rounded, color: NeuColors.accentMuted, size: 14),
           const SizedBox(width: 4),
           Text(
             plan.arabicLabel,

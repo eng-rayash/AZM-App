@@ -175,7 +175,6 @@ class _EmployeesListScreenState extends ConsumerState<EmployeesListScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.employeeCreate),
-        backgroundColor: NeuColors.navyDeep,
         icon: const Icon(Icons.person_add_rounded, color: Colors.white),
         label: Text(
           'موظف جديد',

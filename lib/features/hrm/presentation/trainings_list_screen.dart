@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/hrm_repository.dart';
 
 /// Trainings List Screen — employee training programs.
 class TrainingsListScreen extends ConsumerWidget {
@@ -32,7 +30,7 @@ class TrainingsListScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_trainingsStreamProvider);
+    final async = ref.watch(trainingsListProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -139,7 +137,6 @@ class TrainingsListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateTrainingDialog(context, isDark, ref),
-        backgroundColor: const Color(0xFF00B894),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('تدريب جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -209,20 +206,21 @@ class TrainingsListScreen extends ConsumerWidget {
               ElevatedButton(
                 onPressed: () async {
                   if (nameCtrl.text.isEmpty) return;
-                  final db = ref.read(databaseProvider);
-                  await db.hrmDao.insertTraining(TrainingRecordsCompanion(
-                    employeeId: const Value(1),
-                    employeeName: Value(empCtrl.text.isEmpty ? null : empCtrl.text),
-                    trainingName: Value(nameCtrl.text),
-                    provider: Value(providerCtrl.text.isEmpty ? null : providerCtrl.text),
-                    trainingType: Value(selectedType),
-                    startDate: Value(startCtrl.text),
-                    status: const Value(0),
-                  ));
+                  await ref.read(hrmRepositoryProvider).createTraining(
+                        employeeId: 1,
+                        employeeName:
+                            empCtrl.text.isEmpty ? null : empCtrl.text,
+                        trainingName: nameCtrl.text,
+                        provider: providerCtrl.text.isEmpty
+                            ? null
+                            : providerCtrl.text,
+                        trainingType: selectedType,
+                        startDate: startCtrl.text,
+                      );
                   if (ctx.mounted) ctx.pop();
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00B894), foregroundColor: Colors.white),
+                    backgroundColor: NeuColors.success, foregroundColor: Colors.white),
                 child: const Text('حفظ'),
               ),
             ],
@@ -232,10 +230,3 @@ class TrainingsListScreen extends ConsumerWidget {
     );
   }
 }
-
-final _trainingsStreamProvider = StreamProvider<List<TrainingRecord>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.trainingRecords)
-        ..orderBy([(t) => OrderingTerm.desc(t.startDate)]))
-      .watch();
-});

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,31 +27,31 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'الاجتماعات واللقاءات',
             icon: Icons.groups_rounded,
-            color: NeuColors.navyDeep,
+            color: NeuColors.modulePeople,
             route: RouteNames.meetingsList,
           ),
           _MoreItem(
             title: 'التوجيهات والمعاملات',
             icon: Icons.assignment_rounded,
-            color: const Color(0xFF6C5CE7),
+            color: NeuColors.moduleDelivery,
             route: RouteNames.directivesList,
           ),
           _MoreItem(
             title: 'المواعيد',
             icon: Icons.calendar_today_rounded,
-            color: NeuColors.info,
+            color: NeuColors.moduleStructure,
             route: RouteNames.appointmentsList,
           ),
           _MoreItem(
             title: 'الروتين اليومي',
             icon: Icons.loop_rounded,
-            color: const Color(0xFF00B894),
+            color: NeuColors.moduleDelivery,
             route: RouteNames.routineTasksList,
           ),
           _MoreItem(
             title: 'الجدول الزمني',
             icon: Icons.timeline_rounded,
-            color: const Color(0xFFE17055),
+            color: NeuColors.moduleStructure,
             route: RouteNames.timeline,
           ),
         ],
@@ -62,25 +62,25 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'جهات الاتصال',
             icon: Icons.contacts_rounded,
-            color: NeuColors.navyMid,
+            color: NeuColors.modulePeople,
             route: RouteNames.contactsList,
           ),
           _MoreItem(
             title: 'المكالمات',
             icon: Icons.phone_rounded,
-            color: NeuColors.success,
+            color: NeuColors.moduleStructure,
             route: RouteNames.callsList,
           ),
           _MoreItem(
             title: 'الزيارات',
             icon: Icons.person_pin_circle_rounded,
-            color: const Color(0xFFFDCB6E),
+            color: NeuColors.moduleStructure,
             route: RouteNames.visitorsList,
           ),
           _MoreItem(
             title: 'الحركات الميدانية',
             icon: Icons.directions_car_rounded,
-            color: const Color(0xFFFF7675),
+            color: NeuColors.moduleDelivery,
             route: RouteNames.movementsList,
           ),
         ],
@@ -91,13 +91,13 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'أرشيف المذكرات',
             icon: Icons.archive_rounded,
-            color: NeuColors.navyDeep,
+            color: NeuColors.moduleStructure,
             route: RouteNames.archiveList,
           ),
           _MoreItem(
             title: 'الملاحظات',
             icon: Icons.sticky_note_2_rounded,
-            color: const Color(0xFFFDCB6E),
+            color: NeuColors.moduleStructure,
             route: RouteNames.notesList,
           ),
         ],
@@ -108,19 +108,19 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'التقارير العامة',
             icon: Icons.analytics_rounded,
-            color: NeuColors.navyDeep,
+            color: NeuColors.moduleInsight,
             route: RouteNames.reports,
           ),
           _MoreItem(
             title: 'تقارير الموارد البشرية',
             icon: Icons.people_outline_rounded,
-            color: NeuColors.info,
+            color: NeuColors.moduleInsight,
             route: RouteNames.hrmReports,
           ),
           _MoreItem(
             title: 'التقارير المالية',
             icon: Icons.bar_chart_rounded,
-            color: NeuColors.success,
+            color: NeuColors.moduleInsight,
             route: RouteNames.financeReports,
           ),
         ],
@@ -131,25 +131,25 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'دليل الحسابات',
             icon: Icons.account_tree_rounded,
-            color: const Color(0xFF6C5CE7),
+            color: NeuColors.moduleStructure,
             route: RouteNames.chartOfAccounts,
           ),
           _MoreItem(
             title: 'القيود اليومية',
             icon: Icons.receipt_long_rounded,
-            color: NeuColors.navyDeep,
+            color: NeuColors.moduleStructure,
             route: RouteNames.journalEntries,
           ),
           _MoreItem(
             title: 'السندات',
             icon: Icons.receipt_rounded,
-            color: NeuColors.info,
+            color: NeuColors.moduleIncome,
             route: RouteNames.paymentVouchersList,
           ),
           _MoreItem(
             title: 'الموردون',
             icon: Icons.local_shipping_rounded,
-            color: const Color(0xFFE17055),
+            color: NeuColors.moduleOutgoing,
             route: RouteNames.suppliersList,
           ),
         ],
@@ -172,7 +172,7 @@ class MoreScreen extends ConsumerWidget {
           _MoreItem(
             title: 'إدارة الوحدات',
             icon: Icons.layers_rounded,
-            color: NeuColors.gold,
+            color: NeuColors.accentMuted,
             route: '/settings/modules',
           ),
           _MoreItem(

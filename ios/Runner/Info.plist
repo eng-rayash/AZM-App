@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>مديري</string>
+	<string>عزم</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>mudiri</string>
+	<string>azm</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -46,6 +46,12 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
-	<string>يحتاج تطبيق مديري إلى استخدام البصمة للتحقق من هويتك وتأمين الدخول السريع</string>
+	<string>يحتاج تطبيق عزم إلى استخدام البصمة للتحقق من هويتك وتأمين الدخول السريع</string>
+	<key>NSCameraUsageDescription</key>
+	<string>يستخدم عزم الكاميرا لمسح المستندات والفواتير والمعاملات وحفظها في الأرشيف</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج عزم إلى مكتبة الصور لإرفاق صور المستندات والفواتير بسجلاتك</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>يحفظ عزم المستندات الممسوحة والتقارير المصدَّرة في مكتبة الصور عند طلبك</string>
 </dict>
 </plist>

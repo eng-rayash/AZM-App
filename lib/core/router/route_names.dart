@@ -13,28 +13,43 @@ class RouteNames {
   static const String pinSetup = '/pin-setup';
 
   // ─────────────────────────────────────────────
-  // Shell Routes (Bottom Navigation — 5 tabs)
-  // لوحة التحكم | المتابعات | شؤون العاملين | المالية | المزيد
+  // Shell Routes — تنقّل عزم: أربعة تبويبات
+  // الرئيسية | العمل | الأعمال | الذكاء
   // ─────────────────────────────────────────────
+  //
+  // كل تبويب يجيب عن سؤال واحد:
+  //   الرئيسية → ما وضع عملي؟ ما يحتاجني؟ ماذا أفعل الآن؟
+  //   العمل    → ما الذي يجب تنفيذه؟
+  //   الأعمال  → من وماذا أدير؟
+  //   الذكاء   → ماذا يحدث ولماذا؟
+  //
+  // لا تبويب «المزيد»: حين يصير مكبًّا لعشرات الوجهات فالمشكلة في معمار
+  // المعلومات. الإعدادات والحساب يُوصَل إليهما من ترويسة الرئيسية.
 
   static const String home = '/home';
   static const String dashboard = 'dashboard';
-  static const String followupsList = 'followups';
-  static const String hrmShell = 'hrm';
-  static const String financeShell = 'finance';
-  static const String moreShell = 'more';
+  static const String workShell = 'work';
+  static const String businessShell = 'business';
+  static const String insightsShell = 'insights';
 
   // Full paths for shell routes
   static const String dashboardFull = '/home/dashboard';
+  static const String workFull = '/home/work';
+  static const String businessFull = '/home/business';
+  static const String insightsFull = '/home/insights';
+
+  // مسارات مُبقاة داخل الـShell — وجهات لا تبويبات
   static const String followupsListFull = '/home/followups';
   static const String hrmFull = '/home/hrm';
   static const String financeFull = '/home/finance';
   static const String moreFull = '/home/more';
 
-  // Legacy full paths kept for backward-compatibility
-  static const String meetingsListFull = '/home/meetings'; // redirects to moreFull
-  static const String tasksListFull = '/home/tasks';       // redirects to followupsListFull
-  static const String archiveListFull = '/home/archive';   // kept for archive access
+  // مسار الأرشيف داخل الـShell — مسجّل ويعمل.
+  //
+  // حُذف من هنا `meetingsListFull` و`tasksListFull`: لم يكونا مسجّلين في
+  // الراوتر قط، وكان استدعاؤهما يعرض صفحة خطأ. وجهتاهما الصحيحتان
+  // `meetingsList` و`followupsListFull`.
+  static const String archiveListFull = '/home/archive';
 
   // ─────────────────────────────────────────────
   // Follow-ups Routes

@@ -1,5 +1,5 @@
-name: rvios
-description: "RVIOS — One Platform. Complete Business Management."
+name: azm
+description: "AZM — عزم · نظام تشغيل الأعمال الذكي. من RVIOS Technologies."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -78,11 +78,15 @@ flutter:
     - assets/images/logo_full.png
 
   fonts:
+    # خط عزم العربي الوحيد — Hacen Liner Screen. عناوين ومتن وواجهة.
+    # الاسم "Panorama" مُبقى لأنه مذكور نصّياً في ١٤٤ موضعاً.
     - family: Panorama
       fonts:
-        - asset: assets/fonts/majallab.ttf
+        - asset: assets/fonts/HacenLinerScreen.ttf
 
-    - family: majallab
+    # احتياط الرموز وحدها: Hacen ينقصه … و ﷼ و € و NBSP.
+    # لا يُستدعى إلا حين يعجز الخط الأساسي عن رمز.
+    - family: GlyphFallback
       fonts:
         - asset: assets/fonts/majallab.ttf
 
@@ -100,6 +104,7 @@ flutter:
     - family: RTLMaghfira
       fonts:
         - asset: assets/fonts/rtl-maghfira-ramadan.ttf
+
 
 flutter_launcher_icons:
   android: "launcher_icon"

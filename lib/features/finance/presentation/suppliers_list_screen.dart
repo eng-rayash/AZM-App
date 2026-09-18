@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/finance_repository.dart';
 
 /// Suppliers List Screen — قائمة الموردين.
 class SuppliersListScreen extends ConsumerWidget {
@@ -19,7 +17,7 @@ class SuppliersListScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final suppliersAsync = ref.watch(_suppliersStreamProvider);
+    final suppliersAsync = ref.watch(suppliersListProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -138,7 +136,6 @@ class SuppliersListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateDialog(context, isDark, ref),
-        backgroundColor: const Color(0xFFE17055),
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: Text('مورد جديد',
@@ -206,16 +203,17 @@ class SuppliersListScreen extends ConsumerWidget {
             ElevatedButton(
               onPressed: () async {
                 if (nameCtrl.text.isEmpty) return;
-                final db = ref.read(databaseProvider);
-                await db.financeDao.insertSupplier(SuppliersCompanion(
-                  name: Value(nameCtrl.text),
-                  phone: Value(phoneCtrl.text.isEmpty ? null : phoneCtrl.text),
-                  email: Value(emailCtrl.text.isEmpty ? null : emailCtrl.text),
-                  city: Value(cityCtrl.text.isEmpty ? null : cityCtrl.text),
-                  category: Value(categoryCtrl.text.isEmpty ? null : categoryCtrl.text),
-                  isActive: const Value(true),
-                  currentBalance: const Value(0.0),
-                ));
+                await ref.read(financeRepositoryProvider).createSupplier(
+                      name: nameCtrl.text,
+                      phone:
+                          phoneCtrl.text.isEmpty ? null : phoneCtrl.text,
+                      email:
+                          emailCtrl.text.isEmpty ? null : emailCtrl.text,
+                      city: cityCtrl.text.isEmpty ? null : cityCtrl.text,
+                      category: categoryCtrl.text.isEmpty
+                          ? null
+                          : categoryCtrl.text,
+                    );
                 if (ctx.mounted) ctx.pop();
               },
               style: ElevatedButton.styleFrom(
@@ -228,8 +226,3 @@ class SuppliersListScreen extends ConsumerWidget {
     );
   }
 }
-
-final _suppliersStreamProvider = StreamProvider<List<Supplier>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.financeDao.watchSuppliers();
-});

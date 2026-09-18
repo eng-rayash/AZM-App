@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// RVIOS Design System — Color Tokens
+/// Design System — Color Tokens
 ///
 /// Primary   #9E2226  (Crimson Red — Executive Identity)
 /// Ivory     #FAF8ED  (Light Background)
@@ -14,10 +14,10 @@ class NeuColors {
   NeuColors._();
 
   // ─────────────────────────────────────────────
-  // Brand / Primary — Crimson Red Family (RVIOS Identity)
+  // Brand / Primary — Crimson Red Family
   // ─────────────────────────────────────────────
 
-  /// Primary — Crimson Red (RVIOS executive identity)
+  /// Primary — Crimson Red (executive identity)
   static const Color primary = Color(0xFF9E2226);
 
   /// Primary dark (pressed states, deep accents)
@@ -58,11 +58,18 @@ class NeuColors {
   // Legacy alias
   static const Color goldAccent = gold;
 
+  /// تمييز ثانوي يقرأ على الأرضين.
+  ///
+  /// أُدخل حين كان التمييز ينقلب بين الوضعين، وتستدعيه شاشات كثيرة الآن.
+  /// وقد عاد الذهبي لونًا متوسط السطوع يعمل على الأرضين معًا، فصار هذا
+  /// الاسم مرادفًا له — يبقى للتوافق ولا يغيّر شيئًا في العرض.
+  static const Color accentMuted = gold;
+
   // ─────────────────────────────────────────────
   // Light Theme Colors — Ivory Foundation
   // ─────────────────────────────────────────────
 
-  /// Main background — Ivory (RVIOS light foundation)
+  /// Main background — Ivory
   static const Color bgColor = Color(0xFFF5F3E8);
 
   /// Card / surface — Lighter ivory
@@ -156,6 +163,60 @@ class NeuColors {
   static const Color priorityLow = Color(0xFF9E9E9E);
 
   // ─────────────────────────────────────────────
+  // Module Accents — semantic, not decorative
+  // ─────────────────────────────────────────────
+  //
+  // Module tiles used to pick from a dozen unrelated hues, which reads as a
+  // toy app rather than an ERP. These six carry meaning instead: the colour
+  // tells the reader what kind of module it is, so the palette stays small
+  // and the brand stays dominant.
+
+  /// Money coming in — revenue, sales invoices, receipts.
+  static const Color moduleIncome = success;
+
+  /// Money going out — expenses, suppliers, payment vouchers.
+  static const Color moduleOutgoing = danger;
+
+  /// People and relationships — clients, employees, contacts.
+  static const Color modulePeople = primary;
+
+  /// Reference and structure — chart of accounts, journals, branches.
+  static const Color moduleStructure = info;
+
+  /// Delivery — projects, tasks, training.
+  static const Color moduleDelivery = Color(0xFF6C5CE7);
+
+  /// Insight — reports, analytics, evaluations.
+  static const Color moduleInsight = goldDark;
+
+  // ─────────────────────────────────────────────
+  // Sequential Ramp — intensity in brand crimson
+  // ─────────────────────────────────────────────
+  //
+  // Five ordered steps for heatmaps and density scales. Lightness decreases
+  // monotonically so the steps stay distinguishable in greyscale too.
+
+  static const List<Color> intensityRampLight = [
+    Color(0xFFF1EADF), // 0 — empty, sits on the ivory ground
+    Color(0xFFF0CFCF),
+    Color(0xFFDD9295),
+    Color(0xFFC05055),
+    Color(0xFF9E2226), // 4 — full brand crimson
+  ];
+
+  static const List<Color> intensityRampDark = [
+    Color(0xFF23262B),
+    Color(0xFF4A2225),
+    Color(0xFF73262C),
+    Color(0xFF9E2226),
+    Color(0xFFD45558),
+  ];
+
+  /// Ramp for the active theme.
+  static List<Color> intensityRamp(Brightness brightness) =>
+      brightness == Brightness.dark ? intensityRampDark : intensityRampLight;
+
+  // ─────────────────────────────────────────────
   // Divider & Border
   // ─────────────────────────────────────────────
 
@@ -176,6 +237,14 @@ class NeuColors {
   static Color surfaceColor(Brightness brightness) =>
       brightness == Brightness.dark ? surfaceDark : surface;
 
+  /// Returns the appropriate elevated surface based on brightness
+  static Color surfaceElevatedFor(Brightness brightness) =>
+      brightness == Brightness.dark ? surfaceElevatedDark : surfaceElevated;
+
+  /// Returns the divider/border colour for the theme
+  static Color hairline(Brightness brightness) =>
+      brightness == Brightness.dark ? borderDark : border;
+
   /// Returns the dark shadow based on brightness
   static Color darkShadow(Brightness brightness) =>
       brightness == Brightness.dark ? shadowDarkDark : shadowDark;
@@ -192,6 +261,15 @@ class NeuColors {
   static Color textSecondaryFor(Brightness brightness) =>
       brightness == Brightness.dark ? textSecondaryDark : textSecondary;
 
+  /// Returns the appropriate hint text colour
+  static Color textHintFor(Brightness brightness) =>
+      brightness == Brightness.dark ? textHintDark : textHint;
+
   /// Returns the accent color for the theme
   static Color accentFor(Brightness brightness) =>
-      brightness == Brightness.dark ? gold : primar
+      brightness == Brightness.dark ? gold : primary;
+
+  /// Returns the colour for text sitting on [accentFor]
+  static Color onAccentFor(Brightness brightness) =>
+      brightness == Brightness.dark ? bgColorDark : textOnAccent;
+}

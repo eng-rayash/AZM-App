@@ -30,7 +30,7 @@ class DashboardFab extends StatelessWidget {
     _FabAction(
       label: 'عميل',
       icon: Icons.supervisor_account_rounded,
-      color: Color(0xFF00B894),
+      color: NeuColors.success,
       route: RouteNames.clientCreate,
     ),
     _FabAction(
@@ -48,7 +48,7 @@ class DashboardFab extends StatelessWidget {
     _FabAction(
       label: 'موظف',
       icon: Icons.badge_rounded,
-      color: Color(0xFF6C5CE7),
+      color: NeuColors.moduleDelivery,
       route: RouteNames.employeeCreate,
     ),
     _FabAction(
@@ -79,12 +79,18 @@ class DashboardFab extends StatelessWidget {
       label: 'ملاحظة',
       icon: Icons.note_add_rounded,
       color: NeuColors.navyLight,
-      route: RouteNames.noteCreate,
+      // شاشة الملاحظات تنشئ عبر حوار داخلي، فلا مسار إنشاء مستقلًّا لها
+      route: RouteNames.notesList,
     ),
   ];
 
 
-  void _showMenu(BuildContext context) {
+  /// Opens the module quick-add sheet.
+  ///
+  /// Shared with the shell's centre navigation button so both entry points
+  /// offer the same actions instead of the button jumping straight into one
+  /// hardcoded module.
+  static void showQuickAddMenu(BuildContext context) {
     HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
@@ -98,7 +104,10 @@ class DashboardFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return _AnimatedFabButton(isDark: isDark, onTap: () => _showMenu(context));
+    return _AnimatedFabButton(
+      isDark: isDark,
+      onTap: () => showQuickAddMenu(context),
+    );
   }
 }
 
@@ -180,7 +189,7 @@ class _AnimatedFabButtonState extends State<_AnimatedFabButton>
               ),
               if (!isDark)
                 BoxShadow(
-                  color: NeuColors.goldAccent.withAlpha(40),
+                  color: NeuColors.accentMuted.withAlpha(40),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -197,14 +206,14 @@ class _AnimatedFabButtonState extends State<_AnimatedFabButton>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: NeuColors.goldAccent.withAlpha(60),
+                    color: NeuColors.accentMuted.withAlpha(60),
                     width: 1.5,
                   ),
                 ),
               ),
               const Icon(
                 Icons.add_rounded,
-                color: NeuColors.goldAccent,
+                color: NeuColors.accentMuted,
                 size: 30,
               ),
             ],

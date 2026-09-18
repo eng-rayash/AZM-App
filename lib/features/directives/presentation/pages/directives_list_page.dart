@@ -18,6 +18,7 @@ import '../../../../shared/widgets/sort_menu.dart';
 import '../../providers/directives_provider.dart';
 import '../../widgets/directive_card.dart';
 import '../../domain/directives_repository.dart';
+import '../../../../shared/widgets/error_state.dart';
 
 /// Directives List — displays all executive directives with search, filter, multi-select, and export.
 class DirectivesListPage extends ConsumerStatefulWidget {
@@ -255,7 +256,7 @@ class _DirectivesListPageState extends ConsumerState<DirectivesListPage> {
                 loading: () =>
                     const Center(child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Center(child: Text('خطأ: $err')),
+                    ErrorState(error: err),
                 data: (directives) {
                   var filtered = directives.toList();
 
@@ -347,7 +348,7 @@ class _DirectivesListPageState extends ConsumerState<DirectivesListPage> {
                                     : Icons.radio_button_unchecked_rounded,
                                 color: isSelected
                                     ? (isDark
-                                        ? NeuColors.goldAccent
+                                        ? NeuColors.accentMuted
                                         : NeuColors.navyDeep)
                                     : (isDark
                                         ? NeuColors.textHintDark

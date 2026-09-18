@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_typography.dart';
+import 'app_logo.dart';
 
 /// RVIOS — Responsive Layout System
 ///
@@ -28,9 +29,9 @@ class ResponsiveLayout extends StatelessWidget {
   final Widget? tablet;
   final Widget? desktop;
 
-  // أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬
+  // ─────────────────────────────────────────────────────────────
   // Breakpoints
-  // أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬
+  // ─────────────────────────────────────────────────────────────
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 1200;
 
@@ -88,7 +89,7 @@ class SidebarNavigation extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          // أ¢‌â‚¬أ¢‌â‚¬ Sidebar أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬
+          // ── Sidebar ───────────────────────────────────────────
           AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             width: 240,
@@ -104,7 +105,7 @@ class SidebarNavigation extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // أ¢‌â‚¬أ¢‌â‚¬ Header أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬أ¢‌â‚¬
+                // ── Header ──────────────────────────────────────
                 Container(
                   height: 72,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -117,24 +118,7 @@ class SidebarNavigation extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Image.asset(
-                              'assets/images/logo_icon.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
+                      const AzmMark(size: 38, isDark: true),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
@@ -142,13 +126,14 @@ class SidebarNavigation extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'RVIOS',
+                              'AZM',
                               style: TextStyle(
-                                fontFamily: 'Yapari',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                                fontFamily:
+                                    AppTypography.fontFamilyGivonic,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
                                 color: Colors.white,
-                                letterSpacing: 1.5,
+                                letterSpacing: 5,
                               ),
                             ),
                             Text(

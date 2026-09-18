@@ -10,22 +10,22 @@ import 'core/theme/app_theme.dart';
 import 'features/notifications/domain/notification_service.dart';
 import 'features/notifications/providers/smart_notifications_provider.dart';
 
-/// RVIOS Application Root Widget.
+/// AZM Application Root Widget.
 ///
 /// Configures:
-/// - Material 3 theme (RVIOS Branding — Crimson/Gold/Ivory)
+/// - Material 3 theme (AZM — حبر على ورق، وطباشير على جرافيت)
 /// - Arabic locale (RTL-first)
 /// - GoRouter navigation with Onboarding flow
 /// - Riverpod state management
 /// - Dynamic theme mode via ThemeNotifier
-class RviosApp extends ConsumerStatefulWidget {
-  const RviosApp({super.key});
+class AzmApp extends ConsumerStatefulWidget {
+  const AzmApp({super.key});
 
   @override
-  ConsumerState<RviosApp> createState() => _RviosAppState();
+  ConsumerState<AzmApp> createState() => _AzmAppState();
 }
 
-class _RviosAppState extends ConsumerState<RviosApp> {
+class _AzmAppState extends ConsumerState<AzmApp> {
   @override
   void initState() {
     super.initState();

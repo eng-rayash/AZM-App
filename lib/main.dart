@@ -6,6 +6,7 @@ import 'app.dart';
 import 'core/security/lock_manager.dart';
 import 'core/services/supabase_config.dart';
 import 'core/services/error_tracking_service.dart';
+import 'core/theme/neu_colors.dart';
 
 /// Application entry point.
 ///
@@ -38,10 +39,10 @@ void main() async {
 
   // System UI styling
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
+    SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Color(0xFFECF0F6),
+      systemNavigationBarColor: NeuColors.bgColor,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
@@ -51,7 +52,7 @@ void main() async {
 
   runApp(
     const ProviderScope(
-      child: RviosApp(),
+      child: AzmApp(),
     ),
   );
 }

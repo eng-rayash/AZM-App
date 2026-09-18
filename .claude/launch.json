@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "azm-web",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8085", "--web-hostname", "127.0.0.1"],
+      "port": 8085
+    },
+    {
+      "name": "azm-web-release",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8086", "--directory", "build/web", "--bind", "127.0.0.1"],
+      "port": 8086
+    }
+  ]
+}

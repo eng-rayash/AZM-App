@@ -48,7 +48,7 @@ class PricingScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── Header ───────────────────────────────────────────
               Text(
                 'قدرات بلا حدود لإدارة أعمالك',
                 style: TextStyle(
@@ -71,7 +71,7 @@ class PricingScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // â”€â”€ Plan Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── Plan Cards ────────────────────────────────────────
               ...PlanType.values.map((plan) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: _PlanCard(
@@ -83,7 +83,7 @@ class PricingScreen extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
-              // â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── FAQ ───────────────────────────────────────────────
               _FaqSection(isDark: isDark),
               const SizedBox(height: 32),
             ],
@@ -94,9 +94,9 @@ class PricingScreen extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Plan Card
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _PlanCard extends StatelessWidget {
   const _PlanCard({
@@ -128,7 +128,7 @@ class _PlanCard extends StatelessWidget {
               color: isCurrentPlan
                   ? NeuColors.primary
                   : isPopular
-                      ? NeuColors.gold
+                      ? NeuColors.accentMuted
                       : isDark
                           ? NeuColors.borderDark
                           : NeuColors.border,
@@ -137,7 +137,7 @@ class _PlanCard extends StatelessWidget {
             boxShadow: isPopular
                 ? [
                     BoxShadow(
-                      color: NeuColors.gold.withValues(alpha: 0.2),
+                      color: NeuColors.accentMuted.withValues(alpha: 0.2),
                       blurRadius: 20,
                       spreadRadius: 2,
                     )
@@ -295,7 +295,7 @@ class _PlanCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: NeuColors.gold,
+                color: NeuColors.accentMuted,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
@@ -341,7 +341,7 @@ class _PlanCard extends StatelessWidget {
     switch (plan) {
       case PlanType.freePersonal: return NeuColors.textHint;
       case PlanType.professional: return NeuColors.primary;
-      case PlanType.business: return NeuColors.gold;
+      case PlanType.business: return NeuColors.accentMuted;
       case PlanType.businessPlus: return const Color(0xFF7B1FA2);
       case PlanType.enterprise: return const Color(0xFF1B5E20);
     }
@@ -609,9 +609,9 @@ class _PlanCard extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // FAQ Section
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _FaqSection extends StatelessWidget {
   const _FaqSection({required this.isDark});

@@ -10,6 +10,7 @@ import '../../../shared/widgets/related_entities_widget.dart';
 import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Employee Detail Screen
@@ -28,7 +29,7 @@ class EmployeeDetailScreen extends ConsumerWidget {
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       body: employeesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => ErrorState(error: e),
         data: (employees) {
           final employee = employees.firstWhere(
             (e) => e.id == employeeId,
@@ -80,7 +81,7 @@ class _EmployeeDetailBody extends StatelessWidget {
         SliverAppBar(
           pinned: true,
           expandedHeight: 240,
-          backgroundColor: const Color(0xFF6C5CE7),
+          backgroundColor: NeuColors.moduleDelivery,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
             onPressed: () => context.pop(),
@@ -96,7 +97,7 @@ class _EmployeeDetailBody extends StatelessWidget {
             background: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF6C5CE7), Color(0xFF0984E3)],
+                  colors: [NeuColors.moduleDelivery, NeuColors.info],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                 ),
@@ -125,13 +126,13 @@ class _EmployeeDetailBody extends StatelessWidget {
                           children: [
                             Text(employee.name, style: const TextStyle(
                                 color: Colors.white, fontSize: 20,
-                                fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
+                                fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
                             if (employee.positionName != null)
                               Text(employee.positionName!, style: const TextStyle(
-                                  color: Colors.white70, fontSize: 13, fontFamily: 'Cairo')),
+                                  color: Colors.white70, fontSize: 13, fontFamily: 'Panorama')),
                             if (employee.departmentName != null)
                               Text(employee.departmentName!, style: const TextStyle(
-                                  color: Colors.white60, fontSize: 12, fontFamily: 'Cairo')),
+                                  color: Colors.white60, fontSize: 12, fontFamily: 'Panorama')),
                             const SizedBox(height: 6),
                             // Status badge
                             Container(
@@ -143,7 +144,7 @@ class _EmployeeDetailBody extends StatelessWidget {
                                 border: Border.all(color: Colors.white38),
                               ),
                               child: Text(_empStatus, style: const TextStyle(
-                                  color: Colors.white, fontSize: 12, fontFamily: 'Cairo')),
+                                  color: Colors.white, fontSize: 12, fontFamily: 'Panorama')),
                             ),
                           ],
                         )),
@@ -156,13 +157,13 @@ class _EmployeeDetailBody extends StatelessWidget {
                         Text(
                           'الراتب الأساسي: ${fmt.format(employee.basicSalary)} ر.ي',
                           style: const TextStyle(color: Colors.white70,
-                              fontSize: 13, fontFamily: 'Cairo'),
+                              fontSize: 13, fontFamily: 'Panorama'),
                         ),
                         const Spacer(),
                         if (employee.employeeCode != null)
                           Text('#${employee.employeeCode}',
                               style: const TextStyle(color: Colors.white54,
-                                  fontSize: 12, fontFamily: 'Cairo')),
+                                  fontSize: 12, fontFamily: 'Panorama')),
                       ]),
                     ],
                   ),

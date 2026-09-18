@@ -206,7 +206,7 @@ class _CreateEncounterScreenState
                               Icons.calendar_today_rounded,
                               size: 18,
                               color: isDark
-                                  ? NeuColors.goldAccent
+                                  ? NeuColors.accentMuted
                                   : NeuColors.navyMid,
                             ),
                             AppSpacing.gapHSm,
@@ -242,7 +242,7 @@ class _CreateEncounterScreenState
                               Icons.access_time_rounded,
                               size: 18,
                               color: isDark
-                                  ? NeuColors.goldAccent
+                                  ? NeuColors.accentMuted
                                   : NeuColors.navyMid,
                             ),
                             AppSpacing.gapHSm,

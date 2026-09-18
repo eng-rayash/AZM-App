@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/neu_decorations.dart';
+import '../../core/theme/neu_colors.dart';
 
-/// Neumorphic Card Widget — the building block of the Mudiri UI.
+/// RVIOS Enterprise Card — Premium Glass/Flat Card Component.
 ///
 /// Supports:
-/// - Flat (default) and pressed states
-/// - Gold accent top border (for dashboard cards)
-/// - Status color right bar (for meetings/tasks, RTL-aware)
-/// - Tap and long-press callbacks
+/// - Flat (default) with subtle shadow elevation
+/// - Glassmorphism variant (glass: true)
+/// - Accent top border (showGoldBorder)
+/// - Status color right bar (RTL-aware)
+/// - Gradient card (gradientColors)
+/// - Press animation
 class NeuCard extends StatefulWidget {
   const NeuCard({
     super.key,
@@ -22,6 +24,10 @@ class NeuCard extends StatefulWidget {
     this.statusColor,
     this.isDark = false,
     this.animate = true,
+    this.glass = false,
+    this.gradientColors,
+    this.backgroundColor,
+    this.elevation = 1,
   });
 
   final Widget child;
@@ -34,6 +40,10 @@ class NeuCard extends StatefulWidget {
   final Color? statusColor;
   final bool isDark;
   final bool animate;
+  final bool glass;
+  final List<Color>? gradientColors;
+  final Color? backgroundColor;
+  final int elevation; // 0=flat, 1=default, 2=elevated
 
   @override
   State<NeuCard> createState() => _NeuCardState();
@@ -47,36 +57,169 @@ class _NeuCardState extends State<NeuCard> {
     final isDark =
         widget.isDark || Theme.of(context).brightness == Brightness.dark;
 
-    BoxDecoration decoration;
+    final bgColor = widget.backgroundColor ??
+        (isDark ? NeuColors.surfaceDark : NeuColors.surface);
 
-    if (widget.showGoldBorder) {
-      decoration = _isPressed
-          ? NeuDecorations.neuPressed(radius: widget.radius, isDark: isDark)
-          : NeuDecorations.neuFlatWithGoldTop(
-              radius: widget.radius, isDark: isDark);
-    } else if (widget.statusColor != null) {
-      decoration = _isPressed
-          ? NeuDecorations.neuPressed(radius: widget.radius, isDark: isDark)
-          : NeuDecorations.neuFlatWithStatusBar(
-              statusColor: widget.statusColor!,
-              radius: widget.radius,
-              isDark: isDark,
-            );
+    // Shadow based on elevation
+    List<BoxShadow> shadows = [];
+    if (!_isPressed) {
+      switch (widget.elevation) {
+        case 0:
+          shadows = [];
+          break;
+        case 2:
+          shadows = [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.5)
+                  : Colors.black.withValues(alpha: 0.08),
+              offset: const Offset(0, 8),
+              blurRadius: 24,
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.04),
+              offset: const Offset(0, 2),
+              blurRadius: 6,
+              spreadRadius: 0,
+            ),
+          ];
+          break;
+        default: // elevation = 1
+          shadows = [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.4)
+                  : Colors.black.withValues(alpha: 0.06),
+              offset: const Offset(0, 4),
+              blurRadius: 16,
+              spreadRadius: 0,
+            ),
+          ];
+      }
     } else {
-      decoration = _isPressed
-          ? NeuDecorations.neuPressed(radius: widget.radius, isDark: isDark)
-          : NeuDecorations.neuFlat(radius: widget.radius, isDark: isDark);
+      shadows = [
+        BoxShadow(
+          color: isDark
+              ? NeuColors.accentMuted.withValues(alpha: 0.1)
+              : NeuColors.primary.withValues(alpha: 0.08),
+          offset: const Offset(0, 2),
+          blurRadius: 6,
+          spreadRadius: 0,
+        ),
+      ];
     }
 
-    final card = AnimatedContainer(
-      duration: widget.animate
-          ? NeuDecorations.pressDuration
-          : Duration.zero,
-      curve: NeuDecorations.pressCurve,
+    // Accent — a gold/primary top bar, or a status bar on the leading edge.
+    final Color? accentColor = widget.showGoldBorder
+        ? (isDark ? NeuColors.goldAccent : NeuColors.primary)
+        : widget.statusColor;
+
+    // Border
+    BoxBorder? border;
+    if (_isPressed) {
+      border = Border.all(
+        color: isDark ? NeuColors.goldAccent : NeuColors.primary,
+        width: 1.5,
+      );
+    } else if (accentColor != null) {
+      // The accent used to be a single thick Border side. Combined with the
+      // card's borderRadius that is illegal — Flutter threw
+      // "A borderRadius can only be given on borders with uniform colors" on
+      // every paint of every accented card. The outline stays uniform and the
+      // accent is drawn as an overlay bar below instead.
+      border = Border.all(
+        color: accentColor.withValues(alpha: isDark ? 0.34 : 0.24),
+        width: 1,
+      );
+    } else {
+      border = Border.all(
+        color: isDark
+            ? NeuColors.borderDark.withValues(alpha: 0.6)
+            : NeuColors.border.withValues(alpha: 0.6),
+        width: 0.5,
+      );
+    }
+
+    BoxDecoration decoration;
+    if (widget.glass) {
+      decoration = BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.07)
+            : Colors.white.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(widget.radius),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.9),
+          width: 1,
+        ),
+        boxShadow: shadows,
+      );
+    } else if (widget.gradientColors != null) {
+      decoration = BoxDecoration(
+        gradient: LinearGradient(
+          colors: widget.gradientColors!,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(widget.radius),
+        boxShadow: shadows,
+      );
+    } else {
+      decoration = BoxDecoration(
+        color: _isPressed
+            ? (isDark
+                ? NeuColors.surfaceDark.withValues(alpha: 0.8)
+                : NeuColors.primaryTint.withValues(alpha: 0.3))
+            : bgColor,
+        borderRadius: BorderRadius.circular(widget.radius),
+        border: border,
+        boxShadow: shadows,
+      );
+    }
+
+    final radius = BorderRadius.circular(widget.radius);
+
+    Widget card = AnimatedContainer(
+      duration: widget.animate ? const Duration(milliseconds: 150) : Duration.zero,
+      curve: Curves.easeInOut,
       decoration: decoration,
-      margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 8),
       padding: widget.padding ?? const EdgeInsets.all(16),
       child: widget.child,
+    );
+
+    if (accentColor != null && !widget.glass) {
+      card = Stack(
+        children: [
+          card,
+          // Clipped to the card's own radius so the bar follows its corners.
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: radius,
+              child: widget.showGoldBorder
+                  // Top bar for the "featured" variant.
+                  ? Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(height: 3, color: accentColor),
+                    )
+                  // Leading-edge bar for the status variant. Directional, so
+                  // it sits on the right in Arabic and the left in English.
+                  : Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Container(width: 3.5, color: accentColor),
+                    ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    card = Container(
+      margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 6),
+      child: card,
     );
 
     if (widget.onTap != null || widget.onLongPress != null) {

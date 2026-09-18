@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,8 +40,8 @@ class AppNotification {
   Color get color {
     switch (category) {
       case NotifCategory.followup: return NeuColors.navyDeep;
-      case NotifCategory.invoice: return const Color(0xFF00CEC9);
-      case NotifCategory.hrm: return const Color(0xFF6C5CE7);
+      case NotifCategory.invoice: return NeuColors.success;
+      case NotifCategory.hrm: return NeuColors.moduleDelivery;
       case NotifCategory.project: return const Color(0xFFE17055);
       case NotifCategory.system: return NeuColors.textHint;
     }
@@ -211,7 +211,7 @@ class _NotificationCenterScreenState
                   onPressed: () => notifier.markAllAsRead(),
                   child: const Text('قراءة الكل',
                       style: TextStyle(color: Colors.white70,
-                          fontFamily: 'Cairo', fontSize: 13)),
+                          fontFamily: 'Panorama', fontSize: 13)),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_sweep_rounded, color: Colors.white70),
@@ -224,7 +224,7 @@ class _NotificationCenterScreenState
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: isDark
-                          ? [const Color(0xFF1A2436), const Color(0xFF22549E)]
+                          ? [const Color(0xFF241416), NeuColors.primary]
                           : [NeuColors.navyDeep, NeuColors.navyMid],
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
@@ -252,7 +252,7 @@ class _NotificationCenterScreenState
                               ),
                               child: Text('${unread.length} جديد',
                                   style: const TextStyle(color: Colors.white,
-                                      fontSize: 12, fontFamily: 'Cairo',
+                                      fontSize: 12, fontFamily: 'Panorama',
                                       fontWeight: FontWeight.w700)),
                             ),
                         ]),
@@ -266,9 +266,9 @@ class _NotificationCenterScreenState
                 onTap: (_) => setState(() {}),
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white54,
-                indicatorColor: NeuColors.goldAccent,
+                indicatorColor: NeuColors.accentMuted,
                 indicatorWeight: 3,
-                labelStyle: const TextStyle(fontFamily: 'Cairo',
+                labelStyle: const TextStyle(fontFamily: 'Panorama',
                     fontWeight: FontWeight.w700, fontSize: 13),
                 tabs: [
                   Tab(text: 'غير مقروءة (${unread.length})'),
@@ -448,7 +448,7 @@ class _NotifTile extends StatelessWidget {
                         ),
                         child: Text(notif.categoryLabel,
                             style: TextStyle(
-                              fontSize: 10, fontFamily: 'Cairo',
+                              fontSize: 10, fontFamily: 'Panorama',
                               color: notif.color,
                               fontWeight: FontWeight.w700,
                             )),
@@ -504,7 +504,7 @@ class _CatChip extends StatelessWidget {
             color: selected ? color : color.withValues(alpha: 0.3), width: 1.2),
       ),
       child: Text(label, style: TextStyle(
-        fontSize: 12, fontFamily: 'Cairo',
+        fontSize: 12, fontFamily: 'Panorama',
         fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
         color: selected ? Colors.white : color,
       )),

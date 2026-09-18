@@ -47,7 +47,7 @@ class AuthService {
   Future<bool> authenticateWithBiometrics() async {
     try {
       return await _localAuth.authenticate(
-        localizedReason: 'يرجى التحقق من هويتك للدخول إلى مديري',
+        localizedReason: 'يرجى التحقق من هويتك للدخول إلى عزم',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: true,

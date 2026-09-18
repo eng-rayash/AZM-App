@@ -71,7 +71,7 @@ class AccountScreen extends ConsumerWidget {
 
                       if (authState.status == AuthStatus.authenticated && authState.user != null) ...[
                         Text(
-                          authState.user!.email ?? 'مستخدم مديري',
+                          authState.user!.email ?? 'مستخدم عزم',
                           style: isDark ? AppTypography.h3Dark : AppTypography.h3,
                         ),
                         AppSpacing.gapXs,

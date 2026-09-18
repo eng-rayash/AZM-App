@@ -5,6 +5,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class MaintenanceScreen extends StatelessWidget {
   const MaintenanceScreen({super.key});
@@ -29,26 +30,8 @@ class MaintenanceScreen extends StatelessWidget {
                   children: [
                     // App Logo
                     Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(22),
-                        child: Image.asset(
-                          'assets/icon.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      alignment: Alignment.center,
+                      child: AzmMark(size: 76, isDark: isDark),
                     ),
                     AppSpacing.gapLg,
 

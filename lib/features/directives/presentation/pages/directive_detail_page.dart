@@ -11,6 +11,7 @@ import '../../../../shared/widgets/neu_card.dart';
 import '../../domain/directives_repository.dart';
 import '../../providers/directives_provider.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../shared/widgets/error_state.dart';
 
 /// Directive Detail Page — shows full details of a directive.
 class DirectiveDetailPage extends ConsumerWidget {
@@ -102,7 +103,7 @@ class DirectiveDetailPage extends ConsumerWidget {
         child: directivesAsync.when(
           loading: () =>
               const Center(child: CircularProgressIndicator()),
-          error: (err, _) => Center(child: Text('خطأ: $err')),
+          error: (err, _) => ErrorState(error: err),
           data: (directives) {
             final directive = directives
                 .where((d) => d.id == directiveId)
@@ -265,7 +266,7 @@ class DirectiveDetailPage extends ConsumerWidget {
                 icon,
                 size: 18,
                 color: isDark
-                    ? NeuColors.goldAccent
+                    ? NeuColors.accentMuted
                     : NeuColors.navyDeep,
               ),
               const SizedBox(width: 8),
@@ -352,7 +353,7 @@ class DirectiveDetailPage extends ConsumerWidget {
       case UnifiedStatus.inProgress:
         return NeuColors.warning;
       case UnifiedStatus.awaitingResponse:
-        return NeuColors.goldAccent;
+        return NeuColors.accentMuted;
       case UnifiedStatus.completed:
         return NeuColors.success;
       case UnifiedStatus.overdue:

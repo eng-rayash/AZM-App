@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/router/route_names.dart';
 
 /// RVIOS — Join Company Screen
 ///
@@ -21,13 +22,13 @@ class _JoinCompanyScreenState extends ConsumerState<JoinCompanyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabCtrl;
 
-  // â”€â”€ Tab 1: Code-based â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Tab 1: Code-based ──────────────────────────────────────────
   final _companyCodeCtrl = TextEditingController();
   final _employeeCodeCtrl = TextEditingController();
   final _tempPasswordCtrl = TextEditingController();
   bool _passwordVisible = false;
 
-  // â”€â”€ Tab 2: Link-based â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Tab 2: Link-based ─────────────────────────────────────────
   final _inviteLinkCtrl = TextEditingController();
 
   bool _isLoading = false;
@@ -52,14 +53,14 @@ class _JoinCompanyScreenState extends ConsumerState<JoinCompanyScreen>
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1500)); // simulate
     setState(() => _isLoading = false);
-    if (mounted) context.go('/dashboard');
+    if (mounted) context.go(RouteNames.dashboardFull);
   }
 
   Future<void> _joinWithLink() async {
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1500));
     setState(() => _isLoading = false);
-    if (mounted) context.go('/dashboard');
+    if (mounted) context.go(RouteNames.dashboardFull);
   }
 
   @override
@@ -224,9 +225,9 @@ class _JoinCompanyScreenState extends ConsumerState<JoinCompanyScreen>
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Info Card
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _InfoCard extends StatelessWidget {
   const _InfoCard({
@@ -289,9 +290,9 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Join TextField
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _JoinTextField extends StatelessWidget {
   const _JoinTextField({
@@ -372,9 +373,9 @@ class _JoinTextField extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Join Button
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _JoinButton extends StatelessWidget {
   const _JoinButton({

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +8,146 @@ import '../../../shared/widgets/neu_card.dart';
 import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
+import '../../../shared/widgets/error_state.dart';
+
+/// حوار إنشاء قسم.
+///
+/// كان زرّا «قسم جديد» يقودان إلى مسار غير مسجّل في الراوتر فتظهر صفحة خطأ.
+/// المستودع يملك `createDepartment` أصلًا، فالناقص كان واجهة إدخال لا منطقًا.
+Future<void> _showCreateDepartment(
+  BuildContext context,
+  WidgetRef ref,
+  bool isDark,
+) async {
+  final created = await showDialog<bool>(
+    context: context,
+    builder: (_) => CreateDepartmentDialog(isDark: isDark),
+  );
+
+  if (created == true && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('أُضيف القسم.')),
+    );
+  }
+}
+
+/// محتوى حوار الإنشاء.
+///
+/// مكوّن ذو حالة عمدًا: المتحكّمات النصّية يجب أن يملكها من يعيش ويموت
+/// مع الحقول نفسها. التخلّص منها بعد عودة `showDialog` مباشرة يقع بينما
+/// حركة إغلاق الحوار لم تنتهِ والحقول ما زالت مركَّبة، فيفشل التأكيد
+/// `_dependents.isEmpty` وتتعطّل الشاشة.
+@visibleForTesting
+class CreateDepartmentDialog extends ConsumerStatefulWidget {
+  const CreateDepartmentDialog({super.key, required this.isDark});
+
+  final bool isDark;
+
+  @override
+  ConsumerState<CreateDepartmentDialog> createState() =>
+      _CreateDepartmentDialogState();
+}
+
+class _CreateDepartmentDialogState
+    extends ConsumerState<CreateDepartmentDialog> {
+  final _nameCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _descCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_saving) return;
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _saving = true);
+    try {
+      await ref.read(hrmRepositoryProvider).createDepartment(
+            name: _nameCtrl.text.trim(),
+            description:
+                _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+          );
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذّر حفظ القسم: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: AlertDialog(
+        backgroundColor: isDark ? NeuColors.surfaceDark : NeuColors.surface,
+        title: Text(
+          'قسم جديد',
+          style: AppTypography.h3.copyWith(
+            color:
+                isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
+          ),
+        ),
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameCtrl,
+                autofocus: true,
+                enabled: !_saving,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  labelText: 'اسم القسم',
+                  hintText: 'المبيعات',
+                ),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'اسم القسم مطلوب' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _descCtrl,
+                enabled: !_saving,
+                onFieldSubmitted: (_) => _save(),
+                decoration: const InputDecoration(
+                  labelText: 'الوصف (اختياري)',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: _saving ? null : _save,
+            child: _saving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('حفظ'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Departments Screen
@@ -24,13 +164,13 @@ class DepartmentsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       appBar: AppBar(
-        title: const Text('الأقسام', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w700)),
+        title: const Text('الأقسام', style: TextStyle(fontFamily: 'Panorama', fontWeight: FontWeight.w700)),
         backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.navyDeep,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
-            onPressed: () => context.push(RouteNames.departmentCreate),
+            onPressed: () => _showCreateDepartment(context, ref, isDark),
             tooltip: 'قسم جديد',
           ),
         ],
@@ -39,7 +179,7 @@ class DepartmentsScreen extends ConsumerWidget {
         textDirection: TextDirection.rtl,
         child: deptsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('خطأ: $e')),
+          error: (e, _) => ErrorState(error: e),
           data: (depts) {
             final employees = employeesAsync.valueOrNull ?? [];
             if (depts.isEmpty) {
@@ -110,7 +250,7 @@ class DepartmentsScreen extends ConsumerWidget {
                   width: 44, height: 44,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF6C5CE7), Color(0xFF0984E3)],
+                      colors: [NeuColors.moduleDelivery, NeuColors.info],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -157,7 +297,7 @@ class DepartmentsScreen extends ConsumerWidget {
                                 style: const TextStyle(
                                     color: NeuColors.navyDeep,
                                     fontWeight: FontWeight.w700,
-                                    fontFamily: 'Cairo')),
+                                    fontFamily: 'Panorama')),
                           ),
                           title: Text(emp.name, style: AppTypography.body.copyWith(
                               color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
@@ -208,7 +348,7 @@ class _DeptCard extends StatelessWidget {
             width: 48, height: 48,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF6C5CE7), Color(0xFF0984E3)],
+                colors: [NeuColors.moduleDelivery, NeuColors.info],
                 begin: Alignment.topRight, end: Alignment.bottomLeft,
               ),
               borderRadius: BorderRadius.circular(14),
@@ -227,7 +367,7 @@ class _DeptCard extends StatelessWidget {
             Text('$employeeCount', style: TextStyle(
                 fontSize: 22, fontWeight: FontWeight.w800,
                 color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                fontFamily: 'Cairo')),
+                fontFamily: 'Panorama')),
             Text('موظف', style: AppTypography.caption.copyWith(color: th)),
           ]),
           const SizedBox(width: 8),
@@ -251,13 +391,16 @@ class _EmptyDepts extends StatelessWidget {
       const SizedBox(height: 16),
       Text('لا توجد أقسام بعد', style: AppTypography.bodySmall.copyWith(color: th)),
       const SizedBox(height: 8),
-      ElevatedButton.icon(
-        onPressed: () => context.push(RouteNames.departmentCreate),
+      // الحالة الفارغة مكوّن بلا `ref` — يُلتقط من `Consumer` هنا وحده
+      Consumer(
+        builder: (ctx, ref, _) => ElevatedButton.icon(
+        onPressed: () => _showCreateDepartment(ctx, ref, isDark),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('إضافة قسم', style: TextStyle(color: Colors.white, fontFamily: 'Cairo')),
+        label: const Text('إضافة قسم', style: TextStyle(color: Colors.white, fontFamily: 'Panorama')),
         style: ElevatedButton.styleFrom(
           backgroundColor: NeuColors.navyDeep,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
         ),
       ),
     ]));

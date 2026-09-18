@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,9 +12,9 @@ import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
 import '../domain/finance_repository.dart';
 import '../../../core/constants/app_currencies.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bank Accounts Screen
@@ -106,7 +106,9 @@ class _BankAccountsScreenState extends ConsumerState<BankAccountsScreen>
       backgroundColor: Colors.transparent,
       builder: (ctx) => _AddBankAccountSheet(
         onSaved: (entry) async {
-          await ref.read(databaseProvider).financeDao.insertBankAccount(entry);
+          await ref
+              .read(financeRepositoryProvider)
+              .insertBankAccountEntry(entry);
         },
       ),
     );
@@ -121,7 +123,9 @@ class _BankAccountsScreenState extends ConsumerState<BankAccountsScreen>
       backgroundColor: Colors.transparent,
       builder: (ctx) => _AddCheckSheet(
         onSaved: (entry) async {
-          await ref.read(databaseProvider).financeDao.insertCheck(entry);
+          await ref
+              .read(financeRepositoryProvider)
+              .insertCheckEntry(entry);
         },
       ),
     );
@@ -144,7 +148,7 @@ class _BankAccountsTab extends ConsumerWidget {
 
     return accountsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('خطأ: $e')),
+      error: (e, _) => ErrorState(error: e),
       data: (accounts) {
         // Summary
         final totalBalance = accounts.fold<double>(
@@ -187,7 +191,7 @@ class _BankAccountsTab extends ConsumerWidget {
                           Text(fmt.format(totalBalance),
                               style: AppTypography.statNumber.copyWith(
                                   color: isDark
-                                      ? NeuColors.goldAccent
+                                      ? NeuColors.accentMuted
                                       : NeuColors.navyDeep,
                                   fontSize: 24)),
                           Text('${accounts.length} حساب بنكي',
@@ -273,7 +277,7 @@ class _BankAccountsTab extends ConsumerWidget {
                                             color: Colors.white,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800,
-                                            fontFamily: 'Cairo'),
+                                            fontFamily: 'Panorama'),
                                       ),
                                     ),
                                   ),
@@ -392,11 +396,11 @@ class _BankAccountsTab extends ConsumerWidget {
     final colors = [
       NeuColors.navyDeep,
       NeuColors.navyMid,
-      const Color(0xFF00B894),
-      const Color(0xFF6C5CE7),
+      NeuColors.success,
+      NeuColors.moduleDelivery,
       const Color(0xFFE17055),
       NeuColors.goldDark,
-      const Color(0xFF0984E3),
+      NeuColors.info,
     ];
     return colors[hash.abs() % colors.length];
   }
@@ -446,7 +450,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
 
     return checksAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('خطأ: $e')),
+      error: (e, _) => ErrorState(error: e),
       data: (allChecks) {
         var checks = allChecks.toList();
         if (_filterType >= 0) {
@@ -639,7 +643,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
                                           color: isIncoming
                                               ? NeuColors.success
                                               : NeuColors.danger,
-                                          fontFamily: 'Cairo',
+                                          fontFamily: 'Panorama',
                                         ),
                                       ),
                                     ],
@@ -660,7 +664,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       color: statusColor,
-                                      fontFamily: 'Cairo',
+                                      fontFamily: 'Panorama',
                                     ),
                                   ),
                                 ),
@@ -974,7 +978,7 @@ class _AddBankAccountSheetState extends ConsumerState<_AddBankAccountSheet> {
                                           : (isDark
                                               ? NeuColors.textHintDark
                                               : NeuColors.textHint),
-                                      fontFamily: 'Cairo')),
+                                      fontFamily: 'Panorama')),
                             ],
                           ),
                         ),
@@ -1169,7 +1173,7 @@ class _AddCheckSheetState extends ConsumerState<_AddCheckSheet> {
                                   color: _type == 0
                                       ? NeuColors.success
                                       : NeuColors.textHint,
-                                  fontFamily: 'Cairo')),
+                                  fontFamily: 'Panorama')),
                         ]),
                       ),
                     ),
@@ -1208,7 +1212,7 @@ class _AddCheckSheetState extends ConsumerState<_AddCheckSheet> {
                                   color: _type == 1
                                       ? NeuColors.danger
                                       : NeuColors.textHint,
-                                  fontFamily: 'Cairo')),
+                                  fontFamily: 'Panorama')),
                         ]),
                       ),
                     ),
@@ -1274,7 +1278,7 @@ class _AddCheckSheetState extends ConsumerState<_AddCheckSheet> {
                       Icon(Icons.event_rounded,
                           size: 18,
                           color: isDark
-                              ? NeuColors.goldAccent
+                              ? NeuColors.accentMuted
                               : NeuColors.navyMid),
                       const SizedBox(width: 10),
                       Column(
@@ -1467,7 +1471,7 @@ class _FilterChip extends StatelessWidget {
             color: selected
                 ? Colors.white
                 : (isDark ? NeuColors.textSecondaryDark : color),
-            fontFamily: 'Cairo',
+            fontFamily: 'Panorama',
           ),
         ),
       ),

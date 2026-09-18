@@ -33,7 +33,7 @@ class TaskDetailScreen extends ConsumerWidget {
             Icons.arrow_back_rounded,
             color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
           ),
-          onPressed: () => context.canPop() ? context.pop() : context.go(RouteNames.tasksListFull),
+          onPressed: () => context.canPop() ? context.pop() : context.go(RouteNames.followupsListFull),
         ),
         title: Text(
           'تفاصيل المهمة',

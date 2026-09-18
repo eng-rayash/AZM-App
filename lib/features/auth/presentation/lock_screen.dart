@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/neu_decorations.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 /// Lock Screen — biometric + PIN authentication.
 ///
@@ -137,30 +138,10 @@ class _LockScreenState extends State<LockScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.25),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                      spreadRadius: 1,
-                    ),
-                    BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.06),
-                      blurRadius: 8,
-                      offset: const Offset(-3, -3),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: Image.asset(
-                    'assets/icon.png',
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                alignment: Alignment.center,
+                child: AzmMark(size: 80, isDark: isDark),
               ),
 
               AppSpacing.gapXxl,

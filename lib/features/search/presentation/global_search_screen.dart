@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -99,7 +99,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             type: SearchResultType.employee, id: e.id,
             title: e.name,
             subtitle: e.positionName ?? e.departmentName ?? 'موظف',
-            icon: Icons.badge_rounded, color: const Color(0xFF6C5CE7),
+            icon: Icons.badge_rounded, color: NeuColors.moduleDelivery,
           ));
         }
       }
@@ -115,7 +115,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             type: SearchResultType.client, id: c.id,
             title: c.name,
             subtitle: c.phone ?? c.email ?? 'عميل',
-            icon: Icons.supervisor_account_rounded, color: const Color(0xFF00B894),
+            icon: Icons.supervisor_account_rounded, color: NeuColors.success,
           ));
         }
       }
@@ -146,7 +146,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             type: SearchResultType.invoice, id: i.id,
             title: numStr.isNotEmpty ? 'فاتورة رقم $numStr' : 'فاتورة #${i.id}',
             subtitle: i.clientName ?? 'فاتورة مبيعات',
-            icon: Icons.receipt_long_rounded, color: const Color(0xFF00CEC9),
+            icon: Icons.receipt_long_rounded, color: NeuColors.success,
           ));
         }
       }
@@ -158,7 +158,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   void _navigate(SearchResult result) {
     switch (result.type) {
       case SearchResultType.followup:
-        context.push(RouteNames.followupDetailPath(result.id));
+        context.push(RouteNames.followupEditPath(result.id));
         break;
       case SearchResultType.employee:
         context.push(RouteNames.employeeDetailPath(result.id));
@@ -228,7 +228,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                           children: [
                             const SizedBox(width: 12),
                             Icon(Icons.search_rounded, color: isDark
-                                ? NeuColors.goldAccent : NeuColors.navyDeep, size: 22),
+                                ? NeuColors.accentMuted : NeuColors.navyDeep, size: 22),
                             const SizedBox(width: 8),
                             Expanded(
                               child: TextField(
@@ -291,7 +291,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                     label: 'موظفون',
                     icon: Icons.badge_rounded,
                     selected: _typeFilter == SearchResultType.employee,
-                    color: const Color(0xFF6C5CE7),
+                    color: NeuColors.moduleDelivery,
                     isDark: isDark,
                     onTap: () => setState(() => _typeFilter =
                         _typeFilter == SearchResultType.employee
@@ -301,7 +301,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                     label: 'عملاء',
                     icon: Icons.supervisor_account_rounded,
                     selected: _typeFilter == SearchResultType.client,
-                    color: const Color(0xFF00B894),
+                    color: NeuColors.success,
                     isDark: isDark,
                     onTap: () => setState(() => _typeFilter =
                         _typeFilter == SearchResultType.client
@@ -321,7 +321,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                     label: 'فواتير',
                     icon: Icons.receipt_long_rounded,
                     selected: _typeFilter == SearchResultType.invoice,
-                    color: const Color(0xFF00CEC9),
+                    color: NeuColors.success,
                     isDark: isDark,
                     onTap: () => setState(() => _typeFilter =
                         _typeFilter == SearchResultType.invoice
@@ -407,7 +407,7 @@ class _FilterChip extends StatelessWidget {
           Icon(icon, size: 14, color: selected ? Colors.white : color),
           const SizedBox(width: 5),
           Text(label, style: TextStyle(
-            fontSize: 12, fontFamily: 'Cairo',
+            fontSize: 12, fontFamily: 'Panorama',
             fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
             color: selected ? Colors.white : color,
           )),

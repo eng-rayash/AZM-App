@@ -12,7 +12,7 @@ class RemoteConfigService {
   String minVersion = '0.1.0';
   String latestVersion = '0.1.0';
   bool maintenanceMode = false;
-  String maintenanceMessage = 'نظام مديري حالياً في صيانة دورية المظهر والبيانات مجدولة للتحسين، يرجى المحاولة لاحقاً.';
+  String maintenanceMessage = 'نظام عزم حالياً في صيانة دورية المظهر والبيانات مجدولة للتحسين، يرجى المحاولة لاحقاً.';
   String storeUrl = 'https://play.google.com/store/apps/details?id=com.mudiri.mudiri';
 
   /// Check version requirements and maintenance mode.

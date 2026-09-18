@@ -9,6 +9,7 @@ import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../providers/auth_providers.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -76,52 +77,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Container(
                       width: 90,
                       height: 90,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(22),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Image.asset(
-                            'assets/images/logo_icon.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
+                      alignment: Alignment.center,
+                      child: AzmMark(size: 76, isDark: isDark),
                     ),
                     AppSpacing.gapLg,
 
                     // Title
                     Text(
-                      'RVIOS',
-                      style: TextStyle(
-                        fontFamily: 'Yapari',
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
-                        color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
+                      'عزم',
+                      style: AppTypography.wordmarkAr.copyWith(
+                        fontSize: 34,
+                        color: isDark
+                            ? NeuColors.textPrimaryDark
+                            : NeuColors.primary,
                       ),
                     ),
                     Text(
-                      'ريفيوس',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamilyRTLMaghfira,
-                        fontSize: 28,
-                        color: isDark ? NeuColors.gold : NeuColors.primaryDark,
+                      'AZM',
+                      style: AppTypography.wordmarkEn.copyWith(
+                        fontSize: 18,
+                        color: isDark
+                            ? NeuColors.textHintDark
+                            : NeuColors.textHint,
                       ),
                     ),
                     AppSpacing.gapXs,
                     Text(
-                      'نظام الإدارة التنفيذي الذكي',
+                      'نظام تشغيل الأعمال الذكي',
                       style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
                         color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
                       ),

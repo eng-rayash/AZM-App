@@ -65,7 +65,7 @@ class SortMenu extends StatelessWidget {
                         isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected
                         ? (isDark
-                            ? NeuColors.goldAccent
+                            ? NeuColors.accentMuted
                             : NeuColors.navyDeep)
                         : null,
                   ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/database/app_database.dart';
@@ -177,7 +177,7 @@ class DirectiveCard extends StatelessWidget {
       case UnifiedStatus.inProgress:
         return NeuColors.warning;
       case UnifiedStatus.awaitingResponse:
-        return NeuColors.goldAccent;
+        return NeuColors.accentMuted;
       case UnifiedStatus.completed:
         return NeuColors.success;
       case UnifiedStatus.overdue:

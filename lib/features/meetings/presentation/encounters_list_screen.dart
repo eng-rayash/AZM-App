@@ -18,6 +18,7 @@ import '../../../shared/widgets/sort_menu.dart';
 import '../../../shared/widgets/neu_button.dart';
 
 import '../domain/meetings_repository.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// Encounters List Screen — اللقاءات السريعة
 class EncountersListScreen extends ConsumerStatefulWidget {
@@ -214,7 +215,7 @@ class _EncountersListScreenState extends ConsumerState<EncountersListScreen> {
             Expanded(
               child: meetingsState.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('خطأ: $err')),
+                error: (err, stack) => ErrorState(error: err),
                 data: (meetings) {
                   var filtered = meetings.where((m) => m.meetingType == MeetingType.external_.value).toList();
 

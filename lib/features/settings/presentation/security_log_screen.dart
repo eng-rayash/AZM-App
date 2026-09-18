@@ -174,7 +174,7 @@ class _SecurityLogScreenState extends ConsumerState<SecurityLogScreen> {
                             case SecurityAction.exportData:
                             case SecurityAction.backupCreated:
                             case SecurityAction.pinChanged:
-                              return NeuColors.goldAccent;
+                              return NeuColors.accentMuted;
                             default:
                               return isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary;
                           }

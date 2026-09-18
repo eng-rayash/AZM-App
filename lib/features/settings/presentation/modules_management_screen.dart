@@ -52,11 +52,11 @@ class ModulesManagementScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // â”€â”€ Plan Info Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Plan Info Card ────────────────────────────────────
             _PlanInfoCard(plan: currentPlan, isDark: isDark),
             const SizedBox(height: 20),
 
-            // â”€â”€ Module Groups â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Module Groups ─────────────────────────────────────
             ...ModulesService.moduleGroups.entries.map((entry) {
               return _ModuleGroupSection(
                 title: entry.key,
@@ -69,7 +69,7 @@ class ModulesManagementScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // â”€â”€ Upgrade CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Upgrade CTA ───────────────────────────────────────
             if (currentPlan != PlanType.enterprise)
               _UpgradeCta(currentPlan: currentPlan, isDark: isDark),
 
@@ -81,9 +81,9 @@ class ModulesManagementScreen extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Plan Info Card
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _PlanInfoCard extends StatelessWidget {
   const _PlanInfoCard({required this.plan, required this.isDark});
@@ -141,7 +141,7 @@ class _PlanInfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: NeuColors.gold,
+              color: NeuColors.accentMuted,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -160,9 +160,9 @@ class _PlanInfoCard extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Module Group Section
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _ModuleGroupSection extends StatelessWidget {
   const _ModuleGroupSection({
@@ -237,9 +237,9 @@ class _ModuleGroupSection extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Module Row
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _ModuleRow extends ConsumerWidget {
   const _ModuleRow({
@@ -302,7 +302,7 @@ class _ModuleRow extends ConsumerWidget {
                     style: const TextStyle(
                       fontFamily: 'Panorama',
                       fontSize: 11,
-                      color: NeuColors.gold,
+                      color: NeuColors.accentMuted,
                     ),
                   ),
               ],
@@ -348,7 +348,7 @@ class _ModuleRow extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: NeuColors.goldTint,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: NeuColors.gold.withValues(alpha: 0.4)),
+                border: Border.all(color: NeuColors.accentMuted.withValues(alpha: 0.4)),
               ),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
@@ -410,9 +410,9 @@ class _ModuleRow extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Upgrade CTA
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _UpgradeCta extends StatelessWidget {
   const _UpgradeCta({required this.currentPlan, required this.isDark});
@@ -429,12 +429,12 @@ class _UpgradeCta extends StatelessWidget {
       decoration: BoxDecoration(
         color: NeuColors.goldTint,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: NeuColors.gold.withValues(alpha: 0.5)),
+        border: Border.all(color: NeuColors.accentMuted.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
           const Icon(Icons.rocket_launch_rounded,
-              color: NeuColors.gold, size: 36),
+              color: NeuColors.accentMuted, size: 36),
           const SizedBox(height: 12),
           Text(
             'ترقية إلى ${nextPlan.arabicLabel}',
@@ -462,7 +462,7 @@ class _UpgradeCta extends StatelessWidget {
               key: const Key('btn_upgrade_plan'),
               onPressed: () => context.push('/subscription/pricing'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: NeuColors.gold,
+                backgroundColor: NeuColors.accentMuted,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

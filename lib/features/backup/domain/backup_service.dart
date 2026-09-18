@@ -5,6 +5,7 @@ import '../../../core/database/providers/database_providers.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/demo_data_seeder.dart';
 import '../../../core/security/security_logger.dart';
+import 'restore_result.dart';
 
 // Native-only imports — accessed only on non-web platforms
 import 'backup_service_native.dart'
@@ -12,42 +13,31 @@ import 'backup_service_native.dart'
 
 /// Backup Service — platform-aware backup and restore.
 ///
-/// On Native (Android/iOS/Desktop): exports/imports SQLite file.
-/// On Web: Supabase cloud backup (export JSON, restore from JSON).
+/// على الأجهزة: يصدّر ملف SQLite ويستعيد منه بالدمج على `sync_id`.
+/// على الويب: غير مدعوم، ويقول ذلك صراحةً بدل ادّعاء النجاح.
 class BackupService {
   final SecurityLogger _logger;
   final AppDatabase _db;
 
   BackupService(this._logger, this._db);
 
-  /// Export the current database as a backup.
+  /// يصدّر القاعدة الحالية كملف نسخة احتياطية ويعرض ورقة المشاركة.
   Future<bool> exportBackup() async {
-    if (kIsWeb) {
-      return _exportWeb();
-    }
+    if (kIsWeb) return false;
     return exportNative(_logger, _db);
   }
 
-  /// Restore database from backup.
-  Future<bool> restoreBackup() async {
+  /// يستعيد سجلات من ملف نسخة احتياطية بالدمج.
+  ///
+  /// تُعيد [RestoreResult] لا `bool`: الفارق بين «تمّت ولم تُضف شيئًا»
+  /// و«تمّت وأضافت ٤٢٠ سجلًّا» فارق يهمّ المستخدم، و`bool` يطمسه.
+  Future<RestoreResult> restoreBackup() async {
     if (kIsWeb) {
-      return _restoreWeb();
+      return const RestoreResult.failure(
+        'النسخ الاحتياطي غير متاح في نسخة الويب. استخدم تطبيق الجوال.',
+      );
     }
     return restoreNative(_logger, _db);
-  }
-
-  // ── Web stubs (Supabase-based backup in future versions) ──────────
-
-  Future<bool> _exportWeb() async {
-    // On web, backup is handled by Supabase (data is already in cloud)
-    await _logger.logBackupCreated();
-    return true;
-  }
-
-  Future<bool> _restoreWeb() async {
-    // On web, data is already in Supabase cloud
-    await _logger.logBackupRestored();
-    return true;
   }
 
   /// Load realistic executive demo data
@@ -62,7 +52,7 @@ class BackupService {
 
   /// Get backup file size info
   Future<String> getDbSizeInfo() async {
-    if (kIsWeb) return 'Supabase Cloud';
+    if (kIsWeb) return 'غير متوفر على الويب';
     return getDbSizeNative();
   }
 }

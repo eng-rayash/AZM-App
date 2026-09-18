@@ -14,6 +14,7 @@ import '../../reports/domain/export_service.dart';
 import '../../../shared/widgets/sort_menu.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// Visitors List Screen — with search, status filter, multi-select, and export.
 class VisitorsListScreen extends ConsumerStatefulWidget {
@@ -239,7 +240,7 @@ class _VisitorsListScreenState
                 loading: () => const Center(
                     child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Center(child: Text('خطأ: $err')),
+                    ErrorState(error: err),
                 data: (visitors) {
                   var filtered = visitors.toList();
 
@@ -318,7 +319,7 @@ class _VisitorsListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -384,7 +385,7 @@ class _VisitorsListScreenState
                                         : Text('بالانتظار',
                                             style: TextStyle(
                                                 color: isDark
-                                                    ? NeuColors.goldAccent
+                                                    ? NeuColors.accentMuted
                                                     : NeuColors.warning,
                                                 fontSize: 12)),
                                   ],

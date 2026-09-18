@@ -34,7 +34,7 @@ class SecureStorageService {
   /// Get or create the database encryption key.
   /// The key is generated once on first launch and stored securely.
   Future<String> getOrCreateDbKey() async {
-    var key = await _storage.read(key: AppConstants.dbEncryptionKeyName);
+    var key = await read(AppConstants.dbEncryptionKeyName);
     if (key == null) {
       key = _generateSecureKey(32); // 256-bit key
       await _storage.write(
@@ -58,13 +58,11 @@ class SecureStorageService {
   }
 
   /// Get stored PIN hash
-  Future<String?> getPinHash() async {
-    return _storage.read(key: AppConstants.pinHashKeyName);
-  }
+  Future<String?> getPinHash() => read(AppConstants.pinHashKeyName);
 
   /// Check if PIN is set
   Future<bool> isPinSet() async {
-    final hash = await _storage.read(key: AppConstants.pinHashKeyName);
+    final hash = await read(AppConstants.pinHashKeyName);
     return hash != null && hash.isNotEmpty;
   }
 
@@ -82,7 +80,7 @@ class SecureStorageService {
 
   /// Get preferred auth method
   Future<int> getAuthMethod() async {
-    final value = await _storage.read(key: AppConstants.authMethodKeyName);
+    final value = await read(AppConstants.authMethodKeyName);
     return value != null ? int.parse(value) : 0; // Default: biometric
   }
 
@@ -92,7 +90,7 @@ class SecureStorageService {
 
   /// Check if this is the first launch
   Future<bool> isFirstLaunch() async {
-    final value = await _storage.read(key: AppConstants.isFirstLaunchKey);
+    final value = await read(AppConstants.isFirstLaunchKey);
     return value == null;
   }
 
@@ -109,11 +107,33 @@ class SecureStorageService {
   // ─────────────────────────────────────────────
 
   /// Read a value from secure storage
-  Future<String?> read(String key) => _storage.read(key: key);
+  ///
+  /// An entry that can no longer be decrypted — which surfaces as a WebCrypto
+  /// `OperationError` on the web when the origin's key and its ciphertext fall
+  /// out of sync — is discarded and reported as absent. Without this the
+  /// failure is permanent: every later read of that key throws again, and the
+  /// callers that swallow the exception keep behaving as if storage is empty
+  /// while never repairing it.
+  Future<String?> read(String key) async {
+    try {
+      return await _storage.read(key: key);
+    } catch (e) {
+      await _deleteQuietly(key);
+      return null;
+    }
+  }
 
   /// Write a value to secure storage
   Future<void> write(String key, String value) =>
       _storage.write(key: key, value: value);
+
+  Future<void> _deleteQuietly(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } catch (_) {
+      // Nothing further to do — the entry is already unusable.
+    }
+  }
 
   /// Delete a value from secure storage
   Future<void> delete(String key) => _storage.delete(key: key);

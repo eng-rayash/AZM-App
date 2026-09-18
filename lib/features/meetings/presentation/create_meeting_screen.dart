@@ -140,7 +140,7 @@ class _CreateMeetingScreenState
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: NeuColors.goldAccent, width: 1.5),
+                        color: NeuColors.accentMuted, width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 12),
@@ -167,7 +167,7 @@ class _CreateMeetingScreenState
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                        color: NeuColors.goldAccent, width: 1.5),
+                        color: NeuColors.accentMuted, width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 12),
@@ -240,7 +240,7 @@ class _CreateMeetingScreenState
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                    color: NeuColors.goldAccent, width: 1.5),
+                    color: NeuColors.accentMuted, width: 1.5),
               ),
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: 14, vertical: 12),
@@ -499,7 +499,7 @@ class _CreateMeetingScreenState
                             Icon(Icons.calendar_today_rounded,
                                 size: 18,
                                 color: isDark
-                                    ? NeuColors.goldAccent
+                                    ? NeuColors.accentMuted
                                     : NeuColors.navyMid),
                             AppSpacing.gapHSm,
                             Text(
@@ -527,7 +527,7 @@ class _CreateMeetingScreenState
                             Icon(Icons.access_time_rounded,
                                 size: 18,
                                 color: isDark
-                                    ? NeuColors.goldAccent
+                                    ? NeuColors.accentMuted
                                     : NeuColors.navyMid),
                             AppSpacing.gapHSm,
                             Text(
@@ -673,7 +673,7 @@ class _CreateMeetingScreenState
                 ),
                 isDark: isDark,
                 isNumbered: true,
-                accentColor: NeuColors.goldAccent,
+                accentColor: NeuColors.accentMuted,
               ),
               AppSpacing.gapXxl,
 
@@ -716,7 +716,7 @@ class _CreateMeetingScreenState
                     Switch(
                       value: _promoteToFollowUp,
                       onChanged: (val) => setState(() => _promoteToFollowUp = val),
-                      activeTrackColor: NeuColors.goldAccent,
+                      activeTrackColor: NeuColors.accentMuted,
                       activeThumbColor: NeuColors.navyDeep,
                     ),
                   ],

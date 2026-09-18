@@ -322,7 +322,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
                         Switch(
                           value: _promoteToFollowUp,
                           onChanged: (val) => setState(() => _promoteToFollowUp = val),
-                          activeTrackColor: NeuColors.goldAccent,
+                          activeTrackColor: NeuColors.accentMuted,
                           activeThumbColor: NeuColors.navyDeep,
                         ),
                       ],

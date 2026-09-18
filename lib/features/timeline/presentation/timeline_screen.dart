@@ -35,12 +35,12 @@ class TimelineScreen extends ConsumerWidget {
       switch (type) {
         case 'meeting': return NeuColors.info;
         case 'visitor': return NeuColors.warning;
-        case 'movement': return NeuColors.goldAccent;
+        case 'movement': return NeuColors.accentMuted;
         case 'appointment': return NeuColors.success;
         case 'task': return NeuColors.navyLight;
         case 'call': return NeuColors.info;
         case 'directive': return NeuColors.danger;
-        default: return NeuColors.goldAccent;
+        default: return NeuColors.accentMuted;
       }
     }
 

@@ -15,6 +15,7 @@ import '../../../shared/widgets/sort_menu.dart';
 
 import '../../../core/database/app_database.dart';
 import '../domain/calls_repository.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// Calls List Screen — with search, filter by call type, multi-select, and export.
 class CallsListScreen extends ConsumerStatefulWidget {
@@ -108,7 +109,7 @@ class _CallsListScreenState
                 IconButton(
                   icon: Icon(Icons.add_ic_call_rounded,
                       color: isDark
-                          ? NeuColors.goldAccent
+                          ? NeuColors.accentMuted
                           : NeuColors.navyDeep),
                   onPressed: () => _showAddCallModal(context, ref, isDark),
                 ),
@@ -234,7 +235,7 @@ class _CallsListScreenState
                 loading: () => const Center(
                     child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Center(child: Text('خطأ: $err')),
+                    ErrorState(error: err),
                 data: (calls) {
                   var filtered = calls.toList();
 
@@ -304,7 +305,7 @@ class _CallsListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -527,7 +528,7 @@ class _CallsListScreenState
                         Row(
                           children: [
                             Icon(Icons.star_rounded, 
-                              color: isImportant ? NeuColors.goldAccent : NeuColors.textHint),
+                              color: isImportant ? NeuColors.accentMuted : NeuColors.textHint),
                             const SizedBox(width: 12),
                             Text(
                               'مكالمة هامة وعاجلة',
@@ -538,8 +539,8 @@ class _CallsListScreenState
                         Switch.adaptive(
                           value: isImportant,
                           onChanged: (val) => setModalState(() => isImportant = val),
-                          activeThumbColor: NeuColors.goldAccent,
-                          activeTrackColor: NeuColors.goldAccent.withAlpha(100),
+                          activeThumbColor: NeuColors.accentMuted,
+                          activeTrackColor: NeuColors.accentMuted.withAlpha(100),
                         ),
                       ],
                     ),

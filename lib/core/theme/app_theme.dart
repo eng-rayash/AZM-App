@@ -21,6 +21,7 @@ class AppTheme {
         useMaterial3: true,
         brightness: Brightness.light,
         fontFamily: AppTypography.fontFamilyBody,
+        fontFamilyFallback: AppTypography.fontFamilyFallback,
 
         // Color Scheme — RVIOS Light (Ivory)
         colorScheme: const ColorScheme.light(
@@ -171,7 +172,16 @@ class AppTheme {
           backgroundColor: NeuColors.primary,
           foregroundColor: NeuColors.textOnDark,
           elevation: 0,
-          shape: CircleBorder(),
+          // No `shape` here on purpose: FloatingActionButtonThemeData has a
+          // single `shape` that also applies to `.extended` FABs, and a
+          // CircleBorder squeezes their label into a circle it then overflows.
+          // Round FABs opt in with `shape: CircleBorder()` at the call site.
+          extendedTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamilyBody,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+          ),
         ),
 
         // Divider
@@ -236,6 +246,7 @@ class AppTheme {
         useMaterial3: true,
         brightness: Brightness.dark,
         fontFamily: AppTypography.fontFamilyBody,
+        fontFamilyFallback: AppTypography.fontFamilyFallback,
 
         // Color Scheme — RVIOS Dark (Graphite)
         colorScheme: const ColorScheme.dark(
@@ -357,7 +368,16 @@ class AppTheme {
           backgroundColor: NeuColors.primary,
           foregroundColor: NeuColors.textOnDark,
           elevation: 0,
-          shape: CircleBorder(),
+          // No `shape` here on purpose: FloatingActionButtonThemeData has a
+          // single `shape` that also applies to `.extended` FABs, and a
+          // CircleBorder squeezes their label into a circle it then overflows.
+          // Round FABs opt in with `shape: CircleBorder()` at the call site.
+          extendedTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamilyBody,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+          ),
         ),
 
         dividerTheme: const DividerThemeData(

@@ -10,6 +10,7 @@ import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/related_entities_widget.dart';
 import '../domain/finance_repository.dart';
 import '../../../core/router/route_names.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Detail Screen
@@ -28,7 +29,7 @@ class ClientDetailScreen extends ConsumerWidget {
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       body: clientsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => ErrorState(error: e),
         data: (clients) {
           final client = clients.firstWhere(
             (c) => c.id == clientId,
@@ -89,7 +90,7 @@ class _ClientDetailBody extends StatelessWidget {
             background: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [NeuColors.navyDeep, const Color(0xFF00B894)],
+                  colors: [NeuColors.primary, NeuColors.primaryMid],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                 ),
@@ -118,13 +119,13 @@ class _ClientDetailBody extends StatelessWidget {
                           children: [
                             Text(client.name, style: const TextStyle(
                                 color: Colors.white, fontSize: 20,
-                                fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
+                                fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
                             if (client.phone != null)
                               Text(client.phone!, style: const TextStyle(
-                                  color: Colors.white70, fontSize: 13, fontFamily: 'Cairo')),
+                                  color: Colors.white70, fontSize: 13, fontFamily: 'Panorama')),
                             if (client.email != null)
                               Text(client.email!, style: const TextStyle(
-                                  color: Colors.white70, fontSize: 13, fontFamily: 'Cairo')),
+                                  color: Colors.white70, fontSize: 13, fontFamily: 'Panorama')),
                           ],
                         )),
                       ]),
@@ -206,7 +207,7 @@ class _ClientDetailBody extends StatelessWidget {
                               '${RouteNames.invoiceCreate}?clientId=${client.id}'),
                           icon: const Icon(Icons.add_rounded, size: 16),
                           label: const Text('فاتورة جديدة',
-                              style: TextStyle(fontFamily: 'Cairo')),
+                              style: TextStyle(fontFamily: 'Panorama')),
                         ),
                       ],
                     ),
@@ -219,7 +220,7 @@ class _ClientDetailBody extends StatelessWidget {
                       child: TextButton(
                         onPressed: () => context.push(RouteNames.invoicesList),
                         child: Text('عرض كل الفواتير (${invoices.length})',
-                            style: const TextStyle(fontFamily: 'Cairo')),
+                            style: const TextStyle(fontFamily: 'Panorama')),
                       ),
                     ),
                 ],
@@ -263,7 +264,7 @@ class _StatCard extends StatelessWidget {
       const SizedBox(height: 6),
       FittedBox(child: Text(value, style: TextStyle(
           fontSize: 14, fontWeight: FontWeight.w700,
-          color: color, fontFamily: 'Cairo'))),
+          color: color, fontFamily: 'Panorama'))),
       const SizedBox(height: 2),
       Text(label, style: AppTypography.caption.copyWith(
           color: isDark ? NeuColors.textHintDark : NeuColors.textHint),
@@ -338,7 +339,7 @@ class _InvoiceTile extends StatelessWidget {
           Text(fmt.format(invoice.total),
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
                   color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                  fontFamily: 'Cairo')),
+                  fontFamily: 'Panorama')),
           Text(invoice.currency, style: AppTypography.caption.copyWith(
               color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),
         ]),

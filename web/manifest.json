@@ -1,13 +1,13 @@
 {
-    "name": "RVIOS — Business Operating System",
-    "short_name": "RVIOS",
+    "name": "عزم — نظام تشغيل الأعمال الذكي",
+    "short_name": "عزم",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone", "browser"],
     "background_color": "#171717",
     "theme_color": "#9E2226",
-    "description": "RVIOS — منصة إدارة الأعمال المتكاملة. ERP + HRM + Finance + Projects في منصة واحدة. One Platform. Complete Business Management.",
+    "description": "عزم — نظام تشغيل الأعمال الذكي. افهم عملك، احسم ما يهم، ونفّذ بعزم. من RVIOS Technologies.",
     "lang": "ar",
     "dir": "rtl",
     "orientation": "any",
@@ -19,14 +19,14 @@
             "name": "لوحة التحكم",
             "short_name": "Dashboard",
             "description": "افتح لوحة التحكم الرئيسية",
-            "url": "/dashboard",
+            "url": "/#/home/dashboard",
             "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
         },
         {
-            "name": "المهام",
-            "short_name": "Tasks",
-            "description": "إدارة المهام",
-            "url": "/tasks",
+            "name": "العمل",
+            "short_name": "Work",
+            "description": "المتابعات والاجتماعات والتوجيهات",
+            "url": "/#/home/work",
             "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
         }
     ],

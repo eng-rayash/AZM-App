@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/hrm_repository.dart';
 
 /// Advances List Screen — manage employee salary advances.
 class AdvancesListScreen extends ConsumerWidget {
@@ -33,7 +31,7 @@ class AdvancesListScreen extends ConsumerWidget {
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
 
     // Watch all advances via DB stream
-    final advancesAsync = ref.watch(_advancesStreamProvider);
+    final advancesAsync = ref.watch(advancesListProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -148,7 +146,6 @@ class AdvancesListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateAdvanceDialog(context, isDark, ref),
-        backgroundColor: const Color(0xFFE84393),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('سلفة جديدة',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -197,15 +194,16 @@ class AdvancesListScreen extends ConsumerWidget {
               onPressed: () async {
                 final amount = double.tryParse(amountCtrl.text) ?? 0;
                 if (empCtrl.text.isEmpty || amount <= 0) return;
-                final db = ref.read(databaseProvider);
-                await db.hrmDao.insertAdvance(EmployeeAdvancesCompanion(
-                  employeeId: const Value(1),
-                  employeeName: Value(empCtrl.text),
-                  amount: Value(amount),
-                  requestDate: Value(DateTime.now().toIso8601String().substring(0, 10)),
-                  reason: Value(reasonCtrl.text.isEmpty ? null : reasonCtrl.text),
-                  status: const Value(0),
-                ));
+                await ref.read(hrmRepositoryProvider).createAdvance(
+                      employeeId: 1,
+                      employeeName: empCtrl.text,
+                      amount: amount,
+                      requestDate: DateTime.now()
+                          .toIso8601String()
+                          .substring(0, 10),
+                      reason:
+                          reasonCtrl.text.isEmpty ? null : reasonCtrl.text,
+                    );
                 if (ctx.mounted) ctx.pop();
               },
               style: ElevatedButton.styleFrom(
@@ -220,9 +218,3 @@ class AdvancesListScreen extends ConsumerWidget {
 }
 
 // Stream provider for all advances
-final _advancesStreamProvider = StreamProvider<List<EmployeeAdvance>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.employeeAdvances)
-        ..orderBy([(a) => OrderingTerm.desc(a.requestDate)]))
-      .watch();
-});

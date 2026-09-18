@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +8,6 @@ import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
 
 /// Leaves List Screen — manage employee leave requests.
 class LeavesListScreen extends ConsumerStatefulWidget {
@@ -84,7 +82,6 @@ class _LeavesListScreenState extends ConsumerState<LeavesListScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateLeaveDialog(context, isDark),
-        backgroundColor: NeuColors.info,
         icon: const Icon(Icons.beach_access_rounded, color: Colors.white),
         label: Text('طلب إجازة',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -162,17 +159,17 @@ class _LeavesListScreenState extends ConsumerState<LeavesListScreen>
                       ? end.difference(start).inDays + 1
                       : 1;
                   final messenger = ScaffoldMessenger.of(context);
-                  final db = ref.read(databaseProvider);
-                  await db.hrmDao.insertLeave(LeaveRequestsCompanion(
-                    employeeId: Value(1),
-                    employeeName: Value(empCtrl.text),
-                    leaveType: Value(selectedType),
-                    startDate: Value(startCtrl.text),
-                    endDate: Value(endCtrl.text),
-                    days: Value(days),
-                    reason: Value(reasonCtrl.text.isEmpty ? null : reasonCtrl.text),
-                    status: const Value(0),
-                  ));
+                  await ref.read(hrmRepositoryProvider).createLeaveRequest(
+                        employeeId: 1,
+                        employeeName: empCtrl.text,
+                        leaveType: selectedType,
+                        startDate: startCtrl.text,
+                        endDate: endCtrl.text,
+                        daysCount: days,
+                        reason: reasonCtrl.text.isEmpty
+                            ? null
+                            : reasonCtrl.text,
+                      );
                   if (ctx.mounted) ctx.pop();
                   messenger.showSnackBar(
                     const SnackBar(content: Text('تم تقديم طلب الإجازة')),
@@ -342,19 +339,10 @@ class _LeaveTabContent extends ConsumerWidget {
 
   Future<void> _updateStatus(
       WidgetRef ref, BuildContext ctx, LeaveRequest l, int newStatus) async {
-    final db = ref.read(databaseProvider);
-    await db.hrmDao.updateLeave(LeaveRequestsCompanion(
-      id: Value(l.id),
-      syncId: Value(l.syncId),
-      createdAt: Value(l.createdAt),
-      updatedAt: Value(DateTime.now().millisecondsSinceEpoch),
-      employeeId: Value(l.employeeId),
-      leaveType: Value(l.leaveType),
-      startDate: Value(l.startDate),
-      endDate: Value(l.endDate),
-      days: Value(l.days),
-      status: Value(newStatus),
-    ));
+    await ref.read(hrmRepositoryProvider).updateLeaveStatus(
+          leave: l,
+          newStatus: newStatus,
+        );
     if (ctx.mounted) {
       ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
         content: Text(newStatus == 1 ? 'تمت الموافقة' : 'تم الرفض'),

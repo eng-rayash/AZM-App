@@ -22,9 +22,25 @@ class NotificationService {
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/launcher_icon');
 
+      // iOS/macOS: بدون هذه التهيئة لا يصل إشعار واحد إلى أجهزة Apple —
+      // الإضافة تتجاهل المنصّة التي لا تُهيَّأ بصمت، فتبدو الجدولة ناجحة
+      // بينما لا يُعرض شيء.
+      //
+      // الأذونات لا تُطلب هنا: طلبها عند الإقلاع يستهلك الفرصة الوحيدة
+      // قبل أن يفهم المستخدم لماذا. تُطلب عند أول جدولة فعلية عبر
+      // [requestPermissions].
+      const DarwinInitializationSettings initializationSettingsDarwin =
+          DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
+
       const InitializationSettings initializationSettings =
           InitializationSettings(
         android: initializationSettingsAndroid,
+        iOS: initializationSettingsDarwin,
+        macOS: initializationSettingsDarwin,
       );
 
       await _flutterLocalNotificationsPlugin.initialize(
@@ -39,6 +55,46 @@ class NotificationService {
       await scheduleStaggeredAlerts();
     } catch (e) {
       debugPrint('NotificationService.init error: $e');
+    }
+  }
+
+  /// يطلب إذن الإشعارات من نظام التشغيل، ويعيد ما إذا كان ممنوحًا.
+  ///
+  /// ضروري على المنصّتين: أندرويد ١٣+ يشترط `POST_NOTIFICATIONS` وقت
+  /// التشغيل لا في البيان فقط، وiOS يشترط الإذن قبل عرض أي تنبيه.
+  /// بدونه تنجح الجدولة ظاهريًا ولا يُعرض شيء أبدًا.
+  ///
+  /// يُستدعى عند أول جدولة فعلية، لا عند الإقلاع: طلب الإذن قبل أن يرى
+  /// المستخدم قيمةً له يُهدر الفرصة الوحيدة لطلبه.
+  Future<bool> requestPermissions() async {
+    if (!_initialized) await init();
+
+    try {
+      final android = _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (android != null) {
+        final granted = await android.requestNotificationsPermission();
+        return granted ?? false;
+      }
+
+      final darwin = _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      if (darwin != null) {
+        final granted = await darwin.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        return granted ?? false;
+      }
+
+      // منصّات سطح المكتب لا تطلب إذنًا
+      return true;
+    } catch (e) {
+      debugPrint('NotificationService.requestPermissions error: $e');
+      return false;
     }
   }
 
@@ -60,6 +116,9 @@ class NotificationService {
     debugPrint('All notifications and scheduled reminders cancelled.');
   }
 
+  /// هل طُلب إذن النظام في هذه الجلسة؟ يُطلب مرة واحدة لا مع كل مزامنة.
+  bool _permissionAsked = false;
+
   Future<void> scheduleStaggeredAlerts() async {
     if (!_initialized) await init();
 
@@ -69,6 +128,14 @@ class NotificationService {
       await _flutterLocalNotificationsPlugin.cancel(id: 801);
       await _flutterLocalNotificationsPlugin.cancel(id: 802);
       return;
+    }
+
+    // أول جدولة فعلية هي اللحظة الصحيحة لطلب الإذن: المستخدم مفعِّل
+    // للإشعارات وهناك ما يُجدوَل له. النظام يتذكّر إجابته، فالطلب
+    // مرة واحدة لكل جلسة يكفي.
+    if (!_permissionAsked) {
+      _permissionAsked = true;
+      await requestPermissions();
     }
 
     try {
@@ -162,7 +229,7 @@ class NotificationService {
           AndroidNotificationDetails(
         'mudiri_main_channel',
         'Mudiri Main Channel',
-        channelDescription: 'تنبيهات تطبيق مديري',
+        channelDescription: 'تنبيهات تطبيق عزم',
         importance: Importance.max,
         priority: Priority.high,
       );

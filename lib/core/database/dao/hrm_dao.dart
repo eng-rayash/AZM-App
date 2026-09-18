@@ -176,6 +176,13 @@ class HrmDao extends DatabaseAccessor<AppDatabase> with _$HrmDaoMixin {
             ..orderBy([(a) => OrderingTerm.desc(a.requestDate)]))
           .watch();
 
+  /// كل السلف — تستخدمها شاشة السلف التي كانت تبني تدفّقها بنفسها.
+  Stream<List<EmployeeAdvance>> watchAdvances() =>
+      (select(employeeAdvances)
+            ..where((a) => a.isDeleted.equals(false))
+            ..orderBy([(a) => OrderingTerm.desc(a.requestDate)]))
+          .watch();
+
   Future<int> insertAdvance(EmployeeAdvancesCompanion entry) =>
       into(employeeAdvances).insert(entry);
 
@@ -191,6 +198,12 @@ class HrmDao extends DatabaseAccessor<AppDatabase> with _$HrmDaoMixin {
             ..orderBy([(e) => OrderingTerm.desc(e.evaluationDate)]))
           .watch();
 
+  Stream<List<PerformanceEvaluation>> watchEvaluations() =>
+      (select(performanceEvaluations)
+            ..where((e) => e.isDeleted.equals(false))
+            ..orderBy([(e) => OrderingTerm.desc(e.evaluationDate)]))
+          .watch();
+
   Future<int> insertEvaluation(PerformanceEvaluationsCompanion entry) =>
       into(performanceEvaluations).insert(entry);
 
@@ -198,6 +211,12 @@ class HrmDao extends DatabaseAccessor<AppDatabase> with _$HrmDaoMixin {
   Stream<List<TrainingRecord>> watchTrainingsByEmployee(int employeeId) =>
       (select(trainingRecords)
             ..where((t) => t.employeeId.equals(employeeId))
+            ..orderBy([(t) => OrderingTerm.desc(t.startDate)]))
+          .watch();
+
+  Stream<List<TrainingRecord>> watchTrainings() =>
+      (select(trainingRecords)
+            ..where((t) => t.isDeleted.equals(false))
             ..orderBy([(t) => OrderingTerm.desc(t.startDate)]))
           .watch();
 
@@ -218,6 +237,12 @@ class HrmDao extends DatabaseAccessor<AppDatabase> with _$HrmDaoMixin {
   Stream<List<RewardsPenalty>> watchRewardsByEmployee(int employeeId) =>
       (select(rewardsPenalties)
             ..where((r) => r.employeeId.equals(employeeId))
+            ..orderBy([(r) => OrderingTerm.desc(r.date)]))
+          .watch();
+
+  Stream<List<RewardsPenalty>> watchRewardsPenalties() =>
+      (select(rewardsPenalties)
+            ..where((r) => r.isDeleted.equals(false))
             ..orderBy([(r) => OrderingTerm.desc(r.date)]))
           .watch();
 

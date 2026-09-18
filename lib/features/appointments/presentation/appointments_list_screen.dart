@@ -292,7 +292,7 @@ class _AppointmentsListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -475,7 +475,7 @@ class _AppointmentsListScreenState
             ),
             if (!isDark)
               BoxShadow(
-                color: NeuColors.goldAccent.withAlpha(30),
+                color: NeuColors.accentMuted.withAlpha(30),
                 blurRadius: 16,
                 offset: const Offset(0, 3),
               ),
@@ -490,14 +490,14 @@ class _AppointmentsListScreenState
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: NeuColors.goldAccent.withAlpha(50),
+                  color: NeuColors.accentMuted.withAlpha(50),
                   width: 1.5,
                 ),
               ),
             ),
             const Icon(
               Icons.add_rounded,
-              color: NeuColors.goldAccent,
+              color: NeuColors.accentMuted,
               size: 28,
             ),
           ],

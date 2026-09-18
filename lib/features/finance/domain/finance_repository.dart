@@ -396,6 +396,130 @@ class FinanceRepository {
         ),
       );
 
+  /// يحفظ حسابًا بنكيًا جاهز البناء.
+  ///
+  /// الورقة السفلية في شاشة البنوك تبني `Companion` كاملًا وصحيحًا
+  /// (بما فيه `syncId`)، فتمريره أنظف من تفكيكه إلى معاملات ثم إعادة
+  /// تركيبه. النمط نفسه المتَّبع في [updateClient] و[updateInvoice].
+  Future<int> insertBankAccountEntry(BankAccountsCompanion entry) =>
+      _db.financeDao.insertBankAccount(entry);
+
+  /// يحفظ شيكًا جاهز البناء — انظر [insertBankAccountEntry].
+  Future<int> insertCheckEntry(ChecksCompanion entry) =>
+      _db.financeDao.insertCheck(entry);
+
+  // ── Chart of Accounts ──────────────────────────────────────────
+
+  Stream<List<ChartOfAccount>> watchAccounts() =>
+      _db.financeDao.watchAccounts();
+
+  /// يضيف حسابًا إلى دليل الحسابات.
+  ///
+  /// الأعمدة الأساسية تُملأ هنا: كانت شاشة دليل الحسابات تبني `Companion`
+  /// بدونها فيرفض Drift الإدراج، وزرّ «حفظ» لا يحفظ.
+  Future<int> createAccount({
+    required String code,
+    required String name,
+    required int type,
+    String? nameEn,
+    int? parentId,
+    String? parentName,
+    String? description,
+    double openingBalance = 0,
+    bool allowTransactions = true,
+  }) =>
+      _db.financeDao.insertAccount(
+        ChartOfAccountsCompanion.insert(
+          syncId: _uuid.v4(),
+          code: code,
+          name: name,
+          nameEn: drift.Value(nameEn),
+          type: type,
+          parentId: drift.Value(parentId),
+          parentName: drift.Value(parentName),
+          description: drift.Value(description),
+          isActive: const drift.Value(true),
+          allowTransactions: drift.Value(allowTransactions),
+          openingBalance: drift.Value(openingBalance),
+          currentBalance: drift.Value(openingBalance),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+  // ── Journal Entries ────────────────────────────────────────────
+
+  Stream<List<JournalEntry>> watchJournalEntries() =>
+      _db.financeDao.watchJournalEntries();
+
+  /// يسجّل قيدًا يدويًا.
+  ///
+  /// لا يُرحَّل القيد ولا يحرّك أرصدة الحسابات — محرّك الترحيل غير مبنيّ
+  /// بعد، والقيد يُحفظ بحالة «مسودة» حتى يُبنى.
+  Future<int> createJournalEntry({
+    required String date,
+    required String description,
+    String linesJson = '[]',
+    double totalDebit = 0,
+    double totalCredit = 0,
+    int type = 0,
+    String? entryNumber,
+    String? notes,
+  }) =>
+      _db.financeDao.insertJournalEntry(
+        JournalEntriesCompanion.insert(
+          syncId: _uuid.v4(),
+          entryNumber: drift.Value(entryNumber),
+          date: date,
+          description: description,
+          lines: linesJson,
+          totalDebit: drift.Value(totalDebit),
+          totalCredit: drift.Value(totalCredit),
+          type: drift.Value(type),
+          status: const drift.Value(0),
+          notes: drift.Value(notes),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+  // ── Payment Vouchers ───────────────────────────────────────────
+
+  Stream<List<PaymentVoucher>> watchVouchers() =>
+      _db.financeDao.watchVouchers();
+
+  /// يسجّل سند قبض ([type] = 0) أو صرف ([type] = 1).
+  Future<int> createVoucher({
+    required int type,
+    required String date,
+    required double amount,
+    String? voucherNumber,
+    String? partyName,
+    int? partyType,
+    int? partyId,
+    String? description,
+    int paymentMethod = 0,
+    String? notes,
+  }) =>
+      _db.financeDao.insertVoucher(
+        PaymentVouchersCompanion.insert(
+          syncId: _uuid.v4(),
+          voucherNumber: drift.Value(voucherNumber),
+          type: type,
+          date: date,
+          amount: drift.Value(amount),
+          partyType: drift.Value(partyType),
+          partyId: drift.Value(partyId),
+          partyName: drift.Value(partyName),
+          description: drift.Value(description),
+          paymentMethod: drift.Value(paymentMethod),
+          status: const drift.Value(0),
+          notes: drift.Value(notes),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
   // ── Finance Summary ────────────────────────────────────────────
 
   Future<FinanceSummary> getSummaryForCurrentMonth() async {
@@ -467,6 +591,18 @@ final activeProjectsProvider = StreamProvider<List<Project>>((ref) =>
 
 final bankAccountsProvider = StreamProvider<List<BankAccount>>((ref) =>
     ref.watch(financeRepositoryProvider).watchBankAccounts());
+
+/// دليل الحسابات — كانت الشاشة تبني تدفّقها من `databaseProvider`
+final chartOfAccountsProvider = StreamProvider<List<ChartOfAccount>>((ref) =>
+    ref.watch(financeRepositoryProvider).watchAccounts());
+
+/// القيود اليومية
+final journalEntriesProvider = StreamProvider<List<JournalEntry>>((ref) =>
+    ref.watch(financeRepositoryProvider).watchJournalEntries());
+
+/// سندات القبض والصرف
+final vouchersProvider = StreamProvider<List<PaymentVoucher>>((ref) =>
+    ref.watch(financeRepositoryProvider).watchVouchers());
 
 final pendingChecksProvider = StreamProvider<List<Check>>((ref) =>
     ref.watch(financeRepositoryProvider).watchPendingChecks());

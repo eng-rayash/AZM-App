@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 /// RVIOS — Welcome Screen
 ///
@@ -35,24 +37,27 @@ class WelcomeScreen extends ConsumerWidget {
                       children: [
                         const Spacer(flex: 2),
 
-              // â”€â”€ Logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-              _RviosLogo(isDark: isDark),
+              // ── Logo ────────────────────────────────────────────
+              _AzmLogo(isDark: isDark),
 
               const SizedBox(height: 16),
 
-              // â”€â”€ Tagline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── Tagline ─────────────────────────────────────────
               Text(
-                'One Platform. Complete Business Management.',
+                AppConstants.appTagline,
                 style: AppTypography.caption.copyWith(
-                  color: NeuColors.gold,
-                  letterSpacing: 0.5,
+                  color: isDark
+                      ? NeuColors.textHintDark
+                      : NeuColors.textHint,
+                  letterSpacing: 0.4,
+                  height: 1.7,
                 ),
                 textAlign: TextAlign.center,
               ),
 
               const Spacer(flex: 3),
 
-              // â”€â”€ Action Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── Action Buttons ───────────────────────────────────
 
               // 1. ابدأ مجاناً
               _WelcomeButton(
@@ -131,82 +136,52 @@ class WelcomeScreen extends ConsumerWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Logo Widget
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
-class _RviosLogo extends StatelessWidget {
-  const _RviosLogo({required this.isDark});
+class _AzmLogo extends StatelessWidget {
+  const _AzmLogo({required this.isDark});
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Official Logo Mark Icon
         Container(
           width: 96,
           height: 96,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: NeuColors.primary.withValues(alpha: 0.3),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Image.asset(
-                'assets/images/logo_icon.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
+          alignment: Alignment.center,
+          child: AzmMark(size: 88, isDark: isDark),
         ),
 
         const SizedBox(height: 18),
 
-        // English Title — Yapari Bold
         Text(
-          'RVIOS',
-          style: TextStyle(
-            fontFamily: 'Yapari',
-            fontSize: 36,
-            fontWeight: FontWeight.w700,
+          'عزم',
+          style: AppTypography.wordmarkAr.copyWith(
+            fontSize: 40,
             color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
-            letterSpacing: 4,
           ),
         ),
 
-        // Arabic Title — RTL Maghfira
         Text(
-          'ريفيوس',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamilyRTLMaghfira,
-            fontSize: 34,
-            fontWeight: FontWeight.w400,
-            color: isDark ? NeuColors.gold : NeuColors.primaryDark,
+          'AZM',
+          style: AppTypography.wordmarkEn.copyWith(
+            fontSize: 20,
+            color: isDark ? NeuColors.textHintDark : NeuColors.textHint,
           ),
         ),
 
         const SizedBox(height: 6),
 
         Text(
-          'Business Operating System',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamilyGivonic,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+          AppConstants.appDescriptionAr,
+          style: AppTypography.bodySmall.copyWith(
             color: isDark
                 ? NeuColors.textSecondaryDark
                 : NeuColors.textSecondary,
-            letterSpacing: 1.5,
+            letterSpacing: 0.3,
           ),
         ),
       ],
@@ -214,9 +189,9 @@ class _RviosLogo extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Welcome Button Widget
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _WelcomeButton extends StatelessWidget {
   const _WelcomeButton({

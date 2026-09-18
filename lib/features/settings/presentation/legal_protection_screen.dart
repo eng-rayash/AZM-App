@@ -52,7 +52,7 @@ class LegalProtectionScreen extends StatelessWidget {
                       ),
                       AppSpacing.gapMd,
                       Text(
-                        'اتفاقية الاستخدام وحماية الملكية الفكرية لتطبيق "مديري"',
+                        'اتفاقية الاستخدام وحماية الملكية الفكرية لتطبيق "عزم"',
                         style: (isDark ? AppTypography.h4Dark : AppTypography.h4).copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -71,7 +71,7 @@ class LegalProtectionScreen extends StatelessWidget {
                 // Section 1: Copyright
                 _buildSection(
                   title: 'حقوق النشر والملكية الفكرية ©',
-                  content: 'جميع الحقوق محفوظة لتطبيق "مديري" لعام ٢٠٢٦. إن الواجهات البرمجية، الأكواد المصدرية، التصاميم الهيكلية والجمالية (Executive Neumorphic Design System)، الشعارات، والأيقونات الرسمية هي ملكية فكرية حصرية ومحمية بموجب قوانين حماية حقوق الملكية الفكرية الدولية وقوانين العلامات التجارية والبرمجيات.',
+                  content: 'جميع الحقوق محفوظة لتطبيق "عزم" لعام ٢٠٢٦. إن الواجهات البرمجية، الأكواد المصدرية، التصاميم الهيكلية والجمالية (Executive Neumorphic Design System)، الشعارات، والأيقونات الرسمية هي ملكية فكرية حصرية ومحمية بموجب قوانين حماية حقوق الملكية الفكرية الدولية وقوانين العلامات التجارية والبرمجيات.',
                   isDark: isDark,
                 ),
                 AppSpacing.gapLg,

@@ -452,9 +452,9 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                             final isSelected = currentStatus == statusVal;
 
                             Color statusColor = NeuColors.navyMid;
-                            if (statusVal == UnifiedStatus.newItem) statusColor = NeuColors.goldAccent;
+                            if (statusVal == UnifiedStatus.newItem) statusColor = NeuColors.accentMuted;
                             if (statusVal == UnifiedStatus.inProgress) statusColor = NeuColors.navyDeep;
-                            if (statusVal == UnifiedStatus.awaitingResponse) statusColor = NeuColors.goldAccent;
+                            if (statusVal == UnifiedStatus.awaitingResponse) statusColor = NeuColors.accentMuted;
                             if (statusVal == UnifiedStatus.completed) statusColor = NeuColors.success;
                             if (statusVal == UnifiedStatus.overdue) statusColor = NeuColors.priorityCritical;
 
@@ -1293,6 +1293,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
       ),
       floatingActionButton: _selectedIds.isEmpty
           ? FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () => context.push(RouteNames.followupCreate),
               backgroundColor: NeuColors.navyDeep,
               child: const Icon(Icons.add_rounded, color: Colors.white),
@@ -1302,9 +1303,9 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // FollowupType Filter Strip
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _FollowupTypeFilterStrip extends StatelessWidget {
   const _FollowupTypeFilterStrip({
@@ -1317,11 +1318,11 @@ class _FollowupTypeFilterStrip extends StatelessWidget {
 
   static const _types = [
     (null, Icons.list_alt_rounded, 'الكل', Color(0xFF636E72)),
-    (0, Icons.sync_rounded, 'متابعة', Color(0xFF22549E)),
-    (1, Icons.task_alt_rounded, 'مهمة', Color(0xFF0984E3)),
-    (2, Icons.people_rounded, 'عميل', Color(0xFF00B894)),
+    (0, Icons.sync_rounded, 'متابعة', NeuColors.primary),
+    (1, Icons.task_alt_rounded, 'مهمة', NeuColors.info),
+    (2, Icons.people_rounded, 'عميل', NeuColors.success),
     (3, Icons.apartment_rounded, 'مشروع', Color(0xFFE17055)),
-    (4, Icons.badge_rounded, 'موظف', Color(0xFF6C5CE7)),
+    (4, Icons.badge_rounded, 'موظف', NeuColors.moduleDelivery),
     (5, Icons.account_balance_wallet_rounded, 'مالية', Color(0xFFFDCB6E)),
     (6, Icons.more_horiz_rounded, 'أخرى', Color(0xFF636E72)),
   ];

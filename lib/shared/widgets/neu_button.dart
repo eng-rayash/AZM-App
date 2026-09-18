@@ -132,7 +132,7 @@ class _NeuButtonState extends State<NeuButton> {
           null,
         ),
       NeuButtonVariant.gold => (
-          NeuColors.goldAccent,
+          NeuColors.accentMuted,
           NeuColors.textOnDark,
           null,
         ),

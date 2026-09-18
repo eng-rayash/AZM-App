@@ -329,6 +329,144 @@ class HrmRepository {
         ),
       );
 
+  // ── Advances ───────────────────────────────────────────────────
+
+  Stream<List<EmployeeAdvance>> watchAdvances() => _db.hrmDao.watchAdvances();
+
+  /// يسجّل طلب سلفة.
+  ///
+  /// الأعمدة الأساسية (`syncId` و`createdAt` و`updatedAt`) تُملأ هنا لا في
+  /// الشاشة: كانت الشاشة تبني `Companion` بدونها فيرفض Drift الإدراج
+  /// بـ`InvalidDataException` — أي أن زرّ «تقديم» لم يكن يحفظ شيئًا.
+  Future<int> createAdvance({
+    required int employeeId,
+    required double amount,
+    required String requestDate,
+    String? employeeName,
+    String? reason,
+  }) =>
+      _db.hrmDao.insertAdvance(
+        EmployeeAdvancesCompanion.insert(
+          syncId: _uuid.v4(),
+          employeeId: employeeId,
+          employeeName: drift.Value(employeeName),
+          amount: drift.Value(amount),
+          requestDate: requestDate,
+          reason: drift.Value(reason),
+          status: const drift.Value(0),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+  // ── Performance Evaluations ────────────────────────────────────
+
+  Stream<List<PerformanceEvaluation>> watchEvaluations() =>
+      _db.hrmDao.watchEvaluations();
+
+  Future<int> createEvaluation({
+    required int employeeId,
+    required String period,
+    String? employeeName,
+    double? totalScore,
+    double? maxPossibleScore,
+    double? percentage,
+    int? grade,
+    int status = 0,
+    String? strengths,
+    String? areasForImprovement,
+  }) {
+    // النسبة تُحسب من الدرجات حين تتوفّر، وإلا تُؤخذ كما مرّرها المستدعي
+    final pct = percentage ??
+        ((totalScore != null &&
+                maxPossibleScore != null &&
+                maxPossibleScore > 0)
+            ? (totalScore / maxPossibleScore) * 100
+            : null);
+
+    return _db.hrmDao.insertEvaluation(
+      PerformanceEvaluationsCompanion.insert(
+        syncId: _uuid.v4(),
+        employeeId: employeeId,
+        employeeName: drift.Value(employeeName),
+        period: period,
+        totalScore: drift.Value(totalScore),
+        maxPossibleScore: drift.Value(maxPossibleScore),
+        percentage: drift.Value(pct),
+        grade: drift.Value(grade),
+        status: drift.Value(status),
+        strengths: drift.Value(strengths),
+        areasForImprovement: drift.Value(areasForImprovement),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        updatedAt: DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+
+  // ── Training Records ───────────────────────────────────────────
+
+  Stream<List<TrainingRecord>> watchTrainings() => _db.hrmDao.watchTrainings();
+
+  Future<int> createTraining({
+    required int employeeId,
+    required String trainingName,
+    String? employeeName,
+    String? provider,
+    String? startDate,
+    String? endDate,
+    int trainingType = 0,
+    int status = 0,
+    int? hours,
+    double? cost,
+  }) =>
+      _db.hrmDao.insertTraining(
+        TrainingRecordsCompanion.insert(
+          syncId: _uuid.v4(),
+          employeeId: employeeId,
+          employeeName: drift.Value(employeeName),
+          trainingName: trainingName,
+          provider: drift.Value(provider),
+          trainingType: drift.Value(trainingType),
+          status: drift.Value(status),
+          startDate: drift.Value(startDate),
+          endDate: drift.Value(endDate),
+          hours: drift.Value(hours),
+          cost: drift.Value(cost),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+  // ── Rewards & Penalties ────────────────────────────────────────
+
+  Stream<List<RewardsPenalty>> watchRewardsPenalties() =>
+      _db.hrmDao.watchRewardsPenalties();
+
+  /// [type] — 0 مكافأة · 1 جزاء
+  Future<int> createRewardPenalty({
+    required int employeeId,
+    required int type,
+    required String reason,
+    required String date,
+    String? employeeName,
+    double? amount,
+    String? notes,
+  }) =>
+      _db.hrmDao.insertRewardPenalty(
+        RewardsPenaltiesCompanion.insert(
+          syncId: _uuid.v4(),
+          employeeId: employeeId,
+          type: drift.Value(type),
+          reason: reason,
+          date: date,
+          employeeName: drift.Value(employeeName),
+          amount: drift.Value(amount),
+          notes: drift.Value(notes),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
   // ── Stats for Dashboard ────────────────────────────────────────
 
   Future<int> countActiveEmployees() => _db.employeesDao.countActive();
@@ -379,6 +517,28 @@ final positionsListProvider = StreamProvider<List<Position>>((ref) {
 /// Pending leaves stream
 final pendingLeavesProvider = StreamProvider<List<LeaveRequest>>((ref) {
   return ref.watch(hrmRepositoryProvider).watchPendingLeaves();
+});
+
+/// كل السلف — كانت شاشة السلف تبني هذا التدفّق بنفسها من `databaseProvider`
+final advancesListProvider = StreamProvider<List<EmployeeAdvance>>((ref) {
+  return ref.watch(hrmRepositoryProvider).watchAdvances();
+});
+
+/// كل تقييمات الأداء
+final evaluationsListProvider =
+    StreamProvider<List<PerformanceEvaluation>>((ref) {
+  return ref.watch(hrmRepositoryProvider).watchEvaluations();
+});
+
+/// كل سجلات التدريب
+final trainingsListProvider = StreamProvider<List<TrainingRecord>>((ref) {
+  return ref.watch(hrmRepositoryProvider).watchTrainings();
+});
+
+/// كل المكافآت والجزاءات
+final rewardsPenaltiesListProvider =
+    StreamProvider<List<RewardsPenalty>>((ref) {
+  return ref.watch(hrmRepositoryProvider).watchRewardsPenalties();
 });
 
 /// Contracts by employee

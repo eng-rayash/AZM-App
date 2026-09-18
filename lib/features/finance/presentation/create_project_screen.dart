@@ -40,16 +40,16 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
   bool _isSubmitting = false;
 
   static const _statuses = [
-    (0, 'تخطيط', Color(0xFF0984E3)),
-    (1, 'نشط', Color(0xFF00B894)),
+    (0, 'تخطيط', NeuColors.info),
+    (1, 'نشط', NeuColors.success),
     (2, 'متوقف', Color(0xFFFDCB6E)),
-    (3, 'مكتمل', Color(0xFF6C5CE7)),
+    (3, 'مكتمل', NeuColors.moduleDelivery),
     (4, 'ملغي', Color(0xFFD63031)),
   ];
 
   static const _priorities = [
     (0, 'منخفضة', Icons.arrow_downward_rounded, Color(0xFF636E72)),
-    (1, 'متوسطة', Icons.remove_rounded, Color(0xFF0984E3)),
+    (1, 'متوسطة', Icons.remove_rounded, NeuColors.info),
     (2, 'عالية', Icons.arrow_upward_rounded, Color(0xFFE17055)),
     (3, 'عاجلة', Icons.priority_high_rounded, Color(0xFFD63031)),
   ];

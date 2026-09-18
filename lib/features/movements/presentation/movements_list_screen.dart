@@ -14,6 +14,7 @@ import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/export_button.dart';
 import '../../reports/domain/export_service.dart';
 import '../../../shared/widgets/sort_menu.dart';
+import '../../../shared/widgets/error_state.dart';
 
 
 /// Movements List Screen — تحركات
@@ -213,7 +214,7 @@ class _MovementsListScreenState extends ConsumerState<MovementsListScreen> {
             Expanded(
               child: movementsState.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('خطأ: $err')),
+                error: (err, stack) => ErrorState(error: err),
                 data: (movements) {
                   var filtered = movements.toList();
 

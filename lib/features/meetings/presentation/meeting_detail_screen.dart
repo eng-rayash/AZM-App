@@ -35,7 +35,7 @@ class MeetingDetailScreen extends ConsumerWidget {
             Icons.arrow_back_rounded,
             color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
           ),
-          onPressed: () => context.canPop() ? context.pop() : context.go(RouteNames.meetingsListFull),
+          onPressed: () => context.canPop() ? context.pop() : context.go(RouteNames.meetingsList),
         ),
         title: Text(
           'تفاصيل الاجتماع',
@@ -304,7 +304,7 @@ class MeetingDetailScreen extends ConsumerWidget {
                   items: _decodeJsonList(meeting.decisions, isAttendee: false),
                   isNumbered: true,
                   isDark: isDark,
-                  accentColor: NeuColors.goldAccent,
+                  accentColor: NeuColors.accentMuted,
                 ),
                 AppSpacing.gapXxl,
               ],

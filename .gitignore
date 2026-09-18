@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# توقيع إصدار أندرويد — أسرار لا تدخل المستودع أبدًا
+android/key.properties
+*.jks
+*.keystore

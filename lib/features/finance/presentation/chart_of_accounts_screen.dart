@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +7,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/finance_repository.dart';
 
 /// Chart of Accounts Screen — دليل الحسابات المحاسبية.
 class ChartOfAccountsScreen extends ConsumerWidget {
@@ -18,7 +17,7 @@ class ChartOfAccountsScreen extends ConsumerWidget {
   static const _typeColors = [
     Color(0xFF3B82F6), // أصول - أزرق
     Color(0xFFD62828), // خصوم - أحمر
-    Color(0xFF6C5CE7), // حقوق - بنفسجي
+    NeuColors.moduleDelivery, // حقوق - بنفسجي
     Color(0xFF2E8B57), // إيرادات - أخضر
     Color(0xFFF4A261), // مصروفات - برتقالي
   ];
@@ -27,7 +26,7 @@ class ChartOfAccountsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_chartOfAccountsProvider);
+    final async = ref.watch(chartOfAccountsProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -163,7 +162,6 @@ class ChartOfAccountsScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddAccountDialog(context, isDark, ref),
-        backgroundColor: NeuColors.navyDeep,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('حساب جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -216,16 +214,11 @@ class ChartOfAccountsScreen extends ConsumerWidget {
               ElevatedButton(
                 onPressed: () async {
                   if (codeCtrl.text.isEmpty || nameCtrl.text.isEmpty) return;
-                  final db = ref.read(databaseProvider);
-                  await db.financeDao.insertAccount(ChartOfAccountsCompanion(
-                    code: Value(codeCtrl.text),
-                    name: Value(nameCtrl.text),
-                    type: Value(type),
-                    isActive: const Value(true),
-                    allowTransactions: const Value(true),
-                    openingBalance: const Value(0.0),
-                    currentBalance: const Value(0.0),
-                  ));
+                  await ref.read(financeRepositoryProvider).createAccount(
+                        code: codeCtrl.text,
+                        name: nameCtrl.text,
+                        type: type,
+                      );
                   if (ctx.mounted) ctx.pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -239,10 +232,3 @@ class ChartOfAccountsScreen extends ConsumerWidget {
     );
   }
 }
-
-final _chartOfAccountsProvider = StreamProvider<List<ChartOfAccount>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.chartOfAccounts)
-        ..orderBy([(a) => OrderingTerm.asc(a.code)]))
-      .watch();
-});

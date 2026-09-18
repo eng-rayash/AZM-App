@@ -10,6 +10,7 @@ import '../domain/finance_repository.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/constants/app_currencies.dart';
 import '../../../core/database/app_database.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Project Detail Screen
@@ -27,7 +28,7 @@ class ProjectDetailScreen extends ConsumerWidget {
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       body: projectsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => ErrorState(error: e),
         data: (projects) {
           final project = projects.firstWhere(
             (p) => p.id == projectId,
@@ -105,29 +106,29 @@ class _ProjectDetailBody extends StatelessWidget {
                           ),
                           child: Text(_statusLabel,
                               style: const TextStyle(color: Colors.white,
-                                  fontSize: 12, fontFamily: 'Cairo')),
+                                  fontSize: 12, fontFamily: 'Panorama')),
                         ),
                         const Spacer(),
                         if (project.endDate != null)
                           Text('⏰ ${project.endDate}',
                               style: const TextStyle(color: Colors.white70,
-                                  fontSize: 12, fontFamily: 'Cairo')),
+                                  fontSize: 12, fontFamily: 'Panorama')),
                       ]),
                       const SizedBox(height: 10),
                       Text(project.name, style: const TextStyle(
                           color: Colors.white, fontSize: 22,
-                          fontWeight: FontWeight.w800, fontFamily: 'Cairo')),
+                          fontWeight: FontWeight.w800, fontFamily: 'Panorama')),
                       if (project.description != null)
                         Text(project.description!,
                             maxLines: 2, overflow: TextOverflow.ellipsis,
                             style: const TextStyle(color: Colors.white70,
-                                fontSize: 13, fontFamily: 'Cairo')),
+                                fontSize: 13, fontFamily: 'Panorama')),
                       // Progress bar
                       const SizedBox(height: 12),
                       Row(children: [
                         Text('$progressPct%', style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w700,
-                            fontSize: 13, fontFamily: 'Cairo')),
+                            fontSize: 13, fontFamily: 'Panorama')),
                         const SizedBox(width: 10),
                         Expanded(child: ClipRRect(
                           borderRadius: BorderRadius.circular(4),
@@ -239,7 +240,7 @@ class _BudgetCard extends StatelessWidget {
       FittedBox(child: Text(
         AppCurrencies.formatCompact(value, currency.code),
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
-            color: color, fontFamily: 'Cairo'),
+            color: color, fontFamily: 'Panorama'),
       )),
       Text(currency.symbol, style: AppTypography.caption.copyWith(
           color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),

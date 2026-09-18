@@ -111,7 +111,7 @@ class _MeetingsListScreenState
                               ),
                               child: Icon(Icons.close_rounded,
                                   color: isDark
-                                      ? NeuColors.goldAccent
+                                      ? NeuColors.accentMuted
                                       : NeuColors.navyDeep,
                                   size: 22),
                             ),
@@ -147,7 +147,7 @@ class _MeetingsListScreenState
                                     ? Icons.deselect_rounded
                                     : Icons.select_all_rounded,
                                 color: isDark
-                                    ? NeuColors.goldAccent
+                                    ? NeuColors.accentMuted
                                     : NeuColors.navyDeep,
                                 size: 22,
                               ),
@@ -318,7 +318,7 @@ class _MeetingsListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -448,6 +448,7 @@ class _MeetingsListScreenState
       ),
       floatingActionButton: _selectedIds.isEmpty
           ? FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () => context.push(RouteNames.meetingCreate),
               backgroundColor: NeuColors.navyDeep,
               child: const Icon(Icons.add_rounded, color: Colors.white),

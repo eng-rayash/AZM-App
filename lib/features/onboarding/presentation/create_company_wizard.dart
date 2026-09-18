@@ -8,6 +8,7 @@ import '../../../core/constants/enums.dart';
 import '../../../core/services/code_generator_service.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/router/route_names.dart';
 
 /// RVIOS — Create Company Wizard
 ///
@@ -32,7 +33,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
   int _currentStep = 0;
   final int _totalSteps = 4;
 
-  // â”€â”€ Form Controllers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Form Controllers ─────────────────────────────────────────────
   // Step 1 — Owner
   final _ownerNameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
@@ -51,7 +52,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
   // Step 4 — Plan
   PlanType _selectedPlan = PlanType.business;
 
-  // â”€â”€ Result â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Result ───────────────────────────────────────────────────────
   String? _generatedCompanyCode;
   String? _generatedWorkspaceSlug;
   bool _isCreating = false;
@@ -140,7 +141,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
       ),
       body: Column(
         children: [
-          // â”€â”€ Step Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Step Indicator ─────────────────────────────────────
           if (_currentStep < _totalSteps) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -152,7 +153,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
             const SizedBox(height: 8),
           ],
 
-          // â”€â”€ Pages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Pages ──────────────────────────────────────────────
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -197,7 +198,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
                   companyCode: _generatedCompanyCode ?? '',
                   workspaceSlug: _generatedWorkspaceSlug ?? '',
                   ownerName: _ownerNameCtrl.text,
-                  onGoToDashboard: () => context.go('/dashboard'),
+                  onGoToDashboard: () => context.go(RouteNames.dashboardFull),
                 ),
               ],
             ),
@@ -208,9 +209,9 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Step Indicator
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _StepIndicator extends StatelessWidget {
   const _StepIndicator({
@@ -244,9 +245,9 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Step 1 — Owner Info
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _Step1OwnerInfo extends StatelessWidget {
   const _Step1OwnerInfo({
@@ -328,9 +329,9 @@ class _Step1OwnerInfo extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Step 2 — Company Info
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _Step2CompanyInfo extends StatelessWidget {
   const _Step2CompanyInfo({
@@ -455,9 +456,9 @@ class _Step2CompanyInfo extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Step 3 — Company Size
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _Step3Size extends StatelessWidget {
   const _Step3Size({
@@ -578,9 +579,9 @@ class _Step3Size extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Step 4 — Plan Selection
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _Step4Plan extends StatelessWidget {
   const _Step4Plan({
@@ -624,12 +625,12 @@ class _Step4Plan extends StatelessWidget {
             decoration: BoxDecoration(
               color: NeuColors.goldTint,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: NeuColors.gold),
+              border: Border.all(color: NeuColors.accentMuted),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star_outline, color: NeuColors.gold, size: 16),
+                const Icon(Icons.star_outline, color: NeuColors.accentMuted, size: 16),
                 const SizedBox(width: 6),
                 Text(
                   '${AppConstants.trialDays} يوم مجاناً لجميع الباقات',
@@ -669,7 +670,7 @@ class _Step4Plan extends StatelessWidget {
                       color: isSelected
                           ? NeuColors.primary
                           : isEnterprise
-                              ? NeuColors.gold
+                              ? NeuColors.accentMuted
                               : isDark
                                   ? NeuColors.borderDark
                                   : NeuColors.border,
@@ -699,7 +700,7 @@ class _Step4Plan extends StatelessWidget {
                               color: isSelected
                                   ? Colors.white
                                   : isEnterprise
-                                      ? NeuColors.gold
+                                      ? NeuColors.accentMuted
                                       : isDark
                                           ? NeuColors.textPrimaryDark
                                           : NeuColors.textPrimary,
@@ -771,9 +772,9 @@ class _Step4Plan extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Result Page
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _ResultPage extends StatelessWidget {
   const _ResultPage({
@@ -800,7 +801,7 @@ class _ResultPage extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
 
-          // â”€â”€ Success Icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Success Icon ──────────────────────────────────────
           Container(
             width: 80,
             height: 80,
@@ -834,7 +835,7 @@ class _ResultPage extends StatelessWidget {
 
           const SizedBox(height: 32),
 
-          // â”€â”€ Company Details Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Company Details Card ──────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -873,11 +874,11 @@ class _ResultPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: NeuColors.goldTint,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: NeuColors.gold.withValues(alpha: 0.4)),
+              border: Border.all(color: NeuColors.accentMuted.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: NeuColors.gold, size: 18),
+                const Icon(Icons.info_outline, color: NeuColors.accentMuted, size: 18),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -907,9 +908,9 @@ class _ResultPage extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Info Row (copyable)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _InfoRow extends StatelessWidget {
   const _InfoRow({
@@ -989,9 +990,9 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 // Shared Widgets
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────
 
 class _RviosTextField extends StatelessWidget {
   const _RviosTextField({

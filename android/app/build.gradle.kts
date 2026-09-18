@@ -1,8 +1,20 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// ملف التوقيع لا يدخل المستودع إطلاقًا — راجع android/key.properties.example
+// وأضِف android/key.properties محليًا وفي بيئة البناء وحدها.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+val hasReleaseKeystore = keystorePropertiesFile.exists()
+if (hasReleaseKeystore) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -35,6 +47,17 @@ android {
         pickFirst("**/*.so")
     }
 
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -43,9 +66,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // التوقيع الحقيقي حين يوجد key.properties، ومفتاح التصحيح حين
+            // لا يوجد حتى يبقى `flutter run --release` ممكنًا محليًا.
+            //
+            // حزمة موقَّعة بمفتاح التصحيح لا يقبلها Google Play، ولذلك
+            // يُطبع تحذير صريح عند البناء بدل أن يمرّ الأمر صامتًا.
+            signingConfig = if (hasReleaseKeystore) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn(
+                    "⚠  بناء إصدار بمفتاح التصحيح: لا يوجد android/key.properties. " +
+                    "هذه الحزمة غير صالحة للنشر على Google Play."
+                )
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

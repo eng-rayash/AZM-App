@@ -566,7 +566,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
                       final isSelected = _selectedIds.contains(doc.id);
                       
                       return NeuCard(
-                        statusColor: doc.isConfidential ? NeuColors.priorityCritical : NeuColors.goldAccent,
+                        statusColor: doc.isConfidential ? NeuColors.priorityCritical : NeuColors.accentMuted,
                         padding: const EdgeInsets.all(18),
                         margin: const EdgeInsets.only(bottom: 18),
                         onTap: () {
@@ -591,7 +591,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
                                             : Icons.radio_button_unchecked_rounded,
                                         color: isSelected
                                             ? (isDark
-                                                ? NeuColors.goldAccent
+                                                ? NeuColors.accentMuted
                                                 : NeuColors.navyDeep)
                                             : (isDark
                                                 ? NeuColors.textHintDark
@@ -826,6 +826,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
       ),
       floatingActionButton: _selectedIds.isEmpty
           ? FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () => context.push(RouteNames.archiveCreate),
               backgroundColor: NeuColors.navyDeep,
               child: const Icon(Icons.add_rounded, color: Colors.white),

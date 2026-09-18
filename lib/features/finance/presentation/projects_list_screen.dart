@@ -82,10 +82,10 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _buildChip('الكل', -1, NeuColors.navyDeep, isDark),
-                _buildChip('تخطيط', 0, const Color(0xFF0984E3), isDark),
-                _buildChip('نشط', 1, const Color(0xFF00B894), isDark),
+                _buildChip('تخطيط', 0, NeuColors.info, isDark),
+                _buildChip('نشط', 1, NeuColors.success, isDark),
                 _buildChip('متوقف', 2, const Color(0xFFFDCB6E), isDark),
-                _buildChip('مكتمل', 3, const Color(0xFF6C5CE7), isDark),
+                _buildChip('مكتمل', 3, NeuColors.moduleDelivery, isDark),
                 _buildChip('ملغي', 4, const Color(0xFFD63031), isDark),
               ],
             ),
@@ -126,7 +126,6 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.projectCreate),
-        backgroundColor: const Color(0xFFE17055),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('مشروع جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),

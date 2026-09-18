@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -51,16 +51,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen>
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       appBar: AppBar(
         title: const Text('الحضور والإجازات',
-            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w700)),
+            style: TextStyle(fontFamily: 'Panorama', fontWeight: FontWeight.w700)),
         backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.navyDeep,
         foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabCtrl,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white54,
-          indicatorColor: NeuColors.goldAccent,
+          indicatorColor: NeuColors.accentMuted,
           indicatorWeight: 3,
-          labelStyle: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w700),
+          labelStyle: const TextStyle(fontFamily: 'Panorama', fontWeight: FontWeight.w700),
           tabs: const [
             Tab(text: 'الحضور اليومي'),
             Tab(text: 'طلبات الإجازة'),
@@ -293,7 +293,7 @@ class _AttendanceTile extends StatelessWidget {
             radius: 18,
             backgroundColor: color.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: TextStyle(
-                color: color, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
+                color: color, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
           ),
           const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -314,7 +314,7 @@ class _AttendanceTile extends StatelessWidget {
             ),
             child: Text(statusText, style: TextStyle(
                 fontSize: 11, fontWeight: FontWeight.w700,
-                color: color, fontFamily: 'Cairo')),
+                color: color, fontFamily: 'Panorama')),
           ),
         ]),
       ),
@@ -341,7 +341,7 @@ class _LeaveCard extends StatelessWidget {
             radius: 16,
             backgroundColor: NeuColors.warning.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: const TextStyle(
-                color: NeuColors.warning, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
+                color: NeuColors.warning, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
           ),
           const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -358,7 +358,7 @@ class _LeaveCard extends StatelessWidget {
             ),
             child: const Text('معلق', style: TextStyle(
                 fontSize: 11, fontWeight: FontWeight.w700,
-                color: NeuColors.warning, fontFamily: 'Cairo')),
+                color: NeuColors.warning, fontFamily: 'Panorama')),
           ),
         ]),
         const SizedBox(height: 10),
@@ -383,7 +383,7 @@ class _LeaveCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: const Text('قبول',
-                  style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 13)),
+                  style: TextStyle(color: Colors.white, fontFamily: 'Panorama', fontSize: 13)),
             ),
           ),
           const SizedBox(width: 10),
@@ -396,7 +396,7 @@ class _LeaveCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: const Text('رفض',
-                  style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 13)),
+                  style: TextStyle(color: Colors.white, fontFamily: 'Panorama', fontSize: 13)),
             ),
           ),
         ]),
@@ -429,7 +429,7 @@ class _StatusChip extends StatelessWidget {
       const SizedBox(width: 6),
       Text('$label ($count)', style: TextStyle(
           fontSize: 12, fontWeight: FontWeight.w600,
-          color: color, fontFamily: 'Cairo')),
+          color: color, fontFamily: 'Panorama')),
     ]),
   );
 }

@@ -9,6 +9,7 @@ import '../../../shared/widgets/neu_card.dart';
 import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Payroll Screen
@@ -33,7 +34,7 @@ class _PayrollScreenState extends ConsumerState<PayrollScreen> {
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       appBar: AppBar(
         title: const Text('كشف الرواتب',
-            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w700)),
+            style: TextStyle(fontFamily: 'Panorama', fontWeight: FontWeight.w700)),
         backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.navyDeep,
         foregroundColor: Colors.white,
         actions: [
@@ -80,7 +81,7 @@ class _PayrollScreenState extends ConsumerState<PayrollScreen> {
           Expanded(
             child: employeesAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('خطأ: $e')),
+              error: (e, _) => ErrorState(error: e),
               data: (employees) {
                 final active = employees.where((e) => e.status == 0).toList();
                 if (active.isEmpty) {
@@ -199,7 +200,7 @@ class _PayrollRow extends StatelessWidget {
               radius: 18,
               backgroundColor: NeuColors.navyDeep.withValues(alpha: 0.15),
               child: Text(employee.name[0], style: const TextStyle(
-                  color: NeuColors.navyDeep, fontWeight: FontWeight.w700, fontFamily: 'Cairo')),
+                  color: NeuColors.navyDeep, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
             ),
             const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -212,7 +213,7 @@ class _PayrollRow extends StatelessWidget {
               Text(fmt.format(net), style: TextStyle(
                   fontSize: 15, fontWeight: FontWeight.w800,
                   color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                  fontFamily: 'Cairo')),
+                  fontFamily: 'Panorama')),
               Text('صافي', style: AppTypography.caption.copyWith(color: th)),
             ]),
           ]),
@@ -252,7 +253,7 @@ class _Deduction extends StatelessWidget {
     const SizedBox(height: 2),
     Text(value, style: TextStyle(
         fontSize: 12, fontWeight: FontWeight.w600,
-        color: color, fontFamily: 'Cairo')),
+        color: color, fontFamily: 'Panorama')),
   ]);
 }
 
@@ -284,7 +285,7 @@ class _SummaryCard extends StatelessWidget {
             color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),
         Text(value, style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.w800,
-            color: color, fontFamily: 'Cairo')),
+            color: color, fontFamily: 'Panorama')),
       ])),
     ]),
   );

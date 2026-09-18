@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,9 +11,9 @@ import '../../../core/theme/neu_colors.dart';
 import '../providers/auth_providers.dart';
 import '../../../core/services/remote_config_service.dart';
 
-/// RVIOS Splash Screen — app entry point.
+/// AZM Splash Screen — app entry point.
 ///
-/// Displays the RVIOS logo for 1.5 seconds, then routes to:
+/// Displays the AZM wordmark for 1.5 seconds, then routes to:
 /// - /onboarding (first launch — no account)
 /// - Lock Screen (returning user with PIN)
 /// - Dashboard (returning user, PIN disabled)
@@ -120,94 +120,96 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NeuColors.primary, // RVIOS Crimson Red
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: ScaleTransition(
-            scale: _scaleAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // RVIOS Official Logo Mark
-                Container(
-                  width: 110,
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 30,
-                        offset: const Offset(0, 10),
+      backgroundColor: NeuColors.primary,
+      body: Stack(
+        children: [
+          Center(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // الشعار الرسمي على بطاقة بيضاء
+                    Container(
+                      width: 110,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.35),
+                            blurRadius: 30,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(
-                        'assets/images/logo_icon.png',
-                        fit: BoxFit.contain,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Image.asset(
+                            'assets/images/logo_icon.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 22),
+                    const SizedBox(height: 22),
 
-                // English App Title (Yapari Bold)
-                const Text(
-                  'RVIOS',
-                  style: TextStyle(
-                    fontFamily: 'Yapari',
-                    fontSize: 38,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 4,
-                  ),
-                ),
-
-                // Arabic App Title (RTL Maghfira)
-                const Text(
-                  'ريفيوس',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamilyRTLMaghfira,
-                    fontSize: 36,
-                    color: NeuColors.gold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Tagline (Panorama / Givonic)
-                Text(
-                  AppConstants.appDescription,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamilyPanorama,
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.75),
-                    letterSpacing: 1,
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                // Loading indicator
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      NeuColors.goldAccent.withValues(alpha: 0.8),
+                    // العلامة اللاتينية — Yapari Bold
+                    const Text(
+                      'AZM',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamilyYapari,
+                        fontSize: 38,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 4,
+                      ),
                     ),
-                  ),
+
+                    // العلامة العربية — RTL Maghfira
+                    const Text(
+                      'عزم',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamilyRTLMaghfira,
+                        fontSize: 36,
+                        color: NeuColors.gold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    Text(
+                      AppConstants.appTagline,
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamilyPanorama,
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.75),
+                        letterSpacing: 1,
+                      ),
+                    ),
+
+                    const SizedBox(height: 48),
+
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          NeuColors.goldAccent.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

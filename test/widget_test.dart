@@ -5,8 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:rvios/app.dart';
-import 'package:rvios/core/constants/app_constants.dart';
+import 'package:azm/app.dart';
+import 'package:azm/core/constants/app_constants.dart';
 
 void main() {
   setUpAll(() async {
@@ -40,7 +40,7 @@ void main() {
     // Build our app under ProviderScope and trigger a frame.
     await tester.pumpWidget(
       const ProviderScope(
-        child: RviosApp(),
+        child: AzmApp(),
       ),
     );
 

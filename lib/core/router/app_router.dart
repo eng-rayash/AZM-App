@@ -60,6 +60,9 @@ import '../../features/settings/presentation/legal_protection_screen.dart';
 import '../../features/hrm/presentation/hrm_screen.dart';
 import '../../features/finance/presentation/finance_screen.dart';
 import '../../features/more/presentation/more_screen.dart';
+import '../../features/work/presentation/work_screen.dart';
+import '../../features/business/presentation/business_screen.dart';
+import '../../features/insights/presentation/insights_screen.dart';
 
 // ── Placeholder screens for new routes ─────────────────────────────
 import '../../shared/widgets/erp_placeholder_screen.dart';
@@ -101,14 +104,13 @@ import '../../features/approvals/presentation/approvals_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
 import 'route_names.dart';
 
-/// App Router — GoRouter configuration for Mudiri ERP.
+/// App Router — GoRouter configuration for AZM.
 ///
-/// Shell Route: 5-tab bottom navigation
-///   /home/dashboard    → DashboardScreen
-///   /home/followups    → FollowupsListScreen
-///   /home/hrm          → HrmScreen
-///   /home/finance      → FinanceScreen
-///   /home/more         → MoreScreen
+/// Shell Route — تنقّل عزم: أربعة تبويبات
+///   /home/dashboard  → DashboardScreen  · ما وضع عملي؟
+///   /home/work       → WorkScreen       · ما الذي يجب تنفيذه؟
+///   /home/business   → BusinessScreen   · من وماذا أدير؟
+///   /home/insights   → InsightsScreen   · ماذا يحدث ولماذا؟
 class AppRouter {
   AppRouter._();
 
@@ -209,40 +211,61 @@ class AppRouter {
         builder: (context, state) => const MaintenanceScreen(),
       ),
 
-      // ─── Main Shell (5-Tab Bottom Navigation) ────────────────────
+      // ─── Main Shell — تنقّل عزم: أربعة تبويبات ────────────────────
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => AppShellScaffold(child: child),
         routes: [
-          // Tab 1 — Dashboard
+          // تبويب ١ — الرئيسية
           GoRoute(
             path: RouteNames.dashboardFull,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: DashboardScreen(),
             ),
           ),
-          // Tab 2 — Follow-ups (merged Tasks)
+          // تبويب ٢ — العمل
+          GoRoute(
+            path: RouteNames.workFull,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: WorkScreen(),
+            ),
+          ),
+          // تبويب ٣ — الأعمال
+          GoRoute(
+            path: RouteNames.businessFull,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: BusinessScreen(),
+            ),
+          ),
+          // تبويب ٤ — الذكاء
+          GoRoute(
+            path: RouteNames.insightsFull,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: InsightsScreen(),
+            ),
+          ),
+
+          // ── وجهات داخل الـShell — لم تعد تبويبات ──────────────────
+          // المتابعات وشؤون العاملين والمالية يُوصَل إليها من «العمل»
+          // و«الأعمال»؛ ومساراتها باقية فلا ينكسر أي رابط قائم.
           GoRoute(
             path: RouteNames.followupsListFull,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: FollowupsListScreen(),
             ),
           ),
-          // Tab 3 — HRM
           GoRoute(
             path: RouteNames.hrmFull,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: HrmScreen(),
             ),
           ),
-          // Tab 4 — Finance
           GoRoute(
             path: RouteNames.financeFull,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: FinanceScreen(),
             ),
           ),
-          // Tab 5 — More
           GoRoute(
             path: RouteNames.moreFull,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -357,6 +380,13 @@ class AppRouter {
         builder: (context, state) => const CreateClientScreen(),
       ),
       GoRoute(
+        path: RouteNames.clientEdit,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return CreateClientScreen(clientId: id);
+        },
+      ),
+      GoRoute(
         path: RouteNames.clientDetail,
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
@@ -435,6 +465,13 @@ class AppRouter {
       GoRoute(
         path: RouteNames.projectCreate,
         builder: (context, state) => const CreateProjectScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.projectEdit,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return CreateProjectScreen(projectId: id);
+        },
       ),
       GoRoute(
         path: RouteNames.projectDetail,

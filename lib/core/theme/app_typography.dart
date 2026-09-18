@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'neu_colors.dart';
 
-/// RVIOS Brand Typography System
+/// Brand Typography System
 ///
-/// Fonts:
-/// - Yapari: English Brand Title (RVIOS)
-/// - RTLMaghfira: Arabic Brand Title (ريفيوس)
-/// - Givonic: English Body & Subtitles
-/// - Panorama: Arabic Body & UI Text
+/// الخطوط بأدوارها:
+/// - Yapari:        عنوان العلامة اللاتيني
+/// - RTLMaghfira:   عنوان العلامة العربي
+/// - Givonic:       النص اللاتيني والعناوين الفرعية
+/// - Panorama:      النص العربي وواجهة الاستخدام (Hacen Liner Screen)
+/// - GlyphFallback: احتياط الرموز التي يفتقدها الخط الأساسي (… ﷼ € NBSP)
+///
+/// عائلة `Panorama` أُبقيت باسمها رغم تغيّر الملف تحتها: الاسم مذكور
+/// نصّياً في ١٤٤ موضعاً عبر ٢٧ ملفاً، وتغييره تعديلٌ واسع بلا مقابل.
 class AppTypography {
   AppTypography._();
 
@@ -16,22 +20,35 @@ class AppTypography {
   // Font Family Constants
   // ─────────────────────────────────────────────
 
-  static const String fontFamilyMajallab = 'majallab';
   static const String fontFamilyPanorama = 'Panorama';
   static const String fontFamilyGivonic = 'Givonic';
   static const String fontFamilyYapari = 'Yapari';
   static const String fontFamilyRTLMaghfira = 'RTLMaghfira';
 
+  /// احتياط الرموز التي لا يغطّيها Hacen: … و ﷼ و € و NBSP.
+  /// Givonic لا يصلح (٩٧ رمزاً لاتينياً بلا ellipsis)، فالاحتياط خط
+  /// عربي كامل التغطية يُستدعى للرموز الناقصة وحدها.
+  static const List<String> fontFamilyFallback = ['GlyphFallback'];
+
   // Default font families for body and headings
-  static const String fontFamilyBody = fontFamilyMajallab;
-  static const String fontFamilyHeading = fontFamilyMajallab;
+  static const String fontFamilyBody = fontFamilyPanorama;
+  static const String fontFamilyHeading = fontFamilyPanorama;
 
   // ─────────────────────────────────────────────
-  // Brand Specific Styles (Logo & Headers)
+  // Wordmark — علامة عزم اللفظية
   // ─────────────────────────────────────────────
 
-  /// English Logo/Brand Title (RVIOS) — Yapari Bold
-  static const TextStyle brandTitleEn = TextStyle(
+  /// العلامة اللفظية العربية — RTL Maghfira
+  static const TextStyle wordmarkAr = TextStyle(
+    fontFamily: fontFamilyRTLMaghfira,
+    fontSize: 28,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: NeuColors.primary,
+  );
+
+  /// العلامة اللفظية اللاتينية — Yapari Bold
+  static const TextStyle wordmarkEn = TextStyle(
     fontFamily: fontFamilyYapari,
     fontSize: 26,
     fontWeight: FontWeight.w700,
@@ -39,14 +56,19 @@ class AppTypography {
     color: NeuColors.primary,
   );
 
-  /// Arabic Logo/Brand Title (ريفيوس) — RTL Maghfira
-  static const TextStyle brandTitleAr = TextStyle(
-    fontFamily: fontFamilyRTLMaghfira,
-    fontSize: 28,
+  /// سطر الوصف تحت العلامة
+  static const TextStyle wordmarkTagline = TextStyle(
+    fontFamily: fontFamilyPanorama,
+    fontSize: 11,
     fontWeight: FontWeight.w400,
-    height: 1.2,
-    color: NeuColors.primary,
+    height: 1.5,
+    letterSpacing: 1.2,
+    color: NeuColors.textHint,
   );
+
+  // أسماء بديلة — مُبقاة للتوافق مع الكود القائم
+  static const TextStyle brandTitleEn = wordmarkEn;
+  static const TextStyle brandTitleAr = wordmarkAr;
 
   // ─────────────────────────────────────────────
   // Heading Styles (Panorama)
@@ -170,12 +192,17 @@ class AppTypography {
   );
 
   /// Large number display (stats, counters)
+  ///
+  /// أرقام جدولية إلزامية: المؤشرات تُقرأ في أعمدة، والأرقام المتناسبة
+  /// تجعل الخانات ترقص بين صفّ وآخر.
   static const TextStyle statNumber = TextStyle(
     fontFamily: fontFamilyHeading,
     fontSize: 32,
     fontWeight: FontWeight.w700,
-    height: 1.2,
-    color: NeuColors.navyDeep,
+    height: 1.15,
+    letterSpacing: -0.5,
+    fontFeatures: [FontFeature.tabularFigures()],
+    color: NeuColors.textPrimary,
   );
 
   /// Stat label

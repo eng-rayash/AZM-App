@@ -17,6 +17,7 @@ import '../../../shared/widgets/sort_menu.dart';
 
 import '../providers/tasks_provider.dart';
 import '../domain/tasks_repository.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// Tasks List Screen — displays all active tasks with search, filter, multi-select, and export.
 class TasksListScreen extends ConsumerStatefulWidget {
@@ -235,7 +236,7 @@ class _TasksListScreenState
                 loading: () => const Center(
                     child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Center(child: Text('خطأ: $err')),
+                    ErrorState(error: err),
                 data: (tasks) {
                   var filtered = tasks.toList();
 
@@ -341,7 +342,7 @@ class _TasksListScreenState
                                       : Icons.radio_button_unchecked_rounded,
                                   color: isSelected
                                       ? (isDark
-                                          ? NeuColors.goldAccent
+                                          ? NeuColors.accentMuted
                                           : NeuColors.navyDeep)
                                       : (isDark
                                           ? NeuColors.textHintDark
@@ -470,6 +471,7 @@ class _TasksListScreenState
       ),
       floatingActionButton: _selectedIds.isEmpty
           ? FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () => context.push(RouteNames.taskCreate),
               backgroundColor: NeuColors.navyDeep,
               child: const Icon(Icons.add_rounded, color: Colors.white),

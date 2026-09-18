@@ -86,7 +86,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: NeuColors.goldAccent.withValues(alpha: 0.3),
+                            color: NeuColors.accentMuted.withValues(alpha: 0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 5),
                           ),
@@ -94,7 +94,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       child: const Icon(
                         Icons.mark_email_unread_rounded,
-                        color: NeuColors.goldAccent,
+                        color: NeuColors.accentMuted,
                         size: 48,
                       ),
                     ),
@@ -117,17 +117,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: NeuColors.goldAccent.withValues(alpha: 0.08),
+                        color: NeuColors.accentMuted.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: NeuColors.goldAccent.withValues(alpha: 0.3),
+                          color: NeuColors.accentMuted.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
                         children: [
                           const Icon(
                             Icons.info_outline_rounded,
-                            color: NeuColors.goldAccent,
+                            color: NeuColors.accentMuted,
                             size: 20,
                           ),
                           AppSpacing.gapHSm,
@@ -135,7 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             child: Text(
                               'لم تجد الرسالة؟ تحقق من مجلد البريد غير المرغوب فيه (Spam).',
                               style: AppTypography.bodySmall.copyWith(
-                                color: NeuColors.goldAccent,
+                                color: NeuColors.accentMuted,
                               ),
                             ),
                           ),

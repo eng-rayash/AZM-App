@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
@@ -362,7 +362,7 @@ class _CreateDirectivePageState
                       Icon(
                         Icons.calendar_month_rounded,
                         color: isDark
-                            ? NeuColors.goldAccent
+                            ? NeuColors.accentMuted
                             : NeuColors.navyDeep,
                         size: 20,
                       ),
@@ -382,7 +382,7 @@ class _CreateDirectivePageState
 
                 AppSpacing.gapXxl,
 
-                // â”€â”€ Promote to Follow-up Switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── Promote to Follow-up Switch ────────────────────
                 NeuCard(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
@@ -411,7 +411,7 @@ class _CreateDirectivePageState
                       Switch(
                         value: _promoteToFollowUp,
                         onChanged: (val) => setState(() => _promoteToFollowUp = val),
-                        activeTrackColor: NeuColors.goldAccent,
+                        activeTrackColor: NeuColors.accentMuted,
                         activeThumbColor: NeuColors.navyDeep,
                       ),
                     ],

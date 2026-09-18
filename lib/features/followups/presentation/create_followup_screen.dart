@@ -41,11 +41,11 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
 
   // ── FollowupType metadata ──────────────────────────────────────────
   static const _typesMeta = [
-    (FollowupType.followup, Icons.replay_rounded, Color(0xFF22549E)),
-    (FollowupType.task, Icons.task_alt_rounded, Color(0xFF0984E3)),
-    (FollowupType.clientFollowup, Icons.supervisor_account_rounded, Color(0xFF00B894)),
+    (FollowupType.followup, Icons.replay_rounded, NeuColors.primary),
+    (FollowupType.task, Icons.task_alt_rounded, NeuColors.info),
+    (FollowupType.clientFollowup, Icons.supervisor_account_rounded, NeuColors.success),
     (FollowupType.projectFollowup, Icons.work_rounded, Color(0xFFE17055)),
-    (FollowupType.employeeFollowup, Icons.badge_rounded, Color(0xFF6C5CE7)),
+    (FollowupType.employeeFollowup, Icons.badge_rounded, NeuColors.moduleDelivery),
     (FollowupType.financeFollowup, Icons.monetization_on_rounded, Color(0xFFFDCB6E)),
     (FollowupType.other, Icons.more_horiz_rounded, Color(0xFF636E72)),
   ];
@@ -290,7 +290,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                         Icon(Icons.calendar_today_rounded,
                             size: 18,
                             color: isDark
-                                ? NeuColors.goldAccent
+                                ? NeuColors.accentMuted
                                 : NeuColors.navyMid),
                         const SizedBox(width: 10),
                         Expanded(
@@ -321,7 +321,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                         Icon(Icons.schedule_rounded,
                             size: 18,
                             color: isDark
-                                ? NeuColors.goldAccent
+                                ? NeuColors.accentMuted
                                 : NeuColors.navyMid),
                         const SizedBox(width: 8),
                         Text(

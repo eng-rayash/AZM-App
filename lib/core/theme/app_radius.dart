@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Executive Neumorphism Design System — Border Radius Tokens
+/// Design System — Border Radius Tokens
 ///
-/// Consistent border radius values matching the Neumorphism spec.
+/// Consistent border radius values.
 /// Each component type has a designated radius.
 class AppRadius {
   AppRadius._();

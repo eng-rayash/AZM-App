@@ -12,6 +12,7 @@ import '../../../shared/widgets/related_entities_widget.dart';
 import '../domain/finance_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/constants/app_currencies.dart';
+import '../../../shared/widgets/error_state.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Invoice Detail Screen
@@ -30,7 +31,7 @@ class InvoiceDetailScreen extends ConsumerWidget {
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       body: invoicesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('خطأ: $e')),
+        error: (e, _) => ErrorState(error: e),
         data: (invoices) {
           final invoice = invoices.firstWhere(
             (i) => i.id == invoiceId,
@@ -86,7 +87,7 @@ class _InvoiceDetailBody extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark
-                      ? [const Color(0xFF1A2436), const Color(0xFF22549E)]
+                      ? [const Color(0xFF241416), NeuColors.primary]
                       : [NeuColors.navyDeep, NeuColors.navyMid],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
@@ -109,12 +110,12 @@ class _InvoiceDetailBody extends StatelessWidget {
                               border: Border.all(color: _statusColor),
                             ),
                             child: Text(_statusLabel,
-                                style: const TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Cairo')),
+                                style: const TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Panorama')),
                           ),
                           const Spacer(),
                           Text(
                             currency.symbol,
-                            style: const TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Cairo'),
+                            style: const TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Panorama'),
                           ),
                         ],
                       ),
@@ -122,11 +123,11 @@ class _InvoiceDetailBody extends StatelessWidget {
                       Text(
                         invoice.clientName ?? 'فاتورة',
                         style: const TextStyle(color: Colors.white, fontSize: 20,
-                            fontWeight: FontWeight.w700, fontFamily: 'Cairo'),
+                            fontWeight: FontWeight.w700, fontFamily: 'Panorama'),
                       ),
                       Text(
                         'رقم: ${invoice.invoiceNumber}',
-                        style: const TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Cairo'),
+                        style: const TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Panorama'),
                       ),
                     ],
                   ),
@@ -348,7 +349,7 @@ class _AmountCard extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: color,
-            fontFamily: 'Cairo',
+            fontFamily: 'Panorama',
           )),
         ),
       ]),

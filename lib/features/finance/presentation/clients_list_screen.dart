@@ -55,7 +55,7 @@ class _ClientsListScreenState extends ConsumerState<ClientsListScreen> {
         actions: [
           IconButton(
             onPressed: () => context.push(RouteNames.clientCreate),
-            icon: Icon(Icons.person_add_rounded, color: const Color(0xFF00B894)),
+            icon: Icon(Icons.person_add_rounded, color: NeuColors.success),
           ),
         ],
       ),
@@ -104,7 +104,7 @@ class _ClientsListScreenState extends ConsumerState<ClientsListScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                     decoration: BoxDecoration(
                       color: selected
-                          ? const Color(0xFF00B894)
+                          ? NeuColors.success
                           : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -164,7 +164,6 @@ class _ClientsListScreenState extends ConsumerState<ClientsListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.clientCreate),
-        backgroundColor: const Color(0xFF00B894),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('عميل جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -218,7 +217,7 @@ class _ClientCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF00B894), Color(0xFF00CEC9)],
+                  colors: [NeuColors.primary, NeuColors.primaryMid],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -305,11 +304,11 @@ class _EmptyClients extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF00B894).withValues(alpha: 0.08),
+              color: NeuColors.success.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.supervisor_account_rounded,
-                size: 56, color: const Color(0xFF00B894).withValues(alpha: 0.4)),
+                size: 56, color: NeuColors.success.withValues(alpha: 0.4)),
           ),
           const SizedBox(height: 20),
           Text('لا يوجد عملاء',

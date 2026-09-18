@@ -215,7 +215,6 @@ class _InvoicesListScreenState extends ConsumerState<InvoicesListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.invoiceCreate),
-        backgroundColor: NeuColors.success,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('فاتورة جديدة',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),

@@ -122,12 +122,12 @@ class _CreateClientScreenState extends ConsumerState<CreateClientScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
                           color: selected
-                              ? const Color(0xFF00B894)
+                              ? NeuColors.success
                               : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: selected
-                                ? const Color(0xFF00B894)
+                                ? NeuColors.success
                                 : Colors.transparent,
                           ),
                         ),

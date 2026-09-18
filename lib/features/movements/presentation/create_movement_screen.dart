@@ -285,7 +285,7 @@ class _CreateMovementScreenState
                                 Icon(
                                   Icons.calendar_today_rounded,
                                   size: 18,
-                                  color: NeuColors.goldAccent,
+                                  color: NeuColors.accentMuted,
                                 ),
                                 AppSpacing.gapHSm,
                                 Text(
@@ -318,7 +318,7 @@ class _CreateMovementScreenState
                                 Icon(
                                   Icons.access_time_rounded,
                                   size: 18,
-                                  color: NeuColors.goldAccent,
+                                  color: NeuColors.accentMuted,
                                 ),
                                 AppSpacing.gapHSm,
                                 Text(

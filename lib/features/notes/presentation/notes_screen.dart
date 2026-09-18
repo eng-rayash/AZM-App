@@ -13,6 +13,7 @@ import '../../../shared/widgets/sort_menu.dart';
 
 import '../domain/notes_repository.dart';
 import '../../../core/database/app_database.dart';
+import '../../../shared/widgets/error_state.dart';
 
 /// Notes Screen — with search across title and content.
 class NotesScreen extends ConsumerStatefulWidget {
@@ -268,7 +269,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 IconButton(
                   icon: Icon(Icons.add_box_rounded,
                       color: isDark
-                          ? NeuColors.goldAccent
+                          ? NeuColors.accentMuted
                           : NeuColors.navyDeep),
                   onPressed: () => _showAddNoteDialog(context, ref, isDark),
                 ),
@@ -375,7 +376,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 loading: () => const Center(
                     child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Center(child: Text('خطأ: $err')),
+                    ErrorState(error: err),
                 data: (notes) {
                   var filtered = notes.toList();
 
@@ -456,7 +457,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                                         : Icons.radio_button_unchecked_rounded,
                                     color: isSelected
                                         ? (isDark
-                                            ? NeuColors.goldAccent
+                                            ? NeuColors.accentMuted
                                             : NeuColors.navyDeep)
                                         : (isDark
                                             ? NeuColors.textHintDark

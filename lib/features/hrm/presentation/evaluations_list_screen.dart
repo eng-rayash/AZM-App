@@ -1,4 +1,3 @@
-﻿import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
-import '../../../core/database/app_database.dart';
-import '../../../core/database/providers/database_providers.dart';
+import '../domain/hrm_repository.dart';
 
 /// Evaluations List Screen — employee performance evaluations.
 class EvaluationsListScreen extends ConsumerWidget {
@@ -33,7 +31,7 @@ class EvaluationsListScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = NeuColors.textPrimaryFor(Theme.of(context).brightness);
     final textSecondary = NeuColors.textSecondaryFor(Theme.of(context).brightness);
-    final async = ref.watch(_evaluationsStreamProvider);
+    final async = ref.watch(evaluationsListProvider);
 
     return Scaffold(
       backgroundColor: NeuColors.background(Theme.of(context).brightness),
@@ -148,7 +146,6 @@ class EvaluationsListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateEvalDialog(context, isDark, ref),
-        backgroundColor: const Color(0xFFE17055),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text('تقييم جديد',
             style: AppTypography.buttonLabel.copyWith(color: Colors.white)),
@@ -214,15 +211,13 @@ class EvaluationsListScreen extends ConsumerWidget {
               ElevatedButton(
                 onPressed: () async {
                   if (empCtrl.text.isEmpty) return;
-                  final db = ref.read(databaseProvider);
-                  await db.hrmDao.insertEvaluation(PerformanceEvaluationsCompanion(
-                    employeeId: const Value(1),
-                    employeeName: Value(empCtrl.text),
-                    period: Value(periodCtrl.text),
-                    grade: Value(grade),
-                    percentage: Value(percentage),
-                    status: const Value(0),
-                  ));
+                  await ref.read(hrmRepositoryProvider).createEvaluation(
+                        employeeId: 1,
+                        employeeName: empCtrl.text,
+                        period: periodCtrl.text,
+                        grade: grade,
+                        percentage: percentage,
+                      );
                   if (ctx.mounted) ctx.pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -236,10 +231,3 @@ class EvaluationsListScreen extends ConsumerWidget {
     );
   }
 }
-
-final _evaluationsStreamProvider = StreamProvider<List<PerformanceEvaluation>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return (db.select(db.performanceEvaluations)
-        ..orderBy([(e) => OrderingTerm.desc(e.evaluationDate)]))
-      .watch();
-});
