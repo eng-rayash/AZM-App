@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// أنواع الكيانات في الربط الشامل معرَّفة في `EntityLinkType`
 /// داخل `core/constants/enums.dart` — وهي المرجع الوحيد.
@@ -10,7 +11,7 @@ import 'base_table.dart';
 ///
 /// Allows ANY record to be linked to ANY other record.
 /// This powers the "Smart Relations" feature across all modules.
-class EntityLinks extends Table with BaseTableMixin {
+class EntityLinks extends Table with BaseTableMixin, TenantScoped {
   /// Source entity type (see enum above)
   IntColumn get sourceType => integer()();
 

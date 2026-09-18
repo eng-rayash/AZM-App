@@ -88,6 +88,8 @@ part 'app_database.g.dart';
 /// v10 — Phase 7b: Projects, EntityLinks
 /// v11 — RVIOS Platform: Companies, CompanyMembers, Invitations, AuditLogs
 ///        Users table extended (accountType, employeeCode, email, username...)
+/// v12 — AZM: عمود `companyId` على ٤١ جدول أعمال + شركة محلية افتراضية
+///        تُملأ بها الصفوف القائمة، فلا تُيتَّم بيانات مستخدم قائم.
 @DriftDatabase(
   tables: [
     // ── Existing ─────────────────────────────────────
@@ -177,7 +179,7 @@ class AppDatabase extends _$AppDatabase {
 
 
   @override
-  int get schemaVersion => 11; // RVIOS v11
+  int get schemaVersion => 12; // AZM v12 — tenant scope
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -333,6 +335,23 @@ class AppDatabase extends _$AppDatabase {
             try { await m.addColumn(users, users.supabaseUid); } catch (_) {}
             try { await m.addColumn(users, users.lastSyncedAt); } catch (_) {}
           }
+          // ── v11 → v12: نطاق المستأجر ──────────────────────────────
+          //
+          // عمود `companyId` على كل جدول أعمال. الصفوف القائمة تُملأ
+          // بشركة محلية افتراضية في `beforeOpen` بعد اكتمال الهجرة —
+          // لا هنا، لأن `Migrator` لا يضمن جاهزية الجداول للقراءة أثناءه.
+          if (from < 12) {
+            for (final table in _tenantScopedTables) {
+              try {
+                await m.addColumn(
+                  table,
+                  table.columnsByName['company_id']!,
+                );
+              } catch (_) {
+                // العمود موجود سلفًا — هجرة أُعيد تشغيلها
+              }
+            }
+          }
         },
         beforeOpen: (details) async {
           // Enable foreign key enforcement
@@ -343,8 +362,67 @@ class AppDatabase extends _$AppDatabase {
               details.versionBefore! < 10) {
             await _migrateTasksToFollowUps();
           }
+          // ينسب كل صفّ بلا مالك إلى الشركة المحلية — عند الترقية
+          // وعند الإنشاء معًا، فقاعدة جديدة تحتاجها أيضًا.
+          await _backfillLocalTenant();
         },
       );
+
+  /// الجداول التي تحمل [TenantScoped] — تُشتقّ من المخطط لا تُعدَّد يدويًا.
+  ///
+  /// قائمة مكتوبة بخطّ اليد تتخلّف عن المخطط بصمت: يُضاف جدول جديد
+  /// فيُنسى من الهجرة ومن مرشّح العزل معًا.
+  List<TableInfo<Table, dynamic>> get _tenantScopedTables => allTables
+      .where((t) => t.columnsByName.containsKey('company_id'))
+      .toList();
+
+  /// الشركة المحلية الافتراضية.
+  ///
+  /// قواعد المستخدمين القائمة فيها صفوف سابقة على تعدّد المستأجرين.
+  /// تُنسب إلى هذه الشركة بدل أن تُترك بلا مالك فتختفي عن كل استعلام
+  /// مُقيَّد. تُستبدل بشركة حقيقية عند أول إنشاء أو انضمام.
+  static const String localCompanyId = 'local-company-default---------------';
+
+  /// ينشئ الشركة المحلية إن غابت، ثم ينسب إليها كل صفّ بلا مالك.
+  ///
+  /// يعمل بعد اكتمال الهجرة لا أثناءها: `Migrator` لا يضمن جاهزية
+  /// الجداول للقراءة، وتنفيذ `UPDATE` داخله سلوك غير معرَّف.
+  Future<void> _backfillLocalTenant() async {
+    try {
+      final existing = await (select(companies)
+            ..where((c) => c.syncId.equals(localCompanyId))
+            ..limit(1))
+          .getSingleOrNull();
+
+      if (existing == null) {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        await into(companies).insert(
+          CompaniesCompanion.insert(
+            syncId: localCompanyId,
+            companyCode: 'LOCAL',
+            name: 'مساحة العمل المحلية',
+            workspaceSlug: 'local',
+            ownerSyncId: localCompanyId,
+            createdAt: now,
+            updatedAt: now,
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+      }
+
+      for (final table in _tenantScopedTables) {
+        await customUpdate(
+          'UPDATE "${table.actualTableName}" '
+          'SET company_id = ? WHERE company_id IS NULL',
+          variables: [Variable.withString(localCompanyId)],
+          updates: {table},
+        );
+      }
+    } catch (e) {
+      // الملء أفضل جهد: فشله يترك صفوفًا بلا مالك، ولا يمنع الإقلاع.
+      debugPrint('[DB] backfill local tenant: $e');
+    }
+  }
 
   /// Migrates all existing Task records to FollowUps with followupType=1 (مهمة).
   ///

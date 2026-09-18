@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Employee Contracts table.
-class EmployeeContracts extends Table with BaseTableMixin {
+class EmployeeContracts extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   /// contractType: 0=fixed-term, 1=open-ended, 2=part-time, 3=freelance
@@ -19,7 +20,7 @@ class EmployeeContracts extends Table with BaseTableMixin {
 }
 
 /// Monthly Salary Records table.
-class SalaryRecords extends Table with BaseTableMixin {
+class SalaryRecords extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   IntColumn get month => integer()(); // 1–12
@@ -40,7 +41,7 @@ class SalaryRecords extends Table with BaseTableMixin {
 }
 
 /// Salary Allowances Catalog (reusable allowance types).
-class SalaryAllowanceTypes extends Table with BaseTableMixin {
+class SalaryAllowanceTypes extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get nameEn => text().nullable()();
   /// isPercentage: if true, amount is % of basic salary
@@ -51,7 +52,7 @@ class SalaryAllowanceTypes extends Table with BaseTableMixin {
 }
 
 /// Salary Deduction Types (reusable deduction types).
-class SalaryDeductionTypes extends Table with BaseTableMixin {
+class SalaryDeductionTypes extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get nameEn => text().nullable()();
   BoolColumn get isPercentage => boolean().withDefault(const Constant(false))();

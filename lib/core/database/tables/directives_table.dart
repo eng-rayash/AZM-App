@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Directives table — stores executive orders and directives.
-class Directives extends Table with BaseTableMixin {
+class Directives extends Table with BaseTableMixin, TenantScoped {
   /// Directive title or subject
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

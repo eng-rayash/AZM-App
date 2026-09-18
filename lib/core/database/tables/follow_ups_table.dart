@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 
 /// Follow-ups table — unified action item model.
@@ -8,7 +9,7 @@ import 'base_table.dart';
 /// Merges the old Tasks module into FollowUps.
 /// Supports all action types: follow-ups, tasks, calls, visits, reminders, etc.
 /// Universal entity linking allows attachment to any record in the system.
-class FollowUps extends Table with BaseTableMixin {
+class FollowUps extends Table with BaseTableMixin, TenantScoped {
   /// Follow-up title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

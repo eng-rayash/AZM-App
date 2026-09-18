@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Employees table — core HRM entity.
 ///
 /// Stores all personal, professional, financial, and contact data for employees.
-class Employees extends Table with BaseTableMixin {
+class Employees extends Table with BaseTableMixin, TenantScoped {
   // ── Identity ────────────────────────────────────────────────────
   TextColumn get name => text().withLength(min: 1, max: 150)();
   TextColumn get nameEn => text().nullable()();

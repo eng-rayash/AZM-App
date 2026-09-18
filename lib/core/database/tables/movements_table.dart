@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Movements Table — stores executive movements (خروج، عودة، مهمة خارجية).
-class Movements extends Table with BaseTableMixin {
+class Movements extends Table with BaseTableMixin, TenantScoped {
   /// Destination or location
   TextColumn get destination => text()();
 

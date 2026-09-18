@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Attendance Records table — daily employee check-in/out.
-class AttendanceRecords extends Table with BaseTableMixin {
+class AttendanceRecords extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   TextColumn get date => text()(); // YYYY-MM-DD
@@ -16,7 +17,7 @@ class AttendanceRecords extends Table with BaseTableMixin {
 }
 
 /// Leave Requests table.
-class LeaveRequests extends Table with BaseTableMixin {
+class LeaveRequests extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   /// leaveType: 0=annual, 1=sick, 2=emergency, 3=maternity/paternity,
@@ -37,7 +38,7 @@ class LeaveRequests extends Table with BaseTableMixin {
 }
 
 /// Employee Leave Balance table (annual balance tracking).
-class LeaveBalances extends Table with BaseTableMixin {
+class LeaveBalances extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   IntColumn get year => integer()();
   /// leaveType: same as LeaveRequests.leaveType
@@ -48,7 +49,7 @@ class LeaveBalances extends Table with BaseTableMixin {
 }
 
 /// Employee Advances (Salary Advances) table.
-class EmployeeAdvances extends Table with BaseTableMixin {
+class EmployeeAdvances extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   RealColumn get amount => real().withDefault(const Constant(0.0))();

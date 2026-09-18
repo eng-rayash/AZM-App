@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Invoices table — sales invoices issued to clients.
-class Invoices extends Table with BaseTableMixin {
+class Invoices extends Table with BaseTableMixin, TenantScoped {
   TextColumn get invoiceNumber => text().nullable()();
   IntColumn get clientId => integer().nullable()();
   TextColumn get clientName => text().nullable()(); // cached
@@ -31,7 +32,7 @@ class Invoices extends Table with BaseTableMixin {
 }
 
 /// Expenses table — company expenses.
-class Expenses extends Table with BaseTableMixin {
+class Expenses extends Table with BaseTableMixin, TenantScoped {
   TextColumn get title => text().withLength(min: 1, max: 200)();
   TextColumn get description => text().nullable()();
   RealColumn get amount => real().withDefault(const Constant(0.0))();
@@ -58,7 +59,7 @@ class Expenses extends Table with BaseTableMixin {
 }
 
 /// Revenues table — income records.
-class Revenues extends Table with BaseTableMixin {
+class Revenues extends Table with BaseTableMixin, TenantScoped {
   TextColumn get title => text().withLength(min: 1, max: 200)();
   TextColumn get description => text().nullable()();
   RealColumn get amount => real().withDefault(const Constant(0.0))();

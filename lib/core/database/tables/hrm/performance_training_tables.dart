@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Performance Evaluations table.
-class PerformanceEvaluations extends Table with BaseTableMixin {
+class PerformanceEvaluations extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   /// evaluationPeriod: e.g. "Q1-2025", "سنوي-2025"
@@ -29,7 +30,7 @@ class PerformanceEvaluations extends Table with BaseTableMixin {
 }
 
 /// Training Records table.
-class TrainingRecords extends Table with BaseTableMixin {
+class TrainingRecords extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   TextColumn get trainingName => text().withLength(min: 1, max: 200)();
@@ -50,7 +51,7 @@ class TrainingRecords extends Table with BaseTableMixin {
 }
 
 /// Employee Assets (assigned company assets) table.
-class EmployeeAssets extends Table with BaseTableMixin {
+class EmployeeAssets extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   TextColumn get assetName => text().withLength(min: 1, max: 200)();
@@ -71,7 +72,7 @@ class EmployeeAssets extends Table with BaseTableMixin {
 }
 
 /// Rewards and Penalties table.
-class RewardsPenalties extends Table with BaseTableMixin {
+class RewardsPenalties extends Table with BaseTableMixin, TenantScoped {
   IntColumn get employeeId => integer()();
   TextColumn get employeeName => text().nullable()(); // cached
   /// type: 0=reward/bonus, 1=penalty/deduction

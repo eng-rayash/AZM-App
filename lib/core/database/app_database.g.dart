@@ -1737,6 +1737,17 @@ class $MeetingsTable extends Meetings with TableInfo<$MeetingsTable, Meeting> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -2023,6 +2034,7 @@ class $MeetingsTable extends Meetings with TableInfo<$MeetingsTable, Meeting> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     meetingCategory,
     meetingType,
@@ -2098,6 +2110,12 @@ class $MeetingsTable extends Meetings with TableInfo<$MeetingsTable, Meeting> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -2322,6 +2340,10 @@ class $MeetingsTable extends Meetings with TableInfo<$MeetingsTable, Meeting> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -2450,6 +2472,9 @@ class Meeting extends DataClass implements Insertable<Meeting> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Meeting title
   final String title;
 
@@ -2532,6 +2557,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     required this.meetingCategory,
     required this.meetingType,
@@ -2568,6 +2594,9 @@ class Meeting extends DataClass implements Insertable<Meeting> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     map['meeting_category'] = Variable<int>(meetingCategory);
@@ -2641,6 +2670,9 @@ class Meeting extends DataClass implements Insertable<Meeting> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       meetingCategory: Value(meetingCategory),
       meetingType: Value(meetingType),
@@ -2715,6 +2747,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       meetingCategory: serializer.fromJson<int>(json['meetingCategory']),
       meetingType: serializer.fromJson<int>(json['meetingType']),
@@ -2760,6 +2793,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'meetingCategory': serializer.toJson<int>(meetingCategory),
       'meetingType': serializer.toJson<int>(meetingType),
@@ -2795,6 +2829,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     int? meetingCategory,
     int? meetingType,
@@ -2827,6 +2862,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     meetingCategory: meetingCategory ?? this.meetingCategory,
     meetingType: meetingType ?? this.meetingType,
@@ -2875,6 +2911,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       meetingCategory: data.meetingCategory.present
           ? data.meetingCategory.value
@@ -2934,6 +2971,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('meetingCategory: $meetingCategory, ')
           ..write('meetingType: $meetingType, ')
@@ -2971,6 +3009,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     meetingCategory,
     meetingType,
@@ -3007,6 +3046,7 @@ class Meeting extends DataClass implements Insertable<Meeting> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.meetingCategory == this.meetingCategory &&
           other.meetingType == this.meetingType &&
@@ -3041,6 +3081,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<int> meetingCategory;
   final Value<int> meetingType;
@@ -3073,6 +3114,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.meetingCategory = const Value.absent(),
     this.meetingType = const Value.absent(),
@@ -3106,6 +3148,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.meetingCategory = const Value.absent(),
     this.meetingType = const Value.absent(),
@@ -3144,6 +3187,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<int>? meetingCategory,
     Expression<int>? meetingType,
@@ -3177,6 +3221,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (meetingCategory != null) 'meeting_category': meetingCategory,
       if (meetingType != null) 'meeting_type': meetingType,
@@ -3213,6 +3258,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<int>? meetingCategory,
     Value<int>? meetingType,
@@ -3246,6 +3292,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       meetingCategory: meetingCategory ?? this.meetingCategory,
       meetingType: meetingType ?? this.meetingType,
@@ -3295,6 +3342,9 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -3385,6 +3435,7 @@ class MeetingsCompanion extends UpdateCompanion<Meeting> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('meetingCategory: $meetingCategory, ')
           ..write('meetingType: $meetingType, ')
@@ -3494,6 +3545,17 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -3581,6 +3643,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     dueDate,
@@ -3638,6 +3701,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -3723,6 +3792,10 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -3779,6 +3852,9 @@ class Task extends DataClass implements Insertable<Task> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Task title
   final String title;
 
@@ -3794,7 +3870,7 @@ class Task extends DataClass implements Insertable<Task> {
   /// Priority level (critical=0, high=1, medium=2, low=3)
   final int priority;
 
-  /// Task status using UnifiedStatus (newItem=0, inProgress=1, completed=3, overdue=4)
+  /// الحالة — القيَم في `UnifiedStatus`.
   final int status;
 
   /// Optional: ID of the meeting this task originated from
@@ -3806,6 +3882,7 @@ class Task extends DataClass implements Insertable<Task> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.description,
     this.dueDate,
@@ -3824,6 +3901,9 @@ class Task extends DataClass implements Insertable<Task> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
@@ -3853,6 +3933,9 @@ class Task extends DataClass implements Insertable<Task> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -3883,6 +3966,7 @@ class Task extends DataClass implements Insertable<Task> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       dueDate: serializer.fromJson<String?>(json['dueDate']),
@@ -3902,6 +3986,7 @@ class Task extends DataClass implements Insertable<Task> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'dueDate': serializer.toJson<String?>(dueDate),
@@ -3919,6 +4004,7 @@ class Task extends DataClass implements Insertable<Task> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> description = const Value.absent(),
     Value<String?> dueDate = const Value.absent(),
@@ -3933,6 +4019,7 @@ class Task extends DataClass implements Insertable<Task> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     dueDate: dueDate.present ? dueDate.value : this.dueDate,
@@ -3951,6 +4038,7 @@ class Task extends DataClass implements Insertable<Task> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -3976,6 +4064,7 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('dueDate: $dueDate, ')
@@ -3995,6 +4084,7 @@ class Task extends DataClass implements Insertable<Task> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     dueDate,
@@ -4013,6 +4103,7 @@ class Task extends DataClass implements Insertable<Task> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.description == this.description &&
           other.dueDate == this.dueDate &&
@@ -4029,6 +4120,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> description;
   final Value<String?> dueDate;
@@ -4043,6 +4135,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.dueDate = const Value.absent(),
@@ -4058,6 +4151,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.dueDate = const Value.absent(),
@@ -4076,6 +4170,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<String>? dueDate,
@@ -4091,6 +4186,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (dueDate != null) 'due_date': dueDate,
@@ -4108,6 +4204,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? description,
     Value<String?>? dueDate,
@@ -4123,6 +4220,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
@@ -4153,6 +4251,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -4187,6 +4288,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('dueDate: $dueDate, ')
@@ -4274,6 +4376,17 @@ class $FollowUpsTable extends FollowUps
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -4490,6 +4603,7 @@ class $FollowUpsTable extends FollowUps
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     notes,
     targetDate,
@@ -4558,6 +4672,12 @@ class $FollowUpsTable extends FollowUps
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -4724,6 +4844,10 @@ class $FollowUpsTable extends FollowUps
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -4824,6 +4948,9 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Follow-up title
   final String title;
 
@@ -4833,20 +4960,27 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
   /// Target date for the follow-up (ISO 8601 string: YYYY-MM-DD)
   final String? targetDate;
 
-  /// Follow-up type (0=متابعة, 1=مهمة, 2=اتصال, 3=زيارة,
-  ///                  4=تذكير, 5=مراجعة, 6=إجراء, 7=أخرى)
+  /// نوع المتابعة — القيَم في `FollowupType` وهي المرجع الوحيد.
+  ///
+  /// كان هنا سرد للقيَم يخالف التعداد: يذكر ثماني قيَم (اتصال، زيارة،
+  /// تذكير…) والتعداد يعرّف سبعًا مختلفة. السرد في تعليق يتخلّف عن
+  /// التعريف بلا أن يلاحظ أحد؛ والإشارة إليه لا تتخلّف.
   final int followupType;
 
-  /// Legacy: Type of entity being followed up (0=Meeting, 1=Task, 2=Directive)
-  /// Kept for backward compatibility — use linkedEntityType for new records.
+  /// قديم: نوع الكيان المتابَع — القيَم في `FollowUpEntityType`.
+  ///
+  /// ⚠ ترقيمه يختلف عن `EntityLinkType` المستخدَم في [linkedEntityType]:
+  /// هنا `meeting = 0` وهناك `meeting = 1`. العمودان لا يُترجم أحدهما
+  /// إلى الآخر. مُبقى لأن فيه بيانات؛ والسجلات الجديدة تستخدم
+  /// [linkedEntityType].
   final int entityType;
 
   /// Legacy: ID of the entity being followed up
   final int? entityId;
 
-  /// Universal linked entity type (enum EntityLinkType):
-  /// 0=None, 1=Meeting, 2=Client, 3=Project, 4=Employee,
-  /// 5=Invoice, 6=Contract, 7=Directive, 8=Contact, 9=Other
+  /// نوع الكيان المرتبط — القيَم في `EntityLinkType`.
+  ///
+  /// كان هنا سرد لعشر قيَم لا يطابق التعداد ذا السبع عشرة قيمة.
   final int? linkedEntityType;
 
   /// Universal linked entity ID (FK to any table based on linkedEntityType)
@@ -4858,8 +4992,11 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
   /// Priority level (critical=0, high=1, medium=2, low=3)
   final int priority;
 
-  /// Status using UnifiedStatus
-  /// (newItem=0, inProgress=1, pendingReview=2, completed=3, overdue=4, cancelled=5)
+  /// الحالة — القيَم في `UnifiedStatus`.
+  ///
+  /// كان هنا سرد خاطئ: `pendingReview=2` والتعداد يقول
+  /// `awaitingResponse=2`، و`cancelled=5` والتعداد يقول `stalled=5`
+  /// و`cancelled=6`. من كتب `5` قاصدًا «ملغي» كان يحفظ «متعثر».
   final int status;
 
   /// Assigned entity/person handling the follow-up
@@ -4889,6 +5026,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.notes,
     this.targetDate,
@@ -4918,6 +5056,9 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || notes != null) {
@@ -4974,6 +5115,9 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
@@ -5029,6 +5173,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       notes: serializer.fromJson<String?>(json['notes']),
       targetDate: serializer.fromJson<String?>(json['targetDate']),
@@ -5061,6 +5206,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'notes': serializer.toJson<String?>(notes),
       'targetDate': serializer.toJson<String?>(targetDate),
@@ -5089,6 +5235,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> notes = const Value.absent(),
     Value<String?> targetDate = const Value.absent(),
@@ -5114,6 +5261,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     notes: notes.present ? notes.value : this.notes,
     targetDate: targetDate.present ? targetDate.value : this.targetDate,
@@ -5149,6 +5297,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       notes: data.notes.present ? data.notes.value : this.notes,
       targetDate: data.targetDate.present
@@ -5203,6 +5352,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('notes: $notes, ')
           ..write('targetDate: $targetDate, ')
@@ -5233,6 +5383,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     notes,
     targetDate,
@@ -5262,6 +5413,7 @@ class FollowUp extends DataClass implements Insertable<FollowUp> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.notes == this.notes &&
           other.targetDate == this.targetDate &&
@@ -5289,6 +5441,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> notes;
   final Value<String?> targetDate;
@@ -5314,6 +5467,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.notes = const Value.absent(),
     this.targetDate = const Value.absent(),
@@ -5340,6 +5494,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.notes = const Value.absent(),
     this.targetDate = const Value.absent(),
@@ -5369,6 +5524,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? notes,
     Expression<String>? targetDate,
@@ -5395,6 +5551,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (notes != null) 'notes': notes,
       if (targetDate != null) 'target_date': targetDate,
@@ -5423,6 +5580,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? notes,
     Value<String?>? targetDate,
@@ -5449,6 +5607,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       notes: notes ?? this.notes,
       targetDate: targetDate ?? this.targetDate,
@@ -5490,6 +5649,9 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -5557,6 +5719,7 @@ class FollowUpsCompanion extends UpdateCompanion<FollowUp> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('notes: $notes, ')
           ..write('targetDate: $targetDate, ')
@@ -5660,6 +5823,17 @@ class $DirectivesTable extends Directives
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -5745,6 +5919,7 @@ class $DirectivesTable extends Directives
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     details,
     source,
@@ -5802,6 +5977,12 @@ class $DirectivesTable extends Directives
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -5881,6 +6062,10 @@ class $DirectivesTable extends Directives
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -5937,6 +6122,9 @@ class Directive extends DataClass implements Insertable<Directive> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Directive title or subject
   final String title;
 
@@ -5964,6 +6152,7 @@ class Directive extends DataClass implements Insertable<Directive> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.details,
     this.source,
@@ -5982,6 +6171,9 @@ class Directive extends DataClass implements Insertable<Directive> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || details != null) {
@@ -6011,6 +6203,9 @@ class Directive extends DataClass implements Insertable<Directive> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       details: details == null && nullToAbsent
           ? const Value.absent()
@@ -6041,6 +6236,7 @@ class Directive extends DataClass implements Insertable<Directive> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       details: serializer.fromJson<String?>(json['details']),
       source: serializer.fromJson<String?>(json['source']),
@@ -6060,6 +6256,7 @@ class Directive extends DataClass implements Insertable<Directive> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'details': serializer.toJson<String?>(details),
       'source': serializer.toJson<String?>(source),
@@ -6077,6 +6274,7 @@ class Directive extends DataClass implements Insertable<Directive> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> details = const Value.absent(),
     Value<String?> source = const Value.absent(),
@@ -6091,6 +6289,7 @@ class Directive extends DataClass implements Insertable<Directive> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     details: details.present ? details.value : this.details,
     source: source.present ? source.value : this.source,
@@ -6107,6 +6306,7 @@ class Directive extends DataClass implements Insertable<Directive> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       details: data.details.present ? data.details.value : this.details,
       source: data.source.present ? data.source.value : this.source,
@@ -6128,6 +6328,7 @@ class Directive extends DataClass implements Insertable<Directive> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('details: $details, ')
           ..write('source: $source, ')
@@ -6147,6 +6348,7 @@ class Directive extends DataClass implements Insertable<Directive> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     details,
     source,
@@ -6165,6 +6367,7 @@ class Directive extends DataClass implements Insertable<Directive> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.details == this.details &&
           other.source == this.source &&
@@ -6181,6 +6384,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> details;
   final Value<String?> source;
@@ -6195,6 +6399,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.details = const Value.absent(),
     this.source = const Value.absent(),
@@ -6210,6 +6415,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.details = const Value.absent(),
     this.source = const Value.absent(),
@@ -6228,6 +6434,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? details,
     Expression<String>? source,
@@ -6243,6 +6450,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (details != null) 'details': details,
       if (source != null) 'source': source,
@@ -6260,6 +6468,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? details,
     Value<String?>? source,
@@ -6275,6 +6484,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       details: details ?? this.details,
       source: source ?? this.source,
@@ -6305,6 +6515,9 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -6339,6 +6552,7 @@ class DirectivesCompanion extends UpdateCompanion<Directive> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('details: $details, ')
           ..write('source: $source, ')
@@ -6430,6 +6644,17 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -6515,6 +6740,7 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     position,
     company,
@@ -6572,6 +6798,12 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -6654,6 +6886,10 @@ class $ContactsTable extends Contacts with TableInfo<$ContactsTable, Contact> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -6710,6 +6946,9 @@ class Contact extends DataClass implements Insertable<Contact> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Full name
   final String name;
 
@@ -6737,6 +6976,7 @@ class Contact extends DataClass implements Insertable<Contact> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.position,
     this.company,
@@ -6755,6 +6995,9 @@ class Contact extends DataClass implements Insertable<Contact> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || position != null) {
@@ -6786,6 +7029,9 @@ class Contact extends DataClass implements Insertable<Contact> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       position: position == null && nullToAbsent
           ? const Value.absent()
@@ -6818,6 +7064,7 @@ class Contact extends DataClass implements Insertable<Contact> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       position: serializer.fromJson<String?>(json['position']),
       company: serializer.fromJson<String?>(json['company']),
@@ -6837,6 +7084,7 @@ class Contact extends DataClass implements Insertable<Contact> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'position': serializer.toJson<String?>(position),
       'company': serializer.toJson<String?>(company),
@@ -6854,6 +7102,7 @@ class Contact extends DataClass implements Insertable<Contact> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> position = const Value.absent(),
     Value<String?> company = const Value.absent(),
@@ -6868,6 +7117,7 @@ class Contact extends DataClass implements Insertable<Contact> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     position: position.present ? position.value : this.position,
     company: company.present ? company.value : this.company,
@@ -6884,6 +7134,7 @@ class Contact extends DataClass implements Insertable<Contact> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       position: data.position.present ? data.position.value : this.position,
       company: data.company.present ? data.company.value : this.company,
@@ -6905,6 +7156,7 @@ class Contact extends DataClass implements Insertable<Contact> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('position: $position, ')
           ..write('company: $company, ')
@@ -6924,6 +7176,7 @@ class Contact extends DataClass implements Insertable<Contact> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     position,
     company,
@@ -6942,6 +7195,7 @@ class Contact extends DataClass implements Insertable<Contact> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.position == this.position &&
           other.company == this.company &&
@@ -6958,6 +7212,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> position;
   final Value<String?> company;
@@ -6972,6 +7227,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.position = const Value.absent(),
     this.company = const Value.absent(),
@@ -6987,6 +7243,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.position = const Value.absent(),
     this.company = const Value.absent(),
@@ -7005,6 +7262,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? position,
     Expression<String>? company,
@@ -7020,6 +7278,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (position != null) 'position': position,
       if (company != null) 'company': company,
@@ -7037,6 +7296,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? position,
     Value<String?>? company,
@@ -7052,6 +7312,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       position: position ?? this.position,
       company: company ?? this.company,
@@ -7082,6 +7343,9 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -7116,6 +7380,7 @@ class ContactsCompanion extends UpdateCompanion<Contact> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('position: $position, ')
           ..write('company: $company, ')
@@ -7208,6 +7473,17 @@ class $AppointmentsTable extends Appointments
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -7291,6 +7567,7 @@ class $AppointmentsTable extends Appointments
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     contactId,
     date,
@@ -7348,6 +7625,12 @@ class $AppointmentsTable extends Appointments
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -7434,6 +7717,10 @@ class $AppointmentsTable extends Appointments
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -7490,6 +7777,9 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Appointment title
   final String title;
 
@@ -7517,6 +7807,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.contactId,
     required this.date,
@@ -7535,6 +7826,9 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || contactId != null) {
@@ -7560,6 +7854,9 @@ class Appointment extends DataClass implements Insertable<Appointment> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       contactId: contactId == null && nullToAbsent
           ? const Value.absent()
@@ -7586,6 +7883,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       contactId: serializer.fromJson<int?>(json['contactId']),
       date: serializer.fromJson<String>(json['date']),
@@ -7605,6 +7903,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'contactId': serializer.toJson<int?>(contactId),
       'date': serializer.toJson<String>(date),
@@ -7622,6 +7921,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<int?> contactId = const Value.absent(),
     String? date,
@@ -7636,6 +7936,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     contactId: contactId.present ? contactId.value : this.contactId,
     date: date ?? this.date,
@@ -7652,6 +7953,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       contactId: data.contactId.present ? data.contactId.value : this.contactId,
       date: data.date.present ? data.date.value : this.date,
@@ -7673,6 +7975,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('contactId: $contactId, ')
           ..write('date: $date, ')
@@ -7692,6 +7995,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     contactId,
     date,
@@ -7710,6 +8014,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.contactId == this.contactId &&
           other.date == this.date &&
@@ -7726,6 +8031,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<int?> contactId;
   final Value<String> date;
@@ -7740,6 +8046,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.contactId = const Value.absent(),
     this.date = const Value.absent(),
@@ -7755,6 +8062,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.contactId = const Value.absent(),
     required String date,
@@ -7775,6 +8083,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<int>? contactId,
     Expression<String>? date,
@@ -7790,6 +8099,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (contactId != null) 'contact_id': contactId,
       if (date != null) 'date': date,
@@ -7807,6 +8117,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<int?>? contactId,
     Value<String>? date,
@@ -7822,6 +8133,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       contactId: contactId ?? this.contactId,
       date: date ?? this.date,
@@ -7852,6 +8164,9 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -7886,6 +8201,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('contactId: $contactId, ')
           ..write('date: $date, ')
@@ -7972,6 +8288,17 @@ class $ArchiveTable extends Archive with TableInfo<$ArchiveTable, ArchiveData> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -8097,6 +8424,7 @@ class $ArchiveTable extends Archive with TableInfo<$ArchiveTable, ArchiveData> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     referenceNumber,
     hijriDate,
@@ -8157,6 +8485,12 @@ class $ArchiveTable extends Archive with TableInfo<$ArchiveTable, ArchiveData> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -8269,6 +8603,10 @@ class $ArchiveTable extends Archive with TableInfo<$ArchiveTable, ArchiveData> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -8337,6 +8675,9 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Document title
   final String title;
 
@@ -8373,6 +8714,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.referenceNumber,
     this.hijriDate,
@@ -8394,6 +8736,9 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || referenceNumber != null) {
@@ -8434,6 +8779,9 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       referenceNumber: referenceNumber == null && nullToAbsent
           ? const Value.absent()
@@ -8473,6 +8821,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       referenceNumber: serializer.fromJson<String?>(json['referenceNumber']),
       hijriDate: serializer.fromJson<String?>(json['hijriDate']),
@@ -8495,6 +8844,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'referenceNumber': serializer.toJson<String?>(referenceNumber),
       'hijriDate': serializer.toJson<String?>(hijriDate),
@@ -8515,6 +8865,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> referenceNumber = const Value.absent(),
     Value<String?> hijriDate = const Value.absent(),
@@ -8532,6 +8883,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     referenceNumber: referenceNumber.present
         ? referenceNumber.value
@@ -8557,6 +8909,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       referenceNumber: data.referenceNumber.present
           ? data.referenceNumber.value
@@ -8589,6 +8942,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('referenceNumber: $referenceNumber, ')
           ..write('hijriDate: $hijriDate, ')
@@ -8611,6 +8965,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     referenceNumber,
     hijriDate,
@@ -8632,6 +8987,7 @@ class ArchiveData extends DataClass implements Insertable<ArchiveData> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.referenceNumber == this.referenceNumber &&
           other.hijriDate == this.hijriDate &&
@@ -8651,6 +9007,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> referenceNumber;
   final Value<String?> hijriDate;
@@ -8668,6 +9025,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.referenceNumber = const Value.absent(),
     this.hijriDate = const Value.absent(),
@@ -8686,6 +9044,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.referenceNumber = const Value.absent(),
     this.hijriDate = const Value.absent(),
@@ -8707,6 +9066,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? referenceNumber,
     Expression<String>? hijriDate,
@@ -8725,6 +9085,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (referenceNumber != null) 'reference_number': referenceNumber,
       if (hijriDate != null) 'hijri_date': hijriDate,
@@ -8745,6 +9106,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? referenceNumber,
     Value<String?>? hijriDate,
@@ -8763,6 +9125,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       referenceNumber: referenceNumber ?? this.referenceNumber,
       hijriDate: hijriDate ?? this.hijriDate,
@@ -8796,6 +9159,9 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -8839,6 +9205,7 @@ class ArchiveCompanion extends UpdateCompanion<ArchiveData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('referenceNumber: $referenceNumber, ')
           ..write('hijriDate: $hijriDate, ')
@@ -10133,6 +10500,17 @@ class $CallsTable extends Calls with TableInfo<$CallsTable, CallItem> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _callerNameMeta = const VerificationMeta(
     'callerName',
   );
@@ -10219,6 +10597,7 @@ class $CallsTable extends Calls with TableInfo<$CallsTable, CallItem> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     callerName,
     phoneNumber,
     callType,
@@ -10276,6 +10655,12 @@ class $CallsTable extends Calls with TableInfo<$CallsTable, CallItem> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('caller_name')) {
@@ -10365,6 +10750,10 @@ class $CallsTable extends Calls with TableInfo<$CallsTable, CallItem> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       callerName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}caller_name'],
@@ -10420,6 +10809,9 @@ class CallItem extends DataClass implements Insertable<CallItem> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String callerName;
   final String? phoneNumber;
 
@@ -10436,6 +10828,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.callerName,
     this.phoneNumber,
     required this.callType,
@@ -10454,6 +10847,9 @@ class CallItem extends DataClass implements Insertable<CallItem> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['caller_name'] = Variable<String>(callerName);
     if (!nullToAbsent || phoneNumber != null) {
@@ -10479,6 +10875,9 @@ class CallItem extends DataClass implements Insertable<CallItem> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       callerName: Value(callerName),
       phoneNumber: phoneNumber == null && nullToAbsent
           ? const Value.absent()
@@ -10505,6 +10904,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       callerName: serializer.fromJson<String>(json['callerName']),
       phoneNumber: serializer.fromJson<String?>(json['phoneNumber']),
       callType: serializer.fromJson<int>(json['callType']),
@@ -10524,6 +10924,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'callerName': serializer.toJson<String>(callerName),
       'phoneNumber': serializer.toJson<String?>(phoneNumber),
       'callType': serializer.toJson<int>(callType),
@@ -10541,6 +10942,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? callerName,
     Value<String?> phoneNumber = const Value.absent(),
     int? callType,
@@ -10555,6 +10957,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     callerName: callerName ?? this.callerName,
     phoneNumber: phoneNumber.present ? phoneNumber.value : this.phoneNumber,
     callType: callType ?? this.callType,
@@ -10571,6 +10974,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       callerName: data.callerName.present
           ? data.callerName.value
           : this.callerName,
@@ -10596,6 +11000,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('callerName: $callerName, ')
           ..write('phoneNumber: $phoneNumber, ')
           ..write('callType: $callType, ')
@@ -10615,6 +11020,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     callerName,
     phoneNumber,
     callType,
@@ -10633,6 +11039,7 @@ class CallItem extends DataClass implements Insertable<CallItem> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.callerName == this.callerName &&
           other.phoneNumber == this.phoneNumber &&
           other.callType == this.callType &&
@@ -10649,6 +11056,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> callerName;
   final Value<String?> phoneNumber;
   final Value<int> callType;
@@ -10663,6 +11071,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.callerName = const Value.absent(),
     this.phoneNumber = const Value.absent(),
     this.callType = const Value.absent(),
@@ -10678,6 +11087,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String callerName,
     this.phoneNumber = const Value.absent(),
     this.callType = const Value.absent(),
@@ -10698,6 +11108,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? callerName,
     Expression<String>? phoneNumber,
     Expression<int>? callType,
@@ -10713,6 +11124,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (callerName != null) 'caller_name': callerName,
       if (phoneNumber != null) 'phone_number': phoneNumber,
       if (callType != null) 'call_type': callType,
@@ -10730,6 +11142,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? callerName,
     Value<String?>? phoneNumber,
     Value<int>? callType,
@@ -10745,6 +11158,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       callerName: callerName ?? this.callerName,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       callType: callType ?? this.callType,
@@ -10775,6 +11189,9 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (callerName.present) {
       map['caller_name'] = Variable<String>(callerName.value);
@@ -10809,6 +11226,7 @@ class CallsCompanion extends UpdateCompanion<CallItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('callerName: $callerName, ')
           ..write('phoneNumber: $phoneNumber, ')
           ..write('callType: $callType, ')
@@ -10901,6 +11319,17 @@ class $VisitorsTable extends Visitors
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _visitorNameMeta = const VerificationMeta(
     'visitorName',
   );
@@ -10985,6 +11414,7 @@ class $VisitorsTable extends Visitors
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     visitorName,
     company,
     purpose,
@@ -11042,6 +11472,12 @@ class $VisitorsTable extends Visitors
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('visitor_name')) {
@@ -11127,6 +11563,10 @@ class $VisitorsTable extends Visitors
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       visitorName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}visitor_name'],
@@ -11182,6 +11622,9 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String visitorName;
   final String? company;
   final String? purpose;
@@ -11198,6 +11641,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.visitorName,
     this.company,
     this.purpose,
@@ -11216,6 +11660,9 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['visitor_name'] = Variable<String>(visitorName);
     if (!nullToAbsent || company != null) {
@@ -11247,6 +11694,9 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       visitorName: Value(visitorName),
       company: company == null && nullToAbsent
           ? const Value.absent()
@@ -11279,6 +11729,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       visitorName: serializer.fromJson<String>(json['visitorName']),
       company: serializer.fromJson<String?>(json['company']),
       purpose: serializer.fromJson<String?>(json['purpose']),
@@ -11298,6 +11749,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'visitorName': serializer.toJson<String>(visitorName),
       'company': serializer.toJson<String?>(company),
       'purpose': serializer.toJson<String?>(purpose),
@@ -11315,6 +11767,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? visitorName,
     Value<String?> company = const Value.absent(),
     Value<String?> purpose = const Value.absent(),
@@ -11329,6 +11782,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     visitorName: visitorName ?? this.visitorName,
     company: company.present ? company.value : this.company,
     purpose: purpose.present ? purpose.value : this.purpose,
@@ -11347,6 +11801,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       visitorName: data.visitorName.present
           ? data.visitorName.value
           : this.visitorName,
@@ -11370,6 +11825,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('visitorName: $visitorName, ')
           ..write('company: $company, ')
           ..write('purpose: $purpose, ')
@@ -11389,6 +11845,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     visitorName,
     company,
     purpose,
@@ -11407,6 +11864,7 @@ class VisitorItem extends DataClass implements Insertable<VisitorItem> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.visitorName == this.visitorName &&
           other.company == this.company &&
           other.purpose == this.purpose &&
@@ -11423,6 +11881,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> visitorName;
   final Value<String?> company;
   final Value<String?> purpose;
@@ -11437,6 +11896,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.visitorName = const Value.absent(),
     this.company = const Value.absent(),
     this.purpose = const Value.absent(),
@@ -11452,6 +11912,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String visitorName,
     this.company = const Value.absent(),
     this.purpose = const Value.absent(),
@@ -11470,6 +11931,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? visitorName,
     Expression<String>? company,
     Expression<String>? purpose,
@@ -11485,6 +11947,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (visitorName != null) 'visitor_name': visitorName,
       if (company != null) 'company': company,
       if (purpose != null) 'purpose': purpose,
@@ -11502,6 +11965,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? visitorName,
     Value<String?>? company,
     Value<String?>? purpose,
@@ -11517,6 +11981,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       visitorName: visitorName ?? this.visitorName,
       company: company ?? this.company,
       purpose: purpose ?? this.purpose,
@@ -11547,6 +12012,9 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (visitorName.present) {
       map['visitor_name'] = Variable<String>(visitorName.value);
@@ -11581,6 +12049,7 @@ class VisitorsCompanion extends UpdateCompanion<VisitorItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('visitorName: $visitorName, ')
           ..write('company: $company, ')
           ..write('purpose: $purpose, ')
@@ -11672,6 +12141,17 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteItem> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -11720,6 +12200,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteItem> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     content,
     colorCode,
@@ -11774,6 +12255,12 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteItem> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -11835,6 +12322,10 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteItem> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -11878,6 +12369,9 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String? title;
   final String content;
   final String? colorCode;
@@ -11889,6 +12383,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     this.title,
     required this.content,
     this.colorCode,
@@ -11904,6 +12399,9 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
@@ -11928,6 +12426,9 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: title == null && nullToAbsent
           ? const Value.absent()
           : Value(title),
@@ -11951,6 +12452,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       colorCode: serializer.fromJson<String?>(json['colorCode']),
@@ -11967,6 +12469,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String>(content),
       'colorCode': serializer.toJson<String?>(colorCode),
@@ -11981,6 +12484,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     Value<String?> title = const Value.absent(),
     String? content,
     Value<String?> colorCode = const Value.absent(),
@@ -11992,6 +12496,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title.present ? title.value : this.title,
     content: content ?? this.content,
     colorCode: colorCode.present ? colorCode.value : this.colorCode,
@@ -12005,6 +12510,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
       colorCode: data.colorCode.present ? data.colorCode.value : this.colorCode,
@@ -12021,6 +12527,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('colorCode: $colorCode, ')
@@ -12037,6 +12544,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     content,
     colorCode,
@@ -12052,6 +12560,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.content == this.content &&
           other.colorCode == this.colorCode &&
@@ -12065,6 +12574,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String?> title;
   final Value<String> content;
   final Value<String?> colorCode;
@@ -12076,6 +12586,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.colorCode = const Value.absent(),
@@ -12088,6 +12599,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     required String content,
     this.colorCode = const Value.absent(),
@@ -12103,6 +12615,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? content,
     Expression<String>? colorCode,
@@ -12115,6 +12628,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (colorCode != null) 'color_code': colorCode,
@@ -12129,6 +12643,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String?>? title,
     Value<String>? content,
     Value<String?>? colorCode,
@@ -12141,6 +12656,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       content: content ?? this.content,
       colorCode: colorCode ?? this.colorCode,
@@ -12169,6 +12685,9 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
     }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
+    }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
@@ -12193,6 +12712,7 @@ class NotesCompanion extends UpdateCompanion<NoteItem> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('colorCode: $colorCode, ')
@@ -12282,6 +12802,17 @@ class $MovementsTable extends Movements
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _destinationMeta = const VerificationMeta(
     'destination',
   );
@@ -12349,6 +12880,7 @@ class $MovementsTable extends Movements
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     destination,
     purpose,
     date,
@@ -12405,6 +12937,12 @@ class $MovementsTable extends Movements
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('destination')) {
@@ -12485,6 +13023,10 @@ class $MovementsTable extends Movements
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       destination: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}destination'],
@@ -12537,6 +13079,9 @@ class Movement extends DataClass implements Insertable<Movement> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Destination or location
   final String destination;
 
@@ -12561,6 +13106,7 @@ class Movement extends DataClass implements Insertable<Movement> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.destination,
     this.purpose,
     required this.date,
@@ -12578,6 +13124,9 @@ class Movement extends DataClass implements Insertable<Movement> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['destination'] = Variable<String>(destination);
     if (!nullToAbsent || purpose != null) {
@@ -12602,6 +13151,9 @@ class Movement extends DataClass implements Insertable<Movement> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       destination: Value(destination),
       purpose: purpose == null && nullToAbsent
           ? const Value.absent()
@@ -12627,6 +13179,7 @@ class Movement extends DataClass implements Insertable<Movement> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       destination: serializer.fromJson<String>(json['destination']),
       purpose: serializer.fromJson<String?>(json['purpose']),
       date: serializer.fromJson<String>(json['date']),
@@ -12645,6 +13198,7 @@ class Movement extends DataClass implements Insertable<Movement> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'destination': serializer.toJson<String>(destination),
       'purpose': serializer.toJson<String?>(purpose),
       'date': serializer.toJson<String>(date),
@@ -12661,6 +13215,7 @@ class Movement extends DataClass implements Insertable<Movement> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? destination,
     Value<String?> purpose = const Value.absent(),
     String? date,
@@ -12674,6 +13229,7 @@ class Movement extends DataClass implements Insertable<Movement> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     destination: destination ?? this.destination,
     purpose: purpose.present ? purpose.value : this.purpose,
     date: date ?? this.date,
@@ -12689,6 +13245,7 @@ class Movement extends DataClass implements Insertable<Movement> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       destination: data.destination.present
           ? data.destination.value
           : this.destination,
@@ -12709,6 +13266,7 @@ class Movement extends DataClass implements Insertable<Movement> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('destination: $destination, ')
           ..write('purpose: $purpose, ')
           ..write('date: $date, ')
@@ -12727,6 +13285,7 @@ class Movement extends DataClass implements Insertable<Movement> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     destination,
     purpose,
     date,
@@ -12744,6 +13303,7 @@ class Movement extends DataClass implements Insertable<Movement> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.destination == this.destination &&
           other.purpose == this.purpose &&
           other.date == this.date &&
@@ -12759,6 +13319,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> destination;
   final Value<String?> purpose;
   final Value<String> date;
@@ -12772,6 +13333,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.destination = const Value.absent(),
     this.purpose = const Value.absent(),
     this.date = const Value.absent(),
@@ -12786,6 +13348,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String destination,
     this.purpose = const Value.absent(),
     required String date,
@@ -12805,6 +13368,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? destination,
     Expression<String>? purpose,
     Expression<String>? date,
@@ -12819,6 +13383,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (destination != null) 'destination': destination,
       if (purpose != null) 'purpose': purpose,
       if (date != null) 'date': date,
@@ -12835,6 +13400,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? destination,
     Value<String?>? purpose,
     Value<String>? date,
@@ -12849,6 +13415,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       destination: destination ?? this.destination,
       purpose: purpose ?? this.purpose,
       date: date ?? this.date,
@@ -12878,6 +13445,9 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (destination.present) {
       map['destination'] = Variable<String>(destination.value);
@@ -12909,6 +13479,7 @@ class MovementsCompanion extends UpdateCompanion<Movement> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('destination: $destination, ')
           ..write('purpose: $purpose, ')
           ..write('date: $date, ')
@@ -12995,6 +13566,17 @@ class $RoutineTasksTable extends RoutineTasks
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -13102,6 +13684,7 @@ class $RoutineTasksTable extends RoutineTasks
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     category,
@@ -13160,6 +13743,12 @@ class $RoutineTasksTable extends RoutineTasks
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -13251,6 +13840,10 @@ class $RoutineTasksTable extends RoutineTasks
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -13311,6 +13904,9 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Task title
   final String title;
 
@@ -13341,6 +13937,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.description,
     required this.category,
@@ -13360,6 +13957,9 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
@@ -13386,6 +13986,9 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -13411,6 +14014,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       category: serializer.fromJson<String>(json['category']),
@@ -13431,6 +14035,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'category': serializer.toJson<String>(category),
@@ -13449,6 +14054,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> description = const Value.absent(),
     String? category,
@@ -13464,6 +14070,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     category: category ?? this.category,
@@ -13481,6 +14088,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -13505,6 +14113,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
@@ -13525,6 +14134,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     category,
@@ -13544,6 +14154,7 @@ class RoutineTask extends DataClass implements Insertable<RoutineTask> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.description == this.description &&
           other.category == this.category &&
@@ -13561,6 +14172,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> description;
   final Value<String> category;
@@ -13576,6 +14188,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.category = const Value.absent(),
@@ -13592,6 +14205,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.category = const Value.absent(),
@@ -13611,6 +14225,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<String>? category,
@@ -13627,6 +14242,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (category != null) 'category': category,
@@ -13645,6 +14261,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? description,
     Value<String>? category,
@@ -13661,6 +14278,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       description: description ?? this.description,
       category: category ?? this.category,
@@ -13692,6 +14310,9 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -13729,6 +14350,7 @@ class RoutineTasksCompanion extends UpdateCompanion<RoutineTask> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
@@ -13822,6 +14444,17 @@ class $RoutineCompletionsTable extends RoutineCompletions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _routineTaskSyncIdMeta = const VerificationMeta(
     'routineTaskSyncId',
   );
@@ -13861,6 +14494,7 @@ class $RoutineCompletionsTable extends RoutineCompletions
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     routineTaskSyncId,
     dateKey,
   ];
@@ -13915,6 +14549,12 @@ class $RoutineCompletionsTable extends RoutineCompletions
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
       );
     }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
+      );
+    }
     if (data.containsKey('routine_task_sync_id')) {
       context.handle(
         _routineTaskSyncIdMeta,
@@ -13967,6 +14607,10 @@ class $RoutineCompletionsTable extends RoutineCompletions
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       routineTaskSyncId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}routine_task_sync_id'],
@@ -14004,6 +14648,9 @@ class RoutineCompletion extends DataClass
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Foreign key to [RoutineTasks.syncId] (UUID string)
   final String routineTaskSyncId;
 
@@ -14016,6 +14663,7 @@ class RoutineCompletion extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.routineTaskSyncId,
     required this.dateKey,
   });
@@ -14029,6 +14677,9 @@ class RoutineCompletion extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['routine_task_sync_id'] = Variable<String>(routineTaskSyncId);
     map['date_key'] = Variable<String>(dateKey);
@@ -14045,6 +14696,9 @@ class RoutineCompletion extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       routineTaskSyncId: Value(routineTaskSyncId),
       dateKey: Value(dateKey),
     );
@@ -14062,6 +14716,7 @@ class RoutineCompletion extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       routineTaskSyncId: serializer.fromJson<String>(json['routineTaskSyncId']),
       dateKey: serializer.fromJson<String>(json['dateKey']),
     );
@@ -14076,6 +14731,7 @@ class RoutineCompletion extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'routineTaskSyncId': serializer.toJson<String>(routineTaskSyncId),
       'dateKey': serializer.toJson<String>(dateKey),
     };
@@ -14088,6 +14744,7 @@ class RoutineCompletion extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? routineTaskSyncId,
     String? dateKey,
   }) => RoutineCompletion(
@@ -14097,6 +14754,7 @@ class RoutineCompletion extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     routineTaskSyncId: routineTaskSyncId ?? this.routineTaskSyncId,
     dateKey: dateKey ?? this.dateKey,
   );
@@ -14108,6 +14766,7 @@ class RoutineCompletion extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       routineTaskSyncId: data.routineTaskSyncId.present
           ? data.routineTaskSyncId.value
           : this.routineTaskSyncId,
@@ -14124,6 +14783,7 @@ class RoutineCompletion extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('routineTaskSyncId: $routineTaskSyncId, ')
           ..write('dateKey: $dateKey')
           ..write(')'))
@@ -14138,6 +14798,7 @@ class RoutineCompletion extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     routineTaskSyncId,
     dateKey,
   );
@@ -14151,6 +14812,7 @@ class RoutineCompletion extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.routineTaskSyncId == this.routineTaskSyncId &&
           other.dateKey == this.dateKey);
 }
@@ -14162,6 +14824,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> routineTaskSyncId;
   final Value<String> dateKey;
   const RoutineCompletionsCompanion({
@@ -14171,6 +14834,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.routineTaskSyncId = const Value.absent(),
     this.dateKey = const Value.absent(),
   });
@@ -14181,6 +14845,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String routineTaskSyncId,
     required String dateKey,
   }) : syncId = Value(syncId),
@@ -14195,6 +14860,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? routineTaskSyncId,
     Expression<String>? dateKey,
   }) {
@@ -14205,6 +14871,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (routineTaskSyncId != null) 'routine_task_sync_id': routineTaskSyncId,
       if (dateKey != null) 'date_key': dateKey,
     });
@@ -14217,6 +14884,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? routineTaskSyncId,
     Value<String>? dateKey,
   }) {
@@ -14227,6 +14895,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       routineTaskSyncId: routineTaskSyncId ?? this.routineTaskSyncId,
       dateKey: dateKey ?? this.dateKey,
     );
@@ -14253,6 +14922,9 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
     }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
+    }
     if (routineTaskSyncId.present) {
       map['routine_task_sync_id'] = Variable<String>(routineTaskSyncId.value);
     }
@@ -14271,6 +14943,7 @@ class RoutineCompletionsCompanion extends UpdateCompanion<RoutineCompletion> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('routineTaskSyncId: $routineTaskSyncId, ')
           ..write('dateKey: $dateKey')
           ..write(')'))
@@ -14353,6 +15026,17 @@ class $EmployeesTable extends Employees
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -14907,6 +15591,7 @@ class $EmployeesTable extends Employees
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     employeeCode,
@@ -15007,6 +15692,12 @@ class $EmployeesTable extends Employees
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -15425,6 +16116,10 @@ class $EmployeesTable extends Employees
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -15652,6 +16347,9 @@ class Employee extends DataClass implements Insertable<Employee> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? nameEn;
   final String? employeeCode;
@@ -15719,6 +16417,7 @@ class Employee extends DataClass implements Insertable<Employee> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.nameEn,
     this.employeeCode,
@@ -15780,6 +16479,9 @@ class Employee extends DataClass implements Insertable<Employee> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || nameEn != null) {
@@ -15930,6 +16632,9 @@ class Employee extends DataClass implements Insertable<Employee> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
           ? const Value.absent()
@@ -16075,6 +16780,7 @@ class Employee extends DataClass implements Insertable<Employee> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       employeeCode: serializer.fromJson<String?>(json['employeeCode']),
@@ -16147,6 +16853,7 @@ class Employee extends DataClass implements Insertable<Employee> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'employeeCode': serializer.toJson<String?>(employeeCode),
@@ -16211,6 +16918,7 @@ class Employee extends DataClass implements Insertable<Employee> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> nameEn = const Value.absent(),
     Value<String?> employeeCode = const Value.absent(),
@@ -16268,6 +16976,7 @@ class Employee extends DataClass implements Insertable<Employee> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     employeeCode: employeeCode.present ? employeeCode.value : this.employeeCode,
@@ -16359,6 +17068,7 @@ class Employee extends DataClass implements Insertable<Employee> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       employeeCode: data.employeeCode.present
@@ -16485,6 +17195,7 @@ class Employee extends DataClass implements Insertable<Employee> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('employeeCode: $employeeCode, ')
@@ -16547,6 +17258,7 @@ class Employee extends DataClass implements Insertable<Employee> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     employeeCode,
@@ -16608,6 +17320,7 @@ class Employee extends DataClass implements Insertable<Employee> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
           other.employeeCode == this.employeeCode &&
@@ -16667,6 +17380,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<String?> employeeCode;
@@ -16724,6 +17438,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
     this.employeeCode = const Value.absent(),
@@ -16782,6 +17497,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.nameEn = const Value.absent(),
     this.employeeCode = const Value.absent(),
@@ -16843,6 +17559,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<String>? employeeCode,
@@ -16901,6 +17618,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
       if (employeeCode != null) 'employee_code': employeeCode,
@@ -16964,6 +17682,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? nameEn,
     Value<String?>? employeeCode,
@@ -17022,6 +17741,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
       employeeCode: employeeCode ?? this.employeeCode,
@@ -17097,6 +17817,9 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -17266,6 +17989,7 @@ class EmployeesCompanion extends UpdateCompanion<Employee> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('employeeCode: $employeeCode, ')
@@ -17396,6 +18120,17 @@ class $DepartmentsTable extends Departments
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -17533,6 +18268,7 @@ class $DepartmentsTable extends Departments
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     description,
     managerId,
@@ -17594,6 +18330,12 @@ class $DepartmentsTable extends Departments
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -17709,6 +18451,10 @@ class $DepartmentsTable extends Departments
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -17780,6 +18526,9 @@ class Department extends DataClass implements Insertable<Department> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? description;
   final int? managerId;
@@ -17798,6 +18547,7 @@ class Department extends DataClass implements Insertable<Department> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.description,
     this.managerId,
@@ -17820,6 +18570,9 @@ class Department extends DataClass implements Insertable<Department> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
@@ -17863,6 +18616,9 @@ class Department extends DataClass implements Insertable<Department> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -17907,6 +18663,7 @@ class Department extends DataClass implements Insertable<Department> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       managerId: serializer.fromJson<int?>(json['managerId']),
@@ -17932,6 +18689,7 @@ class Department extends DataClass implements Insertable<Department> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'managerId': serializer.toJson<int?>(managerId),
@@ -17953,6 +18711,7 @@ class Department extends DataClass implements Insertable<Department> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> description = const Value.absent(),
     Value<int?> managerId = const Value.absent(),
@@ -17971,6 +18730,7 @@ class Department extends DataClass implements Insertable<Department> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
     managerId: managerId.present ? managerId.value : this.managerId,
@@ -17995,6 +18755,7 @@ class Department extends DataClass implements Insertable<Department> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
           ? data.description.value
@@ -18030,6 +18791,7 @@ class Department extends DataClass implements Insertable<Department> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('managerId: $managerId, ')
@@ -18053,6 +18815,7 @@ class Department extends DataClass implements Insertable<Department> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     description,
     managerId,
@@ -18075,6 +18838,7 @@ class Department extends DataClass implements Insertable<Department> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.description == this.description &&
           other.managerId == this.managerId &&
@@ -18095,6 +18859,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> description;
   final Value<int?> managerId;
@@ -18113,6 +18878,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.managerId = const Value.absent(),
@@ -18132,6 +18898,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     this.managerId = const Value.absent(),
@@ -18154,6 +18921,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? description,
     Expression<int>? managerId,
@@ -18173,6 +18941,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (managerId != null) 'manager_id': managerId,
@@ -18196,6 +18965,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? description,
     Value<int?>? managerId,
@@ -18215,6 +18985,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       description: description ?? this.description,
       managerId: managerId ?? this.managerId,
@@ -18249,6 +19020,9 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -18297,6 +19071,7 @@ class DepartmentsCompanion extends UpdateCompanion<Department> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('managerId: $managerId, ')
@@ -18387,6 +19162,17 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -18523,6 +19309,7 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     address,
     city,
@@ -18584,6 +19371,12 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -18693,6 +19486,10 @@ class $BranchesTable extends Branches with TableInfo<$BranchesTable, Branche> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -18764,6 +19561,9 @@ class Branche extends DataClass implements Insertable<Branche> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? address;
   final String? city;
@@ -18782,6 +19582,7 @@ class Branche extends DataClass implements Insertable<Branche> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.address,
     this.city,
@@ -18804,6 +19605,9 @@ class Branche extends DataClass implements Insertable<Branche> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || address != null) {
@@ -18845,6 +19649,9 @@ class Branche extends DataClass implements Insertable<Branche> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       address: address == null && nullToAbsent
           ? const Value.absent()
@@ -18885,6 +19692,7 @@ class Branche extends DataClass implements Insertable<Branche> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       address: serializer.fromJson<String?>(json['address']),
       city: serializer.fromJson<String?>(json['city']),
@@ -18908,6 +19716,7 @@ class Branche extends DataClass implements Insertable<Branche> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'address': serializer.toJson<String?>(address),
       'city': serializer.toJson<String?>(city),
@@ -18929,6 +19738,7 @@ class Branche extends DataClass implements Insertable<Branche> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> address = const Value.absent(),
     Value<String?> city = const Value.absent(),
@@ -18947,6 +19757,7 @@ class Branche extends DataClass implements Insertable<Branche> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     address: address.present ? address.value : this.address,
     city: city.present ? city.value : this.city,
@@ -18967,6 +19778,7 @@ class Branche extends DataClass implements Insertable<Branche> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       address: data.address.present ? data.address.value : this.address,
       city: data.city.present ? data.city.value : this.city,
@@ -18994,6 +19806,7 @@ class Branche extends DataClass implements Insertable<Branche> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
           ..write('city: $city, ')
@@ -19017,6 +19830,7 @@ class Branche extends DataClass implements Insertable<Branche> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     address,
     city,
@@ -19039,6 +19853,7 @@ class Branche extends DataClass implements Insertable<Branche> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.address == this.address &&
           other.city == this.city &&
@@ -19059,6 +19874,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> address;
   final Value<String?> city;
@@ -19077,6 +19893,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.address = const Value.absent(),
     this.city = const Value.absent(),
@@ -19096,6 +19913,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.address = const Value.absent(),
     this.city = const Value.absent(),
@@ -19118,6 +19936,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? address,
     Expression<String>? city,
@@ -19137,6 +19956,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (address != null) 'address': address,
       if (city != null) 'city': city,
@@ -19158,6 +19978,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? address,
     Value<String?>? city,
@@ -19177,6 +19998,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       address: address ?? this.address,
       city: city ?? this.city,
@@ -19211,6 +20033,9 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -19257,6 +20082,7 @@ class BranchesCompanion extends UpdateCompanion<Branche> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
           ..write('city: $city, ')
@@ -19348,6 +20174,17 @@ class $PositionsTable extends Positions
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -19487,6 +20324,7 @@ class $PositionsTable extends Positions
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     titleEn,
     level,
@@ -19548,6 +20386,12 @@ class $PositionsTable extends Positions
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -19666,6 +20510,10 @@ class $PositionsTable extends Positions
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -19737,6 +20585,9 @@ class Position extends DataClass implements Insertable<Position> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String title;
   final String? titleEn;
 
@@ -19757,6 +20608,7 @@ class Position extends DataClass implements Insertable<Position> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.titleEn,
     required this.level,
@@ -19779,6 +20631,9 @@ class Position extends DataClass implements Insertable<Position> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || titleEn != null) {
@@ -19820,6 +20675,9 @@ class Position extends DataClass implements Insertable<Position> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       titleEn: titleEn == null && nullToAbsent
           ? const Value.absent()
@@ -19862,6 +20720,7 @@ class Position extends DataClass implements Insertable<Position> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       titleEn: serializer.fromJson<String?>(json['titleEn']),
       level: serializer.fromJson<int>(json['level']),
@@ -19885,6 +20744,7 @@ class Position extends DataClass implements Insertable<Position> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'titleEn': serializer.toJson<String?>(titleEn),
       'level': serializer.toJson<int>(level),
@@ -19906,6 +20766,7 @@ class Position extends DataClass implements Insertable<Position> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> titleEn = const Value.absent(),
     int? level,
@@ -19924,6 +20785,7 @@ class Position extends DataClass implements Insertable<Position> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     titleEn: titleEn.present ? titleEn.value : this.titleEn,
     level: level ?? this.level,
@@ -19948,6 +20810,7 @@ class Position extends DataClass implements Insertable<Position> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       titleEn: data.titleEn.present ? data.titleEn.value : this.titleEn,
       level: data.level.present ? data.level.value : this.level,
@@ -19981,6 +20844,7 @@ class Position extends DataClass implements Insertable<Position> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('titleEn: $titleEn, ')
           ..write('level: $level, ')
@@ -20004,6 +20868,7 @@ class Position extends DataClass implements Insertable<Position> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     titleEn,
     level,
@@ -20026,6 +20891,7 @@ class Position extends DataClass implements Insertable<Position> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.titleEn == this.titleEn &&
           other.level == this.level &&
@@ -20046,6 +20912,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> titleEn;
   final Value<int> level;
@@ -20064,6 +20931,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.titleEn = const Value.absent(),
     this.level = const Value.absent(),
@@ -20083,6 +20951,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.titleEn = const Value.absent(),
     this.level = const Value.absent(),
@@ -20105,6 +20974,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? titleEn,
     Expression<int>? level,
@@ -20124,6 +20994,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (titleEn != null) 'title_en': titleEn,
       if (level != null) 'level': level,
@@ -20145,6 +21016,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? titleEn,
     Value<int>? level,
@@ -20164,6 +21036,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       titleEn: titleEn ?? this.titleEn,
       level: level ?? this.level,
@@ -20198,6 +21071,9 @@ class PositionsCompanion extends UpdateCompanion<Position> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -20244,6 +21120,7 @@ class PositionsCompanion extends UpdateCompanion<Position> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('titleEn: $titleEn, ')
           ..write('level: $level, ')
@@ -20335,6 +21212,17 @@ class $EmployeeContractsTable extends EmployeeContracts
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -20466,6 +21354,7 @@ class $EmployeeContractsTable extends EmployeeContracts
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     contractType,
@@ -20527,6 +21416,12 @@ class $EmployeeContractsTable extends EmployeeContracts
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -20641,6 +21536,10 @@ class $EmployeeContractsTable extends EmployeeContracts
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -20713,6 +21612,9 @@ class EmployeeContract extends DataClass
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
 
@@ -20735,6 +21637,7 @@ class EmployeeContract extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.contractType,
@@ -20757,6 +21660,9 @@ class EmployeeContract extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -20794,6 +21700,9 @@ class EmployeeContract extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -20832,6 +21741,7 @@ class EmployeeContract extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       contractType: serializer.fromJson<int>(json['contractType']),
@@ -20857,6 +21767,7 @@ class EmployeeContract extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'contractType': serializer.toJson<int>(contractType),
@@ -20878,6 +21789,7 @@ class EmployeeContract extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     int? contractType,
@@ -20896,6 +21808,7 @@ class EmployeeContract extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     contractType: contractType ?? this.contractType,
@@ -20918,6 +21831,7 @@ class EmployeeContract extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -20951,6 +21865,7 @@ class EmployeeContract extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('contractType: $contractType, ')
@@ -20974,6 +21889,7 @@ class EmployeeContract extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     contractType,
@@ -20996,6 +21912,7 @@ class EmployeeContract extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.contractType == this.contractType &&
@@ -21016,6 +21933,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<int> contractType;
@@ -21034,6 +21952,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.contractType = const Value.absent(),
@@ -21053,6 +21972,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     this.contractType = const Value.absent(),
@@ -21076,6 +21996,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<int>? contractType,
@@ -21095,6 +22016,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (contractType != null) 'contract_type': contractType,
@@ -21117,6 +22039,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<int>? contractType,
@@ -21136,6 +22059,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       contractType: contractType ?? this.contractType,
@@ -21170,6 +22094,9 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -21218,6 +22145,7 @@ class EmployeeContractsCompanion extends UpdateCompanion<EmployeeContract> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('contractType: $contractType, ')
@@ -21309,6 +22237,17 @@ class $SalaryRecordsTable extends SalaryRecords
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -21486,6 +22425,7 @@ class $SalaryRecordsTable extends SalaryRecords
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     month,
@@ -21551,6 +22491,12 @@ class $SalaryRecordsTable extends SalaryRecords
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -21697,6 +22643,10 @@ class $SalaryRecordsTable extends SalaryRecords
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -21784,6 +22734,9 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
   final int month;
@@ -21810,6 +22763,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.month,
@@ -21836,6 +22790,9 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -21875,6 +22832,9 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -21915,6 +22875,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       month: serializer.fromJson<int>(json['month']),
@@ -21942,6 +22903,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'month': serializer.toJson<int>(month),
@@ -21967,6 +22929,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     int? month,
@@ -21989,6 +22952,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     month: month ?? this.month,
@@ -22013,6 +22977,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -22058,6 +23023,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('month: $month, ')
@@ -22085,6 +23051,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     month,
@@ -22111,6 +23078,7 @@ class SalaryRecord extends DataClass implements Insertable<SalaryRecord> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.month == this.month &&
@@ -22135,6 +23103,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<int> month;
@@ -22157,6 +23126,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.month = const Value.absent(),
@@ -22180,6 +23150,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     required int month,
@@ -22208,6 +23179,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<int>? month,
@@ -22231,6 +23203,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (month != null) 'month': month,
@@ -22256,6 +23229,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<int>? month,
@@ -22279,6 +23253,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       month: month ?? this.month,
@@ -22317,6 +23292,9 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -22375,6 +23353,7 @@ class SalaryRecordsCompanion extends UpdateCompanion<SalaryRecord> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('month: $month, ')
@@ -22475,6 +23454,17 @@ class $SalaryAllowanceTypesTable extends SalaryAllowanceTypes
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -22562,6 +23552,7 @@ class $SalaryAllowanceTypesTable extends SalaryAllowanceTypes
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     isPercentage,
@@ -22618,6 +23609,12 @@ class $SalaryAllowanceTypesTable extends SalaryAllowanceTypes
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -22697,6 +23694,10 @@ class $SalaryAllowanceTypesTable extends SalaryAllowanceTypes
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -22749,6 +23750,9 @@ class SalaryAllowanceType extends DataClass
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? nameEn;
 
@@ -22764,6 +23768,7 @@ class SalaryAllowanceType extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.nameEn,
     required this.isPercentage,
@@ -22781,6 +23786,9 @@ class SalaryAllowanceType extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || nameEn != null) {
@@ -22803,6 +23811,9 @@ class SalaryAllowanceType extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
           ? const Value.absent()
@@ -22826,6 +23837,7 @@ class SalaryAllowanceType extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       isPercentage: serializer.fromJson<bool>(json['isPercentage']),
@@ -22844,6 +23856,7 @@ class SalaryAllowanceType extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'isPercentage': serializer.toJson<bool>(isPercentage),
@@ -22860,6 +23873,7 @@ class SalaryAllowanceType extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> nameEn = const Value.absent(),
     bool? isPercentage,
@@ -22873,6 +23887,7 @@ class SalaryAllowanceType extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     isPercentage: isPercentage ?? this.isPercentage,
@@ -22888,6 +23903,7 @@ class SalaryAllowanceType extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       isPercentage: data.isPercentage.present
@@ -22910,6 +23926,7 @@ class SalaryAllowanceType extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('isPercentage: $isPercentage, ')
@@ -22928,6 +23945,7 @@ class SalaryAllowanceType extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     isPercentage,
@@ -22945,6 +23963,7 @@ class SalaryAllowanceType extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
           other.isPercentage == this.isPercentage &&
@@ -22961,6 +23980,7 @@ class SalaryAllowanceTypesCompanion
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<bool> isPercentage;
@@ -22974,6 +23994,7 @@ class SalaryAllowanceTypesCompanion
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
     this.isPercentage = const Value.absent(),
@@ -22988,6 +24009,7 @@ class SalaryAllowanceTypesCompanion
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.nameEn = const Value.absent(),
     this.isPercentage = const Value.absent(),
@@ -23005,6 +24027,7 @@ class SalaryAllowanceTypesCompanion
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<bool>? isPercentage,
@@ -23019,6 +24042,7 @@ class SalaryAllowanceTypesCompanion
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
       if (isPercentage != null) 'is_percentage': isPercentage,
@@ -23035,6 +24059,7 @@ class SalaryAllowanceTypesCompanion
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? nameEn,
     Value<bool>? isPercentage,
@@ -23049,6 +24074,7 @@ class SalaryAllowanceTypesCompanion
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
       isPercentage: isPercentage ?? this.isPercentage,
@@ -23078,6 +24104,9 @@ class SalaryAllowanceTypesCompanion
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -23109,6 +24138,7 @@ class SalaryAllowanceTypesCompanion
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('isPercentage: $isPercentage, ')
@@ -23200,6 +24230,17 @@ class $SalaryDeductionTypesTable extends SalaryDeductionTypes
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -23272,6 +24313,7 @@ class $SalaryDeductionTypesTable extends SalaryDeductionTypes
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     isPercentage,
@@ -23327,6 +24369,12 @@ class $SalaryDeductionTypesTable extends SalaryDeductionTypes
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -23400,6 +24448,10 @@ class $SalaryDeductionTypesTable extends SalaryDeductionTypes
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -23448,6 +24500,9 @@ class SalaryDeductionType extends DataClass
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? nameEn;
   final bool isPercentage;
@@ -23460,6 +24515,7 @@ class SalaryDeductionType extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.nameEn,
     required this.isPercentage,
@@ -23476,6 +24532,9 @@ class SalaryDeductionType extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || nameEn != null) {
@@ -23497,6 +24556,9 @@ class SalaryDeductionType extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
           ? const Value.absent()
@@ -23519,6 +24581,7 @@ class SalaryDeductionType extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       isPercentage: serializer.fromJson<bool>(json['isPercentage']),
@@ -23536,6 +24599,7 @@ class SalaryDeductionType extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'isPercentage': serializer.toJson<bool>(isPercentage),
@@ -23551,6 +24615,7 @@ class SalaryDeductionType extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> nameEn = const Value.absent(),
     bool? isPercentage,
@@ -23563,6 +24628,7 @@ class SalaryDeductionType extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     isPercentage: isPercentage ?? this.isPercentage,
@@ -23577,6 +24643,7 @@ class SalaryDeductionType extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       isPercentage: data.isPercentage.present
@@ -23598,6 +24665,7 @@ class SalaryDeductionType extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('isPercentage: $isPercentage, ')
@@ -23615,6 +24683,7 @@ class SalaryDeductionType extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     isPercentage,
@@ -23631,6 +24700,7 @@ class SalaryDeductionType extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
           other.isPercentage == this.isPercentage &&
@@ -23646,6 +24716,7 @@ class SalaryDeductionTypesCompanion
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<bool> isPercentage;
@@ -23658,6 +24729,7 @@ class SalaryDeductionTypesCompanion
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
     this.isPercentage = const Value.absent(),
@@ -23671,6 +24743,7 @@ class SalaryDeductionTypesCompanion
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.nameEn = const Value.absent(),
     this.isPercentage = const Value.absent(),
@@ -23687,6 +24760,7 @@ class SalaryDeductionTypesCompanion
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<bool>? isPercentage,
@@ -23700,6 +24774,7 @@ class SalaryDeductionTypesCompanion
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
       if (isPercentage != null) 'is_percentage': isPercentage,
@@ -23715,6 +24790,7 @@ class SalaryDeductionTypesCompanion
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? nameEn,
     Value<bool>? isPercentage,
@@ -23728,6 +24804,7 @@ class SalaryDeductionTypesCompanion
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
       isPercentage: isPercentage ?? this.isPercentage,
@@ -23757,6 +24834,9 @@ class SalaryDeductionTypesCompanion
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
     }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -23784,6 +24864,7 @@ class SalaryDeductionTypesCompanion
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('isPercentage: $isPercentage, ')
@@ -23869,6 +24950,17 @@ class $AttendanceRecordsTable extends AttendanceRecords
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -23976,6 +25068,7 @@ class $AttendanceRecordsTable extends AttendanceRecords
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     date,
@@ -24035,6 +25128,12 @@ class $AttendanceRecordsTable extends AttendanceRecords
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -24134,6 +25233,10 @@ class $AttendanceRecordsTable extends AttendanceRecords
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -24198,6 +25301,9 @@ class AttendanceRecord extends DataClass
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
   final String date;
@@ -24216,6 +25322,7 @@ class AttendanceRecord extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.date,
@@ -24236,6 +25343,9 @@ class AttendanceRecord extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -24271,6 +25381,9 @@ class AttendanceRecord extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -24307,6 +25420,7 @@ class AttendanceRecord extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       date: serializer.fromJson<String>(json['date']),
@@ -24328,6 +25442,7 @@ class AttendanceRecord extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'date': serializer.toJson<String>(date),
@@ -24347,6 +25462,7 @@ class AttendanceRecord extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     String? date,
@@ -24363,6 +25479,7 @@ class AttendanceRecord extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     date: date ?? this.date,
@@ -24381,6 +25498,7 @@ class AttendanceRecord extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -24408,6 +25526,7 @@ class AttendanceRecord extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('date: $date, ')
@@ -24429,6 +25548,7 @@ class AttendanceRecord extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     date,
@@ -24449,6 +25569,7 @@ class AttendanceRecord extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.date == this.date &&
@@ -24467,6 +25588,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<String> date;
@@ -24483,6 +25605,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.date = const Value.absent(),
@@ -24500,6 +25623,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     required String date,
@@ -24521,6 +25645,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<String>? date,
@@ -24538,6 +25663,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (date != null) 'date': date,
@@ -24557,6 +25683,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<String>? date,
@@ -24574,6 +25701,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       date: date ?? this.date,
@@ -24606,6 +25734,9 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -24646,6 +25777,7 @@ class AttendanceRecordsCompanion extends UpdateCompanion<AttendanceRecord> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('date: $date, ')
@@ -24735,6 +25867,17 @@ class $LeaveRequestsTable extends LeaveRequests
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -24897,6 +26040,7 @@ class $LeaveRequestsTable extends LeaveRequests
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     leaveType,
@@ -24961,6 +26105,12 @@ class $LeaveRequestsTable extends LeaveRequests
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -25104,6 +26254,10 @@ class $LeaveRequestsTable extends LeaveRequests
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -25187,6 +26341,9 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
 
@@ -25213,6 +26370,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.leaveType,
@@ -25238,6 +26396,9 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -25282,6 +26443,9 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -25327,6 +26491,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       leaveType: serializer.fromJson<int>(json['leaveType']),
@@ -25353,6 +26518,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'leaveType': serializer.toJson<int>(leaveType),
@@ -25377,6 +26543,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     int? leaveType,
@@ -25398,6 +26565,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     leaveType: leaveType ?? this.leaveType,
@@ -25425,6 +26593,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -25465,6 +26634,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('leaveType: $leaveType, ')
@@ -25484,13 +26654,14 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     syncId,
     createdAt,
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     leaveType,
@@ -25505,7 +26676,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
     approvalNotes,
     attachments,
     notes,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -25516,6 +26687,7 @@ class LeaveRequest extends DataClass implements Insertable<LeaveRequest> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.leaveType == this.leaveType &&
@@ -25539,6 +26711,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<int> leaveType;
@@ -25560,6 +26733,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.leaveType = const Value.absent(),
@@ -25582,6 +26756,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     this.leaveType = const Value.absent(),
@@ -25609,6 +26784,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<int>? leaveType,
@@ -25631,6 +26807,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (leaveType != null) 'leave_type': leaveType,
@@ -25655,6 +26832,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<int>? leaveType,
@@ -25677,6 +26855,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       leaveType: leaveType ?? this.leaveType,
@@ -25714,6 +26893,9 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -25769,6 +26951,7 @@ class LeaveRequestsCompanion extends UpdateCompanion<LeaveRequest> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('leaveType: $leaveType, ')
@@ -25868,6 +27051,17 @@ class $LeaveBalancesTable extends LeaveBalances
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _employeeIdMeta = const VerificationMeta(
     'employeeId',
   );
@@ -25944,6 +27138,7 @@ class $LeaveBalancesTable extends LeaveBalances
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     year,
     leaveType,
@@ -26000,6 +27195,12 @@ class $LeaveBalancesTable extends LeaveBalances
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -26078,6 +27279,10 @@ class $LeaveBalancesTable extends LeaveBalances
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -26129,6 +27334,9 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final int year;
 
@@ -26144,6 +27352,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     required this.year,
     required this.leaveType,
@@ -26161,6 +27370,9 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     map['year'] = Variable<int>(year);
@@ -26181,6 +27393,9 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       year: Value(year),
       leaveType: Value(leaveType),
@@ -26202,6 +27417,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       year: serializer.fromJson<int>(json['year']),
       leaveType: serializer.fromJson<int>(json['leaveType']),
@@ -26220,6 +27436,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'year': serializer.toJson<int>(year),
       'leaveType': serializer.toJson<int>(leaveType),
@@ -26236,6 +27453,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     int? year,
     int? leaveType,
@@ -26249,6 +27467,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     year: year ?? this.year,
     leaveType: leaveType ?? this.leaveType,
@@ -26264,6 +27483,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -26286,6 +27506,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('year: $year, ')
           ..write('leaveType: $leaveType, ')
@@ -26304,6 +27525,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     year,
     leaveType,
@@ -26321,6 +27543,7 @@ class LeaveBalance extends DataClass implements Insertable<LeaveBalance> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.year == this.year &&
           other.leaveType == this.leaveType &&
@@ -26336,6 +27559,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<int> year;
   final Value<int> leaveType;
@@ -26349,6 +27573,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.year = const Value.absent(),
     this.leaveType = const Value.absent(),
@@ -26363,6 +27588,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     required int year,
     this.leaveType = const Value.absent(),
@@ -26381,6 +27607,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<int>? year,
     Expression<int>? leaveType,
@@ -26395,6 +27622,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (year != null) 'year': year,
       if (leaveType != null) 'leave_type': leaveType,
@@ -26411,6 +27639,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<int>? year,
     Value<int>? leaveType,
@@ -26425,6 +27654,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       year: year ?? this.year,
       leaveType: leaveType ?? this.leaveType,
@@ -26454,6 +27684,9 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -26485,6 +27718,7 @@ class LeaveBalancesCompanion extends UpdateCompanion<LeaveBalance> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('year: $year, ')
           ..write('leaveType: $leaveType, ')
@@ -26571,6 +27805,17 @@ class $EmployeeAdvancesTable extends EmployeeAdvances
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -26689,6 +27934,7 @@ class $EmployeeAdvancesTable extends EmployeeAdvances
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     amount,
@@ -26749,6 +27995,12 @@ class $EmployeeAdvancesTable extends EmployeeAdvances
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -26863,6 +28115,10 @@ class $EmployeeAdvancesTable extends EmployeeAdvances
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -26930,6 +28186,9 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
   final double amount;
@@ -26951,6 +28210,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.amount,
@@ -26972,6 +28232,9 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -27006,6 +28269,9 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -27041,6 +28307,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       amount: serializer.fromJson<double>(json['amount']),
@@ -27063,6 +28330,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'amount': serializer.toJson<double>(amount),
@@ -27083,6 +28351,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     double? amount,
@@ -27100,6 +28369,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     amount: amount ?? this.amount,
@@ -27121,6 +28391,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -27155,6 +28426,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('amount: $amount, ')
@@ -27177,6 +28449,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     amount,
@@ -27198,6 +28471,7 @@ class EmployeeAdvance extends DataClass implements Insertable<EmployeeAdvance> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.amount == this.amount &&
@@ -27217,6 +28491,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<double> amount;
@@ -27234,6 +28509,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.amount = const Value.absent(),
@@ -27252,6 +28528,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     this.amount = const Value.absent(),
@@ -27274,6 +28551,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<double>? amount,
@@ -27292,6 +28570,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (amount != null) 'amount': amount,
@@ -27312,6 +28591,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<double>? amount,
@@ -27330,6 +28610,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       amount: amount ?? this.amount,
@@ -27363,6 +28644,9 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -27406,6 +28690,7 @@ class EmployeeAdvancesCompanion extends UpdateCompanion<EmployeeAdvance> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('amount: $amount, ')
@@ -27496,6 +28781,17 @@ class $PerformanceEvaluationsTable extends PerformanceEvaluations
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -27707,6 +29003,7 @@ class $PerformanceEvaluationsTable extends PerformanceEvaluations
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     period,
@@ -27776,6 +29073,12 @@ class $PerformanceEvaluationsTable extends PerformanceEvaluations
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -27956,6 +29259,10 @@ class $PerformanceEvaluationsTable extends PerformanceEvaluations
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -28060,6 +29367,9 @@ class PerformanceEvaluation extends DataClass
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
 
@@ -28094,6 +29404,7 @@ class PerformanceEvaluation extends DataClass
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.period,
@@ -28124,6 +29435,9 @@ class PerformanceEvaluation extends DataClass
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -28189,6 +29503,9 @@ class PerformanceEvaluation extends DataClass
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -28255,6 +29572,7 @@ class PerformanceEvaluation extends DataClass
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       period: serializer.fromJson<String>(json['period']),
@@ -28288,6 +29606,7 @@ class PerformanceEvaluation extends DataClass
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'period': serializer.toJson<String>(period),
@@ -28317,6 +29636,7 @@ class PerformanceEvaluation extends DataClass
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     String? period,
@@ -28343,6 +29663,7 @@ class PerformanceEvaluation extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     period: period ?? this.period,
@@ -28387,6 +29708,7 @@ class PerformanceEvaluation extends DataClass
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -28442,6 +29764,7 @@ class PerformanceEvaluation extends DataClass
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('period: $period, ')
@@ -28473,6 +29796,7 @@ class PerformanceEvaluation extends DataClass
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     period,
@@ -28503,6 +29827,7 @@ class PerformanceEvaluation extends DataClass
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.period == this.period &&
@@ -28532,6 +29857,7 @@ class PerformanceEvaluationsCompanion
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<String> period;
@@ -28558,6 +29884,7 @@ class PerformanceEvaluationsCompanion
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.period = const Value.absent(),
@@ -28585,6 +29912,7 @@ class PerformanceEvaluationsCompanion
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     required String period,
@@ -28616,6 +29944,7 @@ class PerformanceEvaluationsCompanion
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<String>? period,
@@ -28643,6 +29972,7 @@ class PerformanceEvaluationsCompanion
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (period != null) 'period': period,
@@ -28673,6 +30003,7 @@ class PerformanceEvaluationsCompanion
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<String>? period,
@@ -28700,6 +30031,7 @@ class PerformanceEvaluationsCompanion
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       period: period ?? this.period,
@@ -28742,6 +30074,9 @@ class PerformanceEvaluationsCompanion
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -28814,6 +30149,7 @@ class PerformanceEvaluationsCompanion
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('period: $period, ')
@@ -28913,6 +30249,17 @@ class $TrainingRecordsTable extends TrainingRecords
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -29088,6 +30435,7 @@ class $TrainingRecordsTable extends TrainingRecords
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     trainingName,
@@ -29153,6 +30501,12 @@ class $TrainingRecordsTable extends TrainingRecords
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -29297,6 +30651,10 @@ class $TrainingRecordsTable extends TrainingRecords
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -29384,6 +30742,9 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
   final String trainingName;
@@ -29410,6 +30771,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.trainingName,
@@ -29436,6 +30798,9 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -29487,6 +30852,9 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -29537,6 +30905,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       trainingName: serializer.fromJson<String>(json['trainingName']),
@@ -29566,6 +30935,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'trainingName': serializer.toJson<String>(trainingName),
@@ -29591,6 +30961,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     String? trainingName,
@@ -29613,6 +30984,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     trainingName: trainingName ?? this.trainingName,
@@ -29639,6 +31011,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -29678,6 +31051,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('trainingName: $trainingName, ')
@@ -29705,6 +31079,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     trainingName,
@@ -29731,6 +31106,7 @@ class TrainingRecord extends DataClass implements Insertable<TrainingRecord> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.trainingName == this.trainingName &&
@@ -29755,6 +31131,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<String> trainingName;
@@ -29777,6 +31154,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.trainingName = const Value.absent(),
@@ -29800,6 +31178,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     required String trainingName,
@@ -29827,6 +31206,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<String>? trainingName,
@@ -29850,6 +31230,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (trainingName != null) 'training_name': trainingName,
@@ -29875,6 +31256,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<String>? trainingName,
@@ -29898,6 +31280,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       trainingName: trainingName ?? this.trainingName,
@@ -29936,6 +31319,9 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -29994,6 +31380,7 @@ class TrainingRecordsCompanion extends UpdateCompanion<TrainingRecord> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('trainingName: $trainingName, ')
@@ -30089,6 +31476,17 @@ class $EmployeeAssetsTable extends EmployeeAssets
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -30257,6 +31655,7 @@ class $EmployeeAssetsTable extends EmployeeAssets
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     assetName,
@@ -30321,6 +31720,12 @@ class $EmployeeAssetsTable extends EmployeeAssets
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -30461,6 +31866,10 @@ class $EmployeeAssetsTable extends EmployeeAssets
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -30544,6 +31953,9 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
   final String assetName;
@@ -30571,6 +31983,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.assetName,
@@ -30596,6 +32009,9 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -30640,6 +32056,9 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -30685,6 +32104,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       assetName: serializer.fromJson<String>(json['assetName']),
@@ -30711,6 +32131,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'assetName': serializer.toJson<String>(assetName),
@@ -30735,6 +32156,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     String? assetName,
@@ -30756,6 +32178,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     assetName: assetName ?? this.assetName,
@@ -30781,6 +32204,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -30821,6 +32245,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('assetName: $assetName, ')
@@ -30840,13 +32265,14 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     syncId,
     createdAt,
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     assetName,
@@ -30861,7 +32287,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
     value,
     notes,
     attachments,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -30872,6 +32298,7 @@ class EmployeeAsset extends DataClass implements Insertable<EmployeeAsset> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.assetName == this.assetName &&
@@ -30895,6 +32322,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<String> assetName;
@@ -30916,6 +32344,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.assetName = const Value.absent(),
@@ -30938,6 +32367,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     required String assetName,
@@ -30965,6 +32395,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<String>? assetName,
@@ -30987,6 +32418,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (assetName != null) 'asset_name': assetName,
@@ -31011,6 +32443,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<String>? assetName,
@@ -31033,6 +32466,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       assetName: assetName ?? this.assetName,
@@ -31070,6 +32504,9 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -31125,6 +32562,7 @@ class EmployeeAssetsCompanion extends UpdateCompanion<EmployeeAsset> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('assetName: $assetName, ')
@@ -31219,6 +32657,17 @@ class $RewardsPenaltiesTable extends RewardsPenalties
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -31343,6 +32792,7 @@ class $RewardsPenaltiesTable extends RewardsPenalties
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     type,
@@ -31404,6 +32854,12 @@ class $RewardsPenaltiesTable extends RewardsPenalties
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('employee_id')) {
@@ -31523,6 +32979,10 @@ class $RewardsPenaltiesTable extends RewardsPenalties
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       employeeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}employee_id'],
@@ -31594,6 +33054,9 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final int employeeId;
   final String? employeeName;
 
@@ -31616,6 +33079,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.employeeId,
     this.employeeName,
     required this.type,
@@ -31638,6 +33102,9 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['employee_id'] = Variable<int>(employeeId);
     if (!nullToAbsent || employeeName != null) {
@@ -31675,6 +33142,9 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       employeeId: Value(employeeId),
       employeeName: employeeName == null && nullToAbsent
           ? const Value.absent()
@@ -31713,6 +33183,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       employeeId: serializer.fromJson<int>(json['employeeId']),
       employeeName: serializer.fromJson<String?>(json['employeeName']),
       type: serializer.fromJson<int>(json['type']),
@@ -31736,6 +33207,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'employeeId': serializer.toJson<int>(employeeId),
       'employeeName': serializer.toJson<String?>(employeeName),
       'type': serializer.toJson<int>(type),
@@ -31757,6 +33229,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? employeeId,
     Value<String?> employeeName = const Value.absent(),
     int? type,
@@ -31775,6 +33248,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     employeeId: employeeId ?? this.employeeId,
     employeeName: employeeName.present ? employeeName.value : this.employeeName,
     type: type ?? this.type,
@@ -31795,6 +33269,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       employeeId: data.employeeId.present
           ? data.employeeId.value
           : this.employeeId,
@@ -31828,6 +33303,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('type: $type, ')
@@ -31851,6 +33327,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     employeeId,
     employeeName,
     type,
@@ -31873,6 +33350,7 @@ class RewardsPenalty extends DataClass implements Insertable<RewardsPenalty> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.employeeId == this.employeeId &&
           other.employeeName == this.employeeName &&
           other.type == this.type &&
@@ -31893,6 +33371,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> employeeId;
   final Value<String?> employeeName;
   final Value<int> type;
@@ -31911,6 +33390,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.employeeId = const Value.absent(),
     this.employeeName = const Value.absent(),
     this.type = const Value.absent(),
@@ -31930,6 +33410,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int employeeId,
     this.employeeName = const Value.absent(),
     this.type = const Value.absent(),
@@ -31954,6 +33435,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? employeeId,
     Expression<String>? employeeName,
     Expression<int>? type,
@@ -31973,6 +33455,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (employeeId != null) 'employee_id': employeeId,
       if (employeeName != null) 'employee_name': employeeName,
       if (type != null) 'type': type,
@@ -31994,6 +33477,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? employeeId,
     Value<String?>? employeeName,
     Value<int>? type,
@@ -32013,6 +33497,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       employeeId: employeeId ?? this.employeeId,
       employeeName: employeeName ?? this.employeeName,
       type: type ?? this.type,
@@ -32047,6 +33532,9 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (employeeId.present) {
       map['employee_id'] = Variable<int>(employeeId.value);
@@ -32093,6 +33581,7 @@ class RewardsPenaltiesCompanion extends UpdateCompanion<RewardsPenalty> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('employeeId: $employeeId, ')
           ..write('employeeName: $employeeName, ')
           ..write('type: $type, ')
@@ -32183,6 +33672,17 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -32443,6 +33943,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     code,
@@ -32516,6 +34017,12 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -32721,6 +34228,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -32840,6 +34351,9 @@ class Client extends DataClass implements Insertable<Client> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? nameEn;
   final String? code;
@@ -32874,6 +34388,7 @@ class Client extends DataClass implements Insertable<Client> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.nameEn,
     this.code,
@@ -32908,6 +34423,9 @@ class Client extends DataClass implements Insertable<Client> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || nameEn != null) {
@@ -32981,6 +34499,9 @@ class Client extends DataClass implements Insertable<Client> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
           ? const Value.absent()
@@ -33049,6 +34570,7 @@ class Client extends DataClass implements Insertable<Client> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       code: serializer.fromJson<String?>(json['code']),
@@ -33092,6 +34614,7 @@ class Client extends DataClass implements Insertable<Client> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'code': serializer.toJson<String?>(code),
@@ -33125,6 +34648,7 @@ class Client extends DataClass implements Insertable<Client> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> nameEn = const Value.absent(),
     Value<String?> code = const Value.absent(),
@@ -33155,6 +34679,7 @@ class Client extends DataClass implements Insertable<Client> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     code: code.present ? code.value : this.code,
@@ -33199,6 +34724,7 @@ class Client extends DataClass implements Insertable<Client> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       code: data.code.present ? data.code.value : this.code,
@@ -33254,6 +34780,7 @@ class Client extends DataClass implements Insertable<Client> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('code: $code, ')
@@ -33289,6 +34816,7 @@ class Client extends DataClass implements Insertable<Client> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     code,
@@ -33323,6 +34851,7 @@ class Client extends DataClass implements Insertable<Client> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
           other.code == this.code &&
@@ -33355,6 +34884,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<String?> code;
@@ -33385,6 +34915,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
     this.code = const Value.absent(),
@@ -33416,6 +34947,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.nameEn = const Value.absent(),
     this.code = const Value.absent(),
@@ -33450,6 +34982,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<String>? code,
@@ -33481,6 +35014,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
       if (code != null) 'code': code,
@@ -33516,6 +35050,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? nameEn,
     Value<String?>? code,
@@ -33547,6 +35082,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
       code: code ?? this.code,
@@ -33593,6 +35129,9 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -33675,6 +35214,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('code: $code, ')
@@ -33778,6 +35318,17 @@ class $SuppliersTable extends Suppliers
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -34015,6 +35566,7 @@ class $SuppliersTable extends Suppliers
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     code,
@@ -34086,6 +35638,12 @@ class $SuppliersTable extends Suppliers
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -34267,6 +35825,10 @@ class $SuppliersTable extends Suppliers
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -34378,6 +35940,9 @@ class Supplier extends DataClass implements Insertable<Supplier> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? nameEn;
   final String? code;
@@ -34410,6 +35975,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.nameEn,
     this.code,
@@ -34442,6 +36008,9 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || nameEn != null) {
@@ -34511,6 +36080,9 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
           ? const Value.absent()
@@ -34575,6 +36147,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       code: serializer.fromJson<String?>(json['code']),
@@ -34614,6 +36187,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'code': serializer.toJson<String?>(code),
@@ -34645,6 +36219,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> nameEn = const Value.absent(),
     Value<String?> code = const Value.absent(),
@@ -34673,6 +36248,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     code: code.present ? code.value : this.code,
@@ -34709,6 +36285,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       code: data.code.present ? data.code.value : this.code,
@@ -34754,6 +36331,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('code: $code, ')
@@ -34787,6 +36365,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     nameEn,
     code,
@@ -34819,6 +36398,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
           other.code == this.code &&
@@ -34849,6 +36429,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<String?> code;
@@ -34877,6 +36458,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
     this.code = const Value.absent(),
@@ -34906,6 +36488,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.nameEn = const Value.absent(),
     this.code = const Value.absent(),
@@ -34938,6 +36521,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<String>? code,
@@ -34967,6 +36551,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
       if (code != null) 'code': code,
@@ -34999,6 +36584,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? nameEn,
     Value<String?>? code,
@@ -35028,6 +36614,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
       code: code ?? this.code,
@@ -35072,6 +36659,9 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -35148,6 +36738,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
           ..write('code: $code, ')
@@ -35248,6 +36839,17 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -35514,6 +37116,7 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     invoiceNumber,
     clientId,
     clientName,
@@ -35587,6 +37190,12 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('invoice_number')) {
@@ -35783,6 +37392,10 @@ class $InvoicesTable extends Invoices with TableInfo<$InvoicesTable, Invoice> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       invoiceNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}invoice_number'],
@@ -35902,6 +37515,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String? invoiceNumber;
   final int? clientId;
   final String? clientName;
@@ -35936,6 +37552,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     this.invoiceNumber,
     this.clientId,
     this.clientName,
@@ -35970,6 +37587,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     if (!nullToAbsent || invoiceNumber != null) {
       map['invoice_number'] = Variable<String>(invoiceNumber);
@@ -36031,6 +37651,9 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       invoiceNumber: invoiceNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(invoiceNumber),
@@ -36093,6 +37716,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       invoiceNumber: serializer.fromJson<String?>(json['invoiceNumber']),
       clientId: serializer.fromJson<int?>(json['clientId']),
       clientName: serializer.fromJson<String?>(json['clientName']),
@@ -36128,6 +37752,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'invoiceNumber': serializer.toJson<String?>(invoiceNumber),
       'clientId': serializer.toJson<int?>(clientId),
       'clientName': serializer.toJson<String?>(clientName),
@@ -36161,6 +37786,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     Value<String?> invoiceNumber = const Value.absent(),
     Value<int?> clientId = const Value.absent(),
     Value<String?> clientName = const Value.absent(),
@@ -36191,6 +37817,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     invoiceNumber: invoiceNumber.present
         ? invoiceNumber.value
         : this.invoiceNumber,
@@ -36225,6 +37852,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       invoiceNumber: data.invoiceNumber.present
           ? data.invoiceNumber.value
           : this.invoiceNumber,
@@ -36280,6 +37908,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('invoiceNumber: $invoiceNumber, ')
           ..write('clientId: $clientId, ')
           ..write('clientName: $clientName, ')
@@ -36315,6 +37944,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     invoiceNumber,
     clientId,
     clientName,
@@ -36349,6 +37979,7 @@ class Invoice extends DataClass implements Insertable<Invoice> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.invoiceNumber == this.invoiceNumber &&
           other.clientId == this.clientId &&
           other.clientName == this.clientName &&
@@ -36381,6 +38012,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String?> invoiceNumber;
   final Value<int?> clientId;
   final Value<String?> clientName;
@@ -36411,6 +38043,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.invoiceNumber = const Value.absent(),
     this.clientId = const Value.absent(),
     this.clientName = const Value.absent(),
@@ -36442,6 +38075,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.invoiceNumber = const Value.absent(),
     this.clientId = const Value.absent(),
     this.clientName = const Value.absent(),
@@ -36476,6 +38110,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? invoiceNumber,
     Expression<int>? clientId,
     Expression<String>? clientName,
@@ -36507,6 +38142,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (invoiceNumber != null) 'invoice_number': invoiceNumber,
       if (clientId != null) 'client_id': clientId,
       if (clientName != null) 'client_name': clientName,
@@ -36540,6 +38176,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String?>? invoiceNumber,
     Value<int?>? clientId,
     Value<String?>? clientName,
@@ -36571,6 +38208,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       invoiceNumber: invoiceNumber ?? this.invoiceNumber,
       clientId: clientId ?? this.clientId,
       clientName: clientName ?? this.clientName,
@@ -36617,6 +38255,9 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (invoiceNumber.present) {
       map['invoice_number'] = Variable<String>(invoiceNumber.value);
@@ -36699,6 +38340,7 @@ class InvoicesCompanion extends UpdateCompanion<Invoice> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('invoiceNumber: $invoiceNumber, ')
           ..write('clientId: $clientId, ')
           ..write('clientName: $clientName, ')
@@ -36801,6 +38443,17 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -37047,6 +38700,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     amount,
@@ -37118,6 +38772,12 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -37310,6 +38970,10 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -37421,6 +39085,9 @@ class Expense extends DataClass implements Insertable<Expense> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String title;
   final String? description;
   final double amount;
@@ -37453,6 +39120,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.description,
     required this.amount,
@@ -37485,6 +39153,9 @@ class Expense extends DataClass implements Insertable<Expense> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
@@ -37548,6 +39219,9 @@ class Expense extends DataClass implements Insertable<Expense> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -37612,6 +39286,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       amount: serializer.fromJson<double>(json['amount']),
@@ -37645,6 +39320,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'amount': serializer.toJson<double>(amount),
@@ -37676,6 +39352,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> description = const Value.absent(),
     double? amount,
@@ -37704,6 +39381,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     amount: amount ?? this.amount,
@@ -37738,6 +39416,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -37795,6 +39474,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('amount: $amount, ')
@@ -37828,6 +39508,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     amount,
@@ -37860,6 +39541,7 @@ class Expense extends DataClass implements Insertable<Expense> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.description == this.description &&
           other.amount == this.amount &&
@@ -37890,6 +39572,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> description;
   final Value<double> amount;
@@ -37918,6 +39601,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.amount = const Value.absent(),
@@ -37947,6 +39631,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.amount = const Value.absent(),
@@ -37980,6 +39665,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? amount,
@@ -38009,6 +39695,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (amount != null) 'amount': amount,
@@ -38040,6 +39727,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? description,
     Value<double>? amount,
@@ -38069,6 +39757,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       description: description ?? this.description,
       amount: amount ?? this.amount,
@@ -38113,6 +39802,9 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -38189,6 +39881,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('amount: $amount, ')
@@ -38289,6 +39982,17 @@ class $RevenuesTable extends Revenues with TableInfo<$RevenuesTable, Revenue> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -38488,6 +40192,7 @@ class $RevenuesTable extends Revenues with TableInfo<$RevenuesTable, Revenue> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     amount,
@@ -38555,6 +40260,12 @@ class $RevenuesTable extends Revenues with TableInfo<$RevenuesTable, Revenue> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('title')) {
@@ -38714,6 +40425,10 @@ class $RevenuesTable extends Revenues with TableInfo<$RevenuesTable, Revenue> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -38809,6 +40524,9 @@ class Revenue extends DataClass implements Insertable<Revenue> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String title;
   final String? description;
   final double amount;
@@ -38835,6 +40553,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.title,
     this.description,
     required this.amount,
@@ -38863,6 +40582,9 @@ class Revenue extends DataClass implements Insertable<Revenue> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
@@ -38918,6 +40640,9 @@ class Revenue extends DataClass implements Insertable<Revenue> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -38974,6 +40699,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       amount: serializer.fromJson<double>(json['amount']),
@@ -39003,6 +40729,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'amount': serializer.toJson<double>(amount),
@@ -39030,6 +40757,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? title,
     Value<String?> description = const Value.absent(),
     double? amount,
@@ -39054,6 +40782,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     amount: amount ?? this.amount,
@@ -39084,6 +40813,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -39127,6 +40857,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('amount: $amount, ')
@@ -39156,6 +40887,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     title,
     description,
     amount,
@@ -39184,6 +40916,7 @@ class Revenue extends DataClass implements Insertable<Revenue> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.title == this.title &&
           other.description == this.description &&
           other.amount == this.amount &&
@@ -39210,6 +40943,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> title;
   final Value<String?> description;
   final Value<double> amount;
@@ -39234,6 +40968,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.amount = const Value.absent(),
@@ -39259,6 +40994,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.amount = const Value.absent(),
@@ -39288,6 +41024,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? amount,
@@ -39313,6 +41050,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (amount != null) 'amount': amount,
@@ -39340,6 +41078,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? title,
     Value<String?>? description,
     Value<double>? amount,
@@ -39365,6 +41104,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       title: title ?? this.title,
       description: description ?? this.description,
       amount: amount ?? this.amount,
@@ -39405,6 +41145,9 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -39469,6 +41212,7 @@ class RevenuesCompanion extends UpdateCompanion<Revenue> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('amount: $amount, ')
@@ -39566,6 +41310,17 @@ class $ChartOfAccountsTable extends ChartOfAccounts
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -39710,6 +41465,7 @@ class $ChartOfAccountsTable extends ChartOfAccounts
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     code,
     name,
     nameEn,
@@ -39771,6 +41527,12 @@ class $ChartOfAccountsTable extends ChartOfAccounts
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('code')) {
@@ -39890,6 +41652,10 @@ class $ChartOfAccountsTable extends ChartOfAccounts
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
@@ -39961,6 +41727,9 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String code;
   final String name;
   final String? nameEn;
@@ -39982,6 +41751,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.code,
     required this.name,
     this.nameEn,
@@ -40004,6 +41774,9 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['code'] = Variable<String>(code);
     map['name'] = Variable<String>(name);
@@ -40037,6 +41810,9 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       code: Value(code),
       name: Value(name),
       nameEn: nameEn == null && nullToAbsent
@@ -40071,6 +41847,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       code: serializer.fromJson<String>(json['code']),
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
@@ -40094,6 +41871,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'code': serializer.toJson<String>(code),
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
@@ -40115,6 +41893,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? code,
     String? name,
     Value<String?> nameEn = const Value.absent(),
@@ -40133,6 +41912,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     code: code ?? this.code,
     name: name ?? this.name,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
@@ -40153,6 +41933,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       code: data.code.present ? data.code.value : this.code,
       name: data.name.present ? data.name.value : this.name,
       nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
@@ -40186,6 +41967,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
@@ -40209,6 +41991,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     code,
     name,
     nameEn,
@@ -40231,6 +42014,7 @@ class ChartOfAccount extends DataClass implements Insertable<ChartOfAccount> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.code == this.code &&
           other.name == this.name &&
           other.nameEn == this.nameEn &&
@@ -40251,6 +42035,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> code;
   final Value<String> name;
   final Value<String?> nameEn;
@@ -40269,6 +42054,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.code = const Value.absent(),
     this.name = const Value.absent(),
     this.nameEn = const Value.absent(),
@@ -40288,6 +42074,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String code,
     required String name,
     this.nameEn = const Value.absent(),
@@ -40312,6 +42099,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? code,
     Expression<String>? name,
     Expression<String>? nameEn,
@@ -40331,6 +42119,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (code != null) 'code': code,
       if (name != null) 'name': name,
       if (nameEn != null) 'name_en': nameEn,
@@ -40352,6 +42141,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? code,
     Value<String>? name,
     Value<String?>? nameEn,
@@ -40371,6 +42161,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       code: code ?? this.code,
       name: name ?? this.name,
       nameEn: nameEn ?? this.nameEn,
@@ -40405,6 +42196,9 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
@@ -40451,6 +42245,7 @@ class ChartOfAccountsCompanion extends UpdateCompanion<ChartOfAccount> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
           ..write('nameEn: $nameEn, ')
@@ -40542,6 +42337,17 @@ class $JournalEntriesTable extends JournalEntries
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -40670,6 +42476,7 @@ class $JournalEntriesTable extends JournalEntries
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     entryNumber,
     date,
     description,
@@ -40731,6 +42538,12 @@ class $JournalEntriesTable extends JournalEntries
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('entry_number')) {
@@ -40853,6 +42666,10 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       entryNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entry_number'],
@@ -40924,6 +42741,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String? entryNumber;
   final String date;
   final String description;
@@ -40948,6 +42768,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     this.entryNumber,
     required this.date,
     required this.description,
@@ -40970,6 +42791,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     if (!nullToAbsent || entryNumber != null) {
       map['entry_number'] = Variable<String>(entryNumber);
@@ -41003,6 +42827,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       entryNumber: entryNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(entryNumber),
@@ -41037,6 +42864,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       entryNumber: serializer.fromJson<String?>(json['entryNumber']),
       date: serializer.fromJson<String>(json['date']),
       description: serializer.fromJson<String>(json['description']),
@@ -41060,6 +42888,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'entryNumber': serializer.toJson<String?>(entryNumber),
       'date': serializer.toJson<String>(date),
       'description': serializer.toJson<String>(description),
@@ -41081,6 +42910,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     Value<String?> entryNumber = const Value.absent(),
     String? date,
     String? description,
@@ -41099,6 +42929,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     entryNumber: entryNumber.present ? entryNumber.value : this.entryNumber,
     date: date ?? this.date,
     description: description ?? this.description,
@@ -41121,6 +42952,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       entryNumber: data.entryNumber.present
           ? data.entryNumber.value
           : this.entryNumber,
@@ -41156,6 +42988,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('entryNumber: $entryNumber, ')
           ..write('date: $date, ')
           ..write('description: $description, ')
@@ -41179,6 +43012,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     entryNumber,
     date,
     description,
@@ -41201,6 +43035,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.entryNumber == this.entryNumber &&
           other.date == this.date &&
           other.description == this.description &&
@@ -41221,6 +43056,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String?> entryNumber;
   final Value<String> date;
   final Value<String> description;
@@ -41239,6 +43075,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.entryNumber = const Value.absent(),
     this.date = const Value.absent(),
     this.description = const Value.absent(),
@@ -41258,6 +43095,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.entryNumber = const Value.absent(),
     required String date,
     required String description,
@@ -41282,6 +43120,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? entryNumber,
     Expression<String>? date,
     Expression<String>? description,
@@ -41301,6 +43140,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (entryNumber != null) 'entry_number': entryNumber,
       if (date != null) 'date': date,
       if (description != null) 'description': description,
@@ -41322,6 +43162,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String?>? entryNumber,
     Value<String>? date,
     Value<String>? description,
@@ -41341,6 +43182,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       entryNumber: entryNumber ?? this.entryNumber,
       date: date ?? this.date,
       description: description ?? this.description,
@@ -41375,6 +43217,9 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (entryNumber.present) {
       map['entry_number'] = Variable<String>(entryNumber.value);
@@ -41421,6 +43266,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('entryNumber: $entryNumber, ')
           ..write('date: $date, ')
           ..write('description: $description, ')
@@ -41512,6 +43358,17 @@ class $BankAccountsTable extends BankAccounts
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -41649,6 +43506,7 @@ class $BankAccountsTable extends BankAccounts
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     bankName,
     accountName,
     accountNumber,
@@ -41710,6 +43568,12 @@ class $BankAccountsTable extends BankAccounts
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('bank_name')) {
@@ -41825,6 +43689,10 @@ class $BankAccountsTable extends BankAccounts
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       bankName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}bank_name'],
@@ -41896,6 +43764,9 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String bankName;
   final String? accountName;
   final String? accountNumber;
@@ -41914,6 +43785,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.bankName,
     this.accountName,
     this.accountNumber,
@@ -41936,6 +43808,9 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['bank_name'] = Variable<String>(bankName);
     if (!nullToAbsent || accountName != null) {
@@ -41973,6 +43848,9 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       bankName: Value(bankName),
       accountName: accountName == null && nullToAbsent
           ? const Value.absent()
@@ -42007,6 +43885,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       bankName: serializer.fromJson<String>(json['bankName']),
       accountName: serializer.fromJson<String?>(json['accountName']),
       accountNumber: serializer.fromJson<String?>(json['accountNumber']),
@@ -42030,6 +43909,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'bankName': serializer.toJson<String>(bankName),
       'accountName': serializer.toJson<String?>(accountName),
       'accountNumber': serializer.toJson<String?>(accountNumber),
@@ -42051,6 +43931,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? bankName,
     Value<String?> accountName = const Value.absent(),
     Value<String?> accountNumber = const Value.absent(),
@@ -42069,6 +43950,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     bankName: bankName ?? this.bankName,
     accountName: accountName.present ? accountName.value : this.accountName,
     accountNumber: accountNumber.present
@@ -42091,6 +43973,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       bankName: data.bankName.present ? data.bankName.value : this.bankName,
       accountName: data.accountName.present
           ? data.accountName.value
@@ -42122,6 +44005,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('bankName: $bankName, ')
           ..write('accountName: $accountName, ')
           ..write('accountNumber: $accountNumber, ')
@@ -42145,6 +44029,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     bankName,
     accountName,
     accountNumber,
@@ -42167,6 +44052,7 @@ class BankAccount extends DataClass implements Insertable<BankAccount> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.bankName == this.bankName &&
           other.accountName == this.accountName &&
           other.accountNumber == this.accountNumber &&
@@ -42187,6 +44073,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> bankName;
   final Value<String?> accountName;
   final Value<String?> accountNumber;
@@ -42205,6 +44092,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.bankName = const Value.absent(),
     this.accountName = const Value.absent(),
     this.accountNumber = const Value.absent(),
@@ -42224,6 +44112,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String bankName,
     this.accountName = const Value.absent(),
     this.accountNumber = const Value.absent(),
@@ -42246,6 +44135,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? bankName,
     Expression<String>? accountName,
     Expression<String>? accountNumber,
@@ -42265,6 +44155,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (bankName != null) 'bank_name': bankName,
       if (accountName != null) 'account_name': accountName,
       if (accountNumber != null) 'account_number': accountNumber,
@@ -42286,6 +44177,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? bankName,
     Value<String?>? accountName,
     Value<String?>? accountNumber,
@@ -42305,6 +44197,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       bankName: bankName ?? this.bankName,
       accountName: accountName ?? this.accountName,
       accountNumber: accountNumber ?? this.accountNumber,
@@ -42339,6 +44232,9 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (bankName.present) {
       map['bank_name'] = Variable<String>(bankName.value);
@@ -42385,6 +44281,7 @@ class BankAccountsCompanion extends UpdateCompanion<BankAccount> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('bankName: $bankName, ')
           ..write('accountName: $accountName, ')
           ..write('accountNumber: $accountNumber, ')
@@ -42476,6 +44373,17 @@ class $PaymentVouchersTable extends PaymentVouchers
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -42670,6 +44578,7 @@ class $PaymentVouchersTable extends PaymentVouchers
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     voucherNumber,
     type,
     date,
@@ -42737,6 +44646,12 @@ class $PaymentVouchersTable extends PaymentVouchers
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('voucher_number')) {
@@ -42896,6 +44811,10 @@ class $PaymentVouchersTable extends PaymentVouchers
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       voucherNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}voucher_number'],
@@ -42991,6 +44910,9 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String? voucherNumber;
 
   /// type: 0=receipt (سند قبض), 1=payment (سند صرف)
@@ -43023,6 +44945,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     this.voucherNumber,
     required this.type,
     required this.date,
@@ -43051,6 +44974,9 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     if (!nullToAbsent || voucherNumber != null) {
       map['voucher_number'] = Variable<String>(voucherNumber);
@@ -43104,6 +45030,9 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       voucherNumber: voucherNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(voucherNumber),
@@ -43158,6 +45087,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       voucherNumber: serializer.fromJson<String?>(json['voucherNumber']),
       type: serializer.fromJson<int>(json['type']),
       date: serializer.fromJson<String>(json['date']),
@@ -43187,6 +45117,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'voucherNumber': serializer.toJson<String?>(voucherNumber),
       'type': serializer.toJson<int>(type),
       'date': serializer.toJson<String>(date),
@@ -43214,6 +45145,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     Value<String?> voucherNumber = const Value.absent(),
     int? type,
     String? date,
@@ -43238,6 +45170,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     voucherNumber: voucherNumber.present
         ? voucherNumber.value
         : this.voucherNumber,
@@ -43268,6 +45201,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       voucherNumber: data.voucherNumber.present
           ? data.voucherNumber.value
           : this.voucherNumber,
@@ -43309,6 +45243,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('voucherNumber: $voucherNumber, ')
           ..write('type: $type, ')
           ..write('date: $date, ')
@@ -43338,6 +45273,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     voucherNumber,
     type,
     date,
@@ -43366,6 +45302,7 @@ class PaymentVoucher extends DataClass implements Insertable<PaymentVoucher> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.voucherNumber == this.voucherNumber &&
           other.type == this.type &&
           other.date == this.date &&
@@ -43392,6 +45329,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String?> voucherNumber;
   final Value<int> type;
   final Value<String> date;
@@ -43416,6 +45354,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.voucherNumber = const Value.absent(),
     this.type = const Value.absent(),
     this.date = const Value.absent(),
@@ -43441,6 +45380,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.voucherNumber = const Value.absent(),
     required int type,
     required String date,
@@ -43470,6 +45410,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? voucherNumber,
     Expression<int>? type,
     Expression<String>? date,
@@ -43495,6 +45436,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (voucherNumber != null) 'voucher_number': voucherNumber,
       if (type != null) 'type': type,
       if (date != null) 'date': date,
@@ -43522,6 +45464,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String?>? voucherNumber,
     Value<int>? type,
     Value<String>? date,
@@ -43547,6 +45490,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       voucherNumber: voucherNumber ?? this.voucherNumber,
       type: type ?? this.type,
       date: date ?? this.date,
@@ -43587,6 +45531,9 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (voucherNumber.present) {
       map['voucher_number'] = Variable<String>(voucherNumber.value);
@@ -43651,6 +45598,7 @@ class PaymentVouchersCompanion extends UpdateCompanion<PaymentVoucher> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('voucherNumber: $voucherNumber, ')
           ..write('type: $type, ')
           ..write('date: $date, ')
@@ -43747,6 +45695,17 @@ class $ChecksTable extends Checks with TableInfo<$ChecksTable, Check> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -43887,6 +45846,7 @@ class $ChecksTable extends Checks with TableInfo<$ChecksTable, Check> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     checkNumber,
     bankName,
     amount,
@@ -43949,6 +45909,12 @@ class $ChecksTable extends Checks with TableInfo<$ChecksTable, Check> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('check_number')) {
@@ -44068,6 +46034,10 @@ class $ChecksTable extends Checks with TableInfo<$ChecksTable, Check> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       checkNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}check_number'],
@@ -44143,6 +46113,9 @@ class Check extends DataClass implements Insertable<Check> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String checkNumber;
   final String? bankName;
   final double amount;
@@ -44166,6 +46139,7 @@ class Check extends DataClass implements Insertable<Check> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.checkNumber,
     this.bankName,
     required this.amount,
@@ -44189,6 +46163,9 @@ class Check extends DataClass implements Insertable<Check> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['check_number'] = Variable<String>(checkNumber);
     if (!nullToAbsent || bankName != null) {
@@ -44227,6 +46204,9 @@ class Check extends DataClass implements Insertable<Check> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       checkNumber: Value(checkNumber),
       bankName: bankName == null && nullToAbsent
           ? const Value.absent()
@@ -44266,6 +46246,7 @@ class Check extends DataClass implements Insertable<Check> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       checkNumber: serializer.fromJson<String>(json['checkNumber']),
       bankName: serializer.fromJson<String?>(json['bankName']),
       amount: serializer.fromJson<double>(json['amount']),
@@ -44290,6 +46271,7 @@ class Check extends DataClass implements Insertable<Check> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'checkNumber': serializer.toJson<String>(checkNumber),
       'bankName': serializer.toJson<String?>(bankName),
       'amount': serializer.toJson<double>(amount),
@@ -44312,6 +46294,7 @@ class Check extends DataClass implements Insertable<Check> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? checkNumber,
     Value<String?> bankName = const Value.absent(),
     double? amount,
@@ -44331,6 +46314,7 @@ class Check extends DataClass implements Insertable<Check> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     checkNumber: checkNumber ?? this.checkNumber,
     bankName: bankName.present ? bankName.value : this.bankName,
     amount: amount ?? this.amount,
@@ -44352,6 +46336,7 @@ class Check extends DataClass implements Insertable<Check> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       checkNumber: data.checkNumber.present
           ? data.checkNumber.value
           : this.checkNumber,
@@ -44380,6 +46365,7 @@ class Check extends DataClass implements Insertable<Check> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('checkNumber: $checkNumber, ')
           ..write('bankName: $bankName, ')
           ..write('amount: $amount, ')
@@ -44404,6 +46390,7 @@ class Check extends DataClass implements Insertable<Check> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     checkNumber,
     bankName,
     amount,
@@ -44427,6 +46414,7 @@ class Check extends DataClass implements Insertable<Check> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.checkNumber == this.checkNumber &&
           other.bankName == this.bankName &&
           other.amount == this.amount &&
@@ -44448,6 +46436,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> checkNumber;
   final Value<String?> bankName;
   final Value<double> amount;
@@ -44467,6 +46456,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.checkNumber = const Value.absent(),
     this.bankName = const Value.absent(),
     this.amount = const Value.absent(),
@@ -44487,6 +46477,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String checkNumber,
     this.bankName = const Value.absent(),
     this.amount = const Value.absent(),
@@ -44512,6 +46503,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? checkNumber,
     Expression<String>? bankName,
     Expression<double>? amount,
@@ -44532,6 +46524,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (checkNumber != null) 'check_number': checkNumber,
       if (bankName != null) 'bank_name': bankName,
       if (amount != null) 'amount': amount,
@@ -44554,6 +46547,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? checkNumber,
     Value<String?>? bankName,
     Value<double>? amount,
@@ -44574,6 +46568,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       checkNumber: checkNumber ?? this.checkNumber,
       bankName: bankName ?? this.bankName,
       amount: amount ?? this.amount,
@@ -44609,6 +46604,9 @@ class ChecksCompanion extends UpdateCompanion<Check> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (checkNumber.present) {
       map['check_number'] = Variable<String>(checkNumber.value);
@@ -44658,6 +46656,7 @@ class ChecksCompanion extends UpdateCompanion<Check> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('checkNumber: $checkNumber, ')
           ..write('bankName: $bankName, ')
           ..write('amount: $amount, ')
@@ -44749,6 +46748,17 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
     'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -45023,6 +47033,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     description,
     code,
@@ -45097,6 +47108,12 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -45293,6 +47310,10 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -45416,6 +47437,9 @@ class Project extends DataClass implements Insertable<Project> {
 
   /// Creator identifier (for multi-user support in the future)
   final String? createdBy;
+
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
   final String name;
   final String? description;
   final String? code;
@@ -45451,6 +47475,7 @@ class Project extends DataClass implements Insertable<Project> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.name,
     this.description,
     this.code,
@@ -45486,6 +47511,9 @@ class Project extends DataClass implements Insertable<Project> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
@@ -45556,6 +47584,9 @@ class Project extends DataClass implements Insertable<Project> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -45621,6 +47652,7 @@ class Project extends DataClass implements Insertable<Project> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       code: serializer.fromJson<String?>(json['code']),
@@ -45657,6 +47689,7 @@ class Project extends DataClass implements Insertable<Project> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'code': serializer.toJson<String?>(code),
@@ -45691,6 +47724,7 @@ class Project extends DataClass implements Insertable<Project> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     String? name,
     Value<String?> description = const Value.absent(),
     Value<String?> code = const Value.absent(),
@@ -45722,6 +47756,7 @@ class Project extends DataClass implements Insertable<Project> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
     code: code.present ? code.value : this.code,
@@ -45757,6 +47792,7 @@ class Project extends DataClass implements Insertable<Project> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
           ? data.description.value
@@ -45807,6 +47843,7 @@ class Project extends DataClass implements Insertable<Project> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('code: $code, ')
@@ -45843,6 +47880,7 @@ class Project extends DataClass implements Insertable<Project> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     name,
     description,
     code,
@@ -45878,6 +47916,7 @@ class Project extends DataClass implements Insertable<Project> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.name == this.name &&
           other.description == this.description &&
           other.code == this.code &&
@@ -45911,6 +47950,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<String> name;
   final Value<String?> description;
   final Value<String?> code;
@@ -45942,6 +47982,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.code = const Value.absent(),
@@ -45974,6 +48015,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     this.code = const Value.absent(),
@@ -46009,6 +48051,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? code,
@@ -46041,6 +48084,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (code != null) 'code': code,
@@ -46075,6 +48119,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<String>? name,
     Value<String?>? description,
     Value<String?>? code,
@@ -46107,6 +48152,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       name: name ?? this.name,
       description: description ?? this.description,
       code: code ?? this.code,
@@ -46154,6 +48200,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -46239,6 +48288,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('code: $code, ')
@@ -46348,6 +48398,17 @@ class $EntityLinksTable extends EntityLinks
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _companyIdMeta = const VerificationMeta(
+    'companyId',
+  );
+  @override
+  late final GeneratedColumn<String> companyId = GeneratedColumn<String>(
+    'company_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sourceTypeMeta = const VerificationMeta(
     'sourceType',
   );
@@ -46433,6 +48494,7 @@ class $EntityLinksTable extends EntityLinks
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     sourceType,
     sourceId,
     targetType,
@@ -46490,6 +48552,12 @@ class $EntityLinksTable extends EntityLinks
       context.handle(
         _createdByMeta,
         createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('company_id')) {
+      context.handle(
+        _companyIdMeta,
+        companyId.isAcceptableOrUnknown(data['company_id']!, _companyIdMeta),
       );
     }
     if (data.containsKey('source_type')) {
@@ -46581,6 +48649,10 @@ class $EntityLinksTable extends EntityLinks
         DriftSqlType.string,
         data['${effectivePrefix}created_by'],
       ),
+      companyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_id'],
+      ),
       sourceType: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}source_type'],
@@ -46637,6 +48709,9 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
   /// Who created this link
   final String? createdBy;
 
+  /// الشركة التي يخصّها الصف — `syncId` من جدول `Companies`.
+  final String? companyId;
+
   /// Source entity type (see enum above)
   final int sourceType;
 
@@ -46664,6 +48739,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
     required this.updatedAt,
     required this.isDeleted,
     this.createdBy,
+    this.companyId,
     required this.sourceType,
     required this.sourceId,
     required this.targetType,
@@ -46682,6 +48758,9 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
     map['is_deleted'] = Variable<bool>(isDeleted);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || companyId != null) {
+      map['company_id'] = Variable<String>(companyId);
     }
     map['source_type'] = Variable<int>(sourceType);
     map['source_id'] = Variable<int>(sourceId);
@@ -46709,6 +48788,9 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
           : Value(createdBy),
+      companyId: companyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companyId),
       sourceType: Value(sourceType),
       sourceId: Value(sourceId),
       targetType: Value(targetType),
@@ -46737,6 +48819,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
+      companyId: serializer.fromJson<String?>(json['companyId']),
       sourceType: serializer.fromJson<int>(json['sourceType']),
       sourceId: serializer.fromJson<int>(json['sourceId']),
       targetType: serializer.fromJson<int>(json['targetType']),
@@ -46756,6 +48839,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
       'createdBy': serializer.toJson<String?>(createdBy),
+      'companyId': serializer.toJson<String?>(companyId),
       'sourceType': serializer.toJson<int>(sourceType),
       'sourceId': serializer.toJson<int>(sourceId),
       'targetType': serializer.toJson<int>(targetType),
@@ -46773,6 +48857,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
     int? updatedAt,
     bool? isDeleted,
     Value<String?> createdBy = const Value.absent(),
+    Value<String?> companyId = const Value.absent(),
     int? sourceType,
     int? sourceId,
     int? targetType,
@@ -46787,6 +48872,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    companyId: companyId.present ? companyId.value : this.companyId,
     sourceType: sourceType ?? this.sourceType,
     sourceId: sourceId ?? this.sourceId,
     targetType: targetType ?? this.targetType,
@@ -46803,6 +48889,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      companyId: data.companyId.present ? data.companyId.value : this.companyId,
       sourceType: data.sourceType.present
           ? data.sourceType.value
           : this.sourceType,
@@ -46830,6 +48917,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('sourceType: $sourceType, ')
           ..write('sourceId: $sourceId, ')
           ..write('targetType: $targetType, ')
@@ -46849,6 +48937,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
     updatedAt,
     isDeleted,
     createdBy,
+    companyId,
     sourceType,
     sourceId,
     targetType,
@@ -46867,6 +48956,7 @@ class EntityLink extends DataClass implements Insertable<EntityLink> {
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
           other.createdBy == this.createdBy &&
+          other.companyId == this.companyId &&
           other.sourceType == this.sourceType &&
           other.sourceId == this.sourceId &&
           other.targetType == this.targetType &&
@@ -46883,6 +48973,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
   final Value<int> updatedAt;
   final Value<bool> isDeleted;
   final Value<String?> createdBy;
+  final Value<String?> companyId;
   final Value<int> sourceType;
   final Value<int> sourceId;
   final Value<int> targetType;
@@ -46897,6 +48988,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     this.sourceType = const Value.absent(),
     this.sourceId = const Value.absent(),
     this.targetType = const Value.absent(),
@@ -46912,6 +49004,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
     required int updatedAt,
     this.isDeleted = const Value.absent(),
     this.createdBy = const Value.absent(),
+    this.companyId = const Value.absent(),
     required int sourceType,
     required int sourceId,
     required int targetType,
@@ -46933,6 +49026,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
     Expression<int>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<String>? createdBy,
+    Expression<String>? companyId,
     Expression<int>? sourceType,
     Expression<int>? sourceId,
     Expression<int>? targetType,
@@ -46948,6 +49042,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (createdBy != null) 'created_by': createdBy,
+      if (companyId != null) 'company_id': companyId,
       if (sourceType != null) 'source_type': sourceType,
       if (sourceId != null) 'source_id': sourceId,
       if (targetType != null) 'target_type': targetType,
@@ -46965,6 +49060,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
     Value<int>? updatedAt,
     Value<bool>? isDeleted,
     Value<String?>? createdBy,
+    Value<String?>? companyId,
     Value<int>? sourceType,
     Value<int>? sourceId,
     Value<int>? targetType,
@@ -46980,6 +49076,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       createdBy: createdBy ?? this.createdBy,
+      companyId: companyId ?? this.companyId,
       sourceType: sourceType ?? this.sourceType,
       sourceId: sourceId ?? this.sourceId,
       targetType: targetType ?? this.targetType,
@@ -47010,6 +49107,9 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (companyId.present) {
+      map['company_id'] = Variable<String>(companyId.value);
     }
     if (sourceType.present) {
       map['source_type'] = Variable<int>(sourceType.value);
@@ -47044,6 +49144,7 @@ class EntityLinksCompanion extends UpdateCompanion<EntityLink> {
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('createdBy: $createdBy, ')
+          ..write('companyId: $companyId, ')
           ..write('sourceType: $sourceType, ')
           ..write('sourceId: $sourceId, ')
           ..write('targetType: $targetType, ')
@@ -52648,6 +54749,7 @@ typedef $$MeetingsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<int> meetingCategory,
       Value<int> meetingType,
@@ -52682,6 +54784,7 @@ typedef $$MeetingsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<int> meetingCategory,
       Value<int> meetingType,
@@ -52745,6 +54848,11 @@ class $$MeetingsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -52913,6 +55021,11 @@ class $$MeetingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -53066,6 +55179,9 @@ class $$MeetingsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -53198,6 +55314,7 @@ class $$MeetingsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int> meetingCategory = const Value.absent(),
                 Value<int> meetingType = const Value.absent(),
@@ -53230,6 +55347,7 @@ class $$MeetingsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 meetingCategory: meetingCategory,
                 meetingType: meetingType,
@@ -53264,6 +55382,7 @@ class $$MeetingsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<int> meetingCategory = const Value.absent(),
                 Value<int> meetingType = const Value.absent(),
@@ -53296,6 +55415,7 @@ class $$MeetingsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 meetingCategory: meetingCategory,
                 meetingType: meetingType,
@@ -53352,6 +55472,7 @@ typedef $$TasksTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> description,
       Value<String?> dueDate,
@@ -53368,6 +55489,7 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> description,
       Value<String?> dueDate,
@@ -53412,6 +55534,11 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -53490,6 +55617,11 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -53553,6 +55685,9 @@ class $$TasksTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -53615,6 +55750,7 @@ class $$TasksTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String?> dueDate = const Value.absent(),
@@ -53629,6 +55765,7 @@ class $$TasksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 dueDate: dueDate,
@@ -53645,6 +55782,7 @@ class $$TasksTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<String?> dueDate = const Value.absent(),
@@ -53659,6 +55797,7 @@ class $$TasksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 dueDate: dueDate,
@@ -53697,6 +55836,7 @@ typedef $$FollowUpsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> notes,
       Value<String?> targetDate,
@@ -53724,6 +55864,7 @@ typedef $$FollowUpsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> notes,
       Value<String?> targetDate,
@@ -53780,6 +55921,11 @@ class $$FollowUpsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -53913,6 +56059,11 @@ class $$FollowUpsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -54031,6 +56182,9 @@ class $$FollowUpsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -54144,6 +56298,7 @@ class $$FollowUpsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> targetDate = const Value.absent(),
@@ -54169,6 +56324,7 @@ class $$FollowUpsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 notes: notes,
                 targetDate: targetDate,
@@ -54196,6 +56352,7 @@ class $$FollowUpsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> notes = const Value.absent(),
                 Value<String?> targetDate = const Value.absent(),
@@ -54221,6 +56378,7 @@ class $$FollowUpsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 notes: notes,
                 targetDate: targetDate,
@@ -54270,6 +56428,7 @@ typedef $$DirectivesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> details,
       Value<String?> source,
@@ -54286,6 +56445,7 @@ typedef $$DirectivesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> details,
       Value<String?> source,
@@ -54331,6 +56491,11 @@ class $$DirectivesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -54409,6 +56574,11 @@ class $$DirectivesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -54472,6 +56642,9 @@ class $$DirectivesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -54533,6 +56706,7 @@ class $$DirectivesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> details = const Value.absent(),
                 Value<String?> source = const Value.absent(),
@@ -54547,6 +56721,7 @@ class $$DirectivesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 details: details,
                 source: source,
@@ -54563,6 +56738,7 @@ class $$DirectivesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> details = const Value.absent(),
                 Value<String?> source = const Value.absent(),
@@ -54577,6 +56753,7 @@ class $$DirectivesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 details: details,
                 source: source,
@@ -54615,6 +56792,7 @@ typedef $$ContactsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> position,
       Value<String?> company,
@@ -54631,6 +56809,7 @@ typedef $$ContactsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> position,
       Value<String?> company,
@@ -54676,6 +56855,11 @@ class $$ContactsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -54754,6 +56938,11 @@ class $$ContactsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -54817,6 +57006,9 @@ class $$ContactsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -54875,6 +57067,7 @@ class $$ContactsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> position = const Value.absent(),
                 Value<String?> company = const Value.absent(),
@@ -54889,6 +57082,7 @@ class $$ContactsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 position: position,
                 company: company,
@@ -54905,6 +57099,7 @@ class $$ContactsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> position = const Value.absent(),
                 Value<String?> company = const Value.absent(),
@@ -54919,6 +57114,7 @@ class $$ContactsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 position: position,
                 company: company,
@@ -54957,6 +57153,7 @@ typedef $$AppointmentsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<int?> contactId,
       required String date,
@@ -54973,6 +57170,7 @@ typedef $$AppointmentsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<int?> contactId,
       Value<String> date,
@@ -55018,6 +57216,11 @@ class $$AppointmentsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -55096,6 +57299,11 @@ class $$AppointmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -55159,6 +57367,9 @@ class $$AppointmentsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -55220,6 +57431,7 @@ class $$AppointmentsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int?> contactId = const Value.absent(),
                 Value<String> date = const Value.absent(),
@@ -55234,6 +57446,7 @@ class $$AppointmentsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 contactId: contactId,
                 date: date,
@@ -55250,6 +57463,7 @@ class $$AppointmentsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<int?> contactId = const Value.absent(),
                 required String date,
@@ -55264,6 +57478,7 @@ class $$AppointmentsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 contactId: contactId,
                 date: date,
@@ -55305,6 +57520,7 @@ typedef $$ArchiveTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> referenceNumber,
       Value<String?> hijriDate,
@@ -55324,6 +57540,7 @@ typedef $$ArchiveTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> referenceNumber,
       Value<String?> hijriDate,
@@ -55372,6 +57589,11 @@ class $$ArchiveTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -55465,6 +57687,11 @@ class $$ArchiveTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -55542,6 +57769,9 @@ class $$ArchiveTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
@@ -55621,6 +57851,7 @@ class $$ArchiveTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> referenceNumber = const Value.absent(),
                 Value<String?> hijriDate = const Value.absent(),
@@ -55638,6 +57869,7 @@ class $$ArchiveTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 referenceNumber: referenceNumber,
                 hijriDate: hijriDate,
@@ -55657,6 +57889,7 @@ class $$ArchiveTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> referenceNumber = const Value.absent(),
                 Value<String?> hijriDate = const Value.absent(),
@@ -55674,6 +57907,7 @@ class $$ArchiveTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 referenceNumber: referenceNumber,
                 hijriDate: hijriDate,
@@ -56276,6 +58510,7 @@ typedef $$CallsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String callerName,
       Value<String?> phoneNumber,
       Value<int> callType,
@@ -56292,6 +58527,7 @@ typedef $$CallsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> callerName,
       Value<String?> phoneNumber,
       Value<int> callType,
@@ -56336,6 +58572,11 @@ class $$CallsTableFilterComposer extends Composer<_$AppDatabase, $CallsTable> {
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -56414,6 +58655,11 @@ class $$CallsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get callerName => $composableBuilder(
     column: $table.callerName,
     builder: (column) => ColumnOrderings(column),
@@ -56477,6 +58723,9 @@ class $$CallsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get callerName => $composableBuilder(
     column: $table.callerName,
     builder: (column) => column,
@@ -56539,6 +58788,7 @@ class $$CallsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> callerName = const Value.absent(),
                 Value<String?> phoneNumber = const Value.absent(),
                 Value<int> callType = const Value.absent(),
@@ -56553,6 +58803,7 @@ class $$CallsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 callerName: callerName,
                 phoneNumber: phoneNumber,
                 callType: callType,
@@ -56569,6 +58820,7 @@ class $$CallsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String callerName,
                 Value<String?> phoneNumber = const Value.absent(),
                 Value<int> callType = const Value.absent(),
@@ -56583,6 +58835,7 @@ class $$CallsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 callerName: callerName,
                 phoneNumber: phoneNumber,
                 callType: callType,
@@ -56621,6 +58874,7 @@ typedef $$VisitorsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String visitorName,
       Value<String?> company,
       Value<String?> purpose,
@@ -56637,6 +58891,7 @@ typedef $$VisitorsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> visitorName,
       Value<String?> company,
       Value<String?> purpose,
@@ -56682,6 +58937,11 @@ class $$VisitorsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -56760,6 +59020,11 @@ class $$VisitorsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get visitorName => $composableBuilder(
     column: $table.visitorName,
     builder: (column) => ColumnOrderings(column),
@@ -56822,6 +59087,9 @@ class $$VisitorsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get visitorName => $composableBuilder(
     column: $table.visitorName,
@@ -56886,6 +59154,7 @@ class $$VisitorsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> visitorName = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> purpose = const Value.absent(),
@@ -56900,6 +59169,7 @@ class $$VisitorsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 visitorName: visitorName,
                 company: company,
                 purpose: purpose,
@@ -56916,6 +59186,7 @@ class $$VisitorsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String visitorName,
                 Value<String?> company = const Value.absent(),
                 Value<String?> purpose = const Value.absent(),
@@ -56930,6 +59201,7 @@ class $$VisitorsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 visitorName: visitorName,
                 company: company,
                 purpose: purpose,
@@ -56968,6 +59240,7 @@ typedef $$NotesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> title,
       required String content,
       Value<String?> colorCode,
@@ -56981,6 +59254,7 @@ typedef $$NotesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> title,
       Value<String> content,
       Value<String?> colorCode,
@@ -57022,6 +59296,11 @@ class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -57085,6 +59364,11 @@ class $$NotesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -57133,6 +59417,9 @@ class $$NotesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -57180,6 +59467,7 @@ class $$NotesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String> content = const Value.absent(),
                 Value<String?> colorCode = const Value.absent(),
@@ -57191,6 +59479,7 @@ class $$NotesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 content: content,
                 colorCode: colorCode,
@@ -57204,6 +59493,7 @@ class $$NotesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 required String content,
                 Value<String?> colorCode = const Value.absent(),
@@ -57215,6 +59505,7 @@ class $$NotesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 content: content,
                 colorCode: colorCode,
@@ -57250,6 +59541,7 @@ typedef $$MovementsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String destination,
       Value<String?> purpose,
       required String date,
@@ -57265,6 +59557,7 @@ typedef $$MovementsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> destination,
       Value<String?> purpose,
       Value<String> date,
@@ -57309,6 +59602,11 @@ class $$MovementsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -57382,6 +59680,11 @@ class $$MovementsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get destination => $composableBuilder(
     column: $table.destination,
     builder: (column) => ColumnOrderings(column),
@@ -57440,6 +59743,9 @@ class $$MovementsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get destination => $composableBuilder(
     column: $table.destination,
     builder: (column) => column,
@@ -57495,6 +59801,7 @@ class $$MovementsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> destination = const Value.absent(),
                 Value<String?> purpose = const Value.absent(),
                 Value<String> date = const Value.absent(),
@@ -57508,6 +59815,7 @@ class $$MovementsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 destination: destination,
                 purpose: purpose,
                 date: date,
@@ -57523,6 +59831,7 @@ class $$MovementsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String destination,
                 Value<String?> purpose = const Value.absent(),
                 required String date,
@@ -57536,6 +59845,7 @@ class $$MovementsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 destination: destination,
                 purpose: purpose,
                 date: date,
@@ -57573,6 +59883,7 @@ typedef $$RoutineTasksTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> description,
       Value<String> category,
@@ -57590,6 +59901,7 @@ typedef $$RoutineTasksTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> description,
       Value<String> category,
@@ -57636,6 +59948,11 @@ class $$RoutineTasksTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -57719,6 +60036,11 @@ class $$RoutineTasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -57787,6 +60109,9 @@ class $$RoutineTasksTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -57853,6 +60178,7 @@ class $$RoutineTasksTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String> category = const Value.absent(),
@@ -57868,6 +60194,7 @@ class $$RoutineTasksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 category: category,
@@ -57885,6 +60212,7 @@ class $$RoutineTasksTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<String> category = const Value.absent(),
@@ -57900,6 +60228,7 @@ class $$RoutineTasksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 category: category,
@@ -57942,6 +60271,7 @@ typedef $$RoutineCompletionsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String routineTaskSyncId,
       required String dateKey,
     });
@@ -57953,6 +60283,7 @@ typedef $$RoutineCompletionsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> routineTaskSyncId,
       Value<String> dateKey,
     });
@@ -57993,6 +60324,11 @@ class $$RoutineCompletionsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -58046,6 +60382,11 @@ class $$RoutineCompletionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get routineTaskSyncId => $composableBuilder(
     column: $table.routineTaskSyncId,
     builder: (column) => ColumnOrderings(column),
@@ -58083,6 +60424,9 @@ class $$RoutineCompletionsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get routineTaskSyncId => $composableBuilder(
     column: $table.routineTaskSyncId,
@@ -58139,6 +60483,7 @@ class $$RoutineCompletionsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> routineTaskSyncId = const Value.absent(),
                 Value<String> dateKey = const Value.absent(),
               }) => RoutineCompletionsCompanion(
@@ -58148,6 +60493,7 @@ class $$RoutineCompletionsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 routineTaskSyncId: routineTaskSyncId,
                 dateKey: dateKey,
               ),
@@ -58159,6 +60505,7 @@ class $$RoutineCompletionsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String routineTaskSyncId,
                 required String dateKey,
               }) => RoutineCompletionsCompanion.insert(
@@ -58168,6 +60515,7 @@ class $$RoutineCompletionsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 routineTaskSyncId: routineTaskSyncId,
                 dateKey: dateKey,
               ),
@@ -58208,6 +60556,7 @@ typedef $$EmployeesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> nameEn,
       Value<String?> employeeCode,
@@ -58267,6 +60616,7 @@ typedef $$EmployeesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> nameEn,
       Value<String?> employeeCode,
@@ -58355,6 +60705,11 @@ class $$EmployeesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -58648,6 +61003,11 @@ class $$EmployeesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -58926,6 +61286,9 @@ class $$EmployeesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -59175,6 +61538,7 @@ class $$EmployeesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> employeeCode = const Value.absent(),
@@ -59232,6 +61596,7 @@ class $$EmployeesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 employeeCode: employeeCode,
@@ -59291,6 +61656,7 @@ class $$EmployeesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> employeeCode = const Value.absent(),
@@ -59348,6 +61714,7 @@ class $$EmployeesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 employeeCode: employeeCode,
@@ -59429,6 +61796,7 @@ typedef $$DepartmentsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> description,
       Value<int?> managerId,
@@ -59449,6 +61817,7 @@ typedef $$DepartmentsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> description,
       Value<int?> managerId,
@@ -59498,6 +61867,11 @@ class $$DepartmentsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -59596,6 +61970,11 @@ class $$DepartmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -59678,6 +62057,9 @@ class $$DepartmentsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -59762,6 +62144,7 @@ class $$DepartmentsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int?> managerId = const Value.absent(),
@@ -59780,6 +62163,7 @@ class $$DepartmentsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 description: description,
                 managerId: managerId,
@@ -59800,6 +62184,7 @@ class $$DepartmentsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> description = const Value.absent(),
                 Value<int?> managerId = const Value.absent(),
@@ -59818,6 +62203,7 @@ class $$DepartmentsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 description: description,
                 managerId: managerId,
@@ -59863,6 +62249,7 @@ typedef $$BranchesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> address,
       Value<String?> city,
@@ -59883,6 +62270,7 @@ typedef $$BranchesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> address,
       Value<String?> city,
@@ -59932,6 +62320,11 @@ class $$BranchesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -60030,6 +62423,11 @@ class $$BranchesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -60113,6 +62511,9 @@ class $$BranchesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -60185,6 +62586,7 @@ class $$BranchesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> address = const Value.absent(),
                 Value<String?> city = const Value.absent(),
@@ -60203,6 +62605,7 @@ class $$BranchesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 address: address,
                 city: city,
@@ -60223,6 +62626,7 @@ class $$BranchesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> address = const Value.absent(),
                 Value<String?> city = const Value.absent(),
@@ -60241,6 +62645,7 @@ class $$BranchesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 address: address,
                 city: city,
@@ -60283,6 +62688,7 @@ typedef $$PositionsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> titleEn,
       Value<int> level,
@@ -60303,6 +62709,7 @@ typedef $$PositionsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> titleEn,
       Value<int> level,
@@ -60352,6 +62759,11 @@ class $$PositionsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -60450,6 +62862,11 @@ class $$PositionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -60533,6 +62950,9 @@ class $$PositionsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -60611,6 +63031,7 @@ class $$PositionsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> titleEn = const Value.absent(),
                 Value<int> level = const Value.absent(),
@@ -60629,6 +63050,7 @@ class $$PositionsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 titleEn: titleEn,
                 level: level,
@@ -60649,6 +63071,7 @@ class $$PositionsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> titleEn = const Value.absent(),
                 Value<int> level = const Value.absent(),
@@ -60667,6 +63090,7 @@ class $$PositionsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 titleEn: titleEn,
                 level: level,
@@ -60709,6 +63133,7 @@ typedef $$EmployeeContractsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       Value<int> contractType,
@@ -60729,6 +63154,7 @@ typedef $$EmployeeContractsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<int> contractType,
@@ -60778,6 +63204,11 @@ class $$EmployeeContractsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -60876,6 +63307,11 @@ class $$EmployeeContractsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -60958,6 +63394,9 @@ class $$EmployeeContractsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -61049,6 +63488,7 @@ class $$EmployeeContractsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> contractType = const Value.absent(),
@@ -61067,6 +63507,7 @@ class $$EmployeeContractsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 contractType: contractType,
@@ -61087,6 +63528,7 @@ class $$EmployeeContractsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> contractType = const Value.absent(),
@@ -61105,6 +63547,7 @@ class $$EmployeeContractsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 contractType: contractType,
@@ -61154,6 +63597,7 @@ typedef $$SalaryRecordsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       required int month,
@@ -61178,6 +63622,7 @@ typedef $$SalaryRecordsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<int> month,
@@ -61231,6 +63676,11 @@ class $$SalaryRecordsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -61349,6 +63799,11 @@ class $$SalaryRecordsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -61452,6 +63907,9 @@ class $$SalaryRecordsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => column,
@@ -61553,6 +64011,7 @@ class $$SalaryRecordsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> month = const Value.absent(),
@@ -61575,6 +64034,7 @@ class $$SalaryRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 month: month,
@@ -61599,6 +64059,7 @@ class $$SalaryRecordsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 required int month,
@@ -61621,6 +64082,7 @@ class $$SalaryRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 month: month,
@@ -61670,6 +64132,7 @@ typedef $$SalaryAllowanceTypesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> nameEn,
       Value<bool> isPercentage,
@@ -61685,6 +64148,7 @@ typedef $$SalaryAllowanceTypesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> nameEn,
       Value<bool> isPercentage,
@@ -61729,6 +64193,11 @@ class $$SalaryAllowanceTypesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -61802,6 +64271,11 @@ class $$SalaryAllowanceTypesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -61859,6 +64333,9 @@ class $$SalaryAllowanceTypesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -61932,6 +64409,7 @@ class $$SalaryAllowanceTypesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<bool> isPercentage = const Value.absent(),
@@ -61945,6 +64423,7 @@ class $$SalaryAllowanceTypesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 isPercentage: isPercentage,
@@ -61960,6 +64439,7 @@ class $$SalaryAllowanceTypesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
                 Value<bool> isPercentage = const Value.absent(),
@@ -61973,6 +64453,7 @@ class $$SalaryAllowanceTypesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 isPercentage: isPercentage,
@@ -62017,6 +64498,7 @@ typedef $$SalaryDeductionTypesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> nameEn,
       Value<bool> isPercentage,
@@ -62031,6 +64513,7 @@ typedef $$SalaryDeductionTypesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> nameEn,
       Value<bool> isPercentage,
@@ -62074,6 +64557,11 @@ class $$SalaryDeductionTypesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -62142,6 +64630,11 @@ class $$SalaryDeductionTypesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -62194,6 +64687,9 @@ class $$SalaryDeductionTypesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -62264,6 +64760,7 @@ class $$SalaryDeductionTypesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<bool> isPercentage = const Value.absent(),
@@ -62276,6 +64773,7 @@ class $$SalaryDeductionTypesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 isPercentage: isPercentage,
@@ -62290,6 +64788,7 @@ class $$SalaryDeductionTypesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
                 Value<bool> isPercentage = const Value.absent(),
@@ -62302,6 +64801,7 @@ class $$SalaryDeductionTypesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 isPercentage: isPercentage,
@@ -62345,6 +64845,7 @@ typedef $$AttendanceRecordsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       required String date,
@@ -62363,6 +64864,7 @@ typedef $$AttendanceRecordsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<String> date,
@@ -62410,6 +64912,11 @@ class $$AttendanceRecordsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -62498,6 +65005,11 @@ class $$AttendanceRecordsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -62570,6 +65082,9 @@ class $$AttendanceRecordsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -62651,6 +65166,7 @@ class $$AttendanceRecordsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<String> date = const Value.absent(),
@@ -62667,6 +65183,7 @@ class $$AttendanceRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 date: date,
@@ -62685,6 +65202,7 @@ class $$AttendanceRecordsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 required String date,
@@ -62701,6 +65219,7 @@ class $$AttendanceRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 date: date,
@@ -62748,6 +65267,7 @@ typedef $$LeaveRequestsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       Value<int> leaveType,
@@ -62771,6 +65291,7 @@ typedef $$LeaveRequestsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<int> leaveType,
@@ -62823,6 +65344,11 @@ class $$LeaveRequestsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -62936,6 +65462,11 @@ class $$LeaveRequestsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -63034,6 +65565,9 @@ class $$LeaveRequestsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => column,
@@ -63128,6 +65662,7 @@ class $$LeaveRequestsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> leaveType = const Value.absent(),
@@ -63149,6 +65684,7 @@ class $$LeaveRequestsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 leaveType: leaveType,
@@ -63172,6 +65708,7 @@ class $$LeaveRequestsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> leaveType = const Value.absent(),
@@ -63193,6 +65730,7 @@ class $$LeaveRequestsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 leaveType: leaveType,
@@ -63241,6 +65779,7 @@ typedef $$LeaveBalancesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       required int year,
       Value<int> leaveType,
@@ -63256,6 +65795,7 @@ typedef $$LeaveBalancesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<int> year,
       Value<int> leaveType,
@@ -63300,6 +65840,11 @@ class $$LeaveBalancesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -63373,6 +65918,11 @@ class $$LeaveBalancesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -63430,6 +65980,9 @@ class $$LeaveBalancesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -63491,6 +66044,7 @@ class $$LeaveBalancesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<int> year = const Value.absent(),
                 Value<int> leaveType = const Value.absent(),
@@ -63504,6 +66058,7 @@ class $$LeaveBalancesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 year: year,
                 leaveType: leaveType,
@@ -63519,6 +66074,7 @@ class $$LeaveBalancesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 required int year,
                 Value<int> leaveType = const Value.absent(),
@@ -63532,6 +66088,7 @@ class $$LeaveBalancesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 year: year,
                 leaveType: leaveType,
@@ -63572,6 +66129,7 @@ typedef $$EmployeeAdvancesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       Value<double> amount,
@@ -63591,6 +66149,7 @@ typedef $$EmployeeAdvancesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<double> amount,
@@ -63639,6 +66198,11 @@ class $$EmployeeAdvancesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -63732,6 +66296,11 @@ class $$EmployeeAdvancesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -63809,6 +66378,9 @@ class $$EmployeeAdvancesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -63896,6 +66468,7 @@ class $$EmployeeAdvancesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -63913,6 +66486,7 @@ class $$EmployeeAdvancesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 amount: amount,
@@ -63932,6 +66506,7 @@ class $$EmployeeAdvancesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -63949,6 +66524,7 @@ class $$EmployeeAdvancesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 amount: amount,
@@ -63993,6 +66569,7 @@ typedef $$PerformanceEvaluationsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       required String period,
@@ -64021,6 +66598,7 @@ typedef $$PerformanceEvaluationsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<String> period,
@@ -64078,6 +66656,11 @@ class $$PerformanceEvaluationsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -64216,6 +66799,11 @@ class $$PerformanceEvaluationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -64338,6 +66926,9 @@ class $$PerformanceEvaluationsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -64473,6 +67064,7 @@ class $$PerformanceEvaluationsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<String> period = const Value.absent(),
@@ -64499,6 +67091,7 @@ class $$PerformanceEvaluationsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 period: period,
@@ -64527,6 +67120,7 @@ class $$PerformanceEvaluationsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 required String period,
@@ -64553,6 +67147,7 @@ class $$PerformanceEvaluationsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 period: period,
@@ -64610,6 +67205,7 @@ typedef $$TrainingRecordsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       required String trainingName,
@@ -64634,6 +67230,7 @@ typedef $$TrainingRecordsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<String> trainingName,
@@ -64687,6 +67284,11 @@ class $$TrainingRecordsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -64805,6 +67407,11 @@ class $$TrainingRecordsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -64908,6 +67515,9 @@ class $$TrainingRecordsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => column,
@@ -65009,6 +67619,7 @@ class $$TrainingRecordsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<String> trainingName = const Value.absent(),
@@ -65031,6 +67642,7 @@ class $$TrainingRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 trainingName: trainingName,
@@ -65055,6 +67667,7 @@ class $$TrainingRecordsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 required String trainingName,
@@ -65077,6 +67690,7 @@ class $$TrainingRecordsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 trainingName: trainingName,
@@ -65126,6 +67740,7 @@ typedef $$EmployeeAssetsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       required String assetName,
@@ -65149,6 +67764,7 @@ typedef $$EmployeeAssetsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<String> assetName,
@@ -65201,6 +67817,11 @@ class $$EmployeeAssetsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -65314,6 +67935,11 @@ class $$EmployeeAssetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -65412,6 +68038,9 @@ class $$EmployeeAssetsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => column,
@@ -65508,6 +68137,7 @@ class $$EmployeeAssetsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<String> assetName = const Value.absent(),
@@ -65529,6 +68159,7 @@ class $$EmployeeAssetsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 assetName: assetName,
@@ -65552,6 +68183,7 @@ class $$EmployeeAssetsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 required String assetName,
@@ -65573,6 +68205,7 @@ class $$EmployeeAssetsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 assetName: assetName,
@@ -65621,6 +68254,7 @@ typedef $$RewardsPenaltiesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int employeeId,
       Value<String?> employeeName,
       Value<int> type,
@@ -65641,6 +68275,7 @@ typedef $$RewardsPenaltiesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> employeeId,
       Value<String?> employeeName,
       Value<int> type,
@@ -65690,6 +68325,11 @@ class $$RewardsPenaltiesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -65788,6 +68428,11 @@ class $$RewardsPenaltiesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
     builder: (column) => ColumnOrderings(column),
@@ -65870,6 +68515,9 @@ class $$RewardsPenaltiesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get employeeId => $composableBuilder(
     column: $table.employeeId,
@@ -65958,6 +68606,7 @@ class $$RewardsPenaltiesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> employeeId = const Value.absent(),
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> type = const Value.absent(),
@@ -65976,6 +68625,7 @@ class $$RewardsPenaltiesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 type: type,
@@ -65996,6 +68646,7 @@ class $$RewardsPenaltiesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int employeeId,
                 Value<String?> employeeName = const Value.absent(),
                 Value<int> type = const Value.absent(),
@@ -66014,6 +68665,7 @@ class $$RewardsPenaltiesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 employeeId: employeeId,
                 employeeName: employeeName,
                 type: type,
@@ -66059,6 +68711,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> nameEn,
       Value<String?> code,
@@ -66091,6 +68744,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> nameEn,
       Value<String?> code,
@@ -66152,6 +68806,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -66310,6 +68969,11 @@ class $$ClientsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -66453,6 +69117,9 @@ class $$ClientsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -66577,6 +69244,7 @@ class $$ClientsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -66607,6 +69275,7 @@ class $$ClientsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 code: code,
@@ -66639,6 +69308,7 @@ class $$ClientsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -66669,6 +69339,7 @@ class $$ClientsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 code: code,
@@ -66723,6 +69394,7 @@ typedef $$SuppliersTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> nameEn,
       Value<String?> code,
@@ -66753,6 +69425,7 @@ typedef $$SuppliersTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> nameEn,
       Value<String?> code,
@@ -66812,6 +69485,11 @@ class $$SuppliersTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -66960,6 +69638,11 @@ class $$SuppliersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -67093,6 +69776,9 @@ class $$SuppliersTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -67203,6 +69889,7 @@ class $$SuppliersTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -67231,6 +69918,7 @@ class $$SuppliersTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 code: code,
@@ -67261,6 +69949,7 @@ class $$SuppliersTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -67289,6 +69978,7 @@ class $$SuppliersTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 nameEn: nameEn,
                 code: code,
@@ -67341,6 +70031,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> invoiceNumber,
       Value<int?> clientId,
       Value<String?> clientName,
@@ -67373,6 +70064,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> invoiceNumber,
       Value<int?> clientId,
       Value<String?> clientName,
@@ -67434,6 +70126,11 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -67592,6 +70289,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get invoiceNumber => $composableBuilder(
     column: $table.invoiceNumber,
     builder: (column) => ColumnOrderings(column),
@@ -67735,6 +70437,9 @@ class $$InvoicesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get invoiceNumber => $composableBuilder(
     column: $table.invoiceNumber,
     builder: (column) => column,
@@ -67859,6 +70564,7 @@ class $$InvoicesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> invoiceNumber = const Value.absent(),
                 Value<int?> clientId = const Value.absent(),
                 Value<String?> clientName = const Value.absent(),
@@ -67889,6 +70595,7 @@ class $$InvoicesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 invoiceNumber: invoiceNumber,
                 clientId: clientId,
                 clientName: clientName,
@@ -67921,6 +70628,7 @@ class $$InvoicesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> invoiceNumber = const Value.absent(),
                 Value<int?> clientId = const Value.absent(),
                 Value<String?> clientName = const Value.absent(),
@@ -67951,6 +70659,7 @@ class $$InvoicesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 invoiceNumber: invoiceNumber,
                 clientId: clientId,
                 clientName: clientName,
@@ -68005,6 +70714,7 @@ typedef $$ExpensesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> description,
       Value<double> amount,
@@ -68035,6 +70745,7 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> description,
       Value<double> amount,
@@ -68094,6 +70805,11 @@ class $$ExpensesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -68242,6 +70958,11 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -68375,6 +71096,9 @@ class $$ExpensesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -68497,6 +71221,7 @@ class $$ExpensesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -68525,6 +71250,7 @@ class $$ExpensesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 amount: amount,
@@ -68555,6 +71281,7 @@ class $$ExpensesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -68583,6 +71310,7 @@ class $$ExpensesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 amount: amount,
@@ -68635,6 +71363,7 @@ typedef $$RevenuesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String title,
       Value<String?> description,
       Value<double> amount,
@@ -68661,6 +71390,7 @@ typedef $$RevenuesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> title,
       Value<String?> description,
       Value<double> amount,
@@ -68716,6 +71446,11 @@ class $$RevenuesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -68844,6 +71579,11 @@ class $$RevenuesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -68957,6 +71697,9 @@ class $$RevenuesTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -69057,6 +71800,7 @@ class $$RevenuesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -69081,6 +71825,7 @@ class $$RevenuesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 amount: amount,
@@ -69107,6 +71852,7 @@ class $$RevenuesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -69131,6 +71877,7 @@ class $$RevenuesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 title: title,
                 description: description,
                 amount: amount,
@@ -69179,6 +71926,7 @@ typedef $$ChartOfAccountsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String code,
       required String name,
       Value<String?> nameEn,
@@ -69199,6 +71947,7 @@ typedef $$ChartOfAccountsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> code,
       Value<String> name,
       Value<String?> nameEn,
@@ -69248,6 +71997,11 @@ class $$ChartOfAccountsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -69346,6 +72100,11 @@ class $$ChartOfAccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnOrderings(column),
@@ -69428,6 +72187,9 @@ class $$ChartOfAccountsTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
@@ -69516,6 +72278,7 @@ class $$ChartOfAccountsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> code = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
@@ -69534,6 +72297,7 @@ class $$ChartOfAccountsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 code: code,
                 name: name,
                 nameEn: nameEn,
@@ -69554,6 +72318,7 @@ class $$ChartOfAccountsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String code,
                 required String name,
                 Value<String?> nameEn = const Value.absent(),
@@ -69572,6 +72337,7 @@ class $$ChartOfAccountsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 code: code,
                 name: name,
                 nameEn: nameEn,
@@ -69617,6 +72383,7 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> entryNumber,
       required String date,
       required String description,
@@ -69637,6 +72404,7 @@ typedef $$JournalEntriesTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> entryNumber,
       Value<String> date,
       Value<String> description,
@@ -69686,6 +72454,11 @@ class $$JournalEntriesTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -69784,6 +72557,11 @@ class $$JournalEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get entryNumber => $composableBuilder(
     column: $table.entryNumber,
     builder: (column) => ColumnOrderings(column),
@@ -69866,6 +72644,9 @@ class $$JournalEntriesTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<String> get entryNumber => $composableBuilder(
     column: $table.entryNumber,
@@ -69952,6 +72733,7 @@ class $$JournalEntriesTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> entryNumber = const Value.absent(),
                 Value<String> date = const Value.absent(),
                 Value<String> description = const Value.absent(),
@@ -69970,6 +72752,7 @@ class $$JournalEntriesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 entryNumber: entryNumber,
                 date: date,
                 description: description,
@@ -69990,6 +72773,7 @@ class $$JournalEntriesTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> entryNumber = const Value.absent(),
                 required String date,
                 required String description,
@@ -70008,6 +72792,7 @@ class $$JournalEntriesTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 entryNumber: entryNumber,
                 date: date,
                 description: description,
@@ -70053,6 +72838,7 @@ typedef $$BankAccountsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String bankName,
       Value<String?> accountName,
       Value<String?> accountNumber,
@@ -70073,6 +72859,7 @@ typedef $$BankAccountsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> bankName,
       Value<String?> accountName,
       Value<String?> accountNumber,
@@ -70122,6 +72909,11 @@ class $$BankAccountsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -70220,6 +73012,11 @@ class $$BankAccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get bankName => $composableBuilder(
     column: $table.bankName,
     builder: (column) => ColumnOrderings(column),
@@ -70303,6 +73100,9 @@ class $$BankAccountsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get bankName =>
       $composableBuilder(column: $table.bankName, builder: (column) => column);
 
@@ -70382,6 +73182,7 @@ class $$BankAccountsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> bankName = const Value.absent(),
                 Value<String?> accountName = const Value.absent(),
                 Value<String?> accountNumber = const Value.absent(),
@@ -70400,6 +73201,7 @@ class $$BankAccountsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 bankName: bankName,
                 accountName: accountName,
                 accountNumber: accountNumber,
@@ -70420,6 +73222,7 @@ class $$BankAccountsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String bankName,
                 Value<String?> accountName = const Value.absent(),
                 Value<String?> accountNumber = const Value.absent(),
@@ -70438,6 +73241,7 @@ class $$BankAccountsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 bankName: bankName,
                 accountName: accountName,
                 accountNumber: accountNumber,
@@ -70483,6 +73287,7 @@ typedef $$PaymentVouchersTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> voucherNumber,
       required int type,
       required String date,
@@ -70509,6 +73314,7 @@ typedef $$PaymentVouchersTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String?> voucherNumber,
       Value<int> type,
       Value<String> date,
@@ -70564,6 +73370,11 @@ class $$PaymentVouchersTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -70692,6 +73503,11 @@ class $$PaymentVouchersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get voucherNumber => $composableBuilder(
     column: $table.voucherNumber,
     builder: (column) => ColumnOrderings(column),
@@ -70805,6 +73621,9 @@ class $$PaymentVouchersTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get voucherNumber => $composableBuilder(
     column: $table.voucherNumber,
     builder: (column) => column,
@@ -70912,6 +73731,7 @@ class $$PaymentVouchersTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> voucherNumber = const Value.absent(),
                 Value<int> type = const Value.absent(),
                 Value<String> date = const Value.absent(),
@@ -70936,6 +73756,7 @@ class $$PaymentVouchersTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 voucherNumber: voucherNumber,
                 type: type,
                 date: date,
@@ -70962,6 +73783,7 @@ class $$PaymentVouchersTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String?> voucherNumber = const Value.absent(),
                 required int type,
                 required String date,
@@ -70986,6 +73808,7 @@ class $$PaymentVouchersTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 voucherNumber: voucherNumber,
                 type: type,
                 date: date,
@@ -71037,6 +73860,7 @@ typedef $$ChecksTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String checkNumber,
       Value<String?> bankName,
       Value<double> amount,
@@ -71058,6 +73882,7 @@ typedef $$ChecksTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> checkNumber,
       Value<String?> bankName,
       Value<double> amount,
@@ -71108,6 +73933,11 @@ class $$ChecksTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -71211,6 +74041,11 @@ class $$ChecksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get checkNumber => $composableBuilder(
     column: $table.checkNumber,
     builder: (column) => ColumnOrderings(column),
@@ -71299,6 +74134,9 @@ class $$ChecksTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get checkNumber => $composableBuilder(
     column: $table.checkNumber,
     builder: (column) => column,
@@ -71374,6 +74212,7 @@ class $$ChecksTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> checkNumber = const Value.absent(),
                 Value<String?> bankName = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -71393,6 +74232,7 @@ class $$ChecksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 checkNumber: checkNumber,
                 bankName: bankName,
                 amount: amount,
@@ -71414,6 +74254,7 @@ class $$ChecksTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String checkNumber,
                 Value<String?> bankName = const Value.absent(),
                 Value<double> amount = const Value.absent(),
@@ -71433,6 +74274,7 @@ class $$ChecksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 checkNumber: checkNumber,
                 bankName: bankName,
                 amount: amount,
@@ -71476,6 +74318,7 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required String name,
       Value<String?> description,
       Value<String?> code,
@@ -71509,6 +74352,7 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<String> name,
       Value<String?> description,
       Value<String?> code,
@@ -71571,6 +74415,11 @@ class $$ProjectsTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -71734,6 +74583,11 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -71882,6 +74736,9 @@ class $$ProjectsTableAnnotationComposer
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -72003,6 +74860,7 @@ class $$ProjectsTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -72034,6 +74892,7 @@ class $$ProjectsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 description: description,
                 code: code,
@@ -72067,6 +74926,7 @@ class $$ProjectsTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required String name,
                 Value<String?> description = const Value.absent(),
                 Value<String?> code = const Value.absent(),
@@ -72098,6 +74958,7 @@ class $$ProjectsTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 name: name,
                 description: description,
                 code: code,
@@ -72153,6 +75014,7 @@ typedef $$EntityLinksTableCreateCompanionBuilder =
       required int updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       required int sourceType,
       required int sourceId,
       required int targetType,
@@ -72169,6 +75031,7 @@ typedef $$EntityLinksTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<bool> isDeleted,
       Value<String?> createdBy,
+      Value<String?> companyId,
       Value<int> sourceType,
       Value<int> sourceId,
       Value<int> targetType,
@@ -72214,6 +75077,11 @@ class $$EntityLinksTableFilterComposer
 
   ColumnFilters<String> get createdBy => $composableBuilder(
     column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyId => $composableBuilder(
+    column: $table.companyId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -72292,6 +75160,11 @@ class $$EntityLinksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get companyId => $composableBuilder(
+    column: $table.companyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get sourceType => $composableBuilder(
     column: $table.sourceType,
     builder: (column) => ColumnOrderings(column),
@@ -72354,6 +75227,9 @@ class $$EntityLinksTableAnnotationComposer
 
   GeneratedColumn<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get companyId =>
+      $composableBuilder(column: $table.companyId, builder: (column) => column);
 
   GeneratedColumn<int> get sourceType => $composableBuilder(
     column: $table.sourceType,
@@ -72422,6 +75298,7 @@ class $$EntityLinksTableTableManager
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 Value<int> sourceType = const Value.absent(),
                 Value<int> sourceId = const Value.absent(),
                 Value<int> targetType = const Value.absent(),
@@ -72436,6 +75313,7 @@ class $$EntityLinksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 sourceType: sourceType,
                 sourceId: sourceId,
                 targetType: targetType,
@@ -72452,6 +75330,7 @@ class $$EntityLinksTableTableManager
                 required int updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
+                Value<String?> companyId = const Value.absent(),
                 required int sourceType,
                 required int sourceId,
                 required int targetType,
@@ -72466,6 +75345,7 @@ class $$EntityLinksTableTableManager
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 createdBy: createdBy,
+                companyId: companyId,
                 sourceType: sourceType,
                 sourceId: sourceId,
                 targetType: targetType,

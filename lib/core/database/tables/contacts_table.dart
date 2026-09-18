@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Contacts table — stores important contacts and executives.
-class Contacts extends Table with BaseTableMixin {
+class Contacts extends Table with BaseTableMixin, TenantScoped {
   /// Full name
   TextColumn get name => text().withLength(min: 1, max: 150)();
 

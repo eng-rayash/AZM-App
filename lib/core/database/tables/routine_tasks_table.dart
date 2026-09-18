@@ -1,12 +1,13 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Routine Tasks table — stores recurring daily/weekly habits.
 ///
 /// Each row is a routine task definition. Completions are tracked
 /// in the separate [RoutineCompletions] table.
-class RoutineTasks extends Table with BaseTableMixin {
+class RoutineTasks extends Table with BaseTableMixin, TenantScoped {
   /// Task title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 
@@ -35,7 +36,7 @@ class RoutineTasks extends Table with BaseTableMixin {
 }
 
 /// Routine Completions table — tracks which routine tasks were completed on which days.
-class RoutineCompletions extends Table with BaseTableMixin {
+class RoutineCompletions extends Table with BaseTableMixin, TenantScoped {
   /// Foreign key to [RoutineTasks.syncId] (UUID string)
   TextColumn get routineTaskSyncId =>
       text().withLength(min: 36, max: 36)();

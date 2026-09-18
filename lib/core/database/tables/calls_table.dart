@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Calls Table — Phase 4
 /// Records incoming, outgoing, and missed calls.
 @DataClassName('CallItem')
-class Calls extends Table with BaseTableMixin {
+class Calls extends Table with BaseTableMixin, TenantScoped {
   TextColumn get callerName => text()();
   TextColumn get phoneNumber => text().nullable()();
   

@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Appointments table — for personal scheduling, visits, and short meetings.
-class Appointments extends Table with BaseTableMixin {
+class Appointments extends Table with BaseTableMixin, TenantScoped {
   /// Appointment title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

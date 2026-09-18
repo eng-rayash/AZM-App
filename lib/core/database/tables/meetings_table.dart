@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Meeting category enum:
 /// 0 = اجتماع (Meeting) — formal meeting
@@ -12,7 +13,7 @@ import 'base_table.dart';
 ///
 /// Supports all meeting lifecycle states and links to tasks/follow-ups.
 /// RTL-aware: All text fields support Arabic content.
-class Meetings extends Table with BaseTableMixin {
+class Meetings extends Table with BaseTableMixin, TenantScoped {
   /// Meeting title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

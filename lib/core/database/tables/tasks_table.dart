@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Tasks table — stores action items and tasks.
 ///
 /// Can be standalone or linked to a specific meeting.
-class Tasks extends Table with BaseTableMixin {
+class Tasks extends Table with BaseTableMixin, TenantScoped {
   /// Task title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

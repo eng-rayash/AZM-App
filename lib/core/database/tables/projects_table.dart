@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Supported currencies in the system.
 ///
@@ -10,7 +11,7 @@ import 'base_table.dart';
 /// Default: SAR
 
 /// Projects table — work projects linking clients, employees, and finances.
-class Projects extends Table with BaseTableMixin {
+class Projects extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 200)();
   TextColumn get description => text().nullable()();
   TextColumn get code => text().nullable()();

@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Chart of Accounts table — دليل الحسابات.
-class ChartOfAccounts extends Table with BaseTableMixin {
+class ChartOfAccounts extends Table with BaseTableMixin, TenantScoped {
   TextColumn get code => text().withLength(min: 1, max: 20)();
   TextColumn get name => text().withLength(min: 1, max: 150)();
   TextColumn get nameEn => text().nullable()();
@@ -20,7 +21,7 @@ class ChartOfAccounts extends Table with BaseTableMixin {
 }
 
 /// Journal Entries table — القيود اليومية.
-class JournalEntries extends Table with BaseTableMixin {
+class JournalEntries extends Table with BaseTableMixin, TenantScoped {
   TextColumn get entryNumber => text().nullable()();
   TextColumn get date => text()();
   TextColumn get description => text()();
@@ -38,7 +39,7 @@ class JournalEntries extends Table with BaseTableMixin {
 }
 
 /// Bank Accounts table — الحسابات البنكية.
-class BankAccounts extends Table with BaseTableMixin {
+class BankAccounts extends Table with BaseTableMixin, TenantScoped {
   TextColumn get bankName => text().withLength(min: 1, max: 100)();
   TextColumn get accountName => text().nullable()();
   TextColumn get accountNumber => text().nullable()();
@@ -53,7 +54,7 @@ class BankAccounts extends Table with BaseTableMixin {
 }
 
 /// Payment Vouchers table — سندات القبض والصرف.
-class PaymentVouchers extends Table with BaseTableMixin {
+class PaymentVouchers extends Table with BaseTableMixin, TenantScoped {
   TextColumn get voucherNumber => text().nullable()();
   /// type: 0=receipt (سند قبض), 1=payment (سند صرف)
   IntColumn get type => integer()();
@@ -78,7 +79,7 @@ class PaymentVouchers extends Table with BaseTableMixin {
 }
 
 /// Checks table — الشيكات.
-class Checks extends Table with BaseTableMixin {
+class Checks extends Table with BaseTableMixin, TenantScoped {
   TextColumn get checkNumber => text()();
   TextColumn get bankName => text().nullable()();
   RealColumn get amount => real().withDefault(const Constant(0.0))();

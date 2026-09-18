@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Departments table — organizational units within the company.
-class Departments extends Table with BaseTableMixin {
+class Departments extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get description => text().nullable()();
   IntColumn get managerId => integer().nullable()();
@@ -17,7 +18,7 @@ class Departments extends Table with BaseTableMixin {
 }
 
 /// Branches table — physical locations / offices.
-class Branches extends Table with BaseTableMixin {
+class Branches extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get address => text().nullable()();
   TextColumn get city => text().nullable()();
@@ -32,7 +33,7 @@ class Branches extends Table with BaseTableMixin {
 }
 
 /// Positions table — job titles / roles.
-class Positions extends Table with BaseTableMixin {
+class Positions extends Table with BaseTableMixin, TenantScoped {
   TextColumn get title => text().withLength(min: 1, max: 100)();
   TextColumn get titleEn => text().nullable()();
   /// level: 0=executive, 1=senior, 2=mid, 3=junior, 4=intern

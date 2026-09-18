@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Archive table — stores metadata for important documents and records.
-class Archive extends Table with BaseTableMixin {
+class Archive extends Table with BaseTableMixin, TenantScoped {
   /// Document title
   TextColumn get title => text().withLength(min: 1, max: 200)();
 

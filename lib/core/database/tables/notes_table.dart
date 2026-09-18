@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
 import 'base_table.dart';
+import 'tenant_scoped.dart';
 
 /// Notes Table — Phase 4
 /// For quick executive notes and thoughts.
 @DataClassName('NoteItem')
-class Notes extends Table with BaseTableMixin {
+class Notes extends Table with BaseTableMixin, TenantScoped {
   TextColumn get title => text().nullable()();
   TextColumn get content => text()();
   TextColumn get colorCode => text().nullable()();

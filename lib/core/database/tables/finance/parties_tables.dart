@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
 import '../base_table.dart';
+import '../tenant_scoped.dart';
 
 /// Clients table — customers / clients for financial transactions.
 ///
 /// Separate from Contacts (general contacts) — Clients are financial entities.
-class Clients extends Table with BaseTableMixin {
+class Clients extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 150)();
   TextColumn get nameEn => text().nullable()();
   TextColumn get code => text().nullable()();
@@ -34,7 +35,7 @@ class Clients extends Table with BaseTableMixin {
 }
 
 /// Suppliers table — vendors / suppliers.
-class Suppliers extends Table with BaseTableMixin {
+class Suppliers extends Table with BaseTableMixin, TenantScoped {
   TextColumn get name => text().withLength(min: 1, max: 150)();
   TextColumn get nameEn => text().nullable()();
   TextColumn get code => text().nullable()();
