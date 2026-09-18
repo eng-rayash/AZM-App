@@ -29,6 +29,9 @@ class ArchiveRepository {
   /// [localFilePath] passed here is the already-persisted path.
   ///
   /// Returns: Database record ID
+  /// يجلب مستندًا بمعرّفه — تحتاجه شاشة التعديل لتعبئة النموذج.
+  Future<ArchiveData?> getById(int id) => _db.archiveDao.getById(id);
+
   Future<int> createArchiveRecord({
     required String title,
     String? referenceNumber,

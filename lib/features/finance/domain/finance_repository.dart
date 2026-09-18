@@ -522,6 +522,18 @@ class FinanceRepository {
 
   // ── Finance Summary ────────────────────────────────────────────
 
+  /// ملخّص مالي لنطاق تاريخي صريح (`YYYY-MM-DD`).
+  ///
+  /// تحتاجه شاشة التقارير التي كانت تستدعي الـDAO مباشرة بنطاق تختاره.
+  Future<FinanceSummary> getSummaryForRange(String from, String to) async {
+    final map = await _db.financeDao.getFinanceSummary(from, to);
+    return FinanceSummary(
+      totalRevenue: map['revenue'] ?? 0,
+      totalExpenses: map['expenses'] ?? 0,
+      netProfit: map['profit'] ?? 0,
+    );
+  }
+
   Future<FinanceSummary> getSummaryForCurrentMonth() async {
     final now = DateTime.now();
     final from =

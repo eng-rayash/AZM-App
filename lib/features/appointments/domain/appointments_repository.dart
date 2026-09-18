@@ -25,6 +25,9 @@ class AppointmentsRepository {
   }
 
   /// Create a new appointment
+  /// يجلب موعدًا بمعرّفه — تحتاجه شاشة التعديل لتعبئة النموذج.
+  Future<Appointment?> getById(int id) => _db.appointmentsDao.getById(id);
+
   Future<int> createAppointment({
     required String title,
     required DateTime date,

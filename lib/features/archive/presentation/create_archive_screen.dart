@@ -22,7 +22,6 @@ import '../../../shared/widgets/neu_input.dart';
 import '../domain/archive_repository.dart';
 import '../providers/archive_categories_provider.dart';
 import '../../../core/services/document_scanner_service.dart';
-import '../../../core/database/providers/database_providers.dart';
 import '../../../core/security/secure_storage_service.dart';
 
 /// Professional Executive screen for creating a new official Memo.
@@ -50,8 +49,9 @@ class _CreateArchiveScreenState extends ConsumerState<CreateArchiveScreen> {
   }
 
   Future<void> _loadArchiveData() async {
-    final db = ref.read(databaseProvider);
-    final doc = await db.archiveDao.getById(widget.archiveId!);
+    final doc = await ref
+        .read(archiveRepositoryProvider)
+        .getById(widget.archiveId!);
     if (doc != null) {
       setState(() {
         _titleController.text = doc.title;

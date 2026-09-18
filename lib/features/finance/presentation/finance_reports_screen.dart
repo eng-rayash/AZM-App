@@ -1,4 +1,4 @@
-﻿import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +8,6 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../domain/finance_repository.dart';
-import '../../../core/database/providers/database_providers.dart';
 
 /// Finance Reports Screen — comprehensive financial analytics dashboard.
 class FinanceReportsScreen extends ConsumerWidget {
@@ -275,7 +274,8 @@ class FinanceReportsScreen extends ConsumerWidget {
 
   Widget _buildManualSummary(WidgetRef ref, String from, String to, bool isDark) {
     return FutureBuilder<Map<String, double>>(
-      future: ref.read(databaseProvider).financeDao.getFinanceSummary(from, to),
+      future: ref
+          .read(_financeSummaryProvider(_DateRange(from: from, to: to)).future),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return _buildKpiRow(snap.data!, isDark);
@@ -350,7 +350,13 @@ class _DateRange {
 }
 
 final _financeSummaryProvider =
-    FutureProvider.family<Map<String, double>, _DateRange>((ref, range) {
-  final db = ref.watch(databaseProvider);
-  return db.financeDao.getFinanceSummary(range.from, range.to);
+    FutureProvider.family<Map<String, double>, _DateRange>((ref, range) async {
+  final s = await ref
+      .watch(financeRepositoryProvider)
+      .getSummaryForRange(range.from, range.to);
+  return {
+    'revenue': s.totalRevenue,
+    'expenses': s.totalExpenses,
+    'profit': s.netProfit,
+  };
 });

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/database/providers/database_providers.dart';
 import '../../../core/theme/neu_decorations.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/router/route_names.dart';
@@ -735,23 +734,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 backgroundColor: NeuColors.danger,
               ),
               onPressed: () async {
-                final db = ref.read(databaseProvider);
-                await db.transaction(() async {
-                  await db.delete(db.users).go();
-                  await db.delete(db.meetings).go();
-                  await db.delete(db.tasks).go();
-                  await db.delete(db.followUps).go();
-                  await db.delete(db.directives).go();
-                  await db.delete(db.contacts).go();
-                  await db.delete(db.appointments).go();
-                  await db.delete(db.archive).go();
-                  await db.delete(db.securityLogs).go();
-                  await db.delete(db.appSettings).go();
-                  await db.delete(db.calls).go();
-                  await db.delete(db.visitors).go();
-                  await db.delete(db.notes).go();
-                  await db.delete(db.movements).go();
-                });
+                await ref.read(backupServiceProvider).wipeAllData();
                 await SecureStorageService.instance.deleteAll();
                 if (ctx.mounted) Navigator.pop(ctx);
                 if (context.mounted) {

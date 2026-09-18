@@ -10,7 +10,6 @@ import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../domain/appointments_repository.dart';
-import '../../../core/database/providers/database_providers.dart';
 
 /// Screen for creating or editing an appointment
 class CreateAppointmentScreen extends ConsumerStatefulWidget {
@@ -42,8 +41,9 @@ class _CreateAppointmentScreenState extends ConsumerState<CreateAppointmentScree
   }
 
   Future<void> _loadAppointmentData() async {
-    final db = ref.read(databaseProvider);
-    final appt = await db.appointmentsDao.getById(widget.appointmentId!);
+    final appt = await ref
+        .read(appointmentsRepositoryProvider)
+        .getById(widget.appointmentId!);
     if (appt != null) {
       setState(() {
         _titleController.text = appt.title;

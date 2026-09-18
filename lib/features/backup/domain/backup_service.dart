@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/demo_data_seeder.dart';
+import '../../../core/constants/enums.dart';
 import '../../../core/security/security_logger.dart';
 import 'restore_result.dart';
 
@@ -48,6 +49,30 @@ class BackupService {
       await _logger.logBackupRestored();
     }
     return success;
+  }
+
+  /// يحذف كل بيانات التطبيق من القاعدة المحلية.
+  ///
+  /// يمرّ على [GeneratedDatabase.allTables] بدل قائمة مكتوبة يدويًا:
+  /// النسخة السابقة كانت تعدّد ١٤ جدولًا من أصل ٤٨، فتترك الموظفين
+  /// والرواتب والفواتير والمشاريع خلفها بينما تخبر المستخدم أن كل
+  /// بياناته حُذفت. المرور على المخطط يجعل الجداول الجديدة مشمولةً
+  /// تلقائيًا فلا تعود القائمة تتخلّف.
+  ///
+  /// يعيد عدد الجداول التي أُفرغت.
+  Future<int> wipeAllData() async {
+    var cleared = 0;
+    await _db.transaction(() async {
+      for (final table in _db.allTables) {
+        await _db.delete(table).go();
+        cleared++;
+      }
+    });
+    await _logger.log(
+      SecurityAction.deleteRecord,
+      details: 'حذف شامل لبيانات التطبيق ($cleared جدولًا)',
+    );
+    return cleared;
   }
 
   /// Get backup file size info
