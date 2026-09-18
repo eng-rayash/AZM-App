@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +13,7 @@ import '../domain/finance_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/constants/app_currencies.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/constants/enums.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Invoice Detail Screen

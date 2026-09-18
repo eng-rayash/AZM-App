@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +11,7 @@ import '../../../core/router/route_names.dart';
 import '../../../core/constants/app_currencies.dart';
 import '../../../core/database/app_database.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/constants/enums.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Project Detail Screen

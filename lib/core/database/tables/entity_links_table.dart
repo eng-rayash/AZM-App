@@ -1,26 +1,10 @@
 import 'package:drift/drift.dart';
 import 'base_table.dart';
 
-/// Entity types for universal linking.
+/// أنواع الكيانات في الربط الشامل معرَّفة في `EntityLinkType`
+/// داخل `core/constants/enums.dart` — وهي المرجع الوحيد.
 ///
-/// Used by EntityLinks, FollowUps.linkedEntityType, etc.
-/// 0 = none
-/// 1 = meeting       (Meetings)
-/// 2 = followup      (FollowUps)
-/// 3 = client        (Clients)
-/// 4 = project       (Projects)
-/// 5 = employee      (Employees)
-/// 6 = invoice       (Invoices)
-/// 7 = expense       (Expenses)
-/// 8 = revenue       (Revenues)
-/// 9 = contract      (EmployeeContracts)
-/// 10 = directive    (Directives)
-/// 11 = contact      (Contacts)
-/// 12 = supplier     (Suppliers)
-/// 13 = document     (Archive)
-/// 14 = appointment  (Appointments)
-/// 15 = note         (Notes)
-/// 16 = other
+/// كان السرد هنا نسخةً ثانية من الترقيم تتخلّف عن التعداد.
 
 /// Universal Entity Links table.
 ///

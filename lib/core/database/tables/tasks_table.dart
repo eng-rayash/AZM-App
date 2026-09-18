@@ -21,7 +21,7 @@ class Tasks extends Table with BaseTableMixin {
   /// Priority level (critical=0, high=1, medium=2, low=3)
   IntColumn get priority => integer().withDefault(const Constant(2))();
 
-  /// Task status using UnifiedStatus (newItem=0, inProgress=1, completed=3, overdue=4)
+  /// الحالة — القيَم في `UnifiedStatus`.
   IntColumn get status => integer().withDefault(const Constant(0))();
 
   /// Optional: ID of the meeting this task originated from

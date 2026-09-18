@@ -1,4 +1,4 @@
-/// Core Constants & Enums for the Mudiri Application
+/// Core Constants & Enums for AZM
 ///
 /// Unified status and priority systems used across all features.
 library;
@@ -31,7 +31,11 @@ enum MeetingStatus {
   final String arabicLabel;
 
   static MeetingStatus fromValue(int value) =>
-      MeetingStatus.values.firstWhere((e) => e.value == value);
+      MeetingStatus.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => MeetingStatus.scheduled,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -66,7 +70,11 @@ enum MeetingType {
   final String arabicLabel;
 
   static MeetingType fromValue(int value) =>
-      MeetingType.values.firstWhere((e) => e.value == value);
+      MeetingType.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => MeetingType.general,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -101,7 +109,11 @@ enum UnifiedStatus {
   final String arabicLabel;
 
   static UnifiedStatus fromValue(int value) =>
-      UnifiedStatus.values.firstWhere((e) => e.value == value);
+      UnifiedStatus.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => UnifiedStatus.newItem,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -127,7 +139,11 @@ enum Priority {
   final String arabicLabel;
 
   static Priority fromValue(int value) =>
-      Priority.values.firstWhere((e) => e.value == value);
+      Priority.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => Priority.medium,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -156,7 +172,11 @@ enum SecurityAction {
   final String arabicLabel;
 
   static SecurityAction fromValue(int value) =>
-      SecurityAction.values.firstWhere((e) => e.value == value);
+      SecurityAction.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => SecurityAction.login,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -179,7 +199,11 @@ enum AuthMethod {
   final String arabicLabel;
 
   static AuthMethod fromValue(int value) =>
-      AuthMethod.values.firstWhere((e) => e.value == value);
+      AuthMethod.values.firstWhere((e) => e.value == value,
+      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+      orElse: () => AuthMethod.pin,
+      );
 }
 
 // ─────────────────────────────────────────────
@@ -603,6 +627,47 @@ enum AppModule {
       return null;
     }
   }
+}
+
+// ─────────────────────────────────────────────
+// Entity Link Type — نوع الكيان في الربط الشامل
+// ─────────────────────────────────────────────
+
+/// نوع الكيان في جدول [EntityLinks] وفي `FollowUps.linkedEntityType`.
+///
+/// هذا **المصدر الوحيد** لترقيم أنواع الكيانات. كان يسكن داخل ملف widget،
+/// وهو تعداد مجال لا عرض.
+///
+/// ⚠ لا يُخلط مع [FollowUpEntityType]: ذاك ترقيم قديم مختلف يخصّ العمود
+/// `FollowUps.entityType` وحده، وفيه `meeting = 0` بينما هنا `meeting = 1`.
+/// العمودان يحملان معنيين مختلفين ولا يُترجم أحدهما إلى الآخر ضمنيًا.
+enum EntityLinkType {
+  none(0, 'غير محدد'),
+  meeting(1, 'اجتماع'),
+  followup(2, 'متابعة'),
+  client(3, 'عميل'),
+  project(4, 'مشروع'),
+  employee(5, 'موظف'),
+  invoice(6, 'فاتورة'),
+  expense(7, 'مصروف'),
+  revenue(8, 'إيراد'),
+  contract(9, 'عقد'),
+  directive(10, 'توجيه'),
+  contact(11, 'جهة اتصال'),
+  supplier(12, 'مورد'),
+  document(13, 'مستند'),
+  appointment(14, 'موعد'),
+  note(15, 'ملاحظة'),
+  other(16, 'أخرى');
+
+  const EntityLinkType(this.value, this.label);
+  final int value;
+  final String label;
+
+  static EntityLinkType fromValue(int v) => EntityLinkType.values.firstWhere(
+        (e) => e.value == v,
+        orElse: () => EntityLinkType.other,
+      );
 }
 
 // ─────────────────────────────────────────────

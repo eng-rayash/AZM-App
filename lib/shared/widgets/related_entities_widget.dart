@@ -1,9 +1,10 @@
-﻿import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/constants/enums.dart';
 import '../../core/database/app_database.dart';
 import '../../core/database/providers/database_providers.dart';
 import '../../core/router/route_names.dart';
@@ -11,37 +12,82 @@ import '../../core/theme/app_typography.dart';
 import '../../core/theme/neu_colors.dart';
 import '../widgets/neu_card.dart';
 
-/// ─────────────────────────────────────────────────────────────────────────────
-/// Entity Type Definitions — mirrors entity_links_table.dart constants
-/// ─────────────────────────────────────────────────────────────────────────────
-enum EntityLinkType {
-  none(0, 'غير محدد', Icons.link_off_rounded, Color(0xFF636E72)),
-  meeting(1, 'اجتماع', Icons.groups_rounded, NeuColors.moduleDelivery),
-  followup(2, 'متابعة', Icons.replay_rounded, NeuColors.primary),
-  client(3, 'عميل', Icons.supervisor_account_rounded, NeuColors.success),
-  project(4, 'مشروع', Icons.work_rounded, Color(0xFFE17055)),
-  employee(5, 'موظف', Icons.badge_rounded, NeuColors.info),
-  invoice(6, 'فاتورة', Icons.receipt_long_rounded, NeuColors.success),
-  expense(7, 'مصروف', Icons.money_off_rounded, Color(0xFFD63031)),
-  revenue(8, 'إيراد', Icons.attach_money_rounded, NeuColors.success),
-  contract(9, 'عقد', Icons.description_rounded, Color(0xFFFDCB6E)),
-  directive(10, 'توجيه', Icons.policy_rounded, NeuColors.moduleDelivery),
-  contact(11, 'جهة اتصال', Icons.contact_phone_rounded, Color(0xFF2D3436)),
-  supplier(12, 'مورد', Icons.local_shipping_rounded, Color(0xFFE17055)),
-  document(13, 'مستند', Icons.folder_rounded, Color(0xFFB2BEC3)),
-  appointment(14, 'موعد', Icons.event_rounded, NeuColors.info),
-  note(15, 'ملاحظة', Icons.sticky_note_2_rounded, Color(0xFFFDCB6E)),
-  other(16, 'أخرى', Icons.category_rounded, Color(0xFF636E72));
+// تعريف [EntityLinkType] انتقل إلى `core/constants/enums.dart`:
+// تعداد مجال لا عرض، ومكانه مع بقية تعدادات النظام لا داخل widget.
+//
+// ما بقي هنا هو مظهره وحده — الأيقونة واللون شأن عرض، ولو عاشا في
+// التعداد لجرّا طبقة الثوابت إلى الاعتماد على طبقة الثيم.
 
-  const EntityLinkType(this.value, this.label, this.icon, this.color);
-  final int value;
-  final String label;
-  final IconData icon;
-  final Color color;
+/// مظهر نوع الكيان — أيقونته ولونه في الواجهة.
+extension EntityLinkTypeVisuals on EntityLinkType {
+  IconData get icon {
+    switch (this) {
+      case EntityLinkType.none:
+        return Icons.link_off_rounded;
+      case EntityLinkType.meeting:
+        return Icons.groups_rounded;
+      case EntityLinkType.followup:
+        return Icons.replay_rounded;
+      case EntityLinkType.client:
+        return Icons.supervisor_account_rounded;
+      case EntityLinkType.project:
+        return Icons.work_rounded;
+      case EntityLinkType.employee:
+        return Icons.badge_rounded;
+      case EntityLinkType.invoice:
+        return Icons.receipt_long_rounded;
+      case EntityLinkType.expense:
+        return Icons.money_off_rounded;
+      case EntityLinkType.revenue:
+        return Icons.attach_money_rounded;
+      case EntityLinkType.contract:
+        return Icons.description_rounded;
+      case EntityLinkType.directive:
+        return Icons.policy_rounded;
+      case EntityLinkType.contact:
+        return Icons.contact_phone_rounded;
+      case EntityLinkType.supplier:
+        return Icons.local_shipping_rounded;
+      case EntityLinkType.document:
+        return Icons.folder_rounded;
+      case EntityLinkType.appointment:
+        return Icons.event_rounded;
+      case EntityLinkType.note:
+        return Icons.sticky_note_2_rounded;
+      case EntityLinkType.other:
+        return Icons.category_rounded;
+    }
+  }
 
-  static EntityLinkType fromValue(int v) =>
-      EntityLinkType.values.firstWhere((e) => e.value == v,
-          orElse: () => EntityLinkType.other);
+  /// اللون يتبع معنى الكيان: المال الداخل أخضر، والخارج أحمر، والناس
+  /// بلون العلامة — لا لونًا عشوائيًا لكل نوع.
+  Color get color {
+    switch (this) {
+      case EntityLinkType.revenue:
+      case EntityLinkType.invoice:
+        return NeuColors.moduleIncome;
+      case EntityLinkType.expense:
+        return NeuColors.moduleOutgoing;
+      case EntityLinkType.client:
+      case EntityLinkType.employee:
+      case EntityLinkType.contact:
+      case EntityLinkType.supplier:
+        return NeuColors.modulePeople;
+      case EntityLinkType.project:
+      case EntityLinkType.followup:
+      case EntityLinkType.meeting:
+      case EntityLinkType.appointment:
+        return NeuColors.moduleDelivery;
+      case EntityLinkType.contract:
+      case EntityLinkType.directive:
+      case EntityLinkType.document:
+      case EntityLinkType.note:
+        return NeuColors.moduleStructure;
+      case EntityLinkType.none:
+      case EntityLinkType.other:
+        return NeuColors.textHint;
+    }
+  }
 }
 
 /// ─────────────────────────────────────────────────────────────────────────────

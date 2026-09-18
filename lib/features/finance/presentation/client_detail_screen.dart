@@ -11,6 +11,7 @@ import '../../../shared/widgets/related_entities_widget.dart';
 import '../domain/finance_repository.dart';
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/constants/enums.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Detail Screen
