@@ -1,0 +1,350 @@
+// AZM — PostgreSQL Schema
+//
+// مبدأ حاكم: **كل صفّ أعمال يعرف شركته**. العمود `companyId` إلزامي
+// بمفتاح أجنبي على كل جدول أعمال، بخلاف المخطط المحلي حيث هو قابل
+// للإفراغ. هنا يقع الفرض الحقيقي: قيد في قاعدة على جهاز المستخدم ليس
+// حماية، وهذا هو المكان الذي لا يملك المستخدم تعطيله.
+//
+// كل جدول يحمل الحقول التي يحتاجها محرّك المزامنة:
+//   syncId     معرّف مشترك بين الجهاز والخادم — عليه يقع الدمج
+//   createdAt  updatedAt   لكشف التعارض
+//   deletedAt  حذف ناعم: الحذف حدث يُزامَن لا غياب صفّ
+//   version    عدّاد تفاؤلي يمنع الكتابة فوق تعديل أحدث
+//
+// هذا أوّل قصّ من المخطط المحلي (٤٨ جدولًا). الكيانات المنقولة هنا هي
+// ما يثبت العزل والمصادقة طرفًا لطرف؛ والبقية تتبع النمط نفسه.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════════════════════
+// المستأجر والهوية
+// ═══════════════════════════════════════════════════════════
+
+/// الشركة — جذر العزل. كل شيء آخر يُنسب إليها.
+model Organization {
+  id            String   @id @default(uuid())
+  syncId        String   @unique @map("sync_id")
+  companyCode   String   @unique @map("company_code")
+  name          String
+  workspaceSlug String   @unique @map("workspace_slug")
+
+  planType           Int       @default(0) @map("plan_type")
+  subscriptionStatus Int       @default(0) @map("subscription_status")
+  trialEndsAt        DateTime? @map("trial_ends_at")
+
+  country  String?
+  currency String? @default("SAR")
+  industry String?
+  timezone String  @default("Asia/Riyadh")
+  language String  @default("ar")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  memberships Membership[]
+  meetings    Meeting[]
+  followUps   FollowUp[]
+  clients     Client[]
+  invoices    Invoice[]
+  employees   Employee[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+/// المستخدم — عالمي لا يخصّ شركة.
+///
+/// لا يحمل `companyId`: المستخدم الواحد قد ينتمي إلى أكثر من شركة،
+/// وربطه بواحدة يمنع ذلك. علاقته بالشركات في [Membership].
+model User {
+  id           String  @id @default(uuid())
+  syncId       String  @unique @map("sync_id")
+  email        String  @unique
+  passwordHash String  @map("password_hash")
+  displayName  String  @map("display_name")
+  phone        String?
+  avatarUrl    String? @map("avatar_url")
+
+  language String @default("ar")
+  timezone String @default("Asia/Riyadh")
+
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  lastLoginAt     DateTime? @map("last_login_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  memberships Membership[]
+  auditLogs   AuditLog[]
+
+  @@map("users")
+}
+
+/// عضوية مستخدم في شركة — هنا يعيش الدور.
+///
+/// الدور خاصية العلاقة لا خاصية المستخدم: الشخص نفسه قد يكون مالكًا
+/// في شركة وموظفًا في أخرى.
+model Membership {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// 0=owner · 1=superAdmin · 2=admin · 3=executive · 4=hrManager
+  /// 5=financeManager · 6=deptManager · 7=teamLeader · 8=employee · 9=guest
+  role Int @default(8)
+
+  /// صلاحيات دقيقة تتجاوز الدور عند الحاجة
+  permissions Json?
+
+  isActive Boolean   @default(true) @map("is_active")
+  joinedAt DateTime? @map("joined_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, role])
+  @@map("memberships")
+}
+
+// ═══════════════════════════════════════════════════════════
+// جداول الأعمال — كلها مُقيَّدة بالشركة
+// ═══════════════════════════════════════════════════════════
+
+model Meeting {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  title           String
+  meetingCategory Int     @default(0) @map("meeting_category")
+  meetingType     Int     @default(0) @map("meeting_type")
+  date            String
+  time            String
+  endTime         String? @map("end_time")
+  location        String?
+  objective       String?
+
+  agenda    Json?
+  decisions Json?
+  outcomes  Json?
+  attendees Json?
+
+  status   Int @default(0)
+  priority Int @default(2)
+
+  createdBy String?   @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1)
+
+  followUps FollowUp[]
+
+  @@index([companyId, updatedAt])
+  @@index([companyId, date])
+  @@map("meetings")
+}
+
+model FollowUp {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  title        String
+  notes        String?
+  targetDate   String? @map("target_date")
+  followupType Int     @default(0) @map("followup_type")
+
+  /// نوع الكيان المرتبط — قيَمه في EntityLinkType على العميل
+  linkedEntityType  Int?    @map("linked_entity_type")
+  linkedEntityId    String? @map("linked_entity_id")
+  linkedEntityLabel String? @map("linked_entity_label")
+
+  meetingId String?  @map("meeting_id")
+  meeting   Meeting? @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+
+  priority   Int     @default(2)
+  status     Int     @default(0)
+  assignedTo String? @map("assigned_to")
+
+  completedAt DateTime? @map("completed_at")
+  reminderAt  DateTime? @map("reminder_at")
+
+  createdBy String?   @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1)
+
+  @@index([companyId, updatedAt])
+  @@index([companyId, status])
+  @@map("follow_ups")
+}
+
+model Client {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  name String
+
+  /// الاسم بعد التطبيع العربي — عليه يقع بحث حلّال الكيانات.
+  ///
+  /// بدونه لا يطابق «احمد» اسم «أحمد»، ولا «شركه» اسم «شركة».
+  /// البحث بـLIKE على الاسم الخام يفشل على العربية فشلًا صامتًا.
+  nameNormalized String @map("name_normalized")
+
+  phone   String?
+  email   String?
+  address String?
+  city    String?
+  taxNumber String? @map("tax_number")
+
+  currentBalance Decimal @default(0) @map("current_balance") @db.Decimal(14, 2)
+  isActive       Boolean @default(true) @map("is_active")
+
+  createdBy String?   @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1)
+
+  invoices Invoice[]
+
+  @@index([companyId, updatedAt])
+  @@index([companyId, nameNormalized])
+  @@map("clients")
+}
+
+model Invoice {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  invoiceNumber String  @map("invoice_number")
+  clientId      String? @map("client_id")
+  client        Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  issueDate String  @map("issue_date")
+  dueDate   String? @map("due_date")
+
+  items Json?
+
+  /// المبالغ Decimal لا Float: الفاصلة العائمة تفقد القروش في الجمع.
+  subtotal        Decimal @default(0) @db.Decimal(14, 2)
+  discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(14, 2)
+  taxPercent      Decimal @default(0) @map("tax_percent") @db.Decimal(5, 2)
+  taxAmount       Decimal @default(0) @map("tax_amount") @db.Decimal(14, 2)
+  total           Decimal @default(0) @db.Decimal(14, 2)
+  paidAmount      Decimal @default(0) @map("paid_amount") @db.Decimal(14, 2)
+  remainingAmount Decimal @default(0) @map("remaining_amount") @db.Decimal(14, 2)
+
+  currency String @default("SAR")
+  status   Int    @default(0)
+
+  createdBy String?   @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1)
+
+  @@unique([companyId, invoiceNumber])
+  @@index([companyId, updatedAt])
+  @@index([companyId, status])
+  @@map("invoices")
+}
+
+model Employee {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  employeeCode   String? @map("employee_code")
+  name           String
+  nameNormalized String  @map("name_normalized")
+
+  phone String?
+  email String?
+
+  departmentName String? @map("department_name")
+  positionName   String? @map("position_name")
+  hireDate       String? @map("hire_date")
+
+  basicSalary Decimal @default(0) @map("basic_salary") @db.Decimal(14, 2)
+  status      Int     @default(0)
+
+  createdBy String?   @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1)
+
+  @@unique([companyId, employeeCode])
+  @@index([companyId, updatedAt])
+  @@index([companyId, nameNormalized])
+  @@map("employees")
+}
+
+// ═══════════════════════════════════════════════════════════
+// التدقيق
+// ═══════════════════════════════════════════════════════════
+
+/// أثر كل إجراء — من فعل ماذا، متى، وبأي سياق.
+///
+/// لا يُحذف ولا يُعدَّل: السجلّ الذي يمكن تعديله لا يصلح للتدقيق.
+model AuditLog {
+  id     String @id @default(uuid())
+  syncId String @unique @map("sync_id")
+
+  companyId    String       @map("company_id")
+  organization Organization @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  actorId String? @map("actor_id")
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  /// نمط `<كيان>.<فعل>` — نفس النمط المستخدَم على العميل
+  action      String
+  entityType  String? @map("entity_type")
+  entityId    String? @map("entity_id")
+  description String?
+
+  oldValue Json? @map("old_value")
+  newValue Json? @map("new_value")
+
+  ipAddress String? @map("ip_address")
+  platform  String?
+
+  /// 0=info · 1=warning · 2=critical
+  severity Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([companyId, createdAt])
+  @@index([companyId, action])
+  @@map("audit_logs")
+}
