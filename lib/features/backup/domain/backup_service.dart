@@ -6,6 +6,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/database/demo_data_seeder.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/security/security_logger.dart';
+import '../../../core/services/audit_service.dart';
 import 'restore_result.dart';
 
 // Native-only imports — accessed only on non-web platforms
@@ -19,13 +20,22 @@ import 'backup_service_native.dart'
 class BackupService {
   final SecurityLogger _logger;
   final AppDatabase _db;
+  final AuditService? _audit;
 
-  BackupService(this._logger, this._db);
+  BackupService(this._logger, this._db, [this._audit]);
 
   /// يصدّر القاعدة الحالية كملف نسخة احتياطية ويعرض ورقة المشاركة.
   Future<bool> exportBackup() async {
     if (kIsWeb) return false;
-    return exportNative(_logger, _db);
+    final ok = await exportNative(_logger, _db);
+    if (ok) {
+      await _audit?.log(
+        action: 'data.exported',
+        description: 'تصدير نسخة احتياطية كاملة',
+        severity: AuditSeverity.warning,
+      );
+    }
+    return ok;
   }
 
   /// يستعيد سجلات من ملف نسخة احتياطية بالدمج.
@@ -38,7 +48,19 @@ class BackupService {
         'النسخ الاحتياطي غير متاح في نسخة الويب. استخدم تطبيق الجوال.',
       );
     }
-    return restoreNative(_logger, _db);
+    final result = await restoreNative(_logger, _db);
+    if (result.isSuccess) {
+      await _audit?.log(
+        action: 'data.restored',
+        description: 'استعادة من نسخة احتياطية',
+        newValue: {
+          'rowsInserted': result.insertedRows,
+          'tablesMerged': result.mergedTables,
+        },
+        severity: AuditSeverity.warning,
+      );
+    }
+    return result;
   }
 
   /// Load realistic executive demo data
@@ -72,6 +94,12 @@ class BackupService {
       SecurityAction.deleteRecord,
       details: 'حذف شامل لبيانات التطبيق ($cleared جدولًا)',
     );
+    await _audit?.log(
+      action: 'data.wiped',
+      description: 'حذف شامل لبيانات التطبيق',
+      newValue: {'tablesCleared': cleared},
+      severity: AuditSeverity.critical,
+    );
     return cleared;
   }
 
@@ -85,5 +113,5 @@ class BackupService {
 final backupServiceProvider = Provider<BackupService>((ref) {
   final db = ref.watch(databaseProvider);
   final logger = SecurityLogger(db.securityLogsDao);
-  return BackupService(logger, db);
+  return BackupService(logger, db, ref.watch(auditServiceProvider));
 });

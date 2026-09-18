@@ -5,12 +5,16 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/database/app_database.dart';
 import '../../../core/database/providers/database_providers.dart';
+import '../../../core/services/audit_service.dart';
 
 /// HRM Repository — all employee & HR business logic.
 class HrmRepository {
-  HrmRepository(this._db);
+  HrmRepository(this._db, [this._audit]);
 
   final AppDatabase _db;
+
+  /// اختياري حتى تبقى الاختبارات قادرة على بناء المستودع بلا سياق.
+  final AuditService? _audit;
   static const _uuid = Uuid();
 
   // ── Employees ──────────────────────────────────────────────────
@@ -319,15 +323,28 @@ class HrmRepository {
     required int newStatus,
     String? approverName,
     int? approverId,
-  }) =>
-      _db.hrmDao.updateLeave(
-        leave.toCompanion(true).copyWith(
-          status: drift.Value(newStatus),
-          approvedById: drift.Value(approverId),
-          approvedByName: drift.Value(approverName),
-          updatedAt: drift.Value(DateTime.now().millisecondsSinceEpoch),
-        ),
-      );
+  }) async {
+    final ok = await _db.hrmDao.updateLeave(
+      leave.toCompanion(true).copyWith(
+        status: drift.Value(newStatus),
+        approvedById: drift.Value(approverId),
+        approvedByName: drift.Value(approverName),
+        updatedAt: drift.Value(DateTime.now().millisecondsSinceEpoch),
+      ),
+    );
+
+    // قرار يمسّ رصيد الموظف وأجره — يجب أن يُعرف من اتّخذه
+    await _audit?.log(
+      action: newStatus == 1 ? 'leave.approved' : 'leave.rejected',
+      entityType: 'leave_request',
+      entitySyncId: leave.syncId,
+      description: '${leave.employeeName ?? 'موظف'} — ${leave.days} يوم',
+      oldValue: {'status': leave.status},
+      newValue: {'status': newStatus, 'approvedBy': approverName},
+      severity: AuditSeverity.warning,
+    );
+    return ok;
+  }
 
   // ── Advances ───────────────────────────────────────────────────
 
@@ -451,8 +468,8 @@ class HrmRepository {
     String? employeeName,
     double? amount,
     String? notes,
-  }) =>
-      _db.hrmDao.insertRewardPenalty(
+  }) async {
+    final id = await _db.hrmDao.insertRewardPenalty(
         RewardsPenaltiesCompanion.insert(
           syncId: _uuid.v4(),
           employeeId: employeeId,
@@ -466,6 +483,17 @@ class HrmRepository {
           updatedAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+
+    // الجزاء يمسّ سجلّ الموظف وقد يُخصم من أجره
+    await _audit?.log(
+      action: type == 0 ? 'reward.created' : 'penalty.created',
+      entityType: 'reward_penalty',
+      description: '${employeeName ?? 'موظف'} — $reason',
+      newValue: {'type': type, 'amount': amount, 'reason': reason},
+      severity: type == 1 ? AuditSeverity.warning : AuditSeverity.info,
+    );
+    return id;
+  }
 
   // ── Stats for Dashboard ────────────────────────────────────────
 
@@ -483,7 +511,7 @@ class HrmRepository {
 /// Provider for HrmRepository
 final hrmRepositoryProvider = Provider<HrmRepository>((ref) {
   final db = ref.watch(databaseProvider);
-  return HrmRepository(db);
+  return HrmRepository(db, ref.watch(auditServiceProvider));
 });
 
 // ── Stream Providers ───────────────────────────────────────────────

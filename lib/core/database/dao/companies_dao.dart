@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
 
 import '../app_database.dart';
 import '../tables/tenant/companies_table.dart';
@@ -231,6 +232,13 @@ class CompaniesDao extends DatabaseAccessor<AppDatabase>
           .get();
 
   /// Log a user action (convenience helper)
+  static const _uuid = Uuid();
+
+  /// يسجّل إجراءً في سجلّ التدقيق.
+  ///
+  /// كان `syncId` هنا يُبنى من طابع زمني بستّ عشرة خانة، والعمود يشترط
+  /// ٣٦ محرفًا بالضبط — فكانت الدالة ترمي `InvalidDataException` عند أي
+  /// استدعاء. لم يظهر العطب لأنها لم تُستدعَ قط.
   Future<void> logAction({
     required String actorSyncId,
     required String companySyncId,
@@ -246,7 +254,7 @@ class CompaniesDao extends DatabaseAccessor<AppDatabase>
   }) =>
       insertAuditLog(
         AuditLogsCompanion(
-          syncId: Value(DateTime.now().microsecondsSinceEpoch.toString()),
+          syncId: Value(_uuid.v4()),
           createdAt: Value(DateTime.now().millisecondsSinceEpoch),
           updatedAt: Value(DateTime.now().millisecondsSinceEpoch),
           isDeleted: const Value(false),

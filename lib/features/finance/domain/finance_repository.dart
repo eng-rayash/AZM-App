@@ -5,12 +5,17 @@ import 'package:uuid/uuid.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../../../core/constants/app_currencies.dart';
+import '../../../core/services/audit_service.dart';
 
 /// Finance Repository — all financial business logic.
 class FinanceRepository {
-  FinanceRepository(this._db);
+  FinanceRepository(this._db, [this._audit]);
 
   final AppDatabase _db;
+
+  /// اختياري حتى تبقى الاختبارات قادرة على بناء المستودع بلا سياق.
+  final AuditService? _audit;
+
   static const _uuid = Uuid();
 
   // ── Clients ────────────────────────────────────────────────────
@@ -140,8 +145,8 @@ class FinanceRepository {
     String? paymentTerms,
     String? notes,
     String? footer,
-  }) =>
-      _db.financeDao.insertInvoice(
+  }) async {
+    final id = await _db.financeDao.insertInvoice(
         InvoicesCompanion.insert(
           syncId: _uuid.v4(),
           invoiceNumber: drift.Value(invoiceNumber),
@@ -168,6 +173,21 @@ class FinanceRepository {
           updatedAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+
+    // الفاتورة تحمل مالًا — تستحق أثرًا يُرجع إليه
+    await _audit?.log(
+      action: 'invoice.created',
+      entityType: 'invoice',
+      description: 'إنشاء فاتورة $invoiceNumber',
+      newValue: {
+        'invoiceNumber': invoiceNumber,
+        'clientName': clientName,
+        'total': total,
+        'currency': currency,
+      },
+    );
+    return id;
+  }
 
   Future<bool> updateInvoice(InvoicesCompanion entry) =>
       _db.financeDao.updateInvoice(entry);
@@ -465,8 +485,8 @@ class FinanceRepository {
     int type = 0,
     String? entryNumber,
     String? notes,
-  }) =>
-      _db.financeDao.insertJournalEntry(
+  }) async {
+    final id = await _db.financeDao.insertJournalEntry(
         JournalEntriesCompanion.insert(
           syncId: _uuid.v4(),
           entryNumber: drift.Value(entryNumber),
@@ -482,6 +502,15 @@ class FinanceRepository {
           updatedAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+
+    await _audit?.log(
+      action: 'journal.created',
+      entityType: 'journal_entry',
+      description: description,
+      newValue: {'totalDebit': totalDebit, 'totalCredit': totalCredit},
+    );
+    return id;
+  }
 
   // ── Payment Vouchers ───────────────────────────────────────────
 
@@ -500,8 +529,8 @@ class FinanceRepository {
     String? description,
     int paymentMethod = 0,
     String? notes,
-  }) =>
-      _db.financeDao.insertVoucher(
+  }) async {
+    final id = await _db.financeDao.insertVoucher(
         PaymentVouchersCompanion.insert(
           syncId: _uuid.v4(),
           voucherNumber: drift.Value(voucherNumber),
@@ -519,6 +548,24 @@ class FinanceRepository {
           updatedAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+
+    await _audit?.log(
+      action: type == 0 ? 'voucher.receipt_created' : 'voucher.payment_created',
+      entityType: 'voucher',
+      description: type == 0
+          ? 'سند قبض بمبلغ $amount'
+          : 'سند صرف بمبلغ $amount',
+      newValue: {
+        'type': type,
+        'amount': amount,
+        'partyName': partyName,
+        'paymentMethod': paymentMethod,
+      },
+      // المال الخارج أعلى خطرًا من المال الداخل
+      severity: type == 1 ? AuditSeverity.warning : AuditSeverity.info,
+    );
+    return id;
+  }
 
   // ── Finance Summary ────────────────────────────────────────────
 
@@ -574,7 +621,7 @@ class FinanceSummary {
 
 final financeRepositoryProvider = Provider<FinanceRepository>((ref) {
   final db = ref.watch(databaseProvider);
-  return FinanceRepository(db);
+  return FinanceRepository(db, ref.watch(auditServiceProvider));
 });
 
 final clientsListProvider = StreamProvider<List<Client>>((ref) =>
