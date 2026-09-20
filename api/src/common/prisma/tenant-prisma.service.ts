@@ -64,6 +64,18 @@ export class TenantPrismaService extends PrismaClient implements OnModuleInit {
     const tenantModels = TenantPrismaService.TENANT_MODELS;
     const logger = this.logger;
 
+    // العميل الأساس، مُلتقَطًا قبل `$extends`.
+    //
+    // داخل `$allOperations` لا يشير `this` إلى العميل بل إلى الكائن
+    // الحرفي المحيط، فـ`this[model]` غير معرَّف — وهذا ما كان يجعل
+    // فحص الملكية أدناه يرمي ٥٠٠ بدل أن يفحص.
+    //
+    // واستخدام العميل الأساس مقصود لا التفاف: نحن نكتب المرشّح
+    // بأنفسنا هنا، والمرور بالعميل المُوسَّع يعيد دخول المُعترِض.
+    const base = this as unknown as Record<string, {
+      findFirst: (args: unknown) => Promise<{ id: string } | null>;
+    }>;
+
     return this.$extends({
       query: {
         $allModels: {
@@ -123,7 +135,9 @@ export class TenantPrismaService extends PrismaClient implements OnModuleInit {
               // ونتأكّد من ملكيته قبل تعديله أو حذفه.
               case 'update':
               case 'delete': {
-                const owner = await (this as any)[model].findFirst({
+                // `model` يأتي بحرف أول كبير من المُعترِض، وخصائص
+                // العميل بصغير — لذا `lowerFirst`.
+                const owner = await base[lowerFirst(model)].findFirst({
                   where: { ...(a.where as object), companyId },
                   select: { id: true },
                 });
