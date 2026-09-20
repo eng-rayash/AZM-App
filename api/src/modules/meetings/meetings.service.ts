@@ -68,8 +68,10 @@ export class MeetingsService {
         meetingCategory: input.meetingCategory ?? 0,
         priority: input.priority ?? 2,
         status: input.status ?? 0,
-        agenda: input.agenda,
-        attendees: input.attendees,
+        // التضييق هنا لا في الـDTO: هذا هو حدّ Prisma، والـDTO يصف
+        // ما يقبله الشبكة لا ما يخزّنه المحرّك.
+        agenda: input.agenda as Prisma.InputJsonValue | undefined,
+        attendees: input.attendees as Prisma.InputJsonValue | undefined,
         createdBy: ctx.userId,
       }),
     });
@@ -133,9 +135,9 @@ export interface CreateMeetingInput {
   meetingCategory?: number;
   priority?: number;
   status?: number;
-  /// حقول JSON — يقبلها Prisma بنوعه الخاص لا بـ`unknown`
-  agenda?: Prisma.InputJsonValue;
-  attendees?: Prisma.InputJsonValue;
+  /** حقول JSON كما تصل من الشبكة — تُضيَّق عند الكتابة. */
+  agenda?: Record<string, unknown>;
+  attendees?: Record<string, unknown>;
 }
 
 export type UpdateMeetingInput = Partial<

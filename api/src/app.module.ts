@@ -5,9 +5,12 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { TenantPrismaService } from './common/prisma/tenant-prisma.service';
+import { JwtAuthGuard } from './common/tenant/jwt-auth.guard';
 import { TenantGuard } from './common/tenant/tenant.guard';
+import { AuthController } from './modules/auth/auth.controller';
 import { AuthService } from './modules/auth/auth.service';
 import { JwtStrategy } from './modules/auth/jwt.strategy';
+import { MeetingsController } from './modules/meetings/meetings.controller';
 import { MeetingsService } from './modules/meetings/meetings.service';
 
 /**
@@ -21,6 +24,10 @@ import { MeetingsService } from './modules/meetings/meetings.service';
  * إضافة الحارس — والنسيان هنا ثغرة صامتة. الآن العكس: المسار مغلق
  * حتى يُعلَّم بـ`@Public()` صراحةً، والسهو يُنتج مسارًا لا يعمل لا
  * مسارًا مكشوفًا.
+ *
+ * [JwtAuthGuard] مُسجَّل قبله للسبب نفسه، والترتيب ملزِم: Nest ينفّذ
+ * حرّاس `APP_GUARD` بترتيب تسجيلهم، و[TenantGuard] يقرأ `req.user`
+ * الذي يملؤه الأول.
  */
 @Module({
   imports: [
@@ -42,11 +49,13 @@ import { MeetingsService } from './modules/meetings/meetings.service';
       }),
     }),
   ],
+  controllers: [AuthController, MeetingsController],
   providers: [
     TenantPrismaService,
     JwtStrategy,
     AuthService,
     MeetingsService,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: TenantGuard },
   ],
 })
