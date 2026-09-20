@@ -8,7 +8,7 @@ import 'connection/shared.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io)   'connection/native.dart';
 
-import '../constants/app_constants.dart';
+import 'tenant_database.dart';
 
 // ── Core / Existing Tables ────────────────────────────────────────
 import 'dao/app_settings_dao.dart';
@@ -172,7 +172,15 @@ part 'app_database.g.dart';
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  /// الوضع الشخصي — الملف القديم نفسه.
+  AppDatabase() : super(_openConnection(personalTenant));
+
+  /// قاعدة مستأجر بعينه.
+  ///
+  /// كل شركة في ملفها: ما ليس في الملف المفتوح غير موجود، فلا حاجة
+  /// لمرشّح في الاستعلامات ولا سبيل لنسيانه. انظر `tenant_database.dart`.
+  AppDatabase.forTenant(String tenantId)
+      : super(_openConnection(tenantId));
 
   /// Named constructor for testing with a custom executor
   AppDatabase.forTesting(super.e);
@@ -470,9 +478,10 @@ class AppDatabase extends _$AppDatabase {
   }
 }
 
-/// Opens a platform-appropriate database connection.
-/// - Web builds: uses WasmDatabase.inMemory() — no dart:ffi
-/// - Native builds: uses drift_flutter (sqlite3 file) — works on Android/iOS/Desktop
-QueryExecutor _openConnection() {
-  return connectDb(AppConstants.dbName);
+/// يفتح اتصالًا مناسبًا للمنصّة بملفّ المستأجر [tenantId].
+///
+/// المنصّتان تمرّران الاسم إلى `driftDatabase`: ملفّ على الأصيل،
+/// ومخزن IndexedDB على الويب. فالفصل بالاسم يعمل على الاثنين.
+QueryExecutor _openConnection(String tenantId) {
+  return connectDb(tenantDbName(tenantId));
 }

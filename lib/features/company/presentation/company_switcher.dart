@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../../core/database/providers/database_providers.dart';
+import '../../../core/database/tenant_database.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../providers/company_providers.dart';
 
@@ -188,10 +190,14 @@ class _CompanySwitcherSheet extends ConsumerWidget {
             name: 'الوضع الشخصي',
             subtitle: 'Free Personal',
             isActive: activeCompany == null,
-            onTap: () {
+            onTap: () async {
               // الدور يُشتقّ من الشركة النشطة، فلا يُضبط هنا.
               ref.read(activeCompanyProvider.notifier).clearCompany();
-              Navigator.pop(context);
+              // والوضع الشخصي ملفّ قاعدة مستقلّ كبقية المستأجرين.
+              await ref
+                  .read(activeTenantIdProvider.notifier)
+                  .switchTo(personalTenant);
+              if (context.mounted) Navigator.pop(context);
             },
           ),
 
@@ -215,13 +221,21 @@ class _CompanySwitcherSheet extends ConsumerWidget {
                   subtitle: plan.arabicLabel,
                   companyCode: company.companyCode,
                   isActive: activeCompany?.syncId == company.syncId,
-                  onTap: () {
-                    // ضبط الشركة وحده يكفي: `activeMemberRoleProvider`
-                    // مشتقّ منها فيُعاد حسابه تلقائيًا. الجلب اليدوي
-                    // للدور هنا كان المسار الوحيد الذي يحدّثه — ولذلك
-                    // كان أي مسار آخر يترك الدور متخلّفًا.
-                    ref.read(activeCompanyProvider.notifier).setCompany(company);
-                    Navigator.pop(context);
+                  onTap: () async {
+                    // ضبط الشركة يكفي للدور: `activeMemberRoleProvider`
+                    // مشتقّ منها فيُعاد حسابه تلقائيًا.
+                    ref
+                        .read(activeCompanyProvider.notifier)
+                        .setCompany(company);
+
+                    // وتبديل المستأجر يفتح ملف قاعدة هذه الشركة.
+                    // بيانات الشركة السابقة تختفي لأنها في ملف آخر،
+                    // لا لأن مرشّحًا أخفاها.
+                    await ref
+                        .read(activeTenantIdProvider.notifier)
+                        .switchTo(company.syncId);
+
+                    if (context.mounted) Navigator.pop(context);
                   },
                 );
               }).toList(),

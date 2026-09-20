@@ -11,9 +11,14 @@ import '../../../core/services/code_generator_service.dart';
 // DAO Provider
 // ─────────────────────────────────────────────
 
+/// جدول الشركات والعضويات يُقرأ من **قاعدة السجلّ** لا من قاعدة
+/// الشركة النشطة.
+///
+/// لكل شركة ملفها منذ أن صار العزل حقيقة في نظام الملفات؛ ولو كانت
+/// قائمة الشركات داخل ملف الشركة، لاحتجنا أن نعرف الشركة النشطة لنعرف
+/// أي الشركات متاحة — ولتعذّر الخروج من شركة إلى أخرى.
 final companiesDaoProvider = Provider<CompaniesDao>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.companiesDao;
+  return ref.watch(registryDatabaseProvider).companiesDao;
 });
 
 // ─────────────────────────────────────────────

@@ -1,8 +1,10 @@
+import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/database/providers/database_providers.dart';
 import 'core/security/lock_manager.dart';
 import 'core/services/supabase_config.dart';
 import 'core/services/error_tracking_service.dart';
@@ -50,9 +52,25 @@ void main() async {
   // Initialize lock manager
   LockManager.instance.initialize();
 
+  // المستأجر المحفوظ يُقرأ **قبل** بناء الشجرة: `databaseProvider`
+  // يفتح ملفًّا بحسبه، وقراءته بعد الإقلاع تعني فتح الملف الشخصي ثم
+  // إغلاقه فورًا — وميضٌ من بيانات خاطئة في أسوأ الحالات.
+  final activeTenant = await loadActiveTenant();
+
+  // في وضع الشركات تُفتح قاعدتان معًا: ملف الشركة النشطة وملف السجلّ.
+  // drift يحذّر من إنشاء صنف القاعدة مرّتين لأن **منفّذًا مشتركًا**
+  // بين نسختين يسبّب تنازعًا — والمنفّذان هنا ملفّان مختلفان، فالتحذير
+  // إيجابية كاذبة. تركه يدرّب على تجاهل تحذيرات drift الحقيقية.
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+
   runApp(
-    const ProviderScope(
-      child: AzmApp(),
+    ProviderScope(
+      overrides: [
+        activeTenantIdProvider.overrideWith(
+          (ref) => ActiveTenantNotifier(activeTenant),
+        ),
+      ],
+      child: const AzmApp(),
     ),
   );
 }
