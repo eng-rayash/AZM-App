@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 import '../tables/archive_table.dart';
+import '../../utils/arabic_normalizer.dart';
 
 part 'archive_dao.g.dart';
 
@@ -16,15 +17,18 @@ class ArchiveDao extends DatabaseAccessor<AppDatabase> with _$ArchiveDaoMixin {
         ..orderBy([(a) => OrderingTerm.desc(a.createdAt)]))
       .watch();
 
-  /// Search archive by title, ref number, or tags
+  /// بحث في الأرشيف بالعنوان أو الرقم المرجعي أو الوسوم.
+  ///
+  /// المطابقة مطبَّعة — انظر [filterNormalized].
   Stream<List<ArchiveData>> searchArchive(String query) => (select(archive)
-        ..where((a) => 
-            a.isDeleted.equals(false) & 
-            (a.title.like('%$query%') | 
-             a.referenceNumber.like('%$query%') | 
-             a.tags.like('%$query%')))
+        ..where((a) => a.isDeleted.equals(false))
         ..orderBy([(a) => OrderingTerm.desc(a.createdAt)]))
-      .watch();
+      .watch()
+      .map((rows) => filterNormalized(
+            rows,
+            query,
+            (a) => [a.title, a.referenceNumber, a.tags],
+          ));
 
   /// Get a single archive record by ID
   Future<ArchiveData?> getById(int id) =>

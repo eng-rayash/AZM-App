@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 import '../tables/contacts_table.dart';
+import '../../utils/arabic_normalizer.dart';
 
 part 'contacts_dao.g.dart';
 
@@ -19,13 +20,18 @@ class ContactsDao extends DatabaseAccessor<AppDatabase> with _$ContactsDaoMixin 
         ]))
       .watch();
 
-  /// Search contacts by name or company
+  /// بحث في جهات الاتصال بالاسم أو الشركة.
+  ///
+  /// المطابقة مطبَّعة — انظر [filterNormalized].
   Stream<List<Contact>> searchContacts(String query) => (select(contacts)
-        ..where((c) => 
-            c.isDeleted.equals(false) & 
-            (c.name.like('%$query%') | c.company.like('%$query%')))
+        ..where((c) => c.isDeleted.equals(false))
         ..orderBy([(c) => OrderingTerm.asc(c.name)]))
-      .watch();
+      .watch()
+      .map((rows) => filterNormalized(
+            rows,
+            query,
+            (c) => [c.name, c.company],
+          ));
 
   /// Insert a new contact
   Future<int> insertContact(ContactsCompanion contact) => into(contacts).insert(contact);

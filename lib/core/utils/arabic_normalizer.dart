@@ -72,3 +72,42 @@ bool matchesNormalized(String haystack, String needle) {
   if (n.isEmpty) return false;
   return normalizeArabic(haystack).contains(n);
 }
+
+/// يصفّي صفوفًا بالمطابقة المطبَّعة على عدّة حقول.
+///
+/// نقطة الاختناق الوحيدة للبحث: كل `search` في طبقة DAO يمرّ من هنا،
+/// فلا يبقى في المشروع مكانان يطبّقان قواعد مطابقة مختلفة.
+///
+/// ## لماذا التصفية في Dart لا في SQL
+///
+/// التطبيع في SQL يحتاج أحد أمرين: عمودًا مطبَّعًا مخزَّنًا يُحدَّث مع
+/// كل كتابة، أو دالة SQLite مخصَّصة. الأول يضيف مسار كتابة يمكن
+/// نسيانه — وهو أخطر أنواع العطب لأنه يظهر بعد أشهر على صفوف قديمة
+/// فقط. والثاني لا يتوفّر على الويب: `sqlite3.createFunction` غير
+/// متاح في بناء WASM، فيصير البحث يعمل على الهاتف ويفشل على المتصفّح.
+///
+/// التصفية هنا تقرأ صفوف المستأجر النشطة ثم تطابق في الذاكرة. الكلفة
+/// مقبولة لأن القاعدة محلية ولمستأجر واحد؛ حين تتجاوز جداولها عشرات
+/// الآلاف من الصفوف يصير العمود المخزَّن هو الجواب — والخادم يفعل
+/// ذلك بالفعل في `nameNormalized` لأن بياناته لكل المستأجرين.
+///
+/// [fields] تعيد الحقول القابلة للبحث في الصفّ؛ الفراغات تُتجاهل.
+///
+/// نصّ البحث الفارغ يعيد الصفوف كما هي لا قائمة فارغة: صندوق بحث لم
+/// يُكتب فيه شيء يعني «اعرض الكل» لا «لا شيء يطابق».
+List<T> filterNormalized<T>(
+  Iterable<T> rows,
+  String query,
+  Iterable<String?> Function(T row) fields,
+) {
+  final needle = normalizeArabic(query);
+  if (needle.isEmpty) return rows.toList();
+
+  return rows.where((row) {
+    for (final field in fields(row)) {
+      if (field == null || field.isEmpty) continue;
+      if (normalizeArabic(field).contains(needle)) return true;
+    }
+    return false;
+  }).toList();
+}

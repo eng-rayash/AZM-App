@@ -5,6 +5,7 @@ import '../tables/finance/transactions_tables.dart';
 import '../tables/finance/accounting_tables.dart';
 import '../tables/projects_table.dart';
 import '../tables/entity_links_table.dart';
+import '../../utils/arabic_normalizer.dart';
 
 part 'finance_dao.g.dart';
 
@@ -35,15 +36,23 @@ class FinanceDao extends DatabaseAccessor<AppDatabase> with _$FinanceDaoMixin {
             ..orderBy([(c) => OrderingTerm.asc(c.name)]))
           .watch();
 
-  Future<List<Client>> searchClients(String query) =>
-      (select(clients)
-            ..where(
-              (c) =>
-                  c.name.like('%$query%') |
-                  c.phone.like('%$query%') |
-                  c.email.like('%$query%'),
-            ))
-          .get();
+  /// بحث في العملاء بالاسم أو الهاتف أو البريد.
+  ///
+  /// المطابقة مطبَّعة — انظر [filterNormalized].
+  ///
+  /// `isDeleted` كان غائبًا عن الشرط، فكان البحث يعيد عملاء محذوفين.
+  Future<List<Client>> searchClients(String query) async {
+    final rows = await (select(clients)
+          ..where((c) => c.isDeleted.equals(false))
+          ..orderBy([(c) => OrderingTerm.asc(c.name)]))
+        .get();
+
+    return filterNormalized(
+      rows,
+      query,
+      (c) => [c.name, c.phone, c.email],
+    );
+  }
 
   Future<Client?> getClientById(int id) =>
       (select(clients)..where((c) => c.id.equals(id))).getSingleOrNull();

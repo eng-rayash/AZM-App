@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 import '../tables/meetings_table.dart';
+import '../../utils/arabic_normalizer.dart';
 
 part 'meetings_dao.g.dart';
 
@@ -94,16 +95,25 @@ class MeetingsDao extends DatabaseAccessor<AppDatabase>
         ..limit(10))
       .watch();
 
-  /// Search meetings by title or notes
-  Future<List<Meeting>> search(String query) => (select(meetings)
-        ..where((m) =>
-            m.isDeleted.equals(false) &
-            (m.title.contains(query) |
-                m.notes.contains(query) |
-                m.objective.contains(query)))
-        ..orderBy([(m) => OrderingTerm.desc(m.date)])
-        ..limit(50))
-      .get();
+  /// بحث في الاجتماعات بالعنوان أو الملاحظات أو الهدف.
+  ///
+  /// المطابقة مطبَّعة — انظر [filterNormalized]. الحدّ يُطبَّق **بعد**
+  /// التصفية لا قبلها: تحديده في SQL كان يقتطع خمسين صفًّا ثم يبحث
+  /// فيها، فيضيع ما بعدها من مطابقات.
+  Future<List<Meeting>> search(String query) async {
+    final rows = await (select(meetings)
+          ..where((m) => m.isDeleted.equals(false))
+          ..orderBy([(m) => OrderingTerm.desc(m.date)]))
+        .get();
+
+    final matched = filterNormalized(
+      rows,
+      query,
+      (m) => [m.title, m.notes, m.objective],
+    );
+
+    return matched.length > 50 ? matched.sublist(0, 50) : matched;
+  }
 
   /// Get meetings count by status (for stats)
   Future<int> countByStatus(int status) async {

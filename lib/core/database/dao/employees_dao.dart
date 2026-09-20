@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../tables/hrm/employees_table.dart';
+import '../../utils/arabic_normalizer.dart';
 
 part 'employees_dao.g.dart';
 
@@ -11,46 +12,59 @@ class EmployeesDao extends DatabaseAccessor<AppDatabase>
 
   // ── Queries ──────────────────────────────────────────────────────
 
-  /// All active employees ordered by name.
-  Future<List<Employee>> getAllEmployees() =>
-      (select(employees)..orderBy([(e) => OrderingTerm.asc(e.name)])).get();
+  /// كل الموظفين غير المحذوفين، مرتَّبين بالاسم.
+  Future<List<Employee>> getAllEmployees() => (select(employees)
+        ..where((e) => e.isDeleted.equals(false))
+        ..orderBy([(e) => OrderingTerm.asc(e.name)]))
+      .get();
 
-  /// Watch all active employees.
-  Stream<List<Employee>> watchAllEmployees() =>
-      (select(employees)
-            ..where((e) => e.status.isIn([0, 1, 2]))
-            ..orderBy([(e) => OrderingTerm.asc(e.name)]))
-          .watch();
+  /// مراقبة الموظفين على رأس العمل.
+  Stream<List<Employee>> watchAllEmployees() => (select(employees)
+        ..where((e) => e.isDeleted.equals(false) & e.status.isIn([0, 1, 2]))
+        ..orderBy([(e) => OrderingTerm.asc(e.name)]))
+      .watch();
 
-  /// Watch employees by department.
+  /// مراقبة موظفي قسم.
   Stream<List<Employee>> watchByDepartment(int departmentId) =>
       (select(employees)
-            ..where((e) => e.departmentId.equals(departmentId))
+            ..where((e) =>
+                e.isDeleted.equals(false) &
+                e.departmentId.equals(departmentId))
             ..orderBy([(e) => OrderingTerm.asc(e.name)]))
           .watch();
 
-  /// Get employee by ID.
-  Future<Employee?> getById(int id) =>
-      (select(employees)..where((e) => e.id.equals(id))).getSingleOrNull();
+  /// موظف بمعرّفه — يعيد `null` للمحذوف.
+  Future<Employee?> getById(int id) => (select(employees)
+        ..where((e) => e.id.equals(id) & e.isDeleted.equals(false)))
+      .getSingleOrNull();
 
-  /// Search employees by name or code.
-  Future<List<Employee>> search(String query) =>
-      (select(employees)
-            ..where(
-              (e) =>
-                  e.name.like('%$query%') |
-                  e.employeeCode.like('%$query%') |
-                  e.phone.like('%$query%'),
-            )
-            ..orderBy([(e) => OrderingTerm.asc(e.name)]))
-          .get();
+  /// بحث في الموظفين بالاسم أو الرقم الوظيفي أو الهاتف.
+  ///
+  /// المطابقة مطبَّعة — انظر [filterNormalized]. وللتطبيع فائدة هنا
+  /// تتجاوز الأسماء: من يكتب رقمًا بالأرقام العربية-الهندية يجده
+  /// مخزَّنًا باللاتينية.
+  ///
+  /// `isDeleted` كان غائبًا عن الشرط، فكان البحث يعيد موظفين محذوفين.
+  Future<List<Employee>> search(String query) async {
+    final rows = await (select(employees)
+          ..where((e) => e.isDeleted.equals(false))
+          ..orderBy([(e) => OrderingTerm.asc(e.name)]))
+        .get();
 
-  /// Count employees by status.
+    return filterNormalized(
+      rows,
+      query,
+      (e) => [e.name, e.employeeCode, e.phone],
+    );
+  }
+
+  /// عدد الموظفين بحالة معيّنة.
   Future<int> countByStatus(int status) async {
     final count = employees.id.count();
     final query = selectOnly(employees)
       ..addColumns([count])
-      ..where(employees.status.equals(status));
+      ..where(employees.status.equals(status) &
+          employees.isDeleted.equals(false));
     final result = await query.getSingle();
     return result.read(count) ?? 0;
   }
@@ -66,6 +80,20 @@ class EmployeesDao extends DatabaseAccessor<AppDatabase>
   Future<bool> updateEmployee(EmployeesCompanion entry) =>
       update(employees).replace(entry);
 
+  /// حذف ناعم — الحذف حدث يُزامَن لا غياب صفّ.
+  ///
+  /// كان حذفًا صلبًا رغم وجود `isDeleted` وقاعدة المشروع، وكلفته تظهر
+  /// عند المزامنة: الصفّ يختفي من هذا الجهاز ويبقى على جهاز لم يتزامن
+  /// بعد، فيعود في أول دفع. نظيره على الخادم في `MeetingsService.remove`.
+  ///
+  /// ⚠ التحويل وحده لم يكن ليكفي: **لا قراءة في هذا الملف كانت تصفّي
+  /// `isDeleted`** رغم أن توثيقها يقول «active»، فكان الحذف الناعم
+  /// يُظهر المحذوفين في كل قائمة. القراءات أعلاه صُحِّحت معه.
   Future<int> deleteEmployee(int id) =>
-      (delete(employees)..where((e) => e.id.equals(id))).go();
+      (update(employees)..where((e) => e.id.equals(id))).write(
+        EmployeesCompanion(
+          isDeleted: const Value(true),
+          updatedAt: Value(DateTime.now().millisecondsSinceEpoch),
+        ),
+      );
 }
