@@ -63,24 +63,59 @@ final activeCompanyProvider =
 // Active Member Role State
 // ─────────────────────────────────────────────
 
-/// The current user's role in the active company
-final activeMemberRoleProvider = StateProvider<UserRole>((ref) {
-  return UserRole.employee; // default; updated when switching company
+/// معرّف المستخدم المسجَّل — مُحقَن لا مقروء من عالميّ.
+///
+/// القراءة المباشرة من `Supabase.instance` تربط كل ما يعتمد عليها
+/// بتهيئة عالمية: الاختبار لا يستطيع تزييفها، والإقلاع المبكّر يرمي
+/// عندها قبل أن تكتمل. المزوّد يفصل «من المستخدم» عن «ماذا يحقّ له»،
+/// ويُستبدَل في الاختبار بسطر واحد.
+///
+/// `null` تعني الوضع المحلي: لا حساب سحابي، والجهاز جهازك.
+final currentUserSyncIdProvider = Provider<String?>((ref) {
+  try {
+    return Supabase.instance.client.auth.currentUser?.id;
+  } catch (_) {
+    // Supabase غير مُهيَّأ بعد — الوضع المحلي، لا خطأ
+    return null;
+  }
 });
 
-/// Loads the actual role of the currently logged-in user
-/// from the CompanyMembers table for the active company.
+/// دور المستخدم في الشركة النشطة — **مشتقّ لا مخزَّن**.
 ///
-/// Returns [UserRole.employee] if the user has no explicit membership record.
-final userRoleInCompanyProvider =
-    FutureProvider.autoDispose<UserRole>((ref) async {
+/// كان `StateProvider` يحمل نسخة من حقيقة في القاعدة، ويحدّثها ودجت
+/// واحد (مبدّل الشركات) عند التبديل. أي مسار آخر يضبط الشركة دون أن
+/// يتذكّر ضبط الدور كان يترك المستخدم على آخر دور — أو على القيمة
+/// الابتدائية `employee` — بلا أي إشارة. نسخة مكرّرة يحرسها انتباه
+/// المطوّر هي نفس شكل العطب الذي رفضناه على الخادم.
+///
+/// الآن يُشتقّ من [userRoleInCompanyProvider]، فيستحيل أن يتخلّف عن
+/// الشركة النشطة: تغيّرها يُعيد حسابه.
+///
+/// ⚠ هذا **عرض لا حماية**. إخفاء زرّ ليس منعًا، والمنع يقع على
+/// الخادم في `TenantGuard` الذي يقرأ الدور من القاعدة في كل طلب.
+final activeMemberRoleProvider = Provider<UserRole>((ref) {
+  return ref.watch(userRoleInCompanyProvider).when(
+        data: (role) => role,
+        // أثناء التحميل: القيمة الابتدائية نفسها التي كانت قبل الاشتقاق
+        loading: () => UserRole.employee,
+        // عند الخطأ: أدنى لا أعلى. كان المبدّل يقع على `owner` في
+        // `catch` — ومنح أعلى صلاحية لأن استعلامًا فشل لا يُدافَع عنه.
+        error: (_, _) => UserRole.employee,
+      );
+});
+
+/// يقرأ دور المستخدم الحالي من `CompanyMembers` للشركة النشطة.
+///
+/// الحالات الثلاث مقصودة ومتمايزة:
+///   • لا شركة → الوضع الشخصي، و[UserRole.employee] كما كان
+///   • لا مستخدم مسجَّل → الوضع المحلي: الجهاز جهازك فلا أحد تُحمى منه
+///   • شركة ولا صفّ عضوية → منشئ الشركة، إذ لا يكتب المعالج صفًّا بعد
+final userRoleInCompanyProvider = FutureProvider<UserRole>((ref) async {
   final company = ref.watch(activeCompanyProvider);
   if (company == null) return UserRole.employee;
 
-  // Get the current Supabase user's UID
-  final supabaseUser = Supabase.instance.client.auth.currentUser;
-  final userSyncId = supabaseUser?.id;
-  if (userSyncId == null) return UserRole.owner; // guest/local mode — treat as owner
+  final userSyncId = ref.watch(currentUserSyncIdProvider);
+  if (userSyncId == null) return UserRole.owner;
 
   final dao = ref.watch(companiesDaoProvider);
   final membership = await dao.getMembership(
@@ -88,7 +123,7 @@ final userRoleInCompanyProvider =
     userSyncId: userSyncId,
   );
 
-  if (membership == null) return UserRole.owner; // creator has no membership row → owner
+  if (membership == null) return UserRole.owner;
   return UserRole.fromValue(membership.role);
 });
 

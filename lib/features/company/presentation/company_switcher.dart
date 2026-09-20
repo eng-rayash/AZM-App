@@ -189,9 +189,8 @@ class _CompanySwitcherSheet extends ConsumerWidget {
             subtitle: 'Free Personal',
             isActive: activeCompany == null,
             onTap: () {
+              // الدور يُشتقّ من الشركة النشطة، فلا يُضبط هنا.
               ref.read(activeCompanyProvider.notifier).clearCompany();
-              ref.read(activeMemberRoleProvider.notifier).state =
-                  UserRole.employee;
               Navigator.pop(context);
             },
           ),
@@ -216,21 +215,13 @@ class _CompanySwitcherSheet extends ConsumerWidget {
                   subtitle: plan.arabicLabel,
                   companyCode: company.companyCode,
                   isActive: activeCompany?.syncId == company.syncId,
-                  onTap: () async {
-                    ref
-                        .read(activeCompanyProvider.notifier)
-                        .setCompany(company);
-                    // Load the user's actual role for this company from DB
-                    final roleAsync = ref.read(userRoleInCompanyProvider.future);
+                  onTap: () {
+                    // ضبط الشركة وحده يكفي: `activeMemberRoleProvider`
+                    // مشتقّ منها فيُعاد حسابه تلقائيًا. الجلب اليدوي
+                    // للدور هنا كان المسار الوحيد الذي يحدّثه — ولذلك
+                    // كان أي مسار آخر يترك الدور متخلّفًا.
+                    ref.read(activeCompanyProvider.notifier).setCompany(company);
                     Navigator.pop(context);
-                    try {
-                      final role = await roleAsync;
-                      ref.read(activeMemberRoleProvider.notifier).state = role;
-                    } catch (_) {
-                      // Fallback: company switcher — treat as owner if role lookup fails
-                      ref.read(activeMemberRoleProvider.notifier).state =
-                          UserRole.owner;
-                    }
                   },
                 );
               }).toList(),
