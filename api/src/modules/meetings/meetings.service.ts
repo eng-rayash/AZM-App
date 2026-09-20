@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 
-import { TenantPrismaService } from '../../common/prisma/tenant-prisma.service';
+import {
+  TenantPrismaService,
+  tenantCreate,
+} from '../../common/prisma/tenant-prisma.service';
 import { TenantContext } from '../../common/tenant/tenant-context';
 
 /**
@@ -48,7 +52,9 @@ export class MeetingsService {
     const db = this.prisma.forTenant(ctx.companyId);
 
     return db.meeting.create({
-      data: {
+      // `companyId` غائب عمدًا — الطبقة تحقنه. `tenantCreate` هو
+      // الموضع الوحيد الذي يُعلن فيه هذا للمُصرِّف.
+      data: tenantCreate<Prisma.MeetingUncheckedCreateInput>({
         // العميل يرسل `syncId` حين يكون الصفّ أُنشئ محليًا أولًا،
         // فيبقى المعرّف نفسه على الطرفين وتقع المطابقة عليه.
         syncId: input.syncId ?? randomUUID(),
@@ -65,7 +71,7 @@ export class MeetingsService {
         agenda: input.agenda,
         attendees: input.attendees,
         createdBy: ctx.userId,
-      },
+      }),
     });
   }
 
@@ -91,7 +97,10 @@ export class MeetingsService {
 
     return db.meeting.update({
       where: { id },
-      data: { ...input, version: { increment: 1 } },
+      data: {
+        ...(input as Prisma.MeetingUpdateInput),
+        version: { increment: 1 },
+      },
     });
   }
 
@@ -124,8 +133,9 @@ export interface CreateMeetingInput {
   meetingCategory?: number;
   priority?: number;
   status?: number;
-  agenda?: unknown;
-  attendees?: unknown;
+  /// حقول JSON — يقبلها Prisma بنوعه الخاص لا بـ`unknown`
+  agenda?: Prisma.InputJsonValue;
+  attendees?: Prisma.InputJsonValue;
 }
 
 export type UpdateMeetingInput = Partial<

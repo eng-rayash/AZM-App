@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { TenantPrismaService } from './common/prisma/tenant-prisma.service';
@@ -29,10 +29,15 @@ import { MeetingsService } from './modules/meetings/meetings.service';
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
+      useFactory: (config: ConfigService): JwtModuleOptions => ({
+        // `!` مبرَّر: JwtStrategy يفشل عند الإقلاع إن غاب السرّ،
+        // فلا يصل التطبيق إلى هنا بقيمة فارغة.
+        secret: config.get<string>('JWT_SECRET')!,
         signOptions: {
-          expiresIn: config.get<string>('JWT_EXPIRES_IN') ?? '7d',
+          // `expiresIn` في jsonwebtoken يقبل عددًا أو صيغة مدّة
+          // (`7d`)، ونوعه الضيّق لا يُستنتج من `string`.
+          expiresIn: (config.get<string>('JWT_EXPIRES_IN') ??
+            '7d') as `${number}d`,
         },
       }),
     }),

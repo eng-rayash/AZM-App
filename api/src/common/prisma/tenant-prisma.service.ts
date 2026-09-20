@@ -159,3 +159,30 @@ export class TenantIsolationError extends Error {
 function lowerFirst(s: string): string {
   return s.charAt(0).toLowerCase() + s.slice(1);
 }
+
+/**
+ * جسر نوعي بين الحقن وقت التنفيذ ورؤية المُصرِّف.
+ *
+ * `forTenant` يحقن `companyId` في `data` قبل وصولها إلى القاعدة، لكن
+ * TypeScript لا يرى ذلك: نوع `create` في Prisma يطالب بـ`companyId`
+ * أو بعلاقة `organization`. كتابتهما هنا تناقض غرض الطبقة — وما يُكتب
+ * يدويًا يمكن أن يُكتب خطأً.
+ *
+ * فالحلّ أن يُعلَن التنازل **مرة واحدة في مكان واحد** بدل `as` مبعثرة
+ * في كل خدمة: الدالة تقبل الحقول كلها عدا `companyId`، وتتحقّق منها
+ * تحقّقًا كاملًا (بما في ذلك رفض الحقول الزائدة)، ثم تسلّمها لـPrisma.
+ *
+ * ```ts
+ * db.meeting.create({
+ *   data: tenantCreate<Prisma.MeetingUncheckedCreateInput>({ title, date }),
+ * });
+ * ```
+ *
+ * ⚠ لا تستخدمها مع عميل غير مُقيَّد: هناك لن يُحقن شيء وستفشل الكتابة
+ * على قيد `NOT NULL` — وهو فشل صريح، لا تسريب.
+ */
+export function tenantCreate<T extends { companyId: string }>(
+  data: Omit<T, 'companyId'>,
+): T {
+  return data as T;
+}
