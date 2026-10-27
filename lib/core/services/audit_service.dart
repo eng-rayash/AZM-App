@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../database/app_database.dart';
 import '../database/providers/database_providers.dart';
@@ -151,7 +150,7 @@ enum AuditSeverity {
 final auditServiceProvider = Provider<AuditService>((ref) {
   return AuditService(
     ref.watch(databaseProvider),
-    resolveActor: () => Supabase.instance.client.auth.currentUser?.id ?? '',
+    resolveActor: () => ref.read(currentUserSyncIdProvider) ?? '',
     resolveTenant: () => ref.read(activeCompanyProvider)?.syncId ?? '',
   );
 });

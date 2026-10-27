@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/dao/companies_dao.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../../../core/services/code_generator_service.dart';
+import '../../auth/providers/auth_providers.dart';
 
 // ─────────────────────────────────────────────
 // DAO Provider
@@ -70,19 +70,12 @@ final activeCompanyProvider =
 
 /// معرّف المستخدم المسجَّل — مُحقَن لا مقروء من عالميّ.
 ///
-/// القراءة المباشرة من `Supabase.instance` تربط كل ما يعتمد عليها
-/// بتهيئة عالمية: الاختبار لا يستطيع تزييفها، والإقلاع المبكّر يرمي
-/// عندها قبل أن تكتمل. المزوّد يفصل «من المستخدم» عن «ماذا يحقّ له»،
-/// ويُستبدَل في الاختبار بسطر واحد.
+/// معرّف الحساب في النظام الموحّد (نفسه على الويب والتطبيق). المزوّد يفصل
+/// «من المستخدم» عن «ماذا يحقّ له»، ويُستبدَل في الاختبار بسطر واحد.
 ///
-/// `null` تعني الوضع المحلي: لا حساب سحابي، والجهاز جهازك.
+/// `null` تعني الوضع المحلي: ضيف بلا حساب، والجهاز جهازك.
 final currentUserSyncIdProvider = Provider<String?>((ref) {
-  try {
-    return Supabase.instance.client.auth.currentUser?.id;
-  } catch (_) {
-    // Supabase غير مُهيَّأ بعد — الوضع المحلي، لا خطأ
-    return null;
-  }
+  return ref.watch(authStateNotifierProvider).user?.id;
 });
 
 /// دور المستخدم في الشركة النشطة — **مشتقّ لا مخزَّن**.

@@ -32,11 +32,15 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (useFullBanner) {
-      return Image.asset(
-        'assets/images/logo_full.png',
-        width: size * 3.5,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => _buildTextLogo(),
+      // الشعار الأفقي: العلامة بجوار الاسم — لا صورة مسطّحة للاسم، فيبقى
+      // النص بخطوط التطبيق وألوان الوضع الحالي.
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset('assets/brand/azmsmart_mark.png', height: size, fit: BoxFit.contain),
+          SizedBox(width: size * 0.25),
+          _buildTextLogo(),
+        ],
       );
     }
 
@@ -117,7 +121,8 @@ class AppLogo extends StatelessWidget {
   }
 }
 
-/// علامة التطبيق المربّعة — الشعار الرسمي من الأصول.
+/// علامة التطبيق المربّعة — أيقونة عزم سمارت نفسها التي تستعملها منصة الويب:
+/// العلامة الكريمية فوق مربّع أحمر مستدير الزوايا (الاستدارة في الصورة نفسها).
 ///
 /// تُستخدم حيث تلزم أيقونة مربعة: شاشة البداية، القفل، الترحيب،
 /// الإعدادات، والشريط الجانبي.
@@ -137,25 +142,20 @@ class AppLogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size * 0.24),
+        // يطابق استدارة زوايا الصورة (≈٢٢٪) كي يتبع الظلّ حوافها
+        borderRadius: BorderRadius.circular(size * 0.21),
         boxShadow: [
           BoxShadow(
-            color: NeuColors.primary.withValues(alpha: 0.3),
+            color: NeuColors.primary.withValues(alpha: 0.25),
             blurRadius: size * 0.25,
             offset: Offset(0, size * 0.1),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(size * 0.24),
-        child: Image.asset(
-          'assets/images/logo_icon.png',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Image.asset(
-            'assets/icon.png',
-            fit: BoxFit.cover,
-          ),
-        ),
+      child: Image.asset(
+        'assets/brand/azmsmart_icon.png',
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.medium,
       ),
     );
   }

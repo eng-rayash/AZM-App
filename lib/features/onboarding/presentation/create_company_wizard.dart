@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
-import '../../../core/services/code_generator_service.dart';
+import '../../../core/network/api_exception.dart';
+import '../../../core/network/network_providers.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/router/route_names.dart';
@@ -52,10 +53,14 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
   // Step 4 — Plan
   PlanType _selectedPlan = PlanType.business;
 
-  // ── Result ───────────────────────────────────────────────────────
-  String? _generatedCompanyCode;
-  String? _generatedWorkspaceSlug;
+  // ── النتيجة ──────────────────────────────────────────────────────
+  //
+  // «generated» سابقًا لأنها كانت تُولَّد محليًا. الآن تأتي من الخادم:
+  // كود يولّده العميل لا يعرفه الخادم، ولا ينضمّ به أحد.
+  String? _companyCode;
+  String? _workspaceSlug;
   bool _isCreating = false;
+  String? _createError;
 
   @override
   void dispose() {
@@ -91,27 +96,57 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
     }
   }
 
+  /// ينشئ الحساب والشركة **على الخادم**.
+  ///
+  /// كان هذا المعالج `Future.delayed(1500) // simulate` ثم يعرض كودًا
+  /// مولَّدًا محليًا: المستخدم يكمل أربع خطوات ويخرج بكود لشركة غير
+  /// موجودة في أي قاعدة. ولم يكن يُكتب شيء — لا صفّ شركة ولا عضوية.
+  ///
+  /// الآن `POST /auth/register` ينشئ المستخدم والشركة وعضوية المالك في
+  /// معاملة واحدة، ثم تُعتمد الجلسة فيُفتح ملف قاعدة هذه الشركة.
   Future<void> _createCompany() async {
-    setState(() => _isCreating = true);
-
-    // Generate codes
-    final companyCode = CodeGeneratorService.generateCompanyCode();
-    final slug = CodeGeneratorService.generateWorkspaceSlug(
-        _companyNameCtrl.text.trim());
-
-    await Future.delayed(const Duration(milliseconds: 1500)); // simulate
-
     setState(() {
-      _generatedCompanyCode = companyCode;
-      _generatedWorkspaceSlug = slug;
-      _isCreating = false;
-      _currentStep = _totalSteps; // show result
+      _isCreating = true;
+      _createError = null;
     });
 
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeInOut,
-    );
+    try {
+      final session =
+          await ref.read(azmAuthApiProvider).registerWithCompany(
+                email: _emailCtrl.text,
+                password: _passwordCtrl.text,
+                displayName: _ownerNameCtrl.text,
+                companyName: _companyNameCtrl.text,
+              );
+
+      // الرمز ثم تبديل المستأجر — بهذا الترتيب، وفي نداء واحد كي لا
+      // يُحفظ رمزٌ بلا ملفّ قاعدة يطابقه.
+      await ref.read(sessionControllerProvider).adopt(
+            accessToken: session.accessToken,
+            companyId: session.company.id,
+          );
+
+      if (!mounted) return;
+      setState(() {
+        _companyCode = session.company.companyCode;
+        _workspaceSlug = session.company.workspaceSlug;
+        _isCreating = false;
+        _currentStep = _totalSteps;
+      });
+
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    } on ApiException catch (e) {
+      // الفشل يُعرض ولا يُخفى. المعالج السابق لم يكن يفشل أبدًا لأنه
+      // لم يكن يفعل شيئًا — وهذا ما جعل العطب غير مرئي.
+      if (!mounted) return;
+      setState(() {
+        _isCreating = false;
+        _createError = e.message;
+      });
+    }
   }
 
   @override
@@ -191,12 +226,13 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
                   onChanged: (p) => setState(() => _selectedPlan = p),
                   onNext: _nextStep,
                   isCreating: _isCreating,
+                  error: _createError,
                 ),
                 // Result page
                 _ResultPage(
                   companyName: _companyNameCtrl.text,
-                  companyCode: _generatedCompanyCode ?? '',
-                  workspaceSlug: _generatedWorkspaceSlug ?? '',
+                  companyCode: _companyCode ?? '',
+                  workspaceSlug: _workspaceSlug ?? '',
                   ownerName: _ownerNameCtrl.text,
                   onGoToDashboard: () => context.go(RouteNames.dashboardFull),
                 ),
@@ -589,12 +625,20 @@ class _Step4Plan extends StatelessWidget {
     required this.onChanged,
     required this.onNext,
     required this.isCreating,
+    required this.error,
   });
 
   final PlanType selected;
   final ValueChanged<PlanType> onChanged;
   final VoidCallback onNext;
   final bool isCreating;
+
+  /// رسالة فشل الإنشاء، أو `null`.
+  ///
+  /// تُعرض هنا لا في `SnackBar` عابر: المستخدم في آخر خطوة من أربع،
+  /// ورسالة تختفي بعد ثانيتين تتركه أمام زرّ لا يُنتج شيئًا — وهو
+  /// بالضبط ما كان يفعله المعالج السابق.
+  final String? error;
 
   static const _plans = [
     (PlanType.business, 'أعمال', 'حتى 20 مستخدماً', 'âœ… HRM âœ… مالية âœ… مشاريع', false),
@@ -754,6 +798,38 @@ class _Step4Plan extends StatelessWidget {
           }),
 
           const SizedBox(height: 24),
+
+          if (error != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: NeuColors.danger.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: NeuColors.danger.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    color: NeuColors.danger,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      error!,
+                      style: AppTypography.body
+                          .copyWith(color: NeuColors.danger),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
           isCreating
               ? const Center(
                   child: CircularProgressIndicator(
@@ -762,7 +838,7 @@ class _Step4Plan extends StatelessWidget {
                 )
               : _RviosPrimaryButton(
                   id: 'btn_create_company_final',
-                  label: 'إنشاء الشركة',
+                  label: error == null ? 'إنشاء الشركة' : 'أعد المحاولة',
                   icon: Icons.business_center_outlined,
                   onTap: onNext,
                 ),

@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
 import 'core/database/providers/database_providers.dart';
 import 'core/security/lock_manager.dart';
-import 'core/services/supabase_config.dart';
 import 'core/services/error_tracking_service.dart';
 import 'core/theme/neu_colors.dart';
 
@@ -15,7 +14,7 @@ import 'core/theme/neu_colors.dart';
 /// Initializes:
 /// 1. Flutter bindings
 /// 2. Error tracking
-/// 3. Supabase config
+/// 3. (الاتصال بالباكند الموحّد يُفتح عند الحاجة — لا تهيئة عالمية)
 /// 4. System UI (status bar style)
 /// 5. Screen orientation (portrait only)
 /// 6. Lock manager (auto-lock)
@@ -25,13 +24,6 @@ void main() async {
 
   // Initialize Error Tracking
   ErrorTrackingService.instance.initialize();
-
-  // Initialize Supabase Config
-  try {
-    await SupabaseConfig.initialize();
-  } catch (e) {
-    debugPrint('Error initializing Supabase: $e');
-  }
 
   // Lock to portrait orientation (executive apps don't rotate)
   await SystemChrome.setPreferredOrientations([

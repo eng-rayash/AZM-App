@@ -71,12 +71,12 @@ class AccountScreen extends ConsumerWidget {
 
                       if (authState.status == AuthStatus.authenticated && authState.user != null) ...[
                         Text(
-                          authState.user!.email ?? 'مستخدم عزم',
+                          authState.user!.displayName.isNotEmpty ? authState.user!.displayName : 'مستخدم عزم',
                           style: isDark ? AppTypography.h3Dark : AppTypography.h3,
                         ),
                         AppSpacing.gapXs,
                         Text(
-                          'معرف المستخدم: ${authState.user!.id.substring(0, 8)}...',
+                          '${authState.user!.email} · ${authState.session!.company.name}',
                           style: (isDark ? AppTypography.captionDark : AppTypography.caption).copyWith(
                             color: isDark ? NeuColors.textHintDark : NeuColors.textHint,
                           ),
@@ -87,16 +87,18 @@ class AccountScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.cloud_done_rounded,
-                              color: NeuColors.success,
+                            Icon(
+                              authState.session!.offline ? Icons.cloud_off_rounded : Icons.cloud_done_rounded,
+                              color: authState.session!.offline ? NeuColors.warning : NeuColors.success,
                               size: 20,
                             ),
                             AppSpacing.gapHSm,
                             Text(
-                              'الحساب متصل سحابياً مع Supabase',
+                              authState.session!.offline
+                                  ? 'بلا اتصال — يعمل على بيانات الجهاز'
+                                  : 'متصل بحسابك في عزم سمارت',
                               style: (isDark ? AppTypography.bodyDark : AppTypography.body).copyWith(
-                                color: NeuColors.success,
+                                color: authState.session!.offline ? NeuColors.warning : NeuColors.success,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),

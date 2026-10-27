@@ -1,18 +1,93 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// RVIOS — Auth Repository (Supabase-backed)
+import '../../../core/api/api_client.dart';
+
+/// حساب المستخدم في النظام الموحّد — نفسه الذي يدخل به منصة عزم سمارت على الويب.
+class AzmAccount {
+  const AzmAccount({required this.id, required this.email, required this.displayName, this.avatarUrl});
+
+  final String id;
+  final String email;
+  final String displayName;
+  final String? avatarUrl;
+
+  factory AzmAccount.fromJson(Map<String, dynamic> j) => AzmAccount(
+        id: j['id'] as String,
+        email: (j['email'] as String?) ?? '',
+        displayName: (j['displayName'] as String?) ?? '',
+        avatarUrl: j['avatarUrl'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {'id': id, 'email': email, 'displayName': displayName, 'avatarUrl': avatarUrl};
+}
+
+/// شركة ينتمي إليها المستخدم. `role` رقم الدور في الخادم (0 مالك … 9 ضيف).
+class AzmCompany {
+  const AzmCompany({required this.id, required this.name, this.role});
+
+  final String id;
+  final String name;
+  final int? role;
+
+  factory AzmCompany.fromJson(Map<String, dynamic> j) => AzmCompany(
+        id: j['id'] as String,
+        name: (j['name'] as String?) ?? '',
+        role: (j['role'] as num?)?.toInt(),
+      );
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'role': role};
+}
+
+/// جلسة قائمة: من المستخدم، وفي أي شركة، وبأي دور.
+class AzmSession {
+  const AzmSession({
+    required this.account,
+    required this.company,
+    required this.role,
+    this.companies = const [],
+    this.offline = false,
+  });
+
+  final AzmAccount account;
+  final AzmCompany company;
+  final int role;
+
+  /// كل شركات المستخدم — يُملأ عند الدخول، وفارغ عند استعادة الجلسة.
+  final List<AzmCompany> companies;
+
+  /// استُعيدت من نسخة الجهاز لأن الخادم لم يُطَل — تعمل البيانات المحلية،
+  /// وتنتظر المزامنة والتحقق حتى يعود الاتصال.
+  final bool offline;
+
+  Map<String, dynamic> toJson() => {'account': account.toJson(), 'company': company.toJson(), 'role': role};
+
+  factory AzmSession.fromJson(Map<String, dynamic> j, {bool offline = false}) => AzmSession(
+        account: AzmAccount.fromJson(j['account'] as Map<String, dynamic>),
+        company: AzmCompany.fromJson(j['company'] as Map<String, dynamic>),
+        role: (j['role'] as num).toInt(),
+        offline: offline,
+      );
+}
+
+/// المصادقة عبر الباكند الموحّد (بريد وكلمة مرور → رمز JWT).
 ///
-/// Bridges the existing AuthNotifier (auth_providers.dart) with Supabase Auth.
-/// Adds guest mode via SharedPreferences for offline-first support.
+/// الرمز في التخزين الآمن ([TokenStore])، والجلسة تُستعاد عند الإقلاع بسؤال
+/// الخادم (`GET /auth/context`) لا بالثقة في رمز محفوظ: حساب أوقفه مدير
+/// الشركة يخرج من التطبيق في الإقلاع التالي.
+///
+/// ووضع الضيف (بلا حساب، على الجهاز وحده) باقٍ كما هو.
 class AuthRepository {
+  AuthRepository([ApiClient? api]) : _api = api ?? ApiClient();
+
   static const _guestKey = 'rvios_guest_mode';
+  static const _sessionKey = 'azm.lastSession';
+  final ApiClient _api;
 
-  SupabaseClient get _client => Supabase.instance.client;
+  ApiClient get api => _api;
 
-  // ─────────────────────────────────────────────
-  // Guest Mode (offline-first)
-  // ─────────────────────────────────────────────
+  // ── وضع الضيف ────────────────────────────────────────────
 
   Future<bool> isGuestModeEnabled() async {
     final prefs = await SharedPreferences.getInstance();
@@ -24,116 +99,121 @@ class AuthRepository {
     await prefs.setBool(_guestKey, value);
   }
 
-  // ─────────────────────────────────────────────
-  // State
-  // ─────────────────────────────────────────────
+  // ── الجلسة ───────────────────────────────────────────────
 
-  bool get isLoggedIn => _client.auth.currentUser != null;
+  /// يستعيد الجلسة من الرمز المحفوظ، أو `null` إن لم يوجد أو رفضه الخادم.
+  ///
+  /// انقطاع الإنترنت ليس خروجًا من الحساب: حين لا يُطال الخادم تُستعاد آخر
+  /// جلسة محفوظة على الجهاز (`offline`) — التطبيق يعمل على بياناته المحلية.
+  /// أما رفض الخادم للرمز (٤٠١) فخروج فعلي يمسح الرمز والنسخة معًا.
+  Future<AzmSession?> restore() async {
+    if (await _api.tokens.read() == null) return null;
+    try {
+      final ctx = await _api.get('/auth/context');
+      final session = AzmSession(
+        account: AzmAccount.fromJson(ctx['user'] as Map<String, dynamic>),
+        company: AzmCompany.fromJson(ctx['company'] as Map<String, dynamic>),
+        role: (ctx['role'] as num).toInt(),
+      );
+      await _remember(session);
+      return session;
+    } on ApiException catch (e) {
+      if (e.isUnauthorized) {
+        await signOut();
+        return null;
+      }
+      if (e.isNetwork) {
+        final cached = await _cached();
+        if (cached != null) return cached;
+      }
+      rethrow;
+    }
+  }
 
-  User? get currentUser => _client.auth.currentUser;
+  Future<AzmSession> signIn({required String email, required String password, String? companyId}) async {
+    final r = await _api.post('/auth/login', {
+      'email': email,
+      'password': password,
+      'companyId': ?companyId,
+    });
+    return _open(r);
+  }
 
-  String? get currentUserId => _client.auth.currentUser?.id;
-
-  String? get currentUserEmail => _client.auth.currentUser?.email;
-
-  String? get displayName =>
-      _client.auth.currentUser?.userMetadata?['display_name'] as String?;
-
-  Stream<AuthState> get authStateStream => _client.auth.onAuthStateChange;
-
-  // ─────────────────────────────────────────────
-  // Sign Up
-  // ─────────────────────────────────────────────
-
-  Future<AuthResponse> signUpWithEmail({
+  /// حساب جديد وشركته معًا — كما في التسجيل من الويب.
+  Future<AzmSession> signUp({
     required String email,
     required String password,
-    String? fullName,
-    String? displayName,
+    required String displayName,
+    required String companyName,
   }) async {
-    final response = await _client.auth.signUp(
-      email: email,
-      password: password,
-      data: {
-        'full_name': ?fullName,
-        'display_name': ?displayName,
-        if (fullName != null && displayName == null) 'display_name': fullName,
-      },
-    );
-    return response;
+    final r = await _api.post('/auth/register', {
+      'email': email,
+      'password': password,
+      'displayName': displayName,
+      'companyName': companyName,
+    });
+    return _open(r, ownerOfNewCompany: true);
   }
 
-  // ─────────────────────────────────────────────
-  // Sign In
-  // ─────────────────────────────────────────────
-
-  Future<AuthResponse> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    return _client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
+  /// ينتقل إلى شركة أخرى ينتمي إليها المستخدم (رمز جديد لتلك الشركة).
+  Future<AzmSession> switchCompany(String companyId) async {
+    final r = await _api.post('/auth/switch', {'companyId': companyId});
+    await _api.tokens.write(r['accessToken'] as String);
+    final session = await restore();
+    if (session == null) throw const ApiException('تعذّر فتح الشركة المختارة.');
+    return session;
   }
-
-  // ─────────────────────────────────────────────
-  // OTP / Magic Link
-  // ─────────────────────────────────────────────
-
-  Future<void> sendOtp({required String email}) async {
-    await _client.auth.signInWithOtp(
-      email: email,
-      emailRedirectTo: 'https://rvios.com/auth/callback',
-    );
-  }
-
-  Future<AuthResponse> verifyOtp({
-    required String email,
-    required String token,
-  }) async {
-    return _client.auth.verifyOTP(
-      email: email,
-      token: token,
-      type: OtpType.magiclink,
-    );
-  }
-
-  // ─────────────────────────────────────────────
-  // Sign Out
-  // ─────────────────────────────────────────────
 
   Future<void> signOut() async {
     await setGuestMode(false);
-    await _client.auth.signOut();
+    await _api.tokens.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_sessionKey);
   }
 
-  // ─────────────────────────────────────────────
-  // Password Reset
-  // ─────────────────────────────────────────────
+  /// نسخة الجلسة على الجهاز — هوية للعرض فقط، لا صلاحية: الخادم يعيد
+  /// التحقق من الرمز في كل طلب حين يعود الاتصال.
+  Future<void> _remember(AzmSession s) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_sessionKey, jsonEncode(s.toJson()));
+  }
 
+  Future<AzmSession?> _cached() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_sessionKey);
+    if (raw == null) return null;
+    try {
+      return AzmSession.fromJson(jsonDecode(raw) as Map<String, dynamic>, offline: true);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// لا استعادة لكلمة المرور بالبريد في النظام بعد — يعيد مدير الشركة ضبطها.
   Future<void> sendPasswordReset(String email) async {
-    await _client.auth.resetPasswordForEmail(
-      email,
-      redirectTo: 'https://rvios.com/auth/reset-password',
+    throw const ApiException(
+      'استعادة كلمة المرور غير متاحة من التطبيق بعد — اطلب من مدير شركتك إعادة ضبطها.',
     );
   }
 
-  // ─────────────────────────────────────────────
-  // Update Profile
-  // ─────────────────────────────────────────────
-
-  Future<UserResponse> updateProfile({
-    String? displayName,
-    String? avatarUrl,
-  }) async {
-    return _client.auth.updateUser(
-      UserAttributes(
-        data: {
-          'display_name': ?displayName,
-          'avatar_url': ?avatarUrl,
-        },
-      ),
+  Future<AzmSession> _open(Map<String, dynamic> r, {bool ownerOfNewCompany = false}) async {
+    await _api.tokens.write(r['accessToken'] as String);
+    await setGuestMode(false);
+    final company = AzmCompany.fromJson(r['company'] as Map<String, dynamic>);
+    final companies = (r['companies'] as List?)
+            ?.map((c) => AzmCompany.fromJson(c as Map<String, dynamic>))
+            .toList() ??
+        [company];
+    final role = ownerOfNewCompany
+        ? 0
+        : companies.firstWhere((c) => c.id == company.id, orElse: () => company).role ?? 8;
+    final session = AzmSession(
+      account: AzmAccount.fromJson(r['user'] as Map<String, dynamic>),
+      company: company,
+      role: role,
+      companies: companies,
     );
+    await _remember(session);
+    return session;
   }
 }

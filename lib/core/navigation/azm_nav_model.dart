@@ -146,6 +146,12 @@ class AzmNav {
       question: 'من تخدم وما تسلّم',
       destinations: [
         NavDestination(
+          label: 'متاجري',
+          icon: Icons.storefront_outlined,
+          route: RouteNames.storesList,
+          description: 'المتجر العام والكتالوج والطلبات',
+        ),
+        NavDestination(
           label: 'العملاء',
           icon: Icons.people_alt_outlined,
           route: RouteNames.clientsList,

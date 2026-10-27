@@ -1,12 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../api/api_client.dart';
+
+/// إعدادات التطبيق من الباكند الموحّد (`GET /app/config`) — تُضبط من إعدادات
+/// المنصة في عزم سمارت (مفاتيح `app.*`): أدنى إصدار مسموح، ووضع الصيانة
+/// ورسالته، ورابط المتجر.
+///
+/// بلا اتصال تبقى القيم الافتراضية أدناه: التطبيق يعمل محليًا ولا يُحجب
+/// لأن الخادم لم يُطَل.
 class RemoteConfigService {
   RemoteConfigService._();
 
   static final RemoteConfigService instance = RemoteConfigService._();
-
-  final _supabase = Supabase.instance.client;
 
   // Cache configuration values
   String minVersion = '0.1.0';
@@ -15,35 +20,16 @@ class RemoteConfigService {
   String maintenanceMessage = 'نظام عزم حالياً في صيانة دورية المظهر والبيانات مجدولة للتحسين، يرجى المحاولة لاحقاً.';
   String storeUrl = 'https://play.google.com/store/apps/details?id=com.mudiri.mudiri';
 
-  /// Check version requirements and maintenance mode.
-  /// Queries the 'app_config' table in Supabase.
-  /// Table structure:
-  /// - id (int/uuid)
-  /// - min_version (text) e.g. '0.1.0'
-  /// - latest_version (text) e.g. '0.1.0'
-  /// - maintenance_mode (boolean)
-  /// - maintenance_message (text)
-  /// - store_url (text)
   Future<void> fetchConfigs() async {
     try {
-      // Limit search to 1 row, query table 'app_config'
-      final response = await _supabase
-          .from('app_config')
-          .select()
-          .limit(1)
-          .maybeSingle();
-
-      if (response != null) {
-        minVersion = response['min_version'] ?? minVersion;
-        latestVersion = response['latest_version'] ?? latestVersion;
-        maintenanceMode = response['maintenance_mode'] ?? maintenanceMode;
-        maintenanceMessage = response['maintenance_message'] ?? maintenanceMessage;
-        storeUrl = response['store_url'] ?? storeUrl;
-      }
+      final r = await ApiClient().get('/app/config');
+      minVersion = (r['minVersion'] as String?) ?? minVersion;
+      latestVersion = (r['latestVersion'] as String?) ?? latestVersion;
+      maintenanceMode = (r['maintenance'] as bool?) ?? maintenanceMode;
+      maintenanceMessage = (r['maintenanceMessage'] as String?) ?? maintenanceMessage;
+      storeUrl = (r['storeUrl'] as String?) ?? storeUrl;
     } catch (e) {
-      // If table doesn't exist yet, or offline, we use the default fallback values.
-      // This is a robust approach to prevent app crashes.
-      debugPrint('RemoteConfigService error: $e. Using offline default configs.');
+      debugPrint('RemoteConfigService: $e — تُستعمل القيم الافتراضية.');
     }
   }
 

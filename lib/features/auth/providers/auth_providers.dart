@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/api/api_client.dart';
 import '../data/auth_repository.dart';
 
 enum AuthStatus { initial, loading, authenticated, guest, unauthenticated, error, emailVerificationPending }
@@ -7,26 +8,32 @@ enum AuthStatus { initial, loading, authenticated, guest, unauthenticated, error
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
-  final User? user;
+  final AzmSession? session;
 
   const AuthState({
     required this.status,
     this.errorMessage,
-    this.user,
+    this.session,
   });
 
-  const AuthState.initial() : status = AuthStatus.initial, errorMessage = null, user = null;
-  const AuthState.loading() : status = AuthStatus.loading, errorMessage = null, user = null;
-  const AuthState.authenticated(User u) : status = AuthStatus.authenticated, errorMessage = null, user = u;
-  const AuthState.guest() : status = AuthStatus.guest, errorMessage = null, user = null;
-  const AuthState.unauthenticated() : status = AuthStatus.unauthenticated, errorMessage = null, user = null;
-  const AuthState.error(String message) : status = AuthStatus.error, errorMessage = message, user = null;
-  const AuthState.emailVerificationPending() : status = AuthStatus.emailVerificationPending, errorMessage = null, user = null;
+  /// الحساب المسجَّل — `null` للضيف ولغير المسجَّل.
+  AzmAccount? get user => session?.account;
+
+  const AuthState.initial() : status = AuthStatus.initial, errorMessage = null, session = null;
+  const AuthState.loading() : status = AuthStatus.loading, errorMessage = null, session = null;
+  const AuthState.authenticated(AzmSession s) : status = AuthStatus.authenticated, errorMessage = null, session = s;
+  const AuthState.guest() : status = AuthStatus.guest, errorMessage = null, session = null;
+  const AuthState.unauthenticated() : status = AuthStatus.unauthenticated, errorMessage = null, session = null;
+  const AuthState.error(String message) : status = AuthStatus.error, errorMessage = message, session = null;
+  const AuthState.emailVerificationPending() : status = AuthStatus.emailVerificationPending, errorMessage = null, session = null;
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository();
 });
+
+/// عميل الباكند الموحّد بجلسة المستخدم الحالية — لكل ما سيتصل بالخادم بعد الدخول.
+final apiClientProvider = Provider<ApiClient>((ref) => ref.watch(authRepositoryProvider).api);
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
@@ -38,50 +45,49 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> checkCurrentState() async {
     state = const AuthState.loading();
     try {
-      final isGuest = await _repository.isGuestModeEnabled();
-      if (isGuest) {
+      if (await _repository.isGuestModeEnabled()) {
         state = const AuthState.guest();
-      } else if (_repository.isLoggedIn) {
-        state = AuthState.authenticated(_repository.currentUser!);
-      } else {
-        state = const AuthState.unauthenticated();
+        return;
       }
+      final session = await _repository.restore();
+      state = session != null ? AuthState.authenticated(session) : const AuthState.unauthenticated();
     } catch (e) {
-      state = AuthState.error(e.toString());
+      // لا خادم ولا جلسة محفوظة على الجهاز — يعود لشاشة الدخول برسالة واضحة
+      state = AuthState.error(_message(e));
     }
   }
 
   Future<void> login(String email, String password) async {
     state = const AuthState.loading();
     try {
-      final response = await _repository.signInWithEmail(email: email, password: password);
-      if (response.user != null) {
-        state = AuthState.authenticated(response.user!);
-      } else {
-        state = const AuthState.unauthenticated();
-      }
+      final session = await _repository.signIn(email: email, password: password);
+      state = AuthState.authenticated(session);
     } catch (e) {
-      state = AuthState.error(_translateError(e));
+      state = AuthState.error(_message(e));
     }
   }
 
-  Future<void> register(String email, String password, String fullName) async {
+  /// حساب جديد وشركته — الخادم ينشئهما معًا، والمسجِّل مالكها.
+  Future<void> register(String email, String password, String fullName, String companyName) async {
     state = const AuthState.loading();
     try {
-      final response = await _repository.signUpWithEmail(
+      final session = await _repository.signUp(
         email: email,
         password: password,
-        fullName: fullName,
+        displayName: fullName,
+        companyName: companyName,
       );
-      // When Supabase email confirmation is enabled, session is null but user may exist
-      if (response.session != null && response.user != null) {
-        state = AuthState.authenticated(response.user!);
-      } else {
-        // Email verification required — show pending state
-        state = const AuthState.emailVerificationPending();
-      }
+      state = AuthState.authenticated(session);
     } catch (e) {
-      state = AuthState.error(_translateError(e));
+      state = AuthState.error(_message(e));
+    }
+  }
+
+  Future<void> switchCompany(String companyId) async {
+    try {
+      state = AuthState.authenticated(await _repository.switchCompany(companyId));
+    } catch (e) {
+      state = AuthState.error(_message(e));
     }
   }
 
@@ -109,30 +115,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await _repository.sendPasswordReset(email);
     } catch (e) {
-      state = AuthState.error(_translateError(e));
+      state = AuthState.error(_message(e));
     }
   }
 
-  String _translateError(dynamic error) {
-    final errStr = error.toString().toLowerCase();
-    if (errStr.contains('invalid login credentials') || errStr.contains('invalid_credentials')) {
-      // Could be wrong password OR account not found
-      return 'كلمة المرور غير صحيحة أو الحساب غير موجود. تحقق من بيانات الدخول.';
-    } else if (errStr.contains('user not found') || errStr.contains('no user')) {
-      return 'الحساب غير موجود. يرجى إنشاء حساب جديد.';
-    } else if (errStr.contains('wrong password') || errStr.contains('invalid password')) {
-      return 'كلمة المرور غير صحيحة. يرجى المحاولة مجددًا.';
-    } else if (errStr.contains('user already registered') || errStr.contains('already registered')) {
-      return 'هذا البريد الإلكتروني مسجل بالفعل. يرجى تسجيل الدخول.';
-    } else if (errStr.contains('network') || errStr.contains('connection') || errStr.contains('timeout')) {
-      return 'فشل الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت.';
-    } else if (errStr.contains('email not confirmed') || errStr.contains('email_not_confirmed')) {
-      return 'لم يتم تأكيد البريد الإلكتروني بعد. يرجى مراجعة بريدك والضغط على رابط التفعيل.';
-    } else if (errStr.contains('too many requests') || errStr.contains('rate limit')) {
-      return 'محاولات كثيرة. يرجى الانتظار قليلًا ثم المحاولة مجددًا.';
-    }
-    return 'حدث خطأ: $error';
-  }
+  /// رسائل الخادم عربية أصلًا (`ApiException.message`) — تُعرض كما هي.
+  String _message(Object error) =>
+      error is ApiException ? error.message : 'حدث خطأ غير متوقع — أعد المحاولة.';
 }
 
 final authStateNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {

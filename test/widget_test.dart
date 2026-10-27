@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -23,12 +22,6 @@ void main() {
         }
         return null;
       },
-    );
-
-    // Initialize Supabase with placeholder values for test environment
-    await Supabase.initialize(
-      url: 'https://psjlycjbaiacdzvtewvi.supabase.co',
-      anonKey: 'sb_publishable_c1EhUj6faoPYiqy9vPucXg_m7pdb8pQ',
     );
 
     // Initialize timezones and set local location to UTC for test environment

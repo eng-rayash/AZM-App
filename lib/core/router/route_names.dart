@@ -136,6 +136,18 @@ class RouteNames {
   // ─────────────────────────────────────────────
   // Finance Routes
   // ─────────────────────────────────────────────
+  // منصة المتاجر
+  // ─────────────────────────────────────────────
+
+  static const String storesList = '/shop/stores';
+
+  /// لوحة متجر — المعرّف UUID نصًّا لا عددًا، بخلاف بقية المسارات:
+  /// معرّفات المتاجر تأتي من PostgreSQL لا من ترقيم SQLite المحلي.
+  static const String storeWorkspace = '/shop/stores/:storeId';
+  static String storeWorkspacePath(String storeId) =>
+      '/shop/stores/$storeId';
+
+  // ─────────────────────────────────────────────
 
   static const String financeDashboard = '/finance';
 

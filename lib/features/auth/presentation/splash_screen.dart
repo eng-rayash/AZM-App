@@ -51,7 +51,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _navigateAfterDelay() async {
-    // 1. Fetch remote configuration from Supabase (with resilient offline fallback)
+    // 1. إعدادات التطبيق من الباكند الموحّد (وبلا اتصال تبقى الافتراضية)
     try {
       await RemoteConfigService.instance.fetchConfigs();
     } catch (e) {
@@ -77,9 +77,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     await Future.delayed(AppConstants.splashDuration);
     if (!mounted) return;
 
-    final authRepository = ref.read(authRepositoryProvider);
-    final isGuest = await authRepository.isGuestModeEnabled();
-    final isLoggedIn = authRepository.isLoggedIn;
+    // حالة الدخول من المزوّد: إن لم تُحسم بعد (الإقلاع الأول يسأل الخادم)
+    // تُنتظر هنا بدل قراءة جلسة نصف جاهزة
+    final authNotifier = ref.read(authStateNotifierProvider.notifier);
+    var auth = ref.read(authStateNotifierProvider);
+    if (auth.status == AuthStatus.initial || auth.status == AuthStatus.loading) {
+      await authNotifier.checkCurrentState();
+      if (!mounted) return;
+      auth = ref.read(authStateNotifierProvider);
+    }
+    final isGuest = auth.status == AuthStatus.guest;
+    final isLoggedIn = auth.status == AuthStatus.authenticated;
 
     if (!mounted) return;
 
@@ -131,7 +139,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // الشعار الرسمي على بطاقة بيضاء
+                    // شعار عزم سمارت على بطاقة بيضاء
                     Container(
                       width: 110,
                       height: 110,
@@ -151,7 +159,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Image.asset(
-                            'assets/images/logo_icon.png',
+                            'assets/brand/azmsmart_mark.png',
                             fit: BoxFit.contain,
                           ),
                         ),

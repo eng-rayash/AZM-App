@@ -4,15 +4,23 @@
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
-    "display_override": ["window-controls-overlay", "standalone", "browser"],
-    "background_color": "#171717",
-    "theme_color": "#9E2226",
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "browser"
+    ],
+    "background_color": "#C1272D",
+    "theme_color": "#C1272D",
     "description": "عزم — نظام تشغيل الأعمال الذكي. افهم عملك، احسم ما يهم، ونفّذ بعزم. من RVIOS Technologies.",
     "lang": "ar",
     "dir": "rtl",
     "orientation": "any",
     "prefer_related_applications": false,
-    "categories": ["business", "productivity", "utilities"],
+    "categories": [
+        "business",
+        "productivity",
+        "utilities"
+    ],
     "screenshots": [],
     "shortcuts": [
         {
@@ -20,14 +28,24 @@
             "short_name": "Dashboard",
             "description": "افتح لوحة التحكم الرئيسية",
             "url": "/#/home/dashboard",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "العمل",
             "short_name": "Work",
             "description": "المتابعات والاجتماعات والتوجيهات",
             "url": "/#/home/work",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ],
     "icons": [

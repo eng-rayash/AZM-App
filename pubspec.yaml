@@ -53,10 +53,9 @@ dependencies:
   open_file: ^3.5.10
   image_cropper: ^8.0.2
   image: ^4.3.0
-  supabase_flutter: ^2.8.0
   url_launcher: ^6.3.0
 
-  http: any
+  http: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,9 +72,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/icon.png
-    - assets/images/logo_icon.png
-    - assets/images/logo_full.png
+    # علامة عزم سمارت — المصدر نفسه الذي تستعمله منصة الويب (public/brand)
+    - assets/brand/azmsmart_mark.png
+    - assets/brand/azmsmart_icon.png
 
   fonts:
     # خط عزم العربي الوحيد — Hacen Liner Screen. عناوين ومتن وواجهة.
@@ -107,11 +106,22 @@ flutter:
 
 
 flutter_launcher_icons:
+  # أيقونة عزم سمارت نفسها على كل المنصات: العلامة الكريمية فوق الأحمر
+  # (#C1272D)، كما في أيقونة منصة الويب. تُولَّد بـ:
+  #   dart run flutter_launcher_icons
+  image_path: "assets/brand/launcher_icon.png"
   android: "launcher_icon"
+  adaptive_icon_background: "#C1272D"
+  adaptive_icon_foreground: "assets/brand/launcher_foreground.png"
   ios: true
-  image_path: "assets/icon.png"
   remove_alpha_ios: true
-  background_color: "#8c1d24"
-  adaptive_icon_background: "#8c1d24"
-  adaptive_icon_foreground: "assets/icon.png"
-
+  background_color: "#C1272D"
+  web:
+    generate: true
+    image_path: "assets/brand/launcher_icon.png"
+    background_color: "#C1272D"
+    theme_color: "#C1272D"
+  windows:
+    generate: true
+    image_path: "assets/brand/launcher_icon.png"
+    icon_size: 256

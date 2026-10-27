@@ -36,12 +36,54 @@ export class TenantPrismaService extends PrismaClient implements OnModuleInit {
    * بينهما ويُقيَّد بشكل مختلف.
    */
   private static readonly TENANT_MODELS = new Set([
+    'workProject',
+    'workProjectMember',
+    'workMilestone',
+    'workTask',
+    'workTaskComment',
+    'notification',
+    'apiKey',
+    'webhook',
+    'webhookDelivery',
     'meeting',
     'followUp',
     'client',
     'invoice',
     'employee',
     'auditLog',
+    // فوترة منصة المتاجر: التاجر يرى اشتراكاته وفواتيره عبر forTenant.
+    // فريق المنصة يستعمل العميل الأساس (بلا forTenant) لرؤية الكل، ولذلك
+    // لا يتعارض إدراجهما هنا مع لوحة الإدارة عبر الشركات.
+    'platformInvoice',
+    'storeSubscription',
+    // منصة المتاجر: كل جداولها تحمل companyId. الاستثناء الوحيد المقصود أن
+    // الواجهة العامة تحلّ المتجر بـ`slug` عبر العميل الأساس (بلا جلسة) ثم
+    // تنتقل إلى forTenant بشركته — انظر ShopPublicService.
+    'shopStore',
+    'shopSlugHistory',
+    'shopCategory',
+    'shopProduct',
+    'shopProductImage',
+    'shopProductVariant',
+    'shopCustomer',
+    'shopDeliveryZone',
+    'shopOrder',
+    'shopOrderItem',
+    'shopReview',
+    'shopVisit',
+    // محتوى الموقع الرئيسي — منظمة محجوزة كأي شركة أخرى، انظر تعليق
+    // النماذج في schema.prisma.
+    'cmsCategory',
+    'cmsPost',
+    'cmsService',
+    'cmsProject',
+    'cmsProjectImage',
+    'cmsProjectMetric',
+    'cmsProjectCategory',
+    'cmsProjectService',
+    'cmsMedia',
+    'cmsContact',
+    'cmsSetting',
   ]);
 
   async onModuleInit(): Promise<void> {
@@ -95,6 +137,8 @@ export class TenantPrismaService extends PrismaClient implements OnModuleInit {
               case 'deleteMany':
               case 'count':
               case 'aggregate':
+              // كان غائبًا فيُرجع تجميعًا عابرًا للشركات؛ يُحقن كالبقية
+              case 'groupBy':
                 a.where = { ...(a.where as object), companyId };
                 break;
 

@@ -20,6 +20,7 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _companyController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -30,6 +31,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _companyController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -41,6 +43,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final name = _nameController.text.trim();
+    final companyName = _companyController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
@@ -50,7 +53,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       return;
     }
 
-    await ref.read(authStateNotifierProvider.notifier).register(email, password, name);
+    await ref.read(authStateNotifierProvider.notifier).register(email, password, name, companyName);
   }
 
   @override
@@ -232,6 +235,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     AppSpacing.gapLg,
 
+                    // اسم الشركة — الحساب يُنشأ مع شركته، والمسجِّل مالكها
+                    NeuInput(
+                      controller: _companyController,
+                      label: 'اسم الشركة أو النشاط',
+                      hint: 'مثال: مؤسسة الأمل التجارية',
+                      prefixIcon: Icons.business_outlined,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      validator: (value) {
+                        if (value == null || value.trim().length < 2) {
+                          return 'يرجى إدخال اسم الشركة أو النشاط';
+                        }
+                        return null;
+                      },
+                    ),
+                    AppSpacing.gapLg,
+
                     // Email Input
                     NeuInput(
                       controller: _emailController,
@@ -273,8 +293,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         if (value == null || value.isEmpty) {
                           return 'يرجى إدخال كلمة المرور';
                         }
-                        if (value.length < 6) {
-                          return 'يجب أن تكون كلمة المرور ٦ أحرف على الأقل';
+                        if (value.length < 8) {
+                          return 'يجب أن تكون كلمة المرور ٨ أحرف على الأقل';
                         }
                         return null;
                       },

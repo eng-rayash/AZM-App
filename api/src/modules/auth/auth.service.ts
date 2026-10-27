@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +11,7 @@ import { randomUUID } from 'node:crypto';
 import { TenantPrismaService } from '../../common/prisma/tenant-prisma.service';
 import { UserRole } from '../../common/tenant/tenant-context';
 import { normalizeArabic } from '../../common/text/normalize-arabic';
+import { DEMO_EMAIL, DEMO_SESSION, DEMO_WORKSPACE_SLUG } from '../demo/demo.constant';
 
 /**
  * AZM — المصادقة
@@ -94,7 +96,7 @@ export class AuthService {
     return {
       accessToken: await this.signToken(result.user.id, result.org.id),
       user: this.publicUser(result.user),
-      company: { id: result.org.id, name: result.org.name },
+      company: this.publicCompany(result.org),
     };
   }
 
@@ -116,7 +118,17 @@ export class AuthService {
       include: {
         memberships: {
           where: { isActive: true, deletedAt: null },
-          include: { organization: { select: { id: true, name: true } } },
+          include: {
+            organization: {
+              select: {
+                id: true,
+                name: true,
+                companyCode: true,
+                workspaceSlug: true,
+                trialEndsAt: true,
+              },
+            },
+          },
           orderBy: { role: 'asc' },
         },
       },
@@ -166,12 +178,81 @@ export class AuthService {
     };
   }
 
+  /**
+   * دخول العرض التجريبي — بلا كلمة مرور، لشركة العرض وحدها، بجلسة قصيرة. الشركة
+   * للقراءة فقط (الحارس يرفض الكتابة)، فالدخول المفتوح لا يعرّض شيئًا.
+   */
+  async demo() {
+    const membership = await this.prisma.membership.findFirst({
+      where: {
+        user: { email: DEMO_EMAIL },
+        organization: { workspaceSlug: DEMO_WORKSPACE_SLUG },
+        isActive: true,
+        deletedAt: null,
+      },
+      include: {
+        user: true,
+        organization: { select: { id: true, name: true, companyCode: true, workspaceSlug: true, trialEndsAt: true } },
+      },
+    });
+    if (!membership) throw new NotFoundException('العرض التجريبي غير مهيّأ بعد');
+    const company = membership.organization;
+    return {
+      accessToken: await this.jwt.signAsync({ sub: membership.userId, companyId: company.id }, { expiresIn: DEMO_SESSION }),
+      user: this.publicUser(membership.user),
+      company,
+      companies: [{ ...company, role: membership.role }],
+    };
+  }
+
+  /**
+   * ينقل المستخدم إلى شركة أخرى ينتمي إليها — رمز جديد دون كلمة مرور،
+   * لأن الجلسة الحالية مصادَقة أصلًا. العضوية تُفحص من القاعدة.
+   */
+  async switchCompany(userId: string, companyId: string) {
+    const membership = await this.prisma.membership.findFirst({
+      where: { userId, organizationId: companyId, isActive: true, deletedAt: null },
+      include: { organization: { select: { id: true, name: true } } },
+    });
+    if (!membership) {
+      throw new UnauthorizedException('لا عضوية فعّالة في هذه الشركة');
+    }
+    return {
+      accessToken: await this.signToken(userId, companyId),
+      company: membership.organization,
+    };
+  }
+
   // ─────────────────────────────────────────────
   // داخلي
   // ─────────────────────────────────────────────
 
   private signToken(userId: string, companyId: string): Promise<string> {
     return this.jwt.signAsync({ sub: userId, companyId });
+  }
+
+  /**
+   * حقول الشركة التي يحتاجها العميل.
+   *
+   * `companyCode` و`workspaceSlug` ليسا تفصيلًا داخليًا: الكود هو ما
+   * يعطيه المالك لمن يدعوه، والـslug عنوان مساحة العمل. حجبهما كان
+   * يجبر العميل على توليد نظيرَين محليًا — فيعرض للمستخدم كودًا لا
+   * يعرفه الخادم، ولا ينضمّ به أحد.
+   */
+  private publicCompany(o: {
+    id: string;
+    name: string;
+    companyCode: string;
+    workspaceSlug: string;
+    trialEndsAt: Date | null;
+  }) {
+    return {
+      id: o.id,
+      name: o.name,
+      companyCode: o.companyCode,
+      workspaceSlug: o.workspaceSlug,
+      trialEndsAt: o.trialEndsAt,
+    };
   }
 
   /** الحقول الآمنة للإرسال — لا تجزئة كلمة المرور ولا حقول داخلية. */

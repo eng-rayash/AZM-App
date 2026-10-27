@@ -13,6 +13,12 @@ import { PUBLIC_KEY } from './tenant.guard';
  * المكتوب.
  *
  * يسبق [TenantGuard] في الترتيب لأنه يملأ `req.user` الذي يقرؤه.
+ *
+ * مفتاح API (ترويسة `x-api-key`) طريق مصادقة ثانٍ يتجاوز هذا الحارس
+ * عمدًا: التحقّق منه يحتاج استعلام قاعدة بيانات (`ApiKey` ثم
+ * `Membership`)، ومكانه الطبيعي [TenantGuard] الذي يملأ `req.tenant`
+ * مباشرة بلا `req.user` وسيط — تمرير هنا لا يعني قبولًا، فـ`TenantGuard`
+ * يرفض أي مفتاح غير صالح بنفس صرامة رفضه لرمز JWT غير صالح.
  */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -26,6 +32,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
     if (isPublic) return true;
+
+    const req = context.switchToHttp().getRequest();
+    if (req.headers['x-api-key']) return true;
+
     return super.canActivate(context);
   }
 }

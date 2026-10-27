@@ -72,3 +72,16 @@ export function hasHrAccess(role: UserRole): boolean {
 export function hasFinanceAccess(role: UserRole): boolean {
   return hasRole(role, UserRole.FinanceManager) && role !== UserRole.HrManager;
 }
+
+/**
+ * هوية موظّف منصة كما حلّها الخادم — عبر كل الشركات، لا داخل واحدة.
+ *
+ * نوع مختلف عن [TenantContext] عمدًا لا نسخة منه بحقل إضافي: خلطهما في
+ * نوع واحد يفتح الباب لمسار يقرأ `companyId` توقّعًا فيصل بغلط إلى
+ * `forTenant()`، بينما إدارة المنصة يجب ألا تُقيَّد بشركة أصلًا.
+ */
+export interface PlatformContext {
+  readonly userId: string;
+  /** 0=دعم · 1=فوترة · 2=مدير عام */
+  readonly platformRole: number;
+}

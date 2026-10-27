@@ -526,4 +526,137 @@ describe('عزل المستأجرين — من طرف إلى طرف', () => {
       expect(res.body.length).toBeGreaterThan(0);
     });
   });
+
+  // ─────────────────────────────────────────────
+  // العملاء — نفس البوّابة على وحدة جديدة
+  // ─────────────────────────────────────────────
+
+  describe('العملاء — العزل يمتدّ إلى وحدة جديدة', () => {
+    let alphaClientId = '';
+
+    it('ألفا تنشئ عميلًا، والاسم يُطبَّع تلقائيًا', async () => {
+      const res = await request(http)
+        .post('/api/v1/clients')
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .send({ name: 'شركة أحمد للتجارة', phone: '777123456' })
+        .expect(201);
+
+      alphaClientId = res.body.id;
+      expect(res.body.companyId).toBe(alpha.companyId);
+      // «أحمد» بهمزة قطع يُطبَّع مطابقًا لألف عادية
+      expect(res.body.nameNormalized).toBe('شركه احمد للتجاره');
+    });
+
+    it('بيتا لا تراه في قائمتها ولا بمعرّفه', async () => {
+      const list = await request(http)
+        .get('/api/v1/clients')
+        .set('Authorization', `Bearer ${beta.token}`)
+        .expect(200);
+      expect(list.body.map((c: { id: string }) => c.id)).not.toContain(
+        alphaClientId,
+      );
+
+      await request(http)
+        .get(`/api/v1/clients/${alphaClientId}`)
+        .set('Authorization', `Bearer ${beta.token}`)
+        .expect(404);
+    });
+
+    it('تعديل بيتا لعميل ألفا يُمنع', async () => {
+      await request(http)
+        .patch(`/api/v1/clients/${alphaClientId}`)
+        .set('Authorization', `Bearer ${beta.token}`)
+        .send({ name: 'اختُرق' })
+        .expect(404);
+    });
+
+    it('تعديل الاسم يعيد حساب nameNormalized معًا', async () => {
+      const res = await request(http)
+        .patch(`/api/v1/clients/${alphaClientId}`)
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .send({ name: 'مؤسسة سالم' })
+        .expect(200);
+
+      // ؤ ← و في التطبيع، فـ«مؤسسة» تصير «موسسه» لا «مؤسسه»
+      expect(res.body.nameNormalized).toBe('موسسه سالم');
+    });
+  });
+
+  // ─────────────────────────────────────────────
+  // الفواتير — المبالغ تُحسب لا تُقبل
+  // ─────────────────────────────────────────────
+
+  describe('الفواتير — المبالغ محسوبة على الخادم', () => {
+    let alphaInvoiceId = '';
+
+    it('تُنشأ من البنود، والمجموع محسوب لا مُرسَل', async () => {
+      const res = await request(http)
+        .post('/api/v1/invoices')
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .send({
+          issueDate: '2026-10-01',
+          items: [
+            { description: 'استشارة', quantity: 2, unitPrice: 500 },
+            { description: 'تركيب', quantity: 1, unitPrice: 300 },
+          ],
+          discountAmount: 100,
+          taxPercent: 15,
+        })
+        .expect(201);
+
+      alphaInvoiceId = res.body.id;
+      // subtotal = 2*500 + 1*300 = 1300 · taxable = 1300-100 = 1200
+      // tax = 1200*0.15 = 180 · total = 1200+180 = 1380
+      expect(Number(res.body.subtotal)).toBe(1300);
+      expect(Number(res.body.taxAmount)).toBe(180);
+      expect(Number(res.body.total)).toBe(1380);
+      expect(Number(res.body.remainingAmount)).toBe(1380);
+      expect(res.body.invoiceNumber).toMatch(/^INV-\d{6}$/);
+      expect(res.body.companyId).toBe(alpha.companyId);
+    });
+
+    it('ترفض مبلغًا إجماليًا مُرسَلًا من العميل — حقل غير معلَن', async () => {
+      await request(http)
+        .post('/api/v1/invoices')
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .send({
+          issueDate: '2026-10-01',
+          items: [{ description: 'بند', quantity: 1, unitPrice: 100 }],
+          total: 1,
+        })
+        .expect(400);
+    });
+
+    it('تسجيل دفعة يعيد حساب المتبقّي', async () => {
+      const res = await request(http)
+        .patch(`/api/v1/invoices/${alphaInvoiceId}`)
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .send({ paidAmount: 800 })
+        .expect(200);
+
+      expect(Number(res.body.paidAmount)).toBe(800);
+      expect(Number(res.body.remainingAmount)).toBe(580);
+      // البنود لم تُرسَل مع التعديل، والمجموع يبقى كما كان لا يُصفَّر
+      expect(Number(res.body.total)).toBe(1380);
+    });
+
+    it('بيتا لا ترى فاتورة ألفا ولا تحذفها', async () => {
+      await request(http)
+        .get(`/api/v1/invoices/${alphaInvoiceId}`)
+        .set('Authorization', `Bearer ${beta.token}`)
+        .expect(404);
+
+      await request(http)
+        .delete(`/api/v1/invoices/${alphaInvoiceId}`)
+        .set('Authorization', `Bearer ${beta.token}`)
+        .expect(404);
+    });
+
+    it('المالك (مديرٌ مالي فأعلى) يحذف', async () => {
+      await request(http)
+        .delete(`/api/v1/invoices/${alphaInvoiceId}`)
+        .set('Authorization', `Bearer ${alpha.token}`)
+        .expect(200);
+    });
+  });
 });

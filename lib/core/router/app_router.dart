@@ -29,6 +29,8 @@ import '../../features/auth/presentation/force_update_screen.dart';
 import '../../features/auth/presentation/maintenance_screen.dart';
 import '../../features/calls/presentation/calls_list_screen.dart';
 import '../../features/contacts/presentation/contacts_list_screen.dart';
+import '../../features/shop/presentation/store_workspace_screen.dart';
+import '../../features/shop/presentation/stores_screen.dart';
 import '../../features/contacts/presentation/create_contact_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/directives/presentation/pages/create_directive_page.dart';
@@ -368,6 +370,20 @@ class AppRouter {
       GoRoute(
         path: RouteNames.contactsList,
         builder: (context, state) => const ContactsListScreen(),
+      ),
+
+      // ─── منصة المتاجر ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.storesList,
+        builder: (context, state) => const StoresScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.storeWorkspace,
+        builder: (context, state) {
+          // معرّف نصّي لا عددي: UUID من الخادم
+          final storeId = state.pathParameters['storeId']!;
+          return StoreWorkspaceScreen(storeId: storeId);
+        },
       ),
 
       // ─── Finance Routes ───────────────────────────────────────────
