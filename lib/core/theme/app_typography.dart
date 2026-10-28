@@ -5,11 +5,9 @@ import 'neu_colors.dart';
 /// Brand Typography System
 ///
 /// الخطوط بأدوارها:
-/// - Yapari:        عنوان العلامة اللاتيني
-/// - RTLMaghfira:   عنوان العلامة العربي
-/// - Givonic:       النص اللاتيني والعناوين الفرعية
-/// - Panorama:      النص العربي وواجهة الاستخدام (Hacen Liner Screen)
-/// - GlyphFallback: احتياط الرموز التي يفتقدها الخط الأساسي (… ﷼ € NBSP)
+/// - Zain:     العناوين العربية الضخمة والعلامة اللفظية العربية
+/// - Panorama: النص العربي العام وواجهة الاستخدام (ثمانية Serif Text)
+/// - Yapari:   العناوين الإنجليزية الكبيرة والعلامة اللاتينية
 ///
 /// عائلة `Panorama` أُبقيت باسمها رغم تغيّر الملف تحتها: الاسم مذكور
 /// نصّياً في ١٤٤ موضعاً عبر ٢٧ ملفاً، وتغييره تعديلٌ واسع بلا مقابل.
@@ -20,15 +18,21 @@ class AppTypography {
   // Font Family Constants
   // ─────────────────────────────────────────────
 
+  /// ثمانية Serif Text — النص العربي العام (متن، واجهة، تسميات).
   static const String fontFamilyPanorama = 'Panorama';
-  static const String fontFamilyGivonic = 'Givonic';
-  static const String fontFamilyYapari = 'Yapari';
-  static const String fontFamilyRTLMaghfira = 'RTLMaghfira';
 
-  /// احتياط الرموز التي لا يغطّيها Hacen: … و ﷼ و € و NBSP.
-  /// Givonic لا يصلح (٩٧ رمزاً لاتينياً بلا ellipsis)، فالاحتياط خط
-  /// عربي كامل التغطية يُستدعى للرموز الناقصة وحدها.
-  static const List<String> fontFamilyFallback = ['GlyphFallback'];
+  /// زين — العناوين العربية الضخمة والعلامة اللفظية العربية.
+  static const String fontFamilyZain = 'Zain';
+
+  /// يابار — العناوين الإنجليزية الكبيرة والعلامة اللاتينية.
+  static const String fontFamilyYapari = 'Yapari';
+
+  /// أسماء بديلة — مُبقاة للتوافق مع الكود القائم.
+  static const String fontFamilyGivonic = fontFamilyPanorama;
+  static const String fontFamilyRTLMaghfira = fontFamilyZain;
+
+  /// احتياط رموز — ثمانية Serif Text يغطّي العربية واللاتينية معًا.
+  static const List<String> fontFamilyFallback = [fontFamilyPanorama];
 
   // Default font families for body and headings
   static const String fontFamilyBody = fontFamilyPanorama;
@@ -38,9 +42,9 @@ class AppTypography {
   // Wordmark — علامة عزم اللفظية
   // ─────────────────────────────────────────────
 
-  /// العلامة اللفظية العربية — RTL Maghfira
+  /// العلامة اللفظية العربية — زين
   static const TextStyle wordmarkAr = TextStyle(
-    fontFamily: fontFamilyRTLMaghfira,
+    fontFamily: fontFamilyZain,
     fontSize: 28,
     fontWeight: FontWeight.w400,
     height: 1.2,
@@ -71,21 +75,21 @@ class AppTypography {
   static const TextStyle brandTitleAr = wordmarkAr;
 
   // ─────────────────────────────────────────────
-  // Heading Styles (Panorama)
+  // Heading Styles — زين للعناوين الضخمة، ثمانية للباقي
   // ─────────────────────────────────────────────
 
-  /// Page title — large, bold
+  /// Page title — large, bold (خط زين)
   static const TextStyle h1 = TextStyle(
-    fontFamily: fontFamilyHeading,
+    fontFamily: fontFamilyZain,
     fontSize: 28,
     fontWeight: FontWeight.w700,
     height: 1.4,
     color: NeuColors.textPrimary,
   );
 
-  /// Section title
+  /// Section title (خط زين)
   static const TextStyle h2 = TextStyle(
-    fontFamily: fontFamilyHeading,
+    fontFamily: fontFamilyZain,
     fontSize: 22,
     fontWeight: FontWeight.w600,
     height: 1.4,
@@ -111,7 +115,7 @@ class AppTypography {
   );
 
   // ─────────────────────────────────────────────
-  // Body Styles (Panorama & Givonic)
+  // Body Styles (ثمانية Serif Text — Panorama)
   // ─────────────────────────────────────────────
 
   /// Large body text
@@ -141,9 +145,9 @@ class AppTypography {
     color: NeuColors.textSecondary,
   );
 
-  /// English body text (Givonic)
+  /// English body text (Yapari للعناوين، ثمانية للنصوص العامة)
   static const TextStyle bodyEn = TextStyle(
-    fontFamily: fontFamilyGivonic,
+    fontFamily: fontFamilyPanorama,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.5,

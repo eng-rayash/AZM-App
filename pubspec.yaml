@@ -77,32 +77,25 @@ flutter:
     - assets/brand/azmsmart_icon.png
 
   fonts:
-    # خط عزم العربي الوحيد — Hacen Liner Screen. عناوين ومتن وواجهة.
-    # الاسم "Panorama" مُبقى لأنه مذكور نصّياً في ١٤٤ موضعاً.
+    # خط ثمانية — النص العربي العام (متن وواجهة).
+    # الاسم "Panorama" مُبقى لأنه مذكور نصّياً في ١٤٤ موضعاً عبر ٢٧ ملفاً.
     - family: Panorama
       fonts:
-        - asset: assets/fonts/HacenLinerScreen.ttf
+        - asset: assets/fonts/ThmanyahSerifText-Medium.woff2
+          weight: 400
+        - asset: assets/fonts/ThmanyahSerifText-Bold.woff2
+          weight: 700
 
-    # احتياط الرموز وحدها: Hacen ينقصه … و ﷼ و € و NBSP.
-    # لا يُستدعى إلا حين يعجز الخط الأساسي عن رمز.
-    - family: GlyphFallback
+    # خط زين — العناوين العربية الضخمة والعلامة اللفظية.
+    - family: Zain
       fonts:
-        - asset: assets/fonts/majallab.ttf
+        - asset: assets/fonts/ZainMobileSwashes-VF.woff2
 
-    - family: Givonic
-      fonts:
-        - asset: assets/fonts/Givonic-Regular.otf
-
+    # خط يابار — العناوين الإنجليزية الكبيرة والعلامة اللاتينية.
     - family: Yapari
       fonts:
-        - asset: assets/fonts/YapariTrial-Bold.ttf
+        - asset: assets/fonts/YapariTrial-Bold.woff2
           weight: 700
-        - asset: assets/fonts/YapariTrial-ExtraBold.ttf
-          weight: 800
-
-    - family: RTLMaghfira
-      fonts:
-        - asset: assets/fonts/rtl-maghfira-ramadan.ttf
 
 
 flutter_launcher_icons:
