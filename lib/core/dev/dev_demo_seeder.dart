@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database/app_database.dart';
 
-/// بيانات عرض تجريبي مخصصة لكل باقة — تُعبّأ تلقائياً عند أول دخول.
+/// بيانات عرض تجريبي شاملة ومخصصة لكل باقة — تُعبّأ تلقائياً عند أول دخول.
 ///
-/// كل حساب تجريبي يحصل على بيانات تناسب باقته:
-/// - **محترف** (1): مكتب استشارات — عملاء ومشاريع وملاحظات
-/// - **أعمال** (2): شركة صغيرة — + متابعات وتوجيهات وزوار
-/// - **أعمال بلس** (3): مجموعة متنامية — كل ما سبق + حجم أكبر
-/// - **مؤسسي** (4): مؤسسة كبيرة — كل الوحدات بأقصى عمق
+/// كل حساب تجريبي يحصل على بيانات واقعية تناسب باقته وتعرض مميزاتها:
+/// - **محترف** (1): مكتب استشارات — عملاء ومشاريع وفواتير ومالية
+/// - **أعمال** (2): شركة تجارة وتوزيع — + موارد بشرية ومتابعات وتوجيهات
+/// - **أعمال بلس** (3): شركة تقنية متنامية — + فروع وتقييمات أداء وتدريب
+/// - **مؤسسي** (4): مؤسسة كبرى — كل الوحدات بأقصى عمق وحجم
 class DevDemoSeeder {
   DevDemoSeeder._();
 
@@ -32,8 +33,9 @@ class DevDemoSeeder {
       final existing = await db.customSelect('SELECT COUNT(*) AS c FROM users').getSingleOrNull();
       if (existing != null && (existing.data['c'] as int) > 0) return;
       await _seed(db, planValue);
-    } catch (e) {
-      // لا نمنع بدء التطبيق بسبب خطأ في البيانات التجريبية
+    } catch (e, st) {
+      debugPrint('[DevDemoSeeder] ❌ خطأ في تعبئة البيانات التجريبية: $e');
+      debugPrint('[DevDemoSeeder] $st');
       return;
     }
   }
@@ -289,7 +291,7 @@ class DevDemoSeeder {
       ];
       if (plan >= 2) notesList.addAll([
         ["نقاط مهمة — اجتماع المجلس", "- اعتماد ميزانية Q3 (١٢.٥ مليون ريال)\\n- مراجعة أداء الأقسام\\n- خطة التوسع — الموافقة المبدئية\\n- تعيين مدير تقنية جديد", "#4A148C", "مجلس,اجتماع,قرارات", ago(14)],
-        ["متابعة عاجلة ⚡", "الاتصال بأ. صالح الغزالي اليوم بشأن عقد شركة البدر — عاجل\\nالموعد النهائي: غداً الساعة ٥ مساءً", "#B71C1C", "عاجل,متابعة,قانوني", ago(1)],
+        ["متابعة عاجلة", "الاتصال بأ. صالح الغزالي اليوم بشأن عقد شركة البدر — عاجل\\nالموعد النهائي: غداً الساعة ٥ مساءً", "#B71C1C", "عاجل,متابعة,قانوني", ago(1)],
       ]);
       if (plan >= 4) notesList.addAll([
         ["رؤية ٢٠٣٠ — مبادراتنا المتوافقة", "المبادرات المعتمدة:\\n١. التحول الرقمي الكامل — ميزانية ٥ مليون\\n٢. الاستدامة البيئية — تخفيض الانبعاثات ١٥٪\\n٣. تأهيل الكوادر الوطنية — ٩٠٪ سعودة\\n٤. الابتكار في قطاع الطاقة", "#006064", "رؤية2030,استراتيجية,وطني", ago(20)],
@@ -355,7 +357,432 @@ class DevDemoSeeder {
           }
         }
       }
-    });
+
+
+      // ╔═══════════════════════════════════════════════════════════════╗
+      // ║          جداول المالية — محترف+ (plan >= 1)                 ║
+      // ╚═══════════════════════════════════════════════════════════════╝
+
+      // ═══════════════════════════════════════════════════════
+      // ١٦. العملاء (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final clients = <List<Object?>>[
+          ["شركة الخليج للطاقة", "Gulf Energy Co", "CLI-001", 0, "0501234567", "saad@gulf-energy.sa", "الخبر", "SA", "310123456700003", "1010234567", 500000.0, 125000.0, 30, "م. سعد المطيري", 1],
+          ["مجموعة التميم للمقاولات", "Tamim Group", "CLI-002", 0, "0571234570", "abdallah@tamim.sa", "الرياض", "SA", "310567890100003", "1010567890", 300000.0, 0.0, 30, "أ. عبدالله الشمري", 1],
+          ["مستشفى الحياة التخصصي", "Al Hayat Hospital", "CLI-003", 1, "0512345678", "info@alhayat.sa", "جدة", "SA", "310987654300003", "1010987654", 200000.0, 45000.0, 15, "د. سمير الأحمدي", 1],
+        ];
+        if (plan >= 2) clients.addAll([
+          ["شركة بترو العربية", "Petro Arabia", "CLI-004", 0, "0591234572", "ahmed@petroarabia.com", "الظهران", "SA", "310111222300003", "1010111222", 1000000.0, 350000.0, 45, "م. أحمد الدوسري", 1],
+          ["شركة البيان للإعلام", "Al Bayan Media", "CLI-005", 1, "0501234573", "m.alsaeed@bayan.sa", "الرياض", "SA", "310444555600003", "1010444555", 150000.0, 0.0, 15, "أ. محمد السعيد", 1],
+        ]);
+        if (plan >= 3) clients.addAll([
+          ["مجموعة الحربي القابضة", "Al Harbi Holding", "CLI-006", 0, "0551234574", "ali@harbi.com", "الرياض", "SA", "310777888900003", "1010777888", 2000000.0, 800000.0, 60, "د. علي الحربي", 1],
+          ["شركة الرؤية التقنية", "Vision Tech", "CLI-007", 1, "0561234575", "reem@vision.sa", "الرياض", "SA", "310222333400003", "1010222333", 500000.0, 120000.0, 30, "أ. ريم العسيري", 1],
+        ]);
+        if (plan >= 4) clients.addAll([
+          ["أرامكو السعودية", "Saudi Aramco", "CLI-008", 0, "0591234584", "hessa@aramco.sa", "الظهران", "SA", "310999000100003", "1010999000", 10000000.0, 2500000.0, 60, "م. حصة العتيبي", 1],
+          ["صندوق الاستثمارات العامة", "PIF", "CLI-009", 2, "0581234583", "i.khodairi@pif.gov.sa", "الرياض", "SA", "310888777600003", "1010888777", 5000000.0, 0.0, 90, "أ. إبراهيم الخضيري", 1],
+        ]);
+        for (final cl in clients) {
+          final ct = ago(rand.nextInt(60) + 30).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO clients (sync_id, created_at, updated_at, is_deleted, created_by, name, name_en, code, type, phone, email, city, country, tax_number, commercial_register, credit_limit, current_balance, payment_terms, contact_person_name, is_active) VALUES ('${u()}', $ct, $ct, 0, 'user_1', '${cl[0]}', '${cl[1]}', '${cl[2]}', ${cl[3]}, '${cl[4]}', '${cl[5]}', '${cl[6]}', '${cl[7]}', '${cl[8]}', '${cl[9]}', ${cl[10]}, ${cl[11]}, ${cl[12]}, '${cl[13]}', ${cl[14]})");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ١٧. المشاريع (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final projects = <List<Object?>>[
+          ["مشروع تطوير البنية التحتية", "تحديث وتطوير البنية التحتية التقنية للشركة بالكامل", "PRJ-001", "شركة الخليج للطاقة", ago(90), future(60), 450000.0, 180000.0, 500000.0, 1, 40, 0, "تطوير تقني"],
+          ["مشروع التحول الرقمي", "رقمنة العمليات الإدارية والمالية", "PRJ-002", "مجموعة التميم للمقاولات", ago(45), future(90), 280000.0, 95000.0, 320000.0, 1, 25, 1, "تحول رقمي"],
+          ["استشارة إدارية — مستشفى الحياة", "دراسة وتحسين العمليات التشغيلية", "PRJ-003", "مستشفى الحياة التخصصي", ago(30), future(30), 120000.0, 80000.0, 150000.0, 1, 65, 1, "استشارات"],
+        ];
+        if (plan >= 2) projects.addAll([
+          ["منصة التجارة الإلكترونية", "بناء منصة تجارة إلكترونية متكاملة B2B", "PRJ-004", "شركة بترو العربية", ago(60), future(120), 750000.0, 200000.0, 900000.0, 1, 20, 0, "تطوير برمجيات"],
+          ["حملة تسويقية رقمية شاملة", "إدارة الحملة التسويقية السنوية — وسائل التواصل والإعلانات", "PRJ-005", "شركة البيان للإعلام", ago(20), future(40), 180000.0, 60000.0, 200000.0, 1, 35, 1, "تسويق"],
+        ]);
+        if (plan >= 3) projects.addAll([
+          ["نظام ERP متكامل", "تصميم وتنفيذ نظام ERP شامل لإدارة العمليات", "PRJ-006", "مجموعة الحربي القابضة", ago(120), future(180), 2500000.0, 800000.0, 3000000.0, 1, 30, 0, "أنظمة مؤسسية"],
+          ["مشروع الأمن السيبراني", "تقييم وتطبيق حلول الأمن السيبراني المتقدمة", "PRJ-007", "شركة الرؤية التقنية", ago(30), future(60), 500000.0, 150000.0, 600000.0, 1, 25, 0, "أمن معلومات"],
+        ]);
+        if (plan >= 4) projects.addAll([
+          ["مبادرة الابتكار المشتركة مع أرامكو", "تطوير حلول طاقة ذكية باستخدام IoT و AI", "PRJ-008", "أرامكو السعودية", ago(60), future(300), 5000000.0, 1200000.0, 6000000.0, 1, 15, 0, "ابتكار وطاقة"],
+          ["مشروع البنية التحتية — رؤية ٢٠٣٠", "تنفيذ مشاريع البنية التحتية ضمن رؤية المملكة", "PRJ-009", "صندوق الاستثمارات العامة", ago(30), future(365), 12000000.0, 500000.0, 15000000.0, 0, 5, 0, "بنية تحتية"],
+        ]);
+        for (final p in projects) {
+          final sd = p[4] as DateTime; final pt = sd.millisecondsSinceEpoch;
+          final ed = p[5] as DateTime;
+          await db.customStatement("INSERT INTO projects (sync_id, created_at, updated_at, is_deleted, created_by, name, description, code, client_name, start_date, end_date, budget, actual_cost, contract_value, status, progress, priority, category, currency) VALUES ('${u()}', $pt, $pt, 0, 'user_1', '${p[0]}', '${p[1]}', '${p[2]}', '${p[3]}', '${_ds(sd)}', '${_ds(ed)}', ${p[6]}, ${p[7]}, ${p[8]}, ${p[9]}, ${p[10]}, ${p[11]}, '${p[12]}', 'SAR')");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ١٨. الفواتير (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final invoices = <List<Object?>>[
+          ["INV-2026-001", "شركة الخليج للطاقة", ago(25), future(5), 85000.0, 0.0, 0.0, 12750.0, 15.0, 97750.0, 97750.0, 0.0, 3],
+          ["INV-2026-002", "مجموعة التميم للمقاولات", ago(15), future(15), 45000.0, 2250.0, 5.0, 6412.5, 15.0, 49162.5, 0.0, 49162.5, 0],
+          ["INV-2026-003", "مستشفى الحياة التخصصي", ago(5), future(25), 35000.0, 0.0, 0.0, 5250.0, 15.0, 40250.0, 20000.0, 20250.0, 1],
+        ];
+        if (plan >= 2) invoices.addAll([
+          ["INV-2026-004", "شركة بترو العربية", ago(10), future(35), 150000.0, 7500.0, 5.0, 21375.0, 15.0, 163875.0, 163875.0, 0.0, 3],
+          ["INV-2026-005", "شركة البيان للإعلام", ago(3), future(27), 60000.0, 0.0, 0.0, 9000.0, 15.0, 69000.0, 0.0, 69000.0, 0],
+        ]);
+        if (plan >= 3) invoices.addAll([
+          ["INV-2026-006", "مجموعة الحربي القابضة", ago(20), future(40), 350000.0, 17500.0, 5.0, 49875.0, 15.0, 382375.0, 200000.0, 182375.0, 1],
+          ["INV-2026-007", "شركة الرؤية التقنية", ago(8), future(22), 120000.0, 0.0, 0.0, 18000.0, 15.0, 138000.0, 138000.0, 0.0, 3],
+        ]);
+        if (plan >= 4) invoices.addAll([
+          ["INV-2026-008", "أرامكو السعودية", ago(12), future(48), 800000.0, 40000.0, 5.0, 114000.0, 15.0, 874000.0, 500000.0, 374000.0, 1],
+          ["INV-2026-009", "صندوق الاستثمارات العامة", ago(30), future(60), 1500000.0, 0.0, 0.0, 225000.0, 15.0, 1725000.0, 1725000.0, 0.0, 3],
+        ]);
+        for (final inv in invoices) {
+          final id2 = (inv[2] as DateTime); final it = id2.millisecondsSinceEpoch;
+          final dd = inv[3] as DateTime;
+          final itemsJson = '[{"description":"خدمات استشارية","quantity":1,"unit_price":${inv[4]},"total":${inv[4]}}]';
+          await db.customStatement("INSERT INTO invoices (sync_id, created_at, updated_at, is_deleted, created_by, invoice_number, client_name, issue_date, due_date, items, subtotal, discount_amount, discount_percent, tax_amount, tax_percent, total, paid_amount, remaining_amount, currency, status) VALUES ('${u()}', $it, $it, 0, 'user_1', '${inv[0]}', '${inv[1]}', '${_ds(id2)}', '${_ds(dd)}', '$itemsJson', ${inv[4]}, ${inv[5]}, ${inv[6]}, ${inv[7]}, ${inv[8]}, ${inv[9]}, ${inv[10]}, ${inv[11]}, 'SAR', ${inv[12]})");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ١٩. المصروفات (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final expenses = <List<Object?>>[
+          ["إيجار المكتب — أكتوبر ٢٠٢٦", 25000.0, "إيجارات", ago(5), 0, 3],
+          ["اشتراكات البرامج السحابية", 4500.0, "تقنية", ago(10), 0, 3],
+          ["مصاريف سفر — اجتماع الخبر", 3200.0, "سفر وتنقل", ago(8), 0, 3],
+          ["لوازم مكتبية ومستلزمات", 1800.0, "مستلزمات مكتبية", ago(12), 0, 3],
+        ];
+        if (plan >= 2) expenses.addAll([
+          ["رواتب الموظفين — أكتوبر ٢٠٢٦", 185000.0, "رواتب", ago(2), 0, 3],
+          ["حملة إعلانية رقمية — Google Ads", 15000.0, "تسويق", ago(7), 0, 3],
+          ["صيانة المعدات والأجهزة", 8500.0, "صيانة", ago(15), 0, 3],
+        ]);
+        if (plan >= 3) expenses.addAll([
+          ["تجديد تراخيص البرمجيات المؤسسية", 45000.0, "تقنية", ago(20), 0, 3],
+          ["تدريب وتطوير الموظفين — Q3", 32000.0, "تدريب", ago(25), 0, 3],
+        ]);
+        if (plan >= 4) expenses.addAll([
+          ["مشروع تأثيث المقر الجديد — جدة", 280000.0, "أصول ثابتة", ago(30), 0, 3],
+          ["استشارات قانونية دولية", 95000.0, "استشارات", ago(18), 0, 3],
+          ["تأمين طبي شامل للموظفين", 420000.0, "تأمين", ago(35), 0, 3],
+        ]);
+        for (final ex in expenses) {
+          final dt = ex[3] as DateTime; final et = dt.millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO expenses (sync_id, created_at, updated_at, is_deleted, created_by, title, amount, currency, category, date, status) VALUES ('${u()}', $et, $et, 0, 'user_1', '${ex[0]}', ${ex[1]}, 'SAR', '${ex[2]}', '${_ds(dt)}', ${ex[5]})");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ٢٠. الإيرادات (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final revenues = <List<Object?>>[
+          ["تحصيل فاتورة — شركة الخليج للطاقة", 97750.0, "خدمات استشارية", ago(5), "شركة الخليج للطاقة", 0],
+          ["دفعة مقدمة — مشروع التحول الرقمي", 96000.0, "مشاريع", ago(15), "مجموعة التميم للمقاولات", 0],
+          ["سداد جزئي — مستشفى الحياة", 20000.0, "خدمات استشارية", ago(3), "مستشفى الحياة التخصصي", 0],
+        ];
+        if (plan >= 2) revenues.addAll([
+          ["تحصيل فاتورة — شركة بترو العربية", 163875.0, "مشاريع", ago(8), "شركة بترو العربية", 0],
+          ["إيرادات عقد صيانة سنوي", 72000.0, "صيانة وعقود", ago(20), "شركة البيان للإعلام", 0],
+        ]);
+        if (plan >= 3) revenues.addAll([
+          ["دفعة مرحلية — مشروع ERP", 500000.0, "مشاريع كبرى", ago(10), "مجموعة الحربي القابضة", 0],
+          ["تحصيل كامل — مشروع الأمن السيبراني", 138000.0, "خدمات تقنية", ago(6), "شركة الرؤية التقنية", 0],
+        ]);
+        if (plan >= 4) revenues.addAll([
+          ["دفعة أولى — مبادرة أرامكو", 1200000.0, "مشاريع استراتيجية", ago(12), "أرامكو السعودية", 0],
+          ["تحصيل كامل — مشروع PIF", 1725000.0, "مشاريع حكومية", ago(25), "صندوق الاستثمارات العامة", 0],
+        ]);
+        for (final rv in revenues) {
+          final dt = rv[3] as DateTime; final rt = dt.millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO revenues (sync_id, created_at, updated_at, is_deleted, created_by, title, amount, currency, category, date, client_name, payment_method) VALUES ('${u()}', $rt, $rt, 0, 'user_1', '${rv[0]}', ${rv[1]}, 'SAR', '${rv[2]}', '${_ds(dt)}', '${rv[4]}', ${rv[5]})");
+        }
+      }
+
+
+      // ╔═══════════════════════════════════════════════════════════════╗
+      // ║      جداول الموارد البشرية — أعمال+ (plan >= 2)             ║
+      // ╚═══════════════════════════════════════════════════════════════╝
+
+      // متغيرات مشتركة بين أقسام HR المختلفة (أعمال / أعمال بلس / مؤسسي)
+      final empSyncIds = <String>[];
+      final employees = <List<Object?>>[];
+
+      // ═══════════════════════════════════════════════════════
+      // ٢١. الأقسام (أعمال+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 2) {
+        final deptSyncIds = <String>[];
+        final departments = <List<Object?>>[
+          ["الإدارة العامة", "الإشراف العام على جميع العمليات والأقسام", "م. خالد العتيبي", 1],
+          ["المبيعات والتسويق", "إدارة المبيعات والعلاقات التجارية والحملات التسويقية", "أ. سعود الحربي", 1],
+          ["الشؤون المالية", "إدارة الحسابات والميزانيات والتقارير المالية", "م. فهد الشهري", 1],
+          ["الموارد البشرية", "إدارة شؤون الموظفين والتوظيف والتطوير", "أ. منى القحطاني", 1],
+        ];
+        if (plan >= 3) departments.addAll([
+          ["تقنية المعلومات", "تطوير وصيانة الأنظمة التقنية والبنية التحتية", "م. عمر الدوسري", 1],
+          ["ضمان الجودة", "مراقبة الجودة والالتزام بالمعايير والمقاييس", "د. ليلى العمري", 1],
+        ]);
+        if (plan >= 4) departments.addAll([
+          ["التخطيط الاستراتيجي", "وضع الخطط الاستراتيجية وقياس الأداء المؤسسي", "د. سلطان الغامدي", 1],
+          ["الشؤون القانونية", "المراجعة القانونية والعقود والامتثال التنظيمي", "أ. نواف المطيري", 1],
+        ]);
+        for (final dep in departments) {
+          final dt2 = ago(120).millisecondsSinceEpoch;
+          final depSync = u();
+          deptSyncIds.add(depSync);
+          await db.customStatement("INSERT INTO departments (sync_id, created_at, updated_at, is_deleted, created_by, name, description, manager_name, is_active) VALUES ('$depSync', $dt2, $dt2, 0, 'user_1', '${dep[0]}', '${dep[1]}', '${dep[2]}', ${dep[3]})");
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٢. المسميات الوظيفية (أعمال+)
+        // ═══════════════════════════════════════════════════════
+        final positions = <List<Object?>>[
+          ["المدير العام", "General Manager", 0, "الإدارة العامة", 25000.0, 45000.0, 1],
+          ["مدير المبيعات", "Sales Manager", 1, "المبيعات والتسويق", 15000.0, 25000.0, 1],
+          ["محاسب أول", "Senior Accountant", 2, "الشؤون المالية", 10000.0, 18000.0, 1],
+          ["أخصائي موارد بشرية", "HR Specialist", 2, "الموارد البشرية", 9000.0, 15000.0, 1],
+          ["مندوب مبيعات", "Sales Representative", 3, "المبيعات والتسويق", 6000.0, 10000.0, 1],
+          ["سكرتير تنفيذي", "Executive Secretary", 3, "الإدارة العامة", 7000.0, 12000.0, 1],
+        ];
+        if (plan >= 3) positions.addAll([
+          ["مهندس برمجيات أول", "Senior Software Engineer", 2, "تقنية المعلومات", 15000.0, 28000.0, 1],
+          ["مدير المشاريع التقنية", "IT Project Manager", 1, "تقنية المعلومات", 18000.0, 30000.0, 1],
+          ["أخصائي ضمان جودة", "QA Specialist", 2, "ضمان الجودة", 10000.0, 16000.0, 1],
+        ]);
+        if (plan >= 4) positions.addAll([
+          ["نائب الرئيس التنفيذي", "Vice President", 0, "الإدارة العامة", 35000.0, 60000.0, 1],
+          ["مستشار قانوني", "Legal Counsel", 1, "الشؤون القانونية", 20000.0, 35000.0, 1],
+          ["محلل استراتيجي", "Strategy Analyst", 2, "التخطيط الاستراتيجي", 12000.0, 22000.0, 1],
+        ]);
+        for (final pos in positions) {
+          final pt2 = ago(120).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO positions (sync_id, created_at, updated_at, is_deleted, created_by, title, title_en, level, department_name, min_salary, max_salary, is_active) VALUES ('${u()}', $pt2, $pt2, 0, 'user_1', '${pos[0]}', '${pos[1]}', ${pos[2]}, '${pos[3]}', ${pos[4]}, ${pos[5]}, ${pos[6]})");
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٣. الموظفون (أعمال+)
+        // ═══════════════════════════════════════════════════════
+        employees.addAll([
+          ["سعود الحربي", "Saud Al-Harbi", "EMP-001", "1098765432", 0, "1990-05-15", "سعودي", "المبيعات والتسويق", "مدير المبيعات", "2022-03-01", 0, 0, 18000.0, 0, "0501111111", "saud@company.sa"],
+          ["فهد الشهري", "Fahd Al-Shahri", "EMP-002", "1087654321", 0, "1988-11-20", "سعودي", "الشؤون المالية", "محاسب أول", "2021-06-15", 0, 0, 15000.0, 0, "0502222222", "fahd@company.sa"],
+          ["منى القحطاني", "Muna Al-Qahtani", "EMP-003", "1076543210", 1, "1992-08-10", "سعودية", "الموارد البشرية", "أخصائي موارد بشرية", "2023-01-10", 0, 0, 12000.0, 0, "0503333333", "muna@company.sa"],
+          ["ياسر المالكي", "Yaser Al-Malki", "EMP-004", "1065432109", 0, "1995-02-28", "سعودي", "المبيعات والتسويق", "مندوب مبيعات", "2023-09-01", 0, 0, 8000.0, 0, "0504444444", "yaser@company.sa"],
+          ["هدى العتيبي", "Huda Al-Otaibi", "EMP-005", "1054321098", 1, "1994-12-05", "سعودية", "الإدارة العامة", "سكرتير تنفيذي", "2022-11-20", 0, 0, 10000.0, 0, "0505555555", "huda@company.sa"],
+          ["عبدالرحمن الزهراني", "Abdulrahman Al-Zahrani", "EMP-006", "1043210987", 0, "1991-07-18", "سعودي", "الشؤون المالية", "محاسب أول", "2024-02-01", 0, 0, 13000.0, 0, "0506666666", "abdulrahman@company.sa"],
+        ]);
+        if (plan >= 3) employees.addAll([
+          ["عمر الدوسري", "Omar Al-Dosari", "EMP-007", "1032109876", 0, "1989-04-22", "سعودي", "تقنية المعلومات", "مدير المشاريع التقنية", "2021-01-15", 0, 0, 22000.0, 0, "0507777777", "omar@company.sa"],
+          ["ليلى العمري", "Layla Al-Omari", "EMP-008", "1021098765", 1, "1993-09-30", "سعودية", "ضمان الجودة", "أخصائي ضمان جودة", "2022-07-01", 0, 0, 14000.0, 0, "0508888888", "layla@company.sa"],
+          ["خالد الشمراني", "Khalid Al-Shamrani", "EMP-009", "1010987654", 0, "1996-01-12", "سعودي", "تقنية المعلومات", "مهندس برمجيات أول", "2023-04-15", 0, 0, 20000.0, 0, "0509999999", "khalid.sh@company.sa"],
+          ["نورا الحربي", "Noura Al-Harbi", "EMP-010", "1009876543", 1, "1997-06-08", "سعودية", "تقنية المعلومات", "مهندس برمجيات أول", "2024-01-01", 0, 0, 17000.0, 0, "0501010101", "noura.h@company.sa"],
+        ]);
+        if (plan >= 4) employees.addAll([
+          ["سلطان الغامدي", "Sultan Al-Ghamdi", "EMP-011", "1098700001", 0, "1985-03-10", "سعودي", "التخطيط الاستراتيجي", "نائب الرئيس التنفيذي", "2020-01-01", 0, 0, 35000.0, 0, "0501112233", "sultan@company.sa"],
+          ["نواف المطيري", "Nawaf Al-Mutairi", "EMP-012", "1098700002", 0, "1987-08-25", "سعودي", "الشؤون القانونية", "مستشار قانوني", "2021-05-01", 0, 0, 28000.0, 0, "0502223344", "nawaf@company.sa"],
+          ["رنا السبيعي", "Rana Al-Subaie", "EMP-013", "1098700003", 1, "1994-11-15", "سعودية", "التخطيط الاستراتيجي", "محلل استراتيجي", "2023-03-01", 0, 0, 16000.0, 0, "0503334455", "rana@company.sa"],
+          ["ماجد العسيري", "Majed Al-Asiri", "EMP-014", "1098700004", 0, "1990-06-20", "سعودي", "المبيعات والتسويق", "مندوب مبيعات", "2022-08-15", 0, 0, 9000.0, 0, "0504445566", "majed@company.sa"],
+          ["سمية الخالدي", "Sumaya Al-Khalidi", "EMP-015", "1098700005", 1, "1996-02-14", "سعودية", "الموارد البشرية", "أخصائي موارد بشرية", "2024-06-01", 0, 0, 11000.0, 0, "0505556677", "sumaya@company.sa"],
+        ]);
+        for (final emp in employees) {
+          final et2 = ago(rand.nextInt(60) + 60).millisecondsSinceEpoch;
+          final empSync = u();
+          empSyncIds.add(empSync);
+          await db.customStatement("INSERT INTO employees (sync_id, created_at, updated_at, is_deleted, created_by, name, name_en, employee_code, national_id, gender, date_of_birth, nationality, department_name, position_name, hiring_date, employment_type, status, basic_salary, salary_type, phone, email) VALUES ('$empSync', $et2, $et2, 0, 'user_1', '${emp[0]}', '${emp[1]}', '${emp[2]}', '${emp[3]}', ${emp[4]}, '${emp[5]}', '${emp[6]}', '${emp[7]}', '${emp[8]}', '${emp[9]}', ${emp[10]}, ${emp[11]}, ${emp[12]}, ${emp[13]}, '${emp[14]}', '${emp[15]}')");
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٤. عقود الموظفين (أعمال+)
+        // ═══════════════════════════════════════════════════════
+        for (int i = 0; i < employees.length; i++) {
+          final emp = employees[i];
+          final empAutoId = i + 1; // autoincrement id from employees table
+          final ct2 = ago(rand.nextInt(30) + 90).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO employee_contracts (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, contract_type, start_date, end_date, salary, status) VALUES ('${u()}', $ct2, $ct2, 0, 'user_1', $empAutoId, '${emp[0]}', ${i < 3 ? 0 : 1}, '${emp[9]}', '${_ds(future(365))}', ${emp[12]}, 0)");
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٥. سجلات الحضور (أعمال+) — آخر ١٤ يوم
+        // ═══════════════════════════════════════════════════════
+        for (int d = 1; d <= 14; d++) {
+          final attDate = ago(d);
+          if (attDate.weekday == DateTime.friday || attDate.weekday == DateTime.saturday) continue;
+          for (int i = 0; i < employees.length; i++) {
+            final emp = employees[i];
+            final empAutoId = i + 1;
+            final at3 = attDate.millisecondsSinceEpoch;
+            final checkInH = 7 + rand.nextInt(2);
+            final checkInM = rand.nextInt(60);
+            final checkOutH = 15 + rand.nextInt(3);
+            final checkOutM = rand.nextInt(60);
+            final hours = (checkOutH - checkInH) + (checkOutM - checkInM) / 60.0;
+            final status = hours >= 8.0 ? 0 : (hours >= 6.0 ? 2 : 1); // 0=present, 1=absent, 2=late
+            await db.customStatement("INSERT INTO attendance_records (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, date, check_in, check_out, working_hours, status) VALUES ('${u()}', $at3, $at3, 0, 'user_1', $empAutoId, '${emp[0]}', '${_ds(attDate)}', '${_ts(checkInH, checkInM)}', '${_ts(checkOutH, checkOutM)}', ${hours.toStringAsFixed(1)}, $status)");
+          }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٦. طلبات الإجازات (أعمال+)
+        // ═══════════════════════════════════════════════════════
+        final leaves = <List<Object?>>[
+          [1, employees[0][0], 0, ago(20), ago(15), 5, "إجازة سنوية — سفر عائلي", 1, "تمت الموافقة"],
+          [3, employees[2][0], 2, ago(5), ago(4), 1, "مراجعة طبية", 1, null],
+        ];
+        if (plan >= 3 && employees.length > 6) {
+          leaves.addAll([
+            [7, employees[6][0], 0, future(10), future(17), 7, "إجازة سنوية", 0, null],
+            [8, employees[7][0], 3, ago(30), ago(26), 4, "إجازة اضطرارية — ظرف عائلي", 1, "تمت الموافقة — ظرف طارئ"],
+          ]);
+        }
+        if (plan >= 4 && employees.length > 10) {
+          leaves.addAll([
+            [11, employees[10][0], 0, future(20), future(34), 14, "إجازة سنوية — رحلة خارجية", 0, null],
+          ]);
+        }
+        for (final lv in leaves) {
+          final lt2 = (lv[3] as DateTime).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO leave_requests (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, leave_type, start_date, end_date, days, reason, status, approval_notes) VALUES ('${u()}', $lt2, $lt2, 0, 'user_1', ${lv[0]}, '${lv[1]}', ${lv[2]}, '${_ds(lv[3] as DateTime)}', '${_ds(lv[4] as DateTime)}', ${lv[5]}, '${lv[6]}', ${lv[7]}, ${lv[8] != null ? "'${lv[8]}'" : 'NULL'})");
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ٢٧. سجلات الرواتب (أعمال+) — شهر واحد
+        // ═══════════════════════════════════════════════════════
+        final salaryMonth = now.month == 1 ? 12 : now.month - 1;
+        final salaryYear = now.month == 1 ? now.year - 1 : now.year;
+        for (int i = 0; i < employees.length; i++) {
+          final emp = employees[i];
+          final empAutoId = i + 1;
+          final basicSalary = emp[12] as double;
+          final housingAllowance = basicSalary * 0.25;
+          final transportAllowance = basicSalary * 0.10;
+          final totalGross = basicSalary + housingAllowance + transportAllowance;
+          final gosiDeduction = basicSalary * 0.0975;
+          final netSalary = totalGross - gosiDeduction;
+          final st2 = ago(5).millisecondsSinceEpoch;
+          final allowancesJson = '[{"name":"بدل سكن","amount":$housingAllowance},{"name":"بدل نقل","amount":$transportAllowance}]';
+          final deductionsJson = '[{"name":"تأمينات اجتماعية","amount":$gosiDeduction}]';
+          await db.customStatement("INSERT INTO salary_records (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, month, year, basic_salary, allowances, deductions, advances, total_gross, total_deductions, net_salary, payment_method, status) VALUES ('${u()}', $st2, $st2, 0, 'user_1', $empAutoId, '${emp[0]}', $salaryMonth, $salaryYear, $basicSalary, '$allowancesJson', '$deductionsJson', 0.0, $totalGross, $gosiDeduction, $netSalary, 0, 2)");
+        }
+      }
+
+
+      // ╔═══════════════════════════════════════════════════════════════╗
+      // ║    جداول متقدمة — أعمال بلس+ (plan >= 3)                    ║
+      // ╚═══════════════════════════════════════════════════════════════╝
+
+      // ═══════════════════════════════════════════════════════
+      // ٢٨. الفروع (أعمال بلس+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 3) {
+        final branches = <List<Object?>>[
+          ["المقر الرئيسي — الرياض", "طريق الملك فهد، حي العليا، الرياض ١٢٢١١", "الرياض", "SA", "0112345678", "riyadh@company.sa", 1, "م. خالد العتيبي", 1],
+          ["فرع جدة", "شارع التحلية، حي الأندلس، جدة ٢١٥١٢", "جدة", "SA", "0122345678", "jeddah@company.sa", 0, "أ. سعود الحربي", 1],
+        ];
+        if (plan >= 4) branches.addAll([
+          ["فرع الدمام", "طريق الملك عبدالعزيز، حي الشاطئ، الدمام ٣٢٢١١", "الدمام", "SA", "0132345678", "dammam@company.sa", 0, "م. فهد الشهري", 1],
+          ["مكتب التمثيل — دبي", "شارع الشيخ زايد، برج المكاتب، دبي", "دبي", "AE", "0097143210000", "dubai@company.sa", 0, null, 1],
+        ]);
+        for (final br in branches) {
+          final bt = ago(150).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO branches (sync_id, created_at, updated_at, is_deleted, created_by, name, address, city, country, phone, email, is_main_branch, manager_name, is_active) VALUES ('${u()}', $bt, $bt, 0, 'user_1', '${br[0]}', '${br[1]}', '${br[2]}', '${br[3]}', '${br[4]}', '${br[5]}', ${br[6]}, ${br[7] != null ? "'${br[7]}'" : 'NULL'}, ${br[8]})");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ٢٩. تقييمات الأداء (أعمال بلس+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 3 && empSyncIds.isNotEmpty) {
+        final evaluations = <List<Object?>>[
+          [0, "الربع الثالث ٢٠٢٦", "2026-07-01", "2026-09-30", 88.0, 100.0, 88.0, 1, "أداء متميز في تحقيق أهداف المبيعات", "تحسين مهارات العرض والتقديم", ago(15)],
+          [1, "الربع الثالث ٢٠٢٦", "2026-07-01", "2026-09-30", 92.0, 100.0, 92.0, 0, "دقة عالية في التقارير المالية — صفر أخطاء", "التوسع في التحليل المالي الاستراتيجي", ago(15)],
+          [2, "الربع الثالث ٢٠٢٦", "2026-07-01", "2026-09-30", 85.0, 100.0, 85.0, 1, "تحسين ملموس في عمليات التوظيف", "تطوير برامج الاحتفاظ بالموظفين", ago(15)],
+        ];
+        if (plan >= 4) evaluations.addAll([
+          [3, "الربع الثالث ٢٠٢٦", "2026-07-01", "2026-09-30", 78.0, 100.0, 78.0, 2, "أداء جيد مع مساحة للتحسين", "زيادة حجم المبيعات بنسبة ١٥٪", ago(15)],
+          [4, "الربع الثالث ٢٠٢٦", "2026-07-01", "2026-09-30", 95.0, 100.0, 95.0, 0, "أداء استثنائي — تنظيم مثالي لجدول المدير", "الانخراط في مبادرات التطوير المؤسسي", ago(15)],
+        ]);
+        for (final ev in evaluations) {
+          final idx = ev[0] as int;
+          if (idx >= empSyncIds.length) continue;
+          final et3 = (ev[10] as DateTime).millisecondsSinceEpoch;
+          final totalScore = ev[4] as double;
+          final scoresJson = '[{"criteria":"جودة العمل","score":${totalScore * 0.3},"max":30},{"criteria":"الالتزام","score":${totalScore * 0.25},"max":25},{"criteria":"المبادرة","score":${totalScore * 0.25},"max":25},{"criteria":"العمل الجماعي","score":${totalScore * 0.2},"max":20}]';
+          await db.customStatement("INSERT INTO performance_evaluations (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, period, period_start_date, period_end_date, scores, total_score, max_possible_score, percentage, grade, strengths, areas_for_improvement, status, evaluation_date) VALUES ('${u()}', $et3, $et3, 0, 'user_1', '${empSyncIds[idx]}', '${employees[idx][0]}', '${ev[1]}', '${ev[2]}', '${ev[3]}', '$scoresJson', ${ev[4]}, ${ev[5]}, ${ev[6]}, ${ev[7]}, '${ev[8]}', '${ev[9]}', 2, '${_ds(ev[10] as DateTime)}')");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ٣٠. سجلات التدريب (أعمال بلس+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 3 && empSyncIds.isNotEmpty) {
+        final trainings = <List<Object?>>[
+          [0, "إدارة المبيعات المتقدمة", "معهد الإدارة العامة", 0, ago(45), ago(40), 20, "الرياض", 5500.0, 2],
+          [1, "المعايير الدولية للتقارير المالية IFRS", "هيئة المحاسبين السعوديين", 1, ago(60), ago(55), 30, "عن بُعد", 3800.0, 2],
+          [2, "إدارة الموارد البشرية الاستراتيجية", "جامعة الملك سعود", 0, ago(30), ago(25), 15, "الرياض", 4200.0, 2],
+        ];
+        if (plan >= 4) trainings.addAll([
+          [3, "مهارات التفاوض المتقدمة", "Dale Carnegie", 0, future(15), future(18), 24, "دبي", 8500.0, 0],
+          [4, "إدارة المكاتب التنفيذية", "معهد الإدارة العامة", 1, ago(90), ago(85), 20, "الرياض", 3500.0, 2],
+        ]);
+        for (final tr in trainings) {
+          final idx = tr[0] as int;
+          if (idx >= empSyncIds.length) continue;
+          final tt2 = (tr[4] as DateTime).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO training_records (sync_id, created_at, updated_at, is_deleted, created_by, employee_id, employee_name, training_name, provider, training_type, start_date, end_date, hours, location, cost, status) VALUES ('${u()}', $tt2, $tt2, 0, 'user_1', '${empSyncIds[idx]}', '${employees[idx][0]}', '${tr[1]}', '${tr[2]}', ${tr[3]}, '${_ds(tr[4] as DateTime)}', '${_ds(tr[5] as DateTime)}', ${tr[6]}, '${tr[7]}', ${tr[8]}, ${tr[9]})");
+        }
+      }
+
+      // ╔═══════════════════════════════════════════════════════════════╗
+      // ║           جداول مؤسسية — مؤسسي (plan >= 4)                  ║
+      // ╚═══════════════════════════════════════════════════════════════╝
+
+      // ═══════════════════════════════════════════════════════
+      // ٣١. الموردون (محترف+ لكن بيانات أكثر للمؤسسي)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final suppliers = <List<Object?>>[
+          ["شركة التوريدات المكتبية", "Office Supplies Co", "SUP-001", 0, "0511112222", "info@office-supply.sa", "الرياض", "SA", 0.0, 30, 1, "مستلزمات مكتبية"],
+        ];
+        if (plan >= 2) suppliers.addAll([
+          ["شركة الخدمات التقنية المتكاملة", "Integrated Tech", "SUP-002", 0, "0522223333", "sales@itech.sa", "الرياض", "SA", 15000.0, 30, 1, "خدمات تقنية"],
+          ["مؤسسة النظافة والصيانة", "Maintenance Corp", "SUP-003", 1, "0533334444", "info@maintenance.sa", "الرياض", "SA", 0.0, 15, 1, "صيانة ونظافة"],
+        ]);
+        if (plan >= 4) suppliers.addAll([
+          ["شركة الشحن الدولية DHL", "DHL Express", "SUP-004", 0, "0544445555", "sa@dhl.com", "الرياض", "SA", 45000.0, 30, 1, "شحن ولوجستيات"],
+          ["مجموعة الاتصالات السعودية STC", "STC", "SUP-005", 0, "0555556666", "business@stc.sa", "الرياض", "SA", 12000.0, 30, 1, "اتصالات"],
+        ]);
+        for (final sup in suppliers) {
+          final st3 = ago(90).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO suppliers (sync_id, created_at, updated_at, is_deleted, created_by, name, name_en, code, type, phone, email, city, country, current_balance, payment_terms, is_active, category) VALUES ('${u()}', $st3, $st3, 0, 'user_1', '${sup[0]}', '${sup[1]}', '${sup[2]}', ${sup[3]}, '${sup[4]}', '${sup[5]}', '${sup[6]}', '${sup[7]}', ${sup[8]}, ${sup[9]}, ${sup[10]}, '${sup[11]}')");
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // ٣٢. الحسابات البنكية (محترف+)
+      // ═══════════════════════════════════════════════════════
+      if (plan >= 1) {
+        final bankAccounts = <List<Object?>>[
+          ["بنك الرياض", "الحساب الجاري الرئيسي", "SA4420000001234567890123", "SAR", "فرع العليا", 500000.0, 1250000.0, 1],
+        ];
+        if (plan >= 2) bankAccounts.addAll([
+          ["البنك الأهلي السعودي", "حساب الرواتب", "SA5510000001234567890456", "SAR", "فرع السليمانية", 0.0, 320000.0, 1],
+        ]);
+        if (plan >= 4) bankAccounts.addAll([
+          ["بنك ساب", "حساب الاستثمار", "SA6645000001234567890789", "SAR", "فرع KAFD", 2000000.0, 4500000.0, 1],
+          ["Emirates NBD", "حساب العمليات الدولية", "AE070330000012345678901", "USD", "فرع دبي", 500000.0, 850000.0, 1],
+        ]);
+        for (final ba in bankAccounts) {
+          final bt2 = ago(180).millisecondsSinceEpoch;
+          await db.customStatement("INSERT INTO bank_accounts (sync_id, created_at, updated_at, is_deleted, created_by, bank_name, account_name, iban, currency, branch, opening_balance, current_balance, is_active) VALUES ('${u()}', $bt2, $bt2, 0, 'user_1', '${ba[0]}', '${ba[1]}', '${ba[2]}', '${ba[3]}', '${ba[4]}', ${ba[5]}, ${ba[6]}, ${ba[7]})");
+        }
+      }
+
+    }); // end transaction
   }
 
   static String _nameForPlan(int plan) => switch (plan) {

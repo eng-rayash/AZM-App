@@ -26,14 +26,14 @@ class DevDemoAccounts {
   static const List<_DemoAccount> _accounts = [
     _DemoAccount(
       email: 'rayashpro2@gmail.com',
-      displayName: 'أحمد المحترف',
-      companyName: 'شركة المحترف',
+      displayName: 'احمد سالم',
+      companyName: 'موظف في شركة',
       planValue: 1, // PlanType.professional
       planLabel: 'محترف',
     ),
     _DemoAccount(
       email: 'rayash2025@gmail.com',
-      displayName: 'سارة الأعمال',
+      displayName: 'رياش البريهي',
       companyName: 'مجموعة الأعمال',
       planValue: 2, // PlanType.business
       planLabel: 'أعمال',
