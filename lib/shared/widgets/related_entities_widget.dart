@@ -11,6 +11,7 @@ import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/neu_colors.dart';
 import '../widgets/neu_card.dart';
+import '../../core/design/azm_tokens.dart';
 
 // تعريف [EntityLinkType] انتقل إلى `core/constants/enums.dart`:
 // تعداد مجال لا عرض، ومكانه مع بقية تعدادات النظام لا داخل widget.
@@ -188,7 +189,7 @@ class _RelatedEntitiesWidgetState
 
     return NeuCard(
       isDark: isDark,
-      radius: 20,
+      radius: AzmRadius.sm,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(0),
       child: Column(

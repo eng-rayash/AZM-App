@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/design/azm_tokens.dart';
 import '../../core/theme/neu_colors.dart';
 
 /// RVIOS Enterprise Card — Premium Glass/Flat Card Component.
@@ -19,7 +20,7 @@ class NeuCard extends StatefulWidget {
     this.onLongPress,
     this.padding,
     this.margin,
-    this.radius = 20,
+    this.radius = AzmRadius.sm,
     this.showGoldBorder = false,
     this.statusColor,
     this.isDark = false,
@@ -57,54 +58,34 @@ class _NeuCardState extends State<NeuCard> {
     final isDark =
         widget.isDark || Theme.of(context).brightness == Brightness.dark;
 
-    final bgColor = widget.backgroundColor ??
+    final bgColor =
+        widget.backgroundColor ??
         (isDark ? NeuColors.surfaceDark : NeuColors.surface);
 
-    // Shadow based on elevation
+    // الظلّ حسب الارتفاع.
+    //
+    // عزم لا يرفع أسطحه بالظل: «الفراغ هو أداة الارتفاع، والمسافة هي ما
+    // يفصل الطبقات» (`AzmSpace`). المستويان ٠ و١ مسطّحان يفصلهما الحدّ
+    // الشعري، ويبقى الظل للمستوى ٢ وحده — الحوارات والأوراق السفلية،
+    // حيث السطح يطفو فعلًا فوق ما تحته.
+    //
+    // كان المستوى ١ (الافتراضي) يرسم ظلًّا تحت ١٧٩ بطاقة عبر التطبيق،
+    // فتبدو شاشات البطاقات لغةً أخرى غير شاشات الصفوف.
     List<BoxShadow> shadows = [];
-    if (!_isPressed) {
-      switch (widget.elevation) {
-        case 0:
-          shadows = [];
-          break;
-        case 2:
-          shadows = [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.5)
-                  : Colors.black.withValues(alpha: 0.08),
-              offset: const Offset(0, 8),
-              blurRadius: 24,
-              spreadRadius: 0,
-            ),
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.3)
-                  : Colors.black.withValues(alpha: 0.04),
-              offset: const Offset(0, 2),
-              blurRadius: 6,
-              spreadRadius: 0,
-            ),
-          ];
-          break;
-        default: // elevation = 1
-          shadows = [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.4)
-                  : Colors.black.withValues(alpha: 0.06),
-              offset: const Offset(0, 4),
-              blurRadius: 16,
-              spreadRadius: 0,
-            ),
-          ];
-      }
-    } else {
+    if (!_isPressed && widget.elevation >= 2) {
       shadows = [
         BoxShadow(
           color: isDark
-              ? NeuColors.accentMuted.withValues(alpha: 0.1)
-              : NeuColors.primary.withValues(alpha: 0.08),
+              ? Colors.black.withValues(alpha: 0.5)
+              : Colors.black.withValues(alpha: 0.08),
+          offset: const Offset(0, 8),
+          blurRadius: 24,
+          spreadRadius: 0,
+        ),
+        BoxShadow(
+          color: isDark
+              ? Colors.black.withValues(alpha: 0.3)
+              : Colors.black.withValues(alpha: 0.04),
           offset: const Offset(0, 2),
           blurRadius: 6,
           spreadRadius: 0,
@@ -135,11 +116,11 @@ class _NeuCardState extends State<NeuCard> {
         width: 1,
       );
     } else {
+      // حدّ شعري كامل بعرض بكسل واحد: هو ما يفصل السطح عن الأرض الآن
+      // بعد زوال الظل، فلا يصحّ أن يكون نصف شفّاف ونصف عرض.
       border = Border.all(
-        color: isDark
-            ? NeuColors.borderDark.withValues(alpha: 0.6)
-            : NeuColors.border.withValues(alpha: 0.6),
-        width: 0.5,
+        color: isDark ? NeuColors.borderDark : NeuColors.border,
+        width: 1,
       );
     }
 
@@ -172,8 +153,8 @@ class _NeuCardState extends State<NeuCard> {
       decoration = BoxDecoration(
         color: _isPressed
             ? (isDark
-                ? NeuColors.surfaceDark.withValues(alpha: 0.8)
-                : NeuColors.primaryTint.withValues(alpha: 0.3))
+                  ? NeuColors.surfaceDark.withValues(alpha: 0.8)
+                  : NeuColors.primaryTint.withValues(alpha: 0.3))
             : bgColor,
         borderRadius: BorderRadius.circular(widget.radius),
         border: border,
@@ -184,7 +165,9 @@ class _NeuCardState extends State<NeuCard> {
     final radius = BorderRadius.circular(widget.radius);
 
     Widget card = AnimatedContainer(
-      duration: widget.animate ? const Duration(milliseconds: 150) : Duration.zero,
+      duration: widget.animate
+          ? const Duration(milliseconds: 150)
+          : Duration.zero,
       curve: Curves.easeInOut,
       decoration: decoration,
       padding: widget.padding ?? const EdgeInsets.all(16),

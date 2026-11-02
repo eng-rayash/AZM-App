@@ -10,6 +10,7 @@ import '../../hrm/domain/hrm_repository.dart';
 import '../../finance/domain/finance_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../shared/widgets/neu_card.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search Result Model
@@ -437,7 +438,7 @@ class _ResultTile extends StatelessWidget {
     final ts = isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary;
 
     return NeuCard(
-      isDark: isDark, radius: 14,
+      isDark: isDark, radius: AzmRadius.sm,
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: InkWell(

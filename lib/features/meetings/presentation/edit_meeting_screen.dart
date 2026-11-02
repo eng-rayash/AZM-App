@@ -17,6 +17,7 @@ import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../providers/meeting_categories_provider.dart';
 import '../../followups/domain/follow_ups_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Edit Meeting Screen — form for editing an existing meeting.
 class EditMeetingScreen extends ConsumerStatefulWidget {
@@ -589,7 +590,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                       child: GestureDetector(
                         onTap: _pickDate,
                         child: NeuCard(
-                          margin: EdgeInsets.zero, radius: 16,
+                          margin: EdgeInsets.zero, radius: AzmRadius.sm,
                           padding: const EdgeInsets.all(12),
                           child: Row(children: [
                             Icon(
@@ -611,7 +612,7 @@ class _EditMeetingScreenState extends ConsumerState<EditMeetingScreen> {
                       child: GestureDetector(
                         onTap: _pickTime,
                         child: NeuCard(
-                          margin: EdgeInsets.zero, radius: 16,
+                          margin: EdgeInsets.zero, radius: AzmRadius.sm,
                           padding: const EdgeInsets.all(12),
                           child: Row(children: [
                             Icon(

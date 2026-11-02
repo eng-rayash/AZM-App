@@ -12,6 +12,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Employee Detail Screen
@@ -260,7 +261,7 @@ class _EmployeeDetailBody extends StatelessWidget {
                       style: AppTypography.h4.copyWith(color: tp)),
                 ),
                 NeuCard(
-                  isDark: isDark, radius: 16,
+                  isDark: isDark, radius: AzmRadius.sm,
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   padding: const EdgeInsets.all(14),
                   child: Column(children: [
@@ -282,7 +283,7 @@ class _EmployeeDetailBody extends StatelessWidget {
               // ── Notes ─────────────────────────────────────────
               if (employee.notes != null && employee.notes!.isNotEmpty)
                 NeuCard(
-                  isDark: isDark, radius: 16,
+                  isDark: isDark, radius: AzmRadius.sm,
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   padding: const EdgeInsets.all(14),
                   child: Column(
@@ -348,7 +349,7 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (children.isEmpty) return const SizedBox.shrink();
     return NeuCard(
-      isDark: isDark, radius: 16,
+      isDark: isDark, radius: AzmRadius.sm,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(14),
       child: Column(

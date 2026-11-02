@@ -13,6 +13,7 @@ import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../../followups/domain/follow_ups_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Edit Task Screen
 class EditTaskScreen extends ConsumerStatefulWidget {
@@ -227,7 +228,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
                       child: GestureDetector(
                         onTap: _pickDate,
                         child: NeuCard(
-                          margin: EdgeInsets.zero, radius: 16,
+                          margin: EdgeInsets.zero, radius: AzmRadius.sm,
                           padding: const EdgeInsets.all(12),
                           child: Row(children: [
                             Icon(

@@ -16,6 +16,7 @@ import '../../../core/theme/neu_decorations.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Create Meeting Screen — full meeting form with attendees, agenda & decisions.
 ///
@@ -492,7 +493,7 @@ class _CreateMeetingScreenState
                       onTap: _pickDate,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
@@ -520,7 +521,7 @@ class _CreateMeetingScreenState
                       onTap: _pickTime,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [

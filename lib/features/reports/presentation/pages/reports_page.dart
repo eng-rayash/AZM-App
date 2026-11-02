@@ -10,6 +10,7 @@ import '../../../../shared/widgets/neu_card.dart';
 import '../../../../shared/widgets/neu_button.dart';
 import '../../domain/export_service.dart';
 import '../../providers/reports_provider.dart';
+import '../../../../core/design/azm_tokens.dart';
 
 /// Reports Page — analytics dashboard with charts and exportable reports.
 class ReportsPage extends ConsumerWidget {
@@ -302,7 +303,7 @@ class ReportsPage extends ConsumerWidget {
     return NeuCard(
       margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(16),
-      radius: 20,
+      radius: AzmRadius.sm,
       child: Column(
         children: [
           Icon(icon, color: color, size: 28),

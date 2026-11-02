@@ -10,6 +10,7 @@ import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Attendance Screen — Daily attendance/leave tracking
@@ -290,7 +291,7 @@ class _AttendanceTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Row(children: [
           CircleAvatar(
-            radius: 18,
+            radius: AzmRadius.sm,
             backgroundColor: color.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: TextStyle(
                 color: color, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
@@ -334,11 +335,11 @@ class _LeaveCard extends StatelessWidget {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
 
     return NeuCard(
-      isDark: isDark, radius: 14, padding: const EdgeInsets.all(14),
+      isDark: isDark, radius: AzmRadius.sm, padding: const EdgeInsets.all(14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           CircleAvatar(
-            radius: 16,
+            radius: AzmRadius.sm,
             backgroundColor: NeuColors.warning.withValues(alpha: 0.15),
             child: Text(employee.name[0], style: const TextStyle(
                 color: NeuColors.warning, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),

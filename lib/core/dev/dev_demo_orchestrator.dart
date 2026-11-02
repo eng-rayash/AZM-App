@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/app_database.dart';
 import '../database/providers/database_providers.dart';
-import '../database/tenant_database.dart';
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/company/providers/company_providers.dart';
 import 'dev_demo_accounts.dart';

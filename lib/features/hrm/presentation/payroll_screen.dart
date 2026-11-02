@@ -10,6 +10,7 @@ import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Payroll Screen
@@ -189,7 +190,7 @@ class _PayrollRow extends StatelessWidget {
     final net = basic - social - tax;
 
     return NeuCard(
-      isDark: isDark, radius: 14,
+      isDark: isDark, radius: AzmRadius.sm,
       padding: const EdgeInsets.all(12),
       child: InkWell(
         onTap: onTap,
@@ -197,7 +198,7 @@ class _PayrollRow extends StatelessWidget {
         child: Column(children: [
           Row(children: [
             CircleAvatar(
-              radius: 18,
+              radius: AzmRadius.sm,
               backgroundColor: NeuColors.navyDeep.withValues(alpha: 0.15),
               child: Text(employee.name[0], style: const TextStyle(
                   color: NeuColors.navyDeep, fontWeight: FontWeight.w700, fontFamily: 'Panorama')),
@@ -269,7 +270,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NeuCard(
-    isDark: isDark, radius: 16, padding: const EdgeInsets.all(14),
+    isDark: isDark, radius: AzmRadius.sm, padding: const EdgeInsets.all(14),
     child: Row(children: [
       Container(
         width: 40, height: 40,

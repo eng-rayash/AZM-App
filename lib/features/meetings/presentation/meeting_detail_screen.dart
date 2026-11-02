@@ -13,6 +13,7 @@ import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../providers/meetings_provider.dart';
 import '../domain/meetings_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Meeting Detail Screen — full meeting information view.
 class MeetingDetailScreen extends ConsumerWidget {
@@ -79,7 +80,7 @@ class MeetingDetailScreen extends ConsumerWidget {
                 // Title & Status
                 NeuCard(
                   showGoldBorder: true,
-                  radius: 24,
+                  radius: AzmRadius.sm,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

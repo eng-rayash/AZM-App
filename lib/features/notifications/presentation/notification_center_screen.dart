@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/neu_card.dart';
+import '../../../core/design/azm_tokens.dart';
+import '../../../core/utils/arabic_numerals.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Notification Model (local — no backend needed yet)
@@ -31,48 +33,76 @@ class AppNotification {
   final String? actionPath;
 
   AppNotification copyWith({bool? isRead}) => AppNotification(
-    id: id, title: title, body: body,
-    category: category, time: time,
+    id: id,
+    title: title,
+    body: body,
+    category: category,
+    time: time,
     isRead: isRead ?? this.isRead,
     actionPath: actionPath,
   );
 
   Color get color {
     switch (category) {
-      case NotifCategory.followup: return NeuColors.navyDeep;
-      case NotifCategory.invoice: return NeuColors.success;
-      case NotifCategory.hrm: return NeuColors.moduleDelivery;
-      case NotifCategory.project: return const Color(0xFFE17055);
-      case NotifCategory.system: return NeuColors.textHint;
+      case NotifCategory.followup:
+        return NeuColors.navyDeep;
+      case NotifCategory.invoice:
+        return NeuColors.success;
+      case NotifCategory.hrm:
+        return NeuColors.moduleDelivery;
+      case NotifCategory.project:
+        return const Color(0xFFE17055);
+      case NotifCategory.system:
+        return NeuColors.textHint;
     }
   }
 
   IconData get icon {
     switch (category) {
-      case NotifCategory.followup: return Icons.replay_rounded;
-      case NotifCategory.invoice: return Icons.receipt_long_rounded;
-      case NotifCategory.hrm: return Icons.badge_rounded;
-      case NotifCategory.project: return Icons.work_rounded;
-      case NotifCategory.system: return Icons.info_rounded;
+      case NotifCategory.followup:
+        return Icons.replay_rounded;
+      case NotifCategory.invoice:
+        return Icons.receipt_long_rounded;
+      case NotifCategory.hrm:
+        return Icons.badge_rounded;
+      case NotifCategory.project:
+        return Icons.work_rounded;
+      case NotifCategory.system:
+        return Icons.info_rounded;
     }
   }
 
   String get categoryLabel {
     switch (category) {
-      case NotifCategory.followup: return 'متابعات';
-      case NotifCategory.invoice: return 'فواتير';
-      case NotifCategory.hrm: return 'موارد بشرية';
-      case NotifCategory.project: return 'مشاريع';
-      case NotifCategory.system: return 'النظام';
+      case NotifCategory.followup:
+        return 'متابعات';
+      case NotifCategory.invoice:
+        return 'فواتير';
+      case NotifCategory.hrm:
+        return 'موارد بشرية';
+      case NotifCategory.project:
+        return 'مشاريع';
+      case NotifCategory.system:
+        return 'النظام';
     }
   }
 
+  /// «منذ …» بقواعد العدد العربية وأرقامه.
+  ///
+  /// الصيغة السابقة `'منذ $n أيام'` كانت تُخرج «منذ 1 أيام» و«منذ 2
+  /// ساعة» بأرقام لاتينية في واجهة عربية بالكامل.
   String get timeAgo {
     final diff = DateTime.now().difference(time);
     if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} أيام';
+    if (diff.inMinutes < 60) {
+      return 'منذ ${arabicCount(diff.inMinutes, one: 'دقيقة', two: 'دقيقتين', few: 'دقائق', many: 'دقيقة')}';
+    }
+    if (diff.inHours < 24) {
+      return 'منذ ${arabicCount(diff.inHours, one: 'ساعة', two: 'ساعتين', few: 'ساعات', many: 'ساعة')}';
+    }
+    if (diff.inDays < 7) {
+      return 'منذ ${arabicCount(diff.inDays, one: 'يوم', two: 'يومين', few: 'أيام', many: 'يومًا')}';
+    }
     return 'منذ أسبوع';
   }
 }
@@ -82,8 +112,8 @@ class AppNotification {
 // ─────────────────────────────────────────────────────────────────────────────
 final notificationsProvider =
     StateNotifierProvider<NotificationsNotifier, List<AppNotification>>((ref) {
-  return NotificationsNotifier();
-});
+      return NotificationsNotifier();
+    });
 
 class NotificationsNotifier extends StateNotifier<List<AppNotification>> {
   NotificationsNotifier() : super(_sampleNotifications());
@@ -131,7 +161,9 @@ class NotificationsNotifier extends StateNotifier<List<AppNotification>> {
   }
 
   void markAsRead(int id) {
-    state = state.map((n) => n.id == id ? n.copyWith(isRead: true) : n).toList();
+    state = state
+        .map((n) => n.id == id ? n.copyWith(isRead: true) : n)
+        .toList();
   }
 
   void markAllAsRead() {
@@ -200,21 +232,33 @@ class _NotificationCenterScreenState
             SliverAppBar(
               pinned: true,
               expandedHeight: 130,
-              backgroundColor:
-                  isDark ? NeuColors.bgColorDark : NeuColors.navyDeep,
+              backgroundColor: isDark
+                  ? NeuColors.bgColorDark
+                  : NeuColors.navyDeep,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                ),
                 onPressed: () => context.pop(),
               ),
               actions: [
                 TextButton(
                   onPressed: () => notifier.markAllAsRead(),
-                  child: const Text('قراءة الكل',
-                      style: TextStyle(color: Colors.white70,
-                          fontFamily: 'Panorama', fontSize: 13)),
+                  child: const Text(
+                    'قراءة الكل',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontFamily: 'Panorama',
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete_sweep_rounded, color: Colors.white70),
+                  icon: const Icon(
+                    Icons.delete_sweep_rounded,
+                    color: Colors.white70,
+                  ),
                   onPressed: () => _confirmClearAll(context, notifier),
                   tooltip: 'مسح الكل',
                 ),
@@ -235,27 +279,43 @@ class _NotificationCenterScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
-                          const Icon(Icons.notifications_rounded,
-                              color: Colors.white, size: 26),
-                          const SizedBox(width: 10),
-                          Text('مركز الإشعارات',
-                              style: AppTypography.h3.copyWith(color: Colors.white)),
-                          const Spacer(),
-                          if (unread.isNotEmpty)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: NeuColors.danger,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text('${unread.length} جديد',
-                                  style: const TextStyle(color: Colors.white,
-                                      fontSize: 12, fontFamily: 'Panorama',
-                                      fontWeight: FontWeight.w700)),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.notifications_rounded,
+                              color: Colors.white,
+                              size: 26,
                             ),
-                        ]),
+                            const SizedBox(width: 10),
+                            Text(
+                              'مركز الإشعارات',
+                              style: AppTypography.h3.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (unread.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: NeuColors.danger,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '${unread.length} جديد',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontFamily: 'Panorama',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -268,8 +328,11 @@ class _NotificationCenterScreenState
                 unselectedLabelColor: Colors.white54,
                 indicatorColor: NeuColors.accentMuted,
                 indicatorWeight: 3,
-                labelStyle: const TextStyle(fontFamily: 'Panorama',
-                    fontWeight: FontWeight.w700, fontSize: 13),
+                labelStyle: const TextStyle(
+                  fontFamily: 'Panorama',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
                 tabs: [
                   Tab(text: 'غير مقروءة (${unread.length})'),
                   Tab(text: 'الكل (${all.length})'),
@@ -281,34 +344,54 @@ class _NotificationCenterScreenState
             SliverToBoxAdapter(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(children: [
-                  _CatChip(label: 'الكل', selected: _categoryFilter == null,
-                      color: NeuColors.navyDeep, isDark: isDark,
-                      onTap: () => setState(() => _categoryFilter = null)),
-                  ...NotifCategory.values.map((cat) {
-                    final n = AppNotification(
-                      id: 0, title: '', body: '',
-                      category: cat, time: DateTime.now(),
-                    );
-                    return _CatChip(
-                      label: n.categoryLabel,
-                      selected: _categoryFilter == cat,
-                      color: n.color, isDark: isDark,
-                      onTap: () => setState(() =>
-                          _categoryFilter = _categoryFilter == cat ? null : cat),
-                    );
-                  }),
-                ]),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    _CatChip(
+                      label: 'الكل',
+                      selected: _categoryFilter == null,
+                      color: NeuColors.navyDeep,
+                      isDark: isDark,
+                      onTap: () => setState(() => _categoryFilter = null),
+                    ),
+                    ...NotifCategory.values.map((cat) {
+                      final n = AppNotification(
+                        id: 0,
+                        title: '',
+                        body: '',
+                        category: cat,
+                        time: DateTime.now(),
+                      );
+                      return _CatChip(
+                        label: n.categoryLabel,
+                        selected: _categoryFilter == cat,
+                        color: n.color,
+                        isDark: isDark,
+                        onTap: () => setState(
+                          () => _categoryFilter = _categoryFilter == cat
+                              ? null
+                              : cat,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
             ),
           ],
           body: filtered.isEmpty
-              ? _EmptyNotifications(isDark: isDark,
-                  isUnread: _tabCtrl.index == 0)
+              ? _EmptyNotifications(
+                  isDark: isDark,
+                  isUnread: _tabCtrl.index == 0,
+                )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 4),
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   itemCount: filtered.length,
                   itemBuilder: (_, i) {
                     final notif = filtered[i];
@@ -334,14 +417,19 @@ class _NotificationCenterScreenState
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('مسح كل الإشعارات؟',
-            textDirection: TextDirection.rtl),
-        content: const Text('سيتم حذف جميع الإشعارات نهائياً.',
-            textDirection: TextDirection.rtl),
+        title: const Text(
+          'مسح كل الإشعارات؟',
+          textDirection: TextDirection.rtl,
+        ),
+        content: const Text(
+          'سيتم حذف جميع الإشعارات نهائياً.',
+          textDirection: TextDirection.rtl,
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -391,7 +479,8 @@ class _NotifTile extends StatelessWidget {
       ),
       onDismissed: (_) => onDismiss(),
       child: NeuCard(
-        isDark: isDark, radius: 16,
+        isDark: isDark,
+        radius: AzmRadius.sm,
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: EdgeInsets.zero,
         child: InkWell(
@@ -409,64 +498,92 @@ class _NotifTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Indicator + icon
-                Stack(children: [
-                  Container(
-                    width: 44, height: 44,
-                    decoration: BoxDecoration(
-                      color: notif.color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
+                Stack(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: notif.color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(notif.icon, color: notif.color, size: 22),
                     ),
-                    child: Icon(notif.icon, color: notif.color, size: 22),
-                  ),
-                  if (!notif.isRead)
-                    Positioned(
-                      top: 0, left: 0,
-                      child: Container(
-                        width: 10, height: 10,
-                        decoration: BoxDecoration(
-                          color: NeuColors.danger,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
-                              width: 2),
+                    if (!notif.isRead)
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: NeuColors.danger,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDark
+                                  ? NeuColors.bgColorDark
+                                  : NeuColors.bgColor,
+                              width: 2,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                ]),
+                  ],
+                ),
                 const SizedBox(width: 12),
                 // Content
-                Expanded(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: notif.color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(notif.categoryLabel,
-                            style: TextStyle(
-                              fontSize: 10, fontFamily: 'Panorama',
-                              color: notif.color,
-                              fontWeight: FontWeight.w700,
-                            )),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: notif.color.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              notif.categoryLabel,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontFamily: 'Panorama',
+                                color: notif.color,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            notif.timeAgo,
+                            style: AppTypography.caption.copyWith(color: th),
+                          ),
+                        ],
                       ),
-                      const Spacer(),
-                      Text(notif.timeAgo,
-                          style: AppTypography.caption.copyWith(color: th)),
-                    ]),
-                    const SizedBox(height: 5),
-                    Text(notif.title, style: AppTypography.body.copyWith(
-                        color: tp,
-                        fontWeight: notif.isRead ? FontWeight.w500 : FontWeight.w700)),
-                    const SizedBox(height: 3),
-                    Text(notif.body,
-                        maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: AppTypography.caption.copyWith(color: ts)),
-                  ],
-                )),
+                      const SizedBox(height: 5),
+                      Text(
+                        notif.title,
+                        style: AppTypography.body.copyWith(
+                          color: tp,
+                          fontWeight: notif.isRead
+                              ? FontWeight.w500
+                              : FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        notif.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.caption.copyWith(color: ts),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -481,8 +598,11 @@ class _NotifTile extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _CatChip extends StatelessWidget {
   const _CatChip({
-    required this.label, required this.selected,
-    required this.color, required this.isDark, required this.onTap,
+    required this.label,
+    required this.selected,
+    required this.color,
+    required this.isDark,
+    required this.onTap,
   });
 
   final String label;
@@ -498,16 +618,24 @@ class _CatChip extends StatelessWidget {
       margin: const EdgeInsets.only(left: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: selected ? color : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
+        color: selected
+            ? color
+            : (isDark ? NeuColors.surfaceDark : NeuColors.surface),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-            color: selected ? color : color.withValues(alpha: 0.3), width: 1.2),
+          color: selected ? color : color.withValues(alpha: 0.3),
+          width: 1.2,
+        ),
       ),
-      child: Text(label, style: TextStyle(
-        fontSize: 12, fontFamily: 'Panorama',
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-        color: selected ? Colors.white : color,
-      )),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontFamily: 'Panorama',
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          color: selected ? Colors.white : color,
+        ),
+      ),
     ),
   );
 }
@@ -519,15 +647,25 @@ class _EmptyNotifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
-    return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(
-        isUnread ? Icons.notifications_off_rounded : Icons.notifications_none_rounded,
-        size: 64,
-        color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep).withValues(alpha: 0.25),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isUnread
+                ? Icons.notifications_off_rounded
+                : Icons.notifications_none_rounded,
+            size: 64,
+            color: (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)
+                .withValues(alpha: 0.25),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            isUnread ? 'لا توجد إشعارات جديدة ✓' : 'لا توجد إشعارات',
+            style: AppTypography.bodySmall.copyWith(color: th),
+          ),
+        ],
       ),
-      const SizedBox(height: 16),
-      Text(isUnread ? 'لا توجد إشعارات جديدة ✓' : 'لا توجد إشعارات',
-          style: AppTypography.bodySmall.copyWith(color: th)),
-    ]));
+    );
   }
 }

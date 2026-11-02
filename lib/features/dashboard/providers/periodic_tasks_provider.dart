@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show IconData, Icons;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/enums.dart';
@@ -23,14 +24,18 @@ extension TaskPeriodArabic on TaskPeriod {
     }
   }
 
-  String get iconLabel {
+  /// أيقونة الفترة — رمز واجهة لا إيموجي.
+  ///
+  /// الإيموجي يُرسم بخطّ النظام لا بخطّ التطبيق، فيختلف شكله ووزنه بين
+  /// أندرويد وiOS والويب ويكسر رصانة واجهة تنفيذية.
+  IconData get icon {
     switch (this) {
       case TaskPeriod.daily:
-        return '☀️';
+        return Icons.today_outlined;
       case TaskPeriod.weekly:
-        return '📅';
+        return Icons.date_range_outlined;
       case TaskPeriod.monthly:
-        return '🗓️';
+        return Icons.calendar_month_outlined;
     }
   }
 }

@@ -15,6 +15,7 @@ import '../../../core/database/app_database.dart';
 import '../domain/finance_repository.dart';
 import '../../../core/constants/app_currencies.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bank Accounts Screen
@@ -161,7 +162,7 @@ class _BankAccountsTab extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: NeuCard(
                 isDark: isDark,
-                radius: 20,
+                radius: AzmRadius.sm,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   children: [
@@ -247,7 +248,7 @@ class _BankAccountsTab extends ConsumerWidget {
 
                         return NeuCard(
                           isDark: isDark,
-                          radius: 18,
+                          radius: AzmRadius.sm,
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -433,7 +434,9 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
   int _filterType = -1; // -1=all, 0=incoming, 1=outgoing
   int _filterStatus = -1; // -1=all, 0=pending, 1=deposited, 2=cleared, 3=bounced
 
-  static const _statusLabels = ['معلق ⏳', 'مُودَع 🏦', 'محصَّل ✅', 'مرتجع ❌', 'ملغي 🚫'];
+  // الحالة يحملها النصّ واللون في `_statusColors` تحته مباشرة،
+  // فالإيموجي طبقة ثالثة تقول الشيء نفسه بخطّ النظام لا بخطّ التطبيق.
+  static const _statusLabels = ['معلق', 'مُودَع', 'محصَّل', 'مرتجع', 'ملغي'];
   static final _statusColors = [
     NeuColors.warning,
     NeuColors.info,
@@ -602,7 +605,7 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
 
                         return NeuCard(
                           isDark: isDark,
-                          radius: 16,
+                          radius: AzmRadius.sm,
                           padding: const EdgeInsets.all(14),
                           statusColor: isIncoming
                               ? NeuColors.success
@@ -746,9 +749,10 @@ class _ChecksTabState extends ConsumerState<_ChecksTab> {
                                       ),
                                       if (isOverdue) ...[
                                         const SizedBox(width: 4),
-                                        const Text('⚠️',
-                                            style:
-                                                TextStyle(fontSize: 10)),
+                                        const Icon(
+                                            Icons.error_outline_rounded,
+                                            size: 12,
+                                            color: NeuColors.danger),
                                       ],
                                     ]),
                                   ],
@@ -1400,7 +1404,7 @@ class _MiniStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeuCard(
       isDark: isDark,
-      radius: 14,
+      radius: AzmRadius.sm,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(children: [
         Container(

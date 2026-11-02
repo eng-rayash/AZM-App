@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../domain/routine_task_model.dart';
 import '../providers/routine_tasks_provider.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // Main Screen
@@ -1724,7 +1725,7 @@ class _AnalyticsTab extends ConsumerWidget {
         // ── Streak Card ──────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
-          radius: 20,
+          radius: AzmRadius.sm,
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
@@ -1781,7 +1782,7 @@ class _AnalyticsTab extends ConsumerWidget {
         // ── Weekly Bars ──────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
-          radius: 20,
+          radius: AzmRadius.sm,
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1856,7 +1857,7 @@ class _AnalyticsTab extends ConsumerWidget {
         // ── HeatMap ──────────────────────────────────────────────────
         NeuCard(
           isDark: isDark,
-          radius: 20,
+          radius: AzmRadius.sm,
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1949,7 +1950,7 @@ class _AnalyticsTab extends ConsumerWidget {
           Expanded(
             child: NeuCard(
               isDark: isDark,
-              radius: 16,
+              radius: AzmRadius.sm,
               padding: const EdgeInsets.all(16),
               child: Column(children: [
                 Text('${tasks.length}',
@@ -1966,7 +1967,7 @@ class _AnalyticsTab extends ConsumerWidget {
           Expanded(
             child: NeuCard(
               isDark: isDark,
-              radius: 16,
+              radius: AzmRadius.sm,
               padding: const EdgeInsets.all(16),
               child: Column(children: [
                 Text('${completions.length}',

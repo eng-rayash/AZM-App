@@ -11,6 +11,7 @@ import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Create Encounter Screen — نموذج اللقاءات
 ///
@@ -197,7 +198,7 @@ class _CreateEncounterScreenState
                       onTap: _pickDate,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 14),
                         child: Row(
@@ -232,7 +233,7 @@ class _CreateEncounterScreenState
                       onTap: _pickTime,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 14),
                         child: Row(

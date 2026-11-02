@@ -127,15 +127,19 @@ class _TopBar extends StatelessWidget {
   final bool showMenu;
 
   /// اسم الموضع الحالي في الشجرة، ليعرف المستخدم أين هو.
+  ///
+  /// تبويبات الشريط السفلي تُقرأ **أولًا**: الوجهة الواحدة اسمٌ واحد، وقراءة
+  /// الشجرة قبلها كانت تسمّي «الذكاء» في الأسفل و«صحة الأعمال» في الأعلى
+  /// لنفس الشاشة.
   String _title() {
     if (location == RouteNames.dashboardFull) return AzmNav.home.label;
+    for (final tab in AppShellScaffold._tabs) {
+      if (location.startsWith(tab.path)) return tab.label;
+    }
     for (final g in AzmNav.groups) {
       for (final d in g.destinations) {
         if (location.startsWith(d.route)) return d.label;
       }
-    }
-    for (final tab in AppShellScaffold._tabs) {
-      if (location.startsWith(tab.path)) return tab.label;
     }
     return '';
   }

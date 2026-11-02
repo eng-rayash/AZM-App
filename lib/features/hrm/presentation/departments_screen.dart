@@ -9,6 +9,7 @@ import '../domain/hrm_repository.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// حوار إنشاء قسم.
 ///
@@ -338,7 +339,7 @@ class _DeptCard extends StatelessWidget {
     final th = isDark ? NeuColors.textHintDark : NeuColors.textHint;
 
     return NeuCard(
-      isDark: isDark, radius: 16,
+      isDark: isDark, radius: AzmRadius.sm,
       padding: const EdgeInsets.all(14),
       child: InkWell(
         onTap: onTap,

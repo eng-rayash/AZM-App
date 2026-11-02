@@ -5,6 +5,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/neu_colors.dart';
 import '../../../../shared/widgets/neu_card.dart';
 import '../../providers/dashboard_metrics_provider.dart';
+import '../../../../core/design/azm_tokens.dart';
 
 /// RVIOS Executive KPI Grid — four headline figures, all from stored records.
 ///
@@ -181,7 +182,7 @@ class _KpiCard extends StatelessWidget {
         : (trendPositive! ? NeuColors.success : NeuColors.danger);
 
     return NeuCard(
-      radius: 18,
+      radius: AzmRadius.sm,
       elevation: 1,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
       margin: EdgeInsets.zero,
@@ -321,7 +322,7 @@ class _KpiSkeleton extends StatelessWidget {
     );
 
     return NeuCard(
-      radius: 18,
+      radius: AzmRadius.sm,
       elevation: 1,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
       margin: EdgeInsets.zero,
@@ -351,7 +352,7 @@ class _KpiUnavailable extends StatelessWidget {
   Widget build(BuildContext context) {
     final hint = isDark ? NeuColors.textHintDark : NeuColors.textHint;
     return NeuCard(
-      radius: 18,
+      radius: AzmRadius.sm,
       elevation: 1,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
       margin: EdgeInsets.zero,

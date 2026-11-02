@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/neu_colors.dart';
+import '../../core/design/azm_tokens.dart';
 
 /// Dashboard FAB — Floating Action Button with animated bottom menu.
 ///
@@ -14,76 +15,78 @@ import '../../core/theme/neu_colors.dart';
 class DashboardFab extends StatelessWidget {
   const DashboardFab({super.key});
 
+  /// الإجراءات مصبوغة بأدوار الوحدات الستّة في [NeuColors] لا بلون لكلّ
+  /// بند: أحد عشر لونًا غير مترابط يجعل الورقة تبدو لوحة ألوان، ويضيع
+  /// معها المعنى الذي أُنشئت الأدوار من أجله — اللون يقول نوع الوحدة.
   static const List<_FabAction> _actions = [
     _FabAction(
       label: 'متابعة',
       icon: Icons.task_alt_rounded,
-      color: NeuColors.navyDeep,
+      color: NeuColors.moduleDelivery,
       route: RouteNames.followupCreate,
     ),
     _FabAction(
       label: 'اجتماع',
       icon: Icons.groups_rounded,
-      color: NeuColors.navyMid,
+      color: NeuColors.modulePeople,
       route: RouteNames.meetingCreate,
     ),
     _FabAction(
       label: 'عميل',
       icon: Icons.supervisor_account_rounded,
-      color: NeuColors.success,
+      color: NeuColors.modulePeople,
       route: RouteNames.clientCreate,
     ),
     _FabAction(
       label: 'مشروع',
       icon: Icons.work_rounded,
-      color: Color(0xFFE17055),
+      color: NeuColors.moduleDelivery,
       route: RouteNames.projectCreate,
     ),
     _FabAction(
       label: 'فاتورة',
       icon: Icons.receipt_long_rounded,
-      color: NeuColors.success,
+      color: NeuColors.moduleIncome,
       route: RouteNames.invoiceCreate,
     ),
     _FabAction(
       label: 'موظف',
       icon: Icons.badge_rounded,
-      color: NeuColors.moduleDelivery,
+      color: NeuColors.modulePeople,
       route: RouteNames.employeeCreate,
     ),
     _FabAction(
       label: 'مصروف',
       icon: Icons.money_off_rounded,
-      color: NeuColors.danger,
+      color: NeuColors.moduleOutgoing,
       route: RouteNames.expenseCreate,
     ),
     _FabAction(
       label: 'إيراد',
       icon: Icons.attach_money_rounded,
-      color: NeuColors.goldDark,
+      color: NeuColors.moduleIncome,
       route: RouteNames.revenueCreate,
     ),
     _FabAction(
       label: 'توجيه',
       icon: Icons.assignment_rounded,
-      color: NeuColors.warning,
+      color: NeuColors.moduleDelivery,
       route: RouteNames.directiveCreate,
     ),
     _FabAction(
       label: 'موعد',
       icon: Icons.calendar_month_rounded,
-      color: NeuColors.info,
+      color: NeuColors.moduleStructure,
       route: RouteNames.appointmentCreate,
     ),
     _FabAction(
       label: 'ملاحظة',
       icon: Icons.note_add_rounded,
-      color: NeuColors.navyLight,
+      color: NeuColors.moduleStructure,
       // شاشة الملاحظات تنشئ عبر حوار داخلي، فلا مسار إنشاء مستقلًّا لها
       route: RouteNames.notesList,
     ),
   ];
-
 
   /// Opens the module quick-add sheet.
   ///
@@ -135,9 +138,10 @@ class _AnimatedFabButtonState extends State<_AnimatedFabButton>
       vsync: this,
       duration: const Duration(milliseconds: 120),
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnim = Tween<double>(
+      begin: 1.0,
+      end: 0.92,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -251,14 +255,20 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
       ),
     );
     _slideAnims = _itemControllers
-        .map((c) => Tween<Offset>(
-              begin: const Offset(0, 0.3),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(parent: c, curve: Curves.easeOutCubic)))
+        .map(
+          (c) => Tween<Offset>(
+            begin: const Offset(0, 0.3),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: c, curve: Curves.easeOutCubic)),
+        )
         .toList();
     _fadeAnims = _itemControllers
-        .map((c) => Tween<double>(begin: 0, end: 1)
-            .animate(CurvedAnimation(parent: c, curve: Curves.easeOut)))
+        .map(
+          (c) => Tween<double>(
+            begin: 0,
+            end: 1,
+          ).animate(CurvedAnimation(parent: c, curve: Curves.easeOut)),
+        )
         .toList();
 
     // Staggered entrance animation
@@ -280,20 +290,16 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? NeuColors.bgColorDark : NeuColors.bgColor;
-    final surfaceColor =
-        isDark ? NeuColors.surfaceDark : NeuColors.surface;
-    final dividerColor =
-        isDark ? NeuColors.dividerDark : NeuColors.divider;
+    final bgColor = isDark ? NeuColors.bgColorDark : NeuColors.bgColor;
+    final surfaceColor = isDark ? NeuColors.surfaceDark : NeuColors.surface;
+    final dividerColor = isDark ? NeuColors.dividerDark : NeuColors.divider;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(isDark ? 80 : 40),
@@ -317,26 +323,57 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
             ),
             const SizedBox(height: 20),
 
-            // Header
+            // الرأس — عنوان يقول ما هذه الورقة، ثم زرّ الإغلاق.
+            //
+            // كان هنا زرّ إغلاق وحده يطفو بلا عنوان: المستخدم يرى شبكة
+            // أيقونات ولا شيء يقول إنّها «ماذا تريد أن تنشئ».
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: surfaceColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 18,
-                        color: isDark
-                            ? NeuColors.textSecondaryDark
-                            : NeuColors.textSecondary,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'إنشاء جديد',
+                          style: AppTypography.h4.copyWith(
+                            color: isDark
+                                ? NeuColors.textPrimaryDark
+                                : NeuColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'اختر ما تريد تسجيله الآن',
+                          style: AppTypography.caption.copyWith(
+                            color: isDark
+                                ? NeuColors.textHintDark
+                                : NeuColors.textHint,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Tooltip(
+                    message: 'إغلاق',
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: isDark
+                              ? NeuColors.textSecondaryDark
+                              : NeuColors.textSecondary,
+                        ),
                       ),
                     ),
                   ),
@@ -345,19 +382,16 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
             ),
 
             const SizedBox(height: 16),
-            Divider(
-                color: dividerColor, height: 1, indent: 24, endIndent: 24),
+            Divider(color: dividerColor, height: 1, indent: 24, endIndent: 24),
             const SizedBox(height: 8),
 
             // Action Grid — 4 columns, 2 rows
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                   childAspectRatio: 0.85,
                   crossAxisSpacing: 8,
@@ -375,19 +409,16 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
                         onTap: () {
                           Navigator.pop(ctx);
                           // Small delay to let sheet close smoothly
-                          Future.delayed(
-                            const Duration(milliseconds: 80),
-                            () {
-                              if (ctx.mounted) {
-                                final route = widget.actions[i].route;
-                                if (route.startsWith('/home/')) {
-                                  ctx.go(route);
-                                } else {
-                                  ctx.push(route);
-                                }
+                          Future.delayed(const Duration(milliseconds: 80), () {
+                            if (ctx.mounted) {
+                              final route = widget.actions[i].route;
+                              if (route.startsWith('/home/')) {
+                                ctx.go(route);
+                              } else {
+                                ctx.push(route);
                               }
-                            },
-                          );
+                            }
+                          });
                         },
                       ),
                     ),
@@ -397,10 +428,7 @@ class _FabMenuSheetState extends State<_FabMenuSheet>
             ),
 
             // Bottom safe area
-            SizedBox(
-              height:
-                  MediaQuery.of(context).padding.bottom + 16,
-            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
           ],
         ),
       ),
@@ -431,8 +459,7 @@ class _FabActionItemState extends State<_FabActionItem> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bgBase =
-        isDark ? NeuColors.surfaceDark : NeuColors.surface;
+    final bgBase = isDark ? NeuColors.surfaceDark : NeuColors.surface;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
@@ -448,30 +475,16 @@ class _FabActionItemState extends State<_FabActionItem> {
           color: _pressed
               ? widget.action.color.withAlpha(isDark ? 30 : 20)
               : bgBase,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: _pressed
-              ? []
-              : [
-                  BoxShadow(
-                    color: isDark
-                        ? NeuColors.shadowDarkDark
-                        : NeuColors.shadowDark,
-                    blurRadius: 6,
-                    offset: const Offset(3, 3),
-                  ),
-                  BoxShadow(
-                    color: isDark
-                        ? NeuColors.shadowLightDark
-                        : NeuColors.shadowLight,
-                    blurRadius: 6,
-                    offset: const Offset(-3, -3),
-                  ),
-                ],
-          border: _pressed
-              ? Border.all(
-                  color: widget.action.color.withAlpha(80),
-                  width: 1.5)
-              : null,
+          borderRadius: BorderRadius.circular(AzmRadius.sm),
+          // ظلّ مزدوج (فاتح من أعلى اليسار وداكن من أسفل اليمين) هو
+          // أسلوب neumorphism الذي تخلّى عنه باقي التطبيق. الحدّ الشعري
+          // يفصل البطاقة عن الأرض بالقدر نفسه وبلا ضجيج.
+          border: Border.all(
+            color: _pressed
+                ? widget.action.color.withAlpha(90)
+                : (isDark ? NeuColors.borderDark : NeuColors.border),
+            width: _pressed ? 1.5 : 1,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/neu_colors.dart';
 import '../../../../shared/widgets/neu_card.dart';
 import '../../providers/dashboard_metrics_provider.dart';
+import '../../../../core/design/azm_tokens.dart';
 
 /// RVIOS Business Health Score — a single figure derived from real records.
 ///
@@ -161,7 +162,7 @@ class _HealthShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeuCard(
-      radius: 22,
+      radius: AzmRadius.sm,
       elevation: 2,
       padding: const EdgeInsets.all(20),
       gradientColors:
