@@ -51,7 +51,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
   int _employeeCount = 1;
 
   // Step 4 — Plan
-  PlanType _selectedPlan = PlanType.business;
+  PlanType _selectedPlan = PlanType.professional;
 
   // ── النتيجة ──────────────────────────────────────────────────────
   //
@@ -111,17 +111,20 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
     });
 
     try {
-      final session =
-          await ref.read(azmAuthApiProvider).registerWithCompany(
-                email: _emailCtrl.text,
-                password: _passwordCtrl.text,
-                displayName: _ownerNameCtrl.text,
-                companyName: _companyNameCtrl.text,
-              );
+      final session = await ref
+          .read(azmAuthApiProvider)
+          .registerWithCompany(
+            email: _emailCtrl.text,
+            password: _passwordCtrl.text,
+            displayName: _ownerNameCtrl.text,
+            companyName: _companyNameCtrl.text,
+          );
 
       // الرمز ثم تبديل المستأجر — بهذا الترتيب، وفي نداء واحد كي لا
       // يُحفظ رمزٌ بلا ملفّ قاعدة يطابقه.
-      await ref.read(sessionControllerProvider).adopt(
+      await ref
+          .read(sessionControllerProvider)
+          .adopt(
             accessToken: session.accessToken,
             companyId: session.company.id,
           );
@@ -154,18 +157,14 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
+      backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: _prevStep,
         ),
         title: _currentStep < _totalSteps
-            ? Text(
-                'إنشاء حساب الشركة',
-                style: AppTypography.h3,
-              )
+            ? Text('إنشاء حساب الشركة', style: AppTypography.h3)
             : null,
         centerTitle: true,
         elevation: 0,
@@ -208,8 +207,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
                   selectedCountry: _selectedCountry,
                   selectedCurrency: _selectedCurrency,
                   selectedIndustry: _selectedIndustry,
-                  onCountryChanged: (v) =>
-                      setState(() => _selectedCountry = v),
+                  onCountryChanged: (v) => setState(() => _selectedCountry = v),
                   onCurrencyChanged: (v) =>
                       setState(() => _selectedCurrency = v),
                   onIndustryChanged: (v) =>
@@ -250,10 +248,7 @@ class _CreateCompanyWizardState extends ConsumerState<CreateCompanyWizard> {
 // ─────────────────────────────────────────────
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({
-    required this.currentStep,
-    required this.totalSteps,
-  });
+  const _StepIndicator({required this.currentStep, required this.totalSteps});
   final int currentStep;
   final int totalSteps;
 
@@ -269,9 +264,7 @@ class _StepIndicator extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.symmetric(horizontal: 3),
             decoration: BoxDecoration(
-              color: isDone || isActive
-                  ? NeuColors.primary
-                  : NeuColors.divider,
+              color: isDone || isActive ? NeuColors.primary : NeuColors.divider,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -313,9 +306,7 @@ class _Step1OwnerInfo extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             'ستكون أنت المالك الرئيسي للحساب',
-            style: AppTypography.body.copyWith(
-              color: NeuColors.textSecondary,
-            ),
+            style: AppTypography.body.copyWith(color: NeuColors.textSecondary),
           ),
           const SizedBox(height: 28),
 
@@ -402,7 +393,17 @@ class _Step2CompanyInfo extends StatelessWidget {
     'OTHER': '🌐 أخرى',
   };
 
-  static const _currencies = ['SAR', 'AED', 'KWD', 'QAR', 'BHD', 'OMR', 'EGP', 'JOD', 'USD'];
+  static const _currencies = [
+    'SAR',
+    'AED',
+    'KWD',
+    'QAR',
+    'BHD',
+    'OMR',
+    'EGP',
+    'JOD',
+    'USD',
+  ];
 
   static const _industries = [
     'تجارة وبيع بالتجزئة',
@@ -447,10 +448,9 @@ class _Step2CompanyInfo extends StatelessWidget {
             label: 'الدولة',
             value: selectedCountry,
             items: _countries.entries
-                .map((e) => DropdownMenuItem(
-                      value: e.key,
-                      child: Text(e.value),
-                    ))
+                .map(
+                  (e) => DropdownMenuItem(value: e.key, child: Text(e.value)),
+                )
                 .toList(),
             onChanged: (v) => onCountryChanged(v!),
           ),
@@ -544,20 +544,22 @@ class _Step3Size extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 18, vertical: 14),
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? NeuColors.primaryTint
                         : isDark
-                            ? NeuColors.surfaceDark
-                            : NeuColors.surface,
+                        ? NeuColors.surfaceDark
+                        : NeuColors.surface,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isSelected
                           ? NeuColors.primary
                           : isDark
-                              ? NeuColors.borderDark
-                              : NeuColors.border,
+                          ? NeuColors.borderDark
+                          : NeuColors.border,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -576,8 +578,8 @@ class _Step3Size extends StatelessWidget {
                                 color: isSelected
                                     ? NeuColors.primary
                                     : isDark
-                                        ? NeuColors.textPrimaryDark
-                                        : NeuColors.textPrimary,
+                                    ? NeuColors.textPrimaryDark
+                                    : NeuColors.textPrimary,
                               ),
                             ),
                             Text(
@@ -594,8 +596,10 @@ class _Step3Size extends StatelessWidget {
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle_rounded,
-                            color: NeuColors.primary),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: NeuColors.primary,
+                        ),
                     ],
                   ),
                 ),
@@ -640,10 +644,27 @@ class _Step4Plan extends StatelessWidget {
   /// بالضبط ما كان يفعله المعالج السابق.
   final String? error;
 
+  /// الثلاث كما هي في [PlanType] — كلٌّ يفتح عمودًا لا عددًا أكبر.
+  ///
+  /// وصفُ كل باقة يقول **ما تفتحه** لا ما تمنعه: القائمة السابقة كانت
+  /// تعدّ المستخدمين («حتى ٢٠»، «حتى ١٠٠») فيقارن المشتري رقمين ولا
+  /// يعرف ماذا يشتري.
   static const _plans = [
-    (PlanType.business, 'أعمال', 'حتى 20 مستخدماً', 'âœ… HRM âœ… مالية âœ… مشاريع', false),
-    (PlanType.businessPlus, 'أعمال بلس', 'حتى 100 مستخدم', 'âœ… كل الأعمال + تقارير متقدمة', false),
-    (PlanType.enterprise, 'مؤسسي', 'غير محدود', 'âœ… فروع + API + SSO + Audit Logs', true),
+    (
+      PlanType.free,
+      'مجاني',
+      'مستخدم واحد',
+      'التنفيذ والمتابعات والأدوات',
+      false,
+    ),
+    (
+      PlanType.professional,
+      'احترافي',
+      'حتى ٥ مستخدمين',
+      '+ المال والمشاريع والمتاجر',
+      true,
+    ),
+    (PlanType.business, 'أعمال', 'بلا حدّ', '+ الموارد البشرية والفروع', false),
   ];
 
   @override
@@ -674,7 +695,11 @@ class _Step4Plan extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star_outline, color: NeuColors.accentMuted, size: 16),
+                const Icon(
+                  Icons.star_outline,
+                  color: NeuColors.accentMuted,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   '${AppConstants.trialDays} يوم مجاناً لجميع الباقات',
@@ -707,17 +732,17 @@ class _Step4Plan extends StatelessWidget {
                     color: isSelected
                         ? NeuColors.primary
                         : isDark
-                            ? NeuColors.surfaceDark
-                            : NeuColors.surface,
+                        ? NeuColors.surfaceDark
+                        : NeuColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected
                           ? NeuColors.primary
                           : isEnterprise
-                              ? NeuColors.accentMuted
-                              : isDark
-                                  ? NeuColors.borderDark
-                                  : NeuColors.border,
+                          ? NeuColors.accentMuted
+                          : isDark
+                          ? NeuColors.borderDark
+                          : NeuColors.border,
                       width: isSelected || isEnterprise ? 2 : 1,
                     ),
                     boxShadow: isSelected
@@ -726,7 +751,7 @@ class _Step4Plan extends StatelessWidget {
                               color: NeuColors.primary.withValues(alpha: 0.25),
                               blurRadius: 16,
                               offset: const Offset(0, 4),
-                            )
+                            ),
                           ]
                         : null,
                   ),
@@ -744,16 +769,18 @@ class _Step4Plan extends StatelessWidget {
                               color: isSelected
                                   ? Colors.white
                                   : isEnterprise
-                                      ? NeuColors.accentMuted
-                                      : isDark
-                                          ? NeuColors.textPrimaryDark
-                                          : NeuColors.textPrimary,
+                                  ? NeuColors.accentMuted
+                                  : isDark
+                                  ? NeuColors.textPrimaryDark
+                                  : NeuColors.textPrimary,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.white.withValues(alpha: 0.2)
@@ -773,8 +800,11 @@ class _Step4Plan extends StatelessWidget {
                           ),
                           const Spacer(),
                           if (isSelected)
-                            const Icon(Icons.check_circle,
-                                color: Colors.white, size: 22),
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.white,
+                              size: 22,
+                            ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -786,8 +816,8 @@ class _Step4Plan extends StatelessWidget {
                           color: isSelected
                               ? Colors.white.withValues(alpha: 0.85)
                               : isDark
-                                  ? NeuColors.textSecondaryDark
-                                  : NeuColors.textSecondary,
+                              ? NeuColors.textSecondaryDark
+                              : NeuColors.textSecondary,
                         ),
                       ),
                     ],
@@ -820,8 +850,9 @@ class _Step4Plan extends StatelessWidget {
                   Expanded(
                     child: Text(
                       error!,
-                      style: AppTypography.body
-                          .copyWith(color: NeuColors.danger),
+                      style: AppTypography.body.copyWith(
+                        color: NeuColors.danger,
+                      ),
                     ),
                   ),
                 ],
@@ -832,9 +863,7 @@ class _Step4Plan extends StatelessWidget {
 
           isCreating
               ? const Center(
-                  child: CircularProgressIndicator(
-                    color: NeuColors.primary,
-                  ),
+                  child: CircularProgressIndicator(color: NeuColors.primary),
                 )
               : _RviosPrimaryButton(
                   id: 'btn_create_company_final',
@@ -885,8 +914,11 @@ class _ResultPage extends StatelessWidget {
               color: NeuColors.success,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_rounded,
-                color: Colors.white, size: 44),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Colors.white,
+              size: 44,
+            ),
           ),
 
           const SizedBox(height: 20),
@@ -925,13 +957,14 @@ class _ResultPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  companyName,
-                  style: AppTypography.h3,
-                ),
+                Text(companyName, style: AppTypography.h3),
                 const SizedBox(height: 16),
 
-                _InfoRow(label: 'Company ID', value: companyCode, canCopy: true),
+                _InfoRow(
+                  label: 'Company ID',
+                  value: companyCode,
+                  canCopy: true,
+                ),
                 const SizedBox(height: 12),
                 _InfoRow(
                   label: 'رابط Workspace',
@@ -950,11 +983,17 @@ class _ResultPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: NeuColors.goldTint,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: NeuColors.accentMuted.withValues(alpha: 0.4)),
+              border: Border.all(
+                color: NeuColors.accentMuted.withValues(alpha: 0.4),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: NeuColors.accentMuted, size: 18),
+                const Icon(
+                  Icons.info_outline,
+                  color: NeuColors.accentMuted,
+                  size: 18,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -1044,8 +1083,11 @@ class _InfoRow extends StatelessWidget {
                   SnackBar(
                     content: Row(
                       children: [
-                        const Icon(Icons.check_circle_outline,
-                            color: Colors.white, size: 16),
+                        const Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                         const SizedBox(width: 8),
                         Text('تم نسخ "$label"'),
                       ],
@@ -1054,7 +1096,8 @@ class _InfoRow extends StatelessWidget {
                     duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     margin: const EdgeInsets.all(16),
                   ),
                 );
@@ -1116,10 +1159,14 @@ class _RviosTextField extends StatelessWidget {
           prefixIcon: Icon(icon, color: NeuColors.primary, size: 20),
           suffixIcon: suffixIcon,
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           labelStyle: TextStyle(
-            color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+            color: isDark
+                ? NeuColors.textSecondaryDark
+                : NeuColors.textSecondary,
             fontFamily: 'Panorama',
           ),
         ),
@@ -1166,8 +1213,9 @@ class _RviosDropdown<T> extends StatelessWidget {
         onChanged: onChanged,
         isExpanded: true,
         decoration: const InputDecoration(border: InputBorder.none),
-        dropdownColor:
-            isDark ? NeuColors.surfaceElevatedDark : NeuColors.surfaceElevated,
+        dropdownColor: isDark
+            ? NeuColors.surfaceElevatedDark
+            : NeuColors.surfaceElevated,
         style: TextStyle(
           fontFamily: 'Panorama',
           color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,

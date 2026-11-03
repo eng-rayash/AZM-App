@@ -20,6 +20,16 @@ import '../../../core/services/remote_config_service.dart';
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
+  /// ميزانية الإقلاع — أقصى ما ينتظره المستخدم قبل أن يمضي التطبيق
+  /// ببياناته المحلية.
+  ///
+  /// التطبيق يعمل دون اتصال، فلا معنى لحبس الشاشة الأولى على شبكة:
+  /// ما يصل في الوقت يُستعمل، وما تأخّر يلحق بنا بعد الدخول.
+  ///
+  /// عامّة ليقرأها اختبار الدخان: كان يضخّ ١٥٠٠ مللي ثانية بالرقم،
+  /// فكل تغيير هنا يتركه يرسُب بمؤقّت معلّق.
+  static const bootBudget = Duration(milliseconds: 2500);
+
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
@@ -52,13 +62,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _navigateAfterDelay();
   }
 
-  /// ميزانية الإقلاع — أقصى ما ينتظره المستخدم قبل أن يمضي التطبيق
-  /// ببياناته المحلية.
-  ///
-  /// التطبيق يعمل دون اتصال، فلا معنى لحبس الشاشة الأولى على شبكة:
-  /// ما يصل في الوقت يُستعمل، وما تأخّر يلحق بنا بعد الدخول.
-  static const _bootBudget = Duration(milliseconds: 2500);
-
   /// أقلّ ما تبقى شاشة الانطلاق ظاهرة — لحظة علامة لا انتظار.
   static const _minSplash = Duration(milliseconds: 700);
 
@@ -82,7 +85,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     await Future.wait([
       minSplash,
       boot.timeout(
-        _bootBudget,
+        SplashScreen.bootBudget,
         onTimeout: () {
           // لا خطأ هنا: تجاوز الميزانية حالة متوقّعة لا عطب. الإعدادات
           // تبقى على افتراضياتها، وحالة الدخول تُحسم من الجلسة المخزَّنة.

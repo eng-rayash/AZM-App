@@ -22,7 +22,7 @@ class ModulesManagementScreen extends ConsumerWidget {
 
     final currentPlan = company != null
         ? PlanType.fromValue(company.planType)
-        : PlanType.freePersonal;
+        : PlanType.free;
 
     return Scaffold(
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
@@ -70,7 +70,7 @@ class ModulesManagementScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // ── Upgrade CTA ───────────────────────────────────────
-            if (currentPlan != PlanType.enterprise)
+            if (currentPlan != PlanType.business)
               _UpgradeCta(currentPlan: currentPlan, isDark: isDark),
 
             const SizedBox(height: 24),

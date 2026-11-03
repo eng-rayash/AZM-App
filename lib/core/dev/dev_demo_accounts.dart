@@ -42,14 +42,14 @@ class DevDemoAccounts {
       email: 'ruqiafaisal797@gmail.com',
       displayName: 'رقية فيصل',
       companyName: 'أعمال بلس المتقدمة',
-      planValue: 3, // PlanType.businessPlus
+      planValue: 3, // PlanType.business
       planLabel: 'أعمال بلس',
     ),
     _DemoAccount(
       email: 'rviostech@gmail.com',
       displayName: 'المدير التنفيذي',
       companyName: 'RVIOS Technologies',
-      planValue: 4, // PlanType.enterprise
+      planValue: 4, // PlanType.business
       planLabel: 'مؤسسي',
     ),
   ];

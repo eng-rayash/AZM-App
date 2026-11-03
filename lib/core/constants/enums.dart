@@ -30,12 +30,12 @@ enum MeetingStatus {
   final int value;
   final String arabicLabel;
 
-  static MeetingStatus fromValue(int value) =>
-      MeetingStatus.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => MeetingStatus.scheduled,
-      );
+  static MeetingStatus fromValue(int value) => MeetingStatus.values.firstWhere(
+    (e) => e.value == value,
+    // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+    // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+    orElse: () => MeetingStatus.scheduled,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -69,12 +69,12 @@ enum MeetingType {
   final int value;
   final String arabicLabel;
 
-  static MeetingType fromValue(int value) =>
-      MeetingType.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => MeetingType.general,
-      );
+  static MeetingType fromValue(int value) => MeetingType.values.firstWhere(
+    (e) => e.value == value,
+    // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+    // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+    orElse: () => MeetingType.general,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -108,12 +108,12 @@ enum UnifiedStatus {
   final int value;
   final String arabicLabel;
 
-  static UnifiedStatus fromValue(int value) =>
-      UnifiedStatus.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => UnifiedStatus.newItem,
-      );
+  static UnifiedStatus fromValue(int value) => UnifiedStatus.values.firstWhere(
+    (e) => e.value == value,
+    // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+    // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+    orElse: () => UnifiedStatus.newItem,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -138,12 +138,12 @@ enum Priority {
   final int value;
   final String arabicLabel;
 
-  static Priority fromValue(int value) =>
-      Priority.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => Priority.medium,
-      );
+  static Priority fromValue(int value) => Priority.values.firstWhere(
+    (e) => e.value == value,
+    // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+    // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+    orElse: () => Priority.medium,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -172,10 +172,11 @@ enum SecurityAction {
   final String arabicLabel;
 
   static SecurityAction fromValue(int value) =>
-      SecurityAction.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => SecurityAction.login,
+      SecurityAction.values.firstWhere(
+        (e) => e.value == value,
+        // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+        // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+        orElse: () => SecurityAction.login,
       );
 }
 
@@ -198,12 +199,12 @@ enum AuthMethod {
   final int value;
   final String arabicLabel;
 
-  static AuthMethod fromValue(int value) =>
-      AuthMethod.values.firstWhere((e) => e.value == value,
-      // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
-      // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
-      orElse: () => AuthMethod.pin,
-      );
+  static AuthMethod fromValue(int value) => AuthMethod.values.firstWhere(
+    (e) => e.value == value,
+    // قيمة غير معروفة لا تُسقط الشاشة: صفّ من نسخة أقدم أو
+    // بيانات تالفة تُقرأ كقيمة افتراضية بدل أن ترمي.
+    orElse: () => AuthMethod.pin,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -250,11 +251,10 @@ enum FollowupType {
   final int value;
   final String arabicLabel;
 
-  static FollowupType fromValue(int value) =>
-      FollowupType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => FollowupType.followup,
-      );
+  static FollowupType fromValue(int value) => FollowupType.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => FollowupType.followup,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -273,11 +273,8 @@ enum EmployeeStatus {
   final int value;
   final String arabicLabel;
 
-  static EmployeeStatus fromValue(int value) =>
-      EmployeeStatus.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => EmployeeStatus.active,
-      );
+  static EmployeeStatus fromValue(int value) => EmployeeStatus.values
+      .firstWhere((e) => e.value == value, orElse: () => EmployeeStatus.active);
 }
 
 // ─────────────────────────────────────────────
@@ -294,11 +291,8 @@ enum ContractStatus {
   final int value;
   final String arabicLabel;
 
-  static ContractStatus fromValue(int value) =>
-      ContractStatus.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => ContractStatus.active,
-      );
+  static ContractStatus fromValue(int value) => ContractStatus.values
+      .firstWhere((e) => e.value == value, orElse: () => ContractStatus.active);
 }
 
 // ─────────────────────────────────────────────
@@ -317,11 +311,10 @@ enum InvoiceStatus {
   final int value;
   final String arabicLabel;
 
-  static InvoiceStatus fromValue(int value) =>
-      InvoiceStatus.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => InvoiceStatus.draft,
-      );
+  static InvoiceStatus fromValue(int value) => InvoiceStatus.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => InvoiceStatus.draft,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -339,11 +332,10 @@ enum ProjectStatus {
   final int value;
   final String arabicLabel;
 
-  static ProjectStatus fromValue(int value) =>
-      ProjectStatus.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => ProjectStatus.planning,
-      );
+  static ProjectStatus fromValue(int value) => ProjectStatus.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => ProjectStatus.planning,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -363,11 +355,10 @@ enum LeaveType {
   final int value;
   final String arabicLabel;
 
-  static LeaveType fromValue(int value) =>
-      LeaveType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => LeaveType.other,
-      );
+  static LeaveType fromValue(int value) => LeaveType.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => LeaveType.other,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -384,11 +375,10 @@ enum PaymentMethod {
   final int value;
   final String arabicLabel;
 
-  static PaymentMethod fromValue(int value) =>
-      PaymentMethod.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => PaymentMethod.cash,
-      );
+  static PaymentMethod fromValue(int value) => PaymentMethod.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => PaymentMethod.cash,
+  );
 }
 
 // ─── Status Color Extensions ───
@@ -456,11 +446,10 @@ enum AccountType {
   final String arabicLabel;
   final String englishLabel;
 
-  static AccountType fromValue(int value) =>
-      AccountType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => AccountType.freePersonal,
-      );
+  static AccountType fromValue(int value) => AccountType.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => AccountType.freePersonal,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -468,25 +457,63 @@ enum AccountType {
 // ─────────────────────────────────────────────
 
 /// نوع باقة الشركة على المنصة
+/// باقات عزم الثلاث.
+///
+/// كانت خمسًا: مجاني، محترف، أعمال، أعمال بلس، مؤسسي. و«أعمال» و«أعمال
+/// بلس» لم يكن بينهما إلا عدد المستخدمين (٢٠ مقابل ١٠٠) — وهذا **سعر
+/// لا باقة**، فالمشتري لا يفهم ما الذي يشتريه زيادةً.
+///
+/// الثلاث هنا يفتح كلٌّ منها **عمودًا كاملًا** من التطبيق لا عددًا
+/// أكبر، فالفرق يُفهم بلا جدول مقارنة.
 enum PlanType {
-  freePersonal(0, 'مجاني', 1),
-  professional(1, 'محترف', 1),
-  business(2, 'أعمال', 20),
-  businessPlus(3, 'أعمال بلس', 100),
-  enterprise(4, 'مؤسسي', -1); // -1 = unlimited
+  /// فرد واحد — التنفيذ والمتابعات وأدوات الالتقاط الأساسية
+  free(0, 'مجاني', 1),
+
+  /// فريق صغير — يفتح المال والمشاريع والمتاجر
+  professional(1, 'احترافي', 5),
+
+  /// مؤسسة — يفتح الموارد البشرية وما بقي، بلا حدّ للمستخدمين
+  business(2, 'أعمال', -1);
 
   const PlanType(this.value, this.arabicLabel, this.maxUsers);
   final int value;
   final String arabicLabel;
-  final int maxUsers; // -1 = unlimited
+
+  /// ‎-1‎ يعني بلا حدّ
+  final int maxUsers;
 
   bool get isUnlimited => maxUsers == -1;
 
-  static PlanType fromValue(int value) =>
-      PlanType.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => PlanType.freePersonal,
-      );
+  // ── ما يفتحه كل عمود ───────────────────────────────────────
+  //
+  // القدرة تُشتقّ من الترتيب لا تُعدَّد لكل باقة: الأعلى يشمل الأدنى
+  // دائمًا، فإضافة باقة رابعة يومًا ما لا تعني مراجعة كل قدرة.
+
+  /// الفواتير والمصروفات والإيرادات والحسابات
+  bool get hasFinance => index >= professional.index;
+
+  /// العملاء والمشاريع والموردون والمتاجر
+  bool get hasBusiness => index >= professional.index;
+
+  /// الموظفون والحضور والرواتب وما يتبعها
+  bool get hasHrm => index >= business.index;
+
+  /// الفروع والأدوار المتقدّمة والتدقيق
+  bool get hasOrgStructure => index >= business.index;
+
+  /// ترحيل القيم المخزَّنة.
+  ///
+  /// الباقتان المحذوفتان (٣ «أعمال بلس» و٤ «مؤسسي») تؤولان إلى
+  /// [business]: كلتاهما كانت تفتح كل شيء، فمن اشتراهما لا يفقد
+  /// شيئًا. والترحيل هنا لا في القاعدة حتى لا يحتاج صفٌّ قديم كتابةً
+  /// جديدة ليُقرأ صحيحًا.
+  static PlanType fromValue(int value) {
+    if (value >= business.value) return business;
+    return PlanType.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => free,
+    );
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -566,11 +593,10 @@ enum UserRole {
   /// Role level — same as value; lower = higher privilege (0=owner, 9=guest)
   int get level => value;
 
-  static UserRole fromValue(int value) =>
-      UserRole.values.firstWhere(
-        (e) => e.value == value,
-        orElse: () => UserRole.employee,
-      );
+  static UserRole fromValue(int value) => UserRole.values.firstWhere(
+    (e) => e.value == value,
+    orElse: () => UserRole.employee,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -665,9 +691,9 @@ enum EntityLinkType {
   final String label;
 
   static EntityLinkType fromValue(int v) => EntityLinkType.values.firstWhere(
-        (e) => e.value == v,
-        orElse: () => EntityLinkType.other,
-      );
+    (e) => e.value == v,
+    orElse: () => EntityLinkType.other,
+  );
 }
 
 // ─────────────────────────────────────────────
