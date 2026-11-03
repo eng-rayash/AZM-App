@@ -99,11 +99,10 @@ class AzmScreen extends StatelessWidget {
               ),
             ),
             ...slivers,
-            // خلوص أسفل الشاشة: ارتفاع شريط التنقّل زائد متنفَّس، حتى لا
-            // يجلس آخر صفّ تحته. `SafeArea(bottom: false)` أعلاه يترك
-            // الحافة السفلى للشريط نفسه.
+            // خلوص أسفل الشاشة — الشريط والزرّ العائم معًا. `SafeArea
+            // (bottom: false)` أعلاه يترك الحافة السفلى للشريط نفسه.
             const SliverToBoxAdapter(
-              child: SizedBox(height: 96),
+              child: SizedBox(height: AzmSpace.scrollBottomInset),
             ),
           ],
         ),

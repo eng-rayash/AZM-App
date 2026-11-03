@@ -9,6 +9,8 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/neu_colors.dart';
 import '../../../../shared/widgets/neu_card.dart';
 import '../../providers/dashboard_metrics_provider.dart';
+import '../../../../core/design/azm_tokens.dart';
+import '../../../../core/utils/arabic_numerals.dart';
 
 /// RVIOS dual-line performance chart — revenue against expenses.
 ///
@@ -58,7 +60,7 @@ class ExecutivePerformanceChart extends ConsumerWidget {
     return metricsAsync.when(
       loading: () => _ChartShell(
         isDark: isDark,
-        monthsLabel: 'آخر $kDashboardSeriesMonths أشهر',
+        monthsLabel: 'آخر ${toArabicDigits('$kDashboardSeriesMonths')} أشهر',
         body: const SizedBox(
           height: 155,
           child: Center(
@@ -72,7 +74,7 @@ class ExecutivePerformanceChart extends ConsumerWidget {
       ),
       error: (err, _) => _ChartShell(
         isDark: isDark,
-        monthsLabel: 'آخر $kDashboardSeriesMonths أشهر',
+        monthsLabel: 'آخر ${toArabicDigits('$kDashboardSeriesMonths')} أشهر',
         body: _ChartNotice(
           icon: Icons.cloud_off_rounded,
           message: 'تعذّر تحميل بيانات الأداء.',
@@ -94,7 +96,7 @@ class ExecutivePerformanceChart extends ConsumerWidget {
           children: [
             _ChartShell(
               isDark: isDark,
-              monthsLabel: 'آخر ${series.length} أشهر',
+              monthsLabel: 'آخر ${toArabicDigits('${series.length}')} أشهر',
               body: hasMovement
                   ? SizedBox(
                       height: 175,
@@ -106,7 +108,7 @@ class ExecutivePerformanceChart extends ConsumerWidget {
                   : _ChartNotice(
                       icon: Icons.show_chart_rounded,
                       message:
-                          'لا توجد حركات مالية مسجّلة في آخر ${series.length} أشهر.',
+                          'لا توجد حركات مالية مسجّلة في آخر ${toArabicDigits('${series.length}')} أشهر.',
                       isDark: isDark,
                     ),
             ),
@@ -304,7 +306,7 @@ class _ChartShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeuCard(
-      radius: 22,
+      radius: AzmRadius.sm,
       elevation: 2,
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
       margin: EdgeInsets.zero,
@@ -531,7 +533,7 @@ class _SummaryCard extends StatelessWidget {
     final trendColor = isPositive ? NeuColors.success : NeuColors.danger;
 
     return NeuCard(
-      radius: 18,
+      radius: AzmRadius.sm,
       padding: const EdgeInsets.all(14),
       margin: EdgeInsets.zero,
       child: Row(

@@ -10,6 +10,7 @@ import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
 import '../domain/appointments_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Screen for creating or editing an appointment
 class CreateAppointmentScreen extends ConsumerStatefulWidget {
@@ -181,7 +182,7 @@ class _CreateAppointmentScreenState extends ConsumerState<CreateAppointmentScree
                       onTap: _pickDate,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
@@ -199,7 +200,7 @@ class _CreateAppointmentScreenState extends ConsumerState<CreateAppointmentScree
                       onTap: _pickTime,
                       child: NeuCard(
                         margin: EdgeInsets.zero,
-                        radius: 16,
+                        radius: AzmRadius.sm,
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [

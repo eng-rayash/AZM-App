@@ -12,6 +12,7 @@ import '../domain/finance_repository.dart';
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Detail Screen
@@ -174,7 +175,7 @@ class _ClientDetailBody extends StatelessWidget {
 
                 // ── Client Info ───────────────────────────────────
                 NeuCard(
-                  isDark: isDark, radius: 20,
+                  isDark: isDark, radius: AzmRadius.sm,
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   padding: const EdgeInsets.all(16),
                   child: Column(children: [
@@ -259,7 +260,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NeuCard(
-    isDark: isDark, radius: 16, padding: const EdgeInsets.all(12),
+    isDark: isDark, radius: AzmRadius.sm, padding: const EdgeInsets.all(12),
     child: Column(children: [
       Icon(icon, color: color, size: 22),
       const SizedBox(height: 6),
@@ -318,7 +319,7 @@ class _InvoiceTile extends StatelessWidget {
             : NeuColors.warning;
 
     return NeuCard(
-      isDark: isDark, radius: 14,
+      isDark: isDark, radius: AzmRadius.sm,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(children: [

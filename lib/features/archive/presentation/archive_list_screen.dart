@@ -343,7 +343,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
                 if (!matchesQuery) return false;
 
                 if (_selectedFilter == 'الكل') return true;
-                if (_selectedFilter == 'سري للغاية 🔒') return doc.isConfidential;
+                if (_selectedFilter == 'سري للغاية') return doc.isConfidential;
                 return doc.category?.toLowerCase() == _selectedFilter.toLowerCase();
               }).toList();
 
@@ -473,7 +473,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
                 final filters = [
                   'الكل',
                   ...dynamicCategories,
-                  'سري للغاية 🔒',
+                  'سري للغاية',
                 ];
 
                 // Reset filter if the selected one was removed
@@ -538,7 +538,7 @@ class _ArchiveListScreenState extends ConsumerState<ArchiveListScreen> {
                     if (!matchesQuery) return false;
 
                     if (_selectedFilter == 'الكل') return true;
-                    if (_selectedFilter == 'سري للغاية 🔒') return doc.isConfidential;
+                    if (_selectedFilter == 'سري للغاية') return doc.isConfidential;
                     return doc.category?.toLowerCase() == _selectedFilter.toLowerCase();
                   }).toList();
 

@@ -59,11 +59,17 @@
 
   <!-- ═══ Font Face ═════════════════════════════════════════════════ -->
   <style>
+    /* خط شاشة الانطلاق — ثمانية Serif Text، وهو الخط نفسه الذي يحمله
+       `pubspec.yaml` باسم العائلة Panorama. كان هنا `majallab.ttf` ولا
+       وجود له في `assets/fonts/`، فيُطلب على كل إقلاع ويعود 404 ثم
+       يسقط المتصفّح إلى خط النظام — فتظهر الشاشة الأولى بخطّ غير خطّ
+       التطبيق. */
     @font-face {
-      font-family: 'majallab';
-      src: url('assets/fonts/majallab.ttf') format('truetype');
-      font-weight: normal;
+      font-family: 'Panorama';
+      src: url('assets/assets/fonts/ThmanyahSerifText-Medium.woff2') format('woff2');
+      font-weight: 400;
       font-style: normal;
+      font-display: swap;
     }
 
     html, body {
@@ -71,7 +77,7 @@
       padding: 0;
       height: 100%;
       background-color: #171717;
-      font-family: 'majallab', 'Panorama', 'Tajawal', 'Segoe UI', sans-serif;
+      font-family: 'Panorama', 'Tajawal', 'Segoe UI', sans-serif;
     }
 
     #rvios-splash {

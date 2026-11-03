@@ -12,6 +12,7 @@ import '../../../core/constants/app_currencies.dart';
 import '../../../core/database/app_database.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Project Detail Screen
@@ -179,7 +180,7 @@ class _ProjectDetailBody extends StatelessWidget {
 
               // ── Details Card ──────────────────────────────────
               NeuCard(
-                isDark: isDark, radius: 20,
+                isDark: isDark, radius: AzmRadius.sm,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 padding: const EdgeInsets.all(16),
                 child: Column(children: [
@@ -233,7 +234,7 @@ class _BudgetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NeuCard(
-    isDark: isDark, radius: 16, padding: const EdgeInsets.all(12),
+    isDark: isDark, radius: AzmRadius.sm, padding: const EdgeInsets.all(12),
     child: Column(children: [
       Text(label, style: AppTypography.caption.copyWith(
           color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),

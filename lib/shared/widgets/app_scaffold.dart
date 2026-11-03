@@ -23,24 +23,28 @@ import 'dashboard_fab.dart';
 /// عند [AzmBreakpoint.sidebar] فأعلى يصير الجانبي لوحًا ثابتًا ويختفي السفلي —
 /// فالإبهام لم يعد قيدًا، والشجرة المرئية دائمًا أسرع.
 class AppShellScaffold extends StatelessWidget {
-  const AppShellScaffold({
-    super.key,
-    required this.child,
-  });
+  const AppShellScaffold({super.key, required this.child});
 
   final Widget child;
 
+  /// التبويبات الخمسة — كل واحد يجيب عن سؤال واحد، وأسماؤها هي أسماء
+  /// مجموعات [AzmSidebar] نفسها.
+  ///
+  /// كانت أربعة: «الرئيسية» و«العمل» و«الأعمال» و«الذكاء». ثلاث علل:
+  /// «العمل» و«الأعمال» يفرّق بينهما حرف ومعناهما مختلف تمامًا؛ وأكبر
+  /// مجموعتين (المالية ١٠ وجهات، والفريق ١٢) بلا تبويب أصلًا؛ و«الذكاء»
+  /// اسمٌ يَعِد بما لا يُسلَّم — فتحته تقارير.
   static const _tabs = <_Tab>[
     _Tab(
-      icon: Icons.dashboard_outlined,
-      activeIcon: Icons.dashboard_rounded,
-      label: 'الرئيسية',
+      icon: Icons.wb_sunny_outlined,
+      activeIcon: Icons.wb_sunny_rounded,
+      label: 'اليوم',
       path: RouteNames.dashboardFull,
     ),
     _Tab(
       icon: Icons.checklist_outlined,
       activeIcon: Icons.checklist_rounded,
-      label: 'العمل',
+      label: 'التنفيذ',
       path: RouteNames.workFull,
     ),
     _Tab(
@@ -50,10 +54,16 @@ class AppShellScaffold extends StatelessWidget {
       path: RouteNames.businessFull,
     ),
     _Tab(
-      icon: Icons.insights_outlined,
-      activeIcon: Icons.insights_rounded,
-      label: 'الذكاء',
-      path: RouteNames.insightsFull,
+      icon: Icons.groups_outlined,
+      activeIcon: Icons.groups_rounded,
+      label: 'الفريق',
+      path: RouteNames.hrmFull,
+    ),
+    _Tab(
+      icon: Icons.handyman_outlined,
+      activeIcon: Icons.handyman_rounded,
+      label: 'أدوات',
+      path: RouteNames.toolsFull,
     ),
   ];
 
@@ -98,13 +108,12 @@ class AppShellScaffold extends StatelessWidget {
                   Expanded(child: child),
                 ],
               ),
+        // الزرّ العائم على الضيّقة وحدها: على العريضة اللوح الجانبي ظاهر
+        // دائمًا ومداخل الإنشاء فيه، فلا يزاحم المحتوى زرٌّ فوقه.
+        floatingActionButton: wide ? null : _CreateFab(location: location),
         bottomNavigationBar: wide
             ? null
-            : _AzmBottomNav(
-                tabs: _tabs,
-                currentPath: location,
-                palette: p,
-              ),
+            : _AzmBottomNav(tabs: _tabs, currentPath: location, palette: p),
       ),
     );
   }
@@ -127,15 +136,19 @@ class _TopBar extends StatelessWidget {
   final bool showMenu;
 
   /// اسم الموضع الحالي في الشجرة، ليعرف المستخدم أين هو.
+  ///
+  /// تبويبات الشريط السفلي تُقرأ **أولًا**: الوجهة الواحدة اسمٌ واحد، وقراءة
+  /// الشجرة قبلها كانت تسمّي «الذكاء» في الأسفل و«صحة الأعمال» في الأعلى
+  /// لنفس الشاشة.
   String _title() {
     if (location == RouteNames.dashboardFull) return AzmNav.home.label;
+    for (final tab in AppShellScaffold._tabs) {
+      if (location.startsWith(tab.path)) return tab.label;
+    }
     for (final g in AzmNav.groups) {
       for (final d in g.destinations) {
         if (location.startsWith(d.route)) return d.label;
       }
-    }
-    for (final tab in AppShellScaffold._tabs) {
-      if (location.startsWith(tab.path)) return tab.label;
     }
     return '';
   }
@@ -261,36 +274,17 @@ class _AzmBottomNav extends StatelessWidget {
         top: false,
         child: SizedBox(
           height: 58,
+          // الخمسة تُبنى من القائمة لا بالاسم: إضافة تبويب سادس يومًا
+          // ما تصير سطرًا في `_tabs` لا تعديلًا هنا.
           child: Row(
             children: [
-              _NavItem(
-                tab: tabs[0],
-                isActive: _isActive(tabs[0].path),
-                palette: p,
-                onTap: () => context.go(tabs[0].path),
-              ),
-              _NavItem(
-                tab: tabs[1],
-                isActive: _isActive(tabs[1].path),
-                palette: p,
-                onTap: () => context.go(tabs[1].path),
-              ),
-              _CreateAction(
-                palette: p,
-                onTap: () => DashboardFab.showQuickAddMenu(context),
-              ),
-              _NavItem(
-                tab: tabs[2],
-                isActive: _isActive(tabs[2].path),
-                palette: p,
-                onTap: () => context.go(tabs[2].path),
-              ),
-              _NavItem(
-                tab: tabs[3],
-                isActive: _isActive(tabs[3].path),
-                palette: p,
-                onTap: () => context.go(tabs[3].path),
-              ),
+              for (final tab in tabs)
+                _NavItem(
+                  tab: tab,
+                  isActive: _isActive(tab.path),
+                  palette: p,
+                  onTap: () => context.go(tab.path),
+                ),
             ],
           ),
         ),
@@ -358,54 +352,63 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-/// إجراء الإنشاء — على مستوى التطبيق لا الشاشة: أي كيان أساسي في خطوتين.
-class _CreateAction extends StatefulWidget {
-  const _CreateAction({required this.palette, required this.onTap});
+/// زرّ الإنشاء — عائم وواعٍ بالسياق.
+///
+/// كان يجلس في منتصف الشريط السفلي يفتح قائمةً بأحد عشر خيارًا: تنقّلٌ
+/// مقنّع في هيئة إجراء، ويأكل خُمس عرض الشريط الذي صارت التبويبات
+/// الخمسة أولى به.
+///
+/// الآن ضغطةٌ واحدة تُنشئ ما يخصّ التبويب الحالي مباشرةً — مهمة في
+/// «التنفيذ»، فاتورة في «الأعمال»، موظفًا في «الفريق» — والضغطة
+/// المطوّلة تفتح القائمة الكاملة لمن أراد غير ذلك.
+class _CreateFab extends StatelessWidget {
+  const _CreateFab({required this.location});
 
-  final AzmPalette palette;
-  final VoidCallback onTap;
+  final String location;
 
-  @override
-  State<_CreateAction> createState() => _CreateActionState();
-}
-
-class _CreateActionState extends State<_CreateAction> {
-  bool _pressed = false;
+  /// ما يُنشأ بالضغطة القصيرة في كل تبويب، وتسميته لقارئ الشاشة.
+  ///
+  /// `null` يعني أن التبويب لا كيان أساسيًّا له — فالزرّ يفتح القائمة
+  /// الكاملة بدل أن يخمّن.
+  (String, String)? _primary() {
+    if (location.startsWith(RouteNames.workFull)) {
+      return (RouteNames.taskCreate, 'مهمة جديدة');
+    }
+    if (location.startsWith(RouteNames.businessFull)) {
+      return (RouteNames.invoiceCreate, 'فاتورة جديدة');
+    }
+    if (location.startsWith(RouteNames.hrmFull)) {
+      return (RouteNames.employeeCreate, 'موظف جديد');
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final p = widget.palette;
+    final p = AzmPalette.of(context);
+    final primary = _primary();
+    final label = primary?.$2 ?? 'إنشاء';
 
-    return Expanded(
-      child: Semantics(
-        button: true,
-        label: 'إنشاء',
-        child: Center(
-          child: GestureDetector(
-            onTapDown: (_) => setState(() => _pressed = true),
-            onTapUp: (_) {
-              setState(() => _pressed = false);
-              widget.onTap();
-            },
-            onTapCancel: () => setState(() => _pressed = false),
-            child: AnimatedScale(
-              scale: _pressed ? 0.92 : 1.0,
-              duration: AzmMotion.instant,
-              curve: AzmMotion.enter,
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: p.accent,
-                  borderRadius: BorderRadius.circular(AzmRadius.sm),
-                ),
-                child: Icon(
-                  Icons.add_rounded,
-                  color: p.onAccent,
-                  size: 24,
-                ),
-              ),
+    return Semantics(
+      button: true,
+      label: label,
+      hint: 'اضغط مطوّلًا لكل خيارات الإنشاء',
+      child: Tooltip(
+        message: label,
+        child: GestureDetector(
+          onLongPress: () => DashboardFab.showQuickAddMenu(context),
+          child: FloatingActionButton(
+            onPressed: () => primary == null
+                ? DashboardFab.showQuickAddMenu(context)
+                : context.push(primary.$1),
+            backgroundColor: p.accent,
+            foregroundColor: p.onAccent,
+            elevation: 0,
+            highlightElevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AzmRadius.sm),
             ),
+            child: const Icon(Icons.add_rounded, size: 26),
           ),
         ),
       ),

@@ -14,6 +14,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/constants/app_currencies.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/design/azm_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Invoice Detail Screen
@@ -60,9 +61,9 @@ class _InvoiceDetailBody extends StatelessWidget {
 
   String get _statusLabel {
     switch (invoice.status) {
-      case 1: return 'مدفوعة ✓';
-      case 2: return 'متأخرة ⚠';
-      default: return 'معلقة ⏳';
+      case 1: return 'مدفوعة';
+      case 2: return 'متأخرة';
+      default: return 'معلقة';
     }
   }
 
@@ -171,7 +172,7 @@ class _InvoiceDetailBody extends StatelessWidget {
                 // ── Details Card ─────────────────────────────────
                 NeuCard(
                   isDark: isDark,
-                  radius: 20,
+                  radius: AzmRadius.sm,
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   padding: const EdgeInsets.all(16),
                   child: Column(children: [
@@ -205,7 +206,7 @@ class _InvoiceDetailBody extends StatelessWidget {
                   ),
                   NeuCard(
                     isDark: isDark,
-                    radius: 20,
+                    radius: AzmRadius.sm,
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     padding: const EdgeInsets.all(0),
                     child: _InvoiceItemsTable(
@@ -339,7 +340,7 @@ class _AmountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeuCard(
       isDark: isDark,
-      radius: 16,
+      radius: AzmRadius.sm,
       padding: const EdgeInsets.all(12),
       child: Column(children: [
         Text(label, style: AppTypography.caption.copyWith(

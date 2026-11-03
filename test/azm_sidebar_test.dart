@@ -24,17 +24,18 @@ void main() {
         ),
       );
 
-  testWidgets('يعرض الرئيسية وكل المجموعات الست', (tester) async {
+  testWidgets('يعرض «اليوم» وكل المجموعات الست', (tester) async {
     await tester.pumpWidget(host(RouteNames.dashboardFull));
     await tester.pumpAndSettle();
 
-    expect(find.text('الرئيسية'), findsOneWidget);
+    // ‏«الرئيسية» صارت «اليوم»: اسمٌ يقول ما في الشاشة لا موضعها
+    expect(find.text('اليوم'), findsOneWidget);
     for (final g in AzmNav.groups) {
       expect(find.text(g.label), findsOneWidget, reason: g.label);
     }
   });
 
-  testWidgets('المجموعات مطويّة على الرئيسية — لا تُغرق الشاشة',
+  testWidgets('المجموعات مطويّة عند الفتح — لا تُغرق الشاشة',
       (tester) async {
     await tester.pumpWidget(host(RouteNames.dashboardFull));
     await tester.pumpAndSettle();

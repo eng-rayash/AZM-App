@@ -302,7 +302,7 @@ class _FollowupsListScreenState extends ConsumerState<FollowupsListScreen> {
                                           borderRadius: BorderRadius.circular(6),
                                         ),
                                         child: Text(
-                                          'انتقال للمصدر 🔗',
+                                          'انتقال للمصدر',
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.bold,

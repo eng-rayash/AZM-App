@@ -185,11 +185,7 @@ class AzmNavRow extends StatelessWidget {
               // في RTL يشير سهم «ادخل» إلى اليسار. أيقونات Material
               // تُعكس تلقائيًا مع اتجاه النص، فـ`chevron_right` هو ما
               // يُرسم يسارًا هنا — الاسم يصف الرسم قبل العكس لا بعده.
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: p.inkGhost,
-              ),
+              Icon(Icons.chevron_right_rounded, size: 20, color: p.inkGhost),
             ],
           ),
         ),
@@ -254,6 +250,222 @@ class AzmCount extends StatelessWidget {
         color: tone ?? p.inkFaint,
         fontWeight: FontWeight.w600,
         fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Switch Row
+// ─────────────────────────────────────────────────────────────
+
+/// صفّ مفتاح — نفس هندسة [AzmNavRow] ومفتاحٌ مكان السهم.
+///
+/// الصفّ كلّه هدف لمس لا المفتاح وحده: مفتاح Material عرضه ٤٠ بكسل،
+/// وإصابته بالإبهام على شاشة ممسوكة بيد واحدة أصعب مما تبدو.
+class AzmSwitchRow extends StatelessWidget {
+  const AzmSwitchRow({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    this.subtitle,
+    this.icon,
+    this.showDivider = true,
+    this.enabled = true,
+  });
+
+  final String title;
+
+  /// وصف صف واحد — ما يفعله التفعيل لا ما هو
+  final String? subtitle;
+
+  final IconData? icon;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final bool showDivider;
+
+  /// معطَّل — يُعرض خافتًا ولا يستجيب (ميزة غير متاحة على هذا الجهاز)
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final titleColor = enabled ? p.ink : p.inkGhost;
+    final iconColor = enabled ? p.inkFaint : p.inkGhost;
+
+    return Semantics(
+      toggled: value,
+      enabled: enabled,
+      label: subtitle == null ? title : '$title — $subtitle',
+      child: InkWell(
+        onTap: enabled ? () => onChanged(!value) : null,
+        splashColor: p.inkGhost.withValues(alpha: 0.10),
+        highlightColor: p.inkGhost.withValues(alpha: 0.06),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AzmSpace.screenGutter,
+            vertical: AzmSpace.md,
+          ),
+          decoration: showDivider
+              ? BoxDecoration(border: AzmElevation.rowDivider(p))
+              : null,
+          child: Row(
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 19, color: iconColor),
+                const SizedBox(width: AzmSpace.md),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTypography.body.copyWith(
+                        color: titleColor,
+                        fontWeight: FontWeight.w600,
+                        height: 1.35,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 1),
+                      Text(
+                        subtitle!,
+                        style: AppTypography.caption.copyWith(
+                          color: p.inkFaint,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: AzmSpace.sm),
+              // المفتاح يُعرض ولا يلتقط اللمس — الصفّ هو الهدف، فلا
+              // يتضاعف الحدث حين يُضغط المفتاح نفسه.
+              IgnorePointer(
+                child: Switch(
+                  value: value,
+                  onChanged: enabled ? onChanged : null,
+                  activeThumbColor: p.onAccent,
+                  activeTrackColor: p.accent,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Segmented Choice
+// ─────────────────────────────────────────────────────────────
+
+/// خيار من ثلاثة أو أربعة — معروضة كلها لا مخبوءة خلف قائمة.
+///
+/// القائمة المنسدلة تُخفي البدائل وتطلب ضغطتين؛ وحين تكون البدائل
+/// ثلاثة فعرضها جميعًا أرخص من إخفائها.
+class AzmSegmented<T> extends StatelessWidget {
+  const AzmSegmented({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+    this.showDivider = true,
+  });
+
+  /// ما الذي يُختار — يُقرأ فوق الخيارات لا داخلها
+  final String label;
+
+  final T value;
+
+  /// البدائل بترتيب عرضها: القيمة ونصّها
+  final List<(T, String)> options;
+
+  final ValueChanged<T> onChanged;
+  final bool showDivider;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AzmSpace.screenGutter,
+        AzmSpace.md,
+        AzmSpace.screenGutter,
+        AzmSpace.lg,
+      ),
+      decoration: showDivider
+          ? BoxDecoration(border: AzmElevation.rowDivider(p))
+          : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: AppTypography.body.copyWith(
+              color: p.ink,
+              fontWeight: FontWeight.w600,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: AzmSpace.md),
+          Container(
+            decoration: BoxDecoration(
+              border: AzmElevation.hairline(p),
+              borderRadius: AzmRadius.control,
+            ),
+            padding: const EdgeInsets.all(3),
+            child: Row(
+              children: [
+                for (final (optionValue, optionLabel) in options)
+                  Expanded(
+                    child: Semantics(
+                      button: true,
+                      selected: optionValue == value,
+                      label: optionLabel,
+                      child: InkWell(
+                        onTap: () => onChanged(optionValue),
+                        borderRadius: AzmRadius.control,
+                        child: AnimatedContainer(
+                          duration: AzmMotion.standard,
+                          curve: AzmMotion.enter,
+                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: optionValue == value
+                                ? p.accent
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(
+                              AzmRadius.sm - 3,
+                            ),
+                          ),
+                          child: Text(
+                            optionLabel,
+                            style: AppTypography.bodySmall.copyWith(
+                              color: optionValue == value
+                                  ? p.onAccent
+                                  : p.inkMuted,
+                              fontWeight: optionValue == value
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

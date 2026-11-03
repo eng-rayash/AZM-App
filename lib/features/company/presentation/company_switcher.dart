@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/database/providers/database_providers.dart';
 import '../../../core/database/tenant_database.dart';
+import '../../../core/design/azm_tokens.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../providers/company_providers.dart';
 
@@ -29,75 +31,54 @@ class CompanySwitcher extends ConsumerWidget {
     final company = ref.watch(activeCompanyProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: () => _showSwitcherSheet(context, ref),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: company != null
-              ? NeuColors.primaryTint
-              : isDark
-                  ? NeuColors.surfaceDark
-                  : NeuColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: company != null
-                ? NeuColors.primary.withValues(alpha: 0.4)
-                : isDark
-                    ? NeuColors.borderDark
-                    : NeuColors.border,
+    final accent = NeuColors.accentFor(
+      isDark ? Brightness.dark : Brightness.light,
+    );
+    final tone = company != null
+        ? accent
+        : isDark
+        ? NeuColors.textSecondaryDark
+        : NeuColors.textSecondary;
+
+    return Semantics(
+      button: true,
+      label: 'مساحة العمل: ${company?.name ?? 'شخصي'} — اضغط للتبديل',
+      child: InkWell(
+        onTap: () => _showSwitcherSheet(context, ref),
+        borderRadius: BorderRadius.circular(AzmRadius.sm),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AzmSpace.sm,
+            vertical: AzmSpace.xs,
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Company icon
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: company != null ? NeuColors.primary : NeuColors.textHint,
-                shape: BoxShape.circle,
+          // `mainAxisSize.min` مع عرض نصّ ثابت كان يطلب ٢١١٫٤ بكسل في
+          // عمود عرضه ٢١١ — فيض «RIGHT OVERFLOWED BY 0.4» على كل جوال
+          // ضيّق. الاسم الآن `Flexible` فيتقلّص بدل أن يفيض.
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                company != null ? Icons.business_rounded : Icons.person_rounded,
+                size: 16,
+                color: tone,
               ),
-              child: Center(
-                child: Icon(
-                  company != null
-                      ? Icons.business_rounded
-                      : Icons.person_rounded,
-                  color: Colors.white,
-                  size: 12,
+              const SizedBox(width: AzmSpace.sm),
+              Flexible(
+                child: Text(
+                  company?.name ?? 'شخصي',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body.copyWith(
+                    color: tone,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 6),
-
-            // Company name / Personal
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 140),
-              child: Text(
-                company?.name ?? 'شخصي',
-                style: TextStyle(
-                  fontFamily: 'Panorama',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: company != null
-                      ? NeuColors.primary
-                      : isDark
-                          ? NeuColors.textSecondaryDark
-                          : NeuColors.textSecondary,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            const SizedBox(width: 4),
-            Icon(
-              Icons.unfold_more_rounded,
-              size: 14,
-              color: company != null ? NeuColors.primary : NeuColors.textHint,
-            ),
-          ],
+              const SizedBox(width: AzmSpace.xs),
+              Icon(Icons.unfold_more_rounded, size: 15, color: tone),
+            ],
+          ),
         ),
       ),
     );
@@ -167,7 +148,11 @@ class _CompanySwitcherSheet extends ConsumerWidget {
                     Navigator.pop(context);
                     context.push('/onboarding/create-company');
                   },
-                  icon: const Icon(Icons.add, size: 16, color: NeuColors.primary),
+                  icon: const Icon(
+                    Icons.add,
+                    size: 16,
+                    color: NeuColors.primary,
+                  ),
                   label: const Text(
                     'أضف شركة',
                     style: TextStyle(
@@ -314,15 +299,15 @@ class _WorkspaceItem extends StatelessWidget {
             color: isActive
                 ? NeuColors.primaryTint
                 : isDark
-                    ? NeuColors.bgColorDark
-                    : NeuColors.bgColor,
+                ? NeuColors.bgColorDark
+                : NeuColors.bgColor,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isActive
                   ? NeuColors.primary
                   : isDark
-                      ? NeuColors.borderDark
-                      : NeuColors.border,
+                  ? NeuColors.borderDark
+                  : NeuColors.border,
               width: isActive ? 2 : 1,
             ),
           ),
@@ -351,8 +336,8 @@ class _WorkspaceItem extends StatelessWidget {
                         color: isActive
                             ? NeuColors.primary
                             : isDark
-                                ? NeuColors.textPrimaryDark
-                                : NeuColors.textPrimary,
+                            ? NeuColors.textPrimaryDark
+                            : NeuColors.textPrimary,
                       ),
                     ),
                     Row(
@@ -368,9 +353,13 @@ class _WorkspaceItem extends StatelessWidget {
                           ),
                         ),
                         if (companyCode != null) ...[
-                          const Text(' • ',
-                              style:
-                                  TextStyle(color: NeuColors.textHint, fontSize: 10)),
+                          const Text(
+                            ' • ',
+                            style: TextStyle(
+                              color: NeuColors.textHint,
+                              fontSize: 10,
+                            ),
+                          ),
                           Text(
                             companyCode!,
                             style: const TextStyle(
@@ -387,11 +376,17 @@ class _WorkspaceItem extends StatelessWidget {
                 ),
               ),
               if (isActive)
-                const Icon(Icons.check_circle_rounded,
-                    color: NeuColors.primary, size: 20)
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: NeuColors.primary,
+                  size: 20,
+                )
               else
-                const Icon(Icons.chevron_right_rounded,
-                    color: NeuColors.textHint, size: 20),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: NeuColors.textHint,
+                  size: 20,
+                ),
             ],
           ),
         ),

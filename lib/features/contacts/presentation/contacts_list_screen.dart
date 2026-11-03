@@ -14,6 +14,7 @@ import '../../reports/domain/export_service.dart';
 import '../../../shared/widgets/sort_menu.dart';
 
 import '../domain/contacts_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Screen displaying the list of executive contacts with search & filter.
 class ContactsListScreen extends ConsumerStatefulWidget {
@@ -405,7 +406,7 @@ class _ContactsListScreenState
                                 backgroundColor: isDark
                                     ? NeuColors.surfaceDark
                                     : NeuColors.surface,
-                                radius: 24,
+                                radius: AzmRadius.sm,
                                 child: Text(
                                   contact.name.characters.first,
                                   style: TextStyle(

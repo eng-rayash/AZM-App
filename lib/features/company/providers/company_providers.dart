@@ -39,7 +39,7 @@ class ActiveCompanyNotifier extends StateNotifier<Company?> {
 
   /// Current plan type
   PlanType get planType =>
-      state != null ? PlanType.fromValue(state!.planType) : PlanType.freePersonal;
+      state != null ? PlanType.fromValue(state!.planType) : PlanType.free;
 
   /// Subscription status
   SubscriptionStatus get subscriptionStatus => state != null
@@ -147,7 +147,7 @@ final availableModulesProvider = Provider<List<AppModule>>((ref) {
 
   final plan = company != null
       ? PlanType.fromValue(company.planType)
-      : PlanType.freePersonal;
+      : PlanType.free;
 
   final all = CodeGeneratorService.getAvailableModules(plan, role);
   // Remove any modules the admin has explicitly disabled

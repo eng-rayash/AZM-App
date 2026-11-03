@@ -11,6 +11,7 @@ import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/priority_chip.dart';
 import '../providers/tasks_provider.dart';
 import '../domain/tasks_repository.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Task Detail Screen
 class TaskDetailScreen extends ConsumerWidget {
@@ -79,7 +80,7 @@ class TaskDetailScreen extends ConsumerWidget {
               children: [
                 NeuCard(
                   showGoldBorder: true,
-                  radius: 24,
+                  radius: AzmRadius.sm,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

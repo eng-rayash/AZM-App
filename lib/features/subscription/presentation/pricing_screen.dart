@@ -19,7 +19,7 @@ class PricingScreen extends ConsumerWidget {
     final company = ref.watch(activeCompanyProvider);
     final currentPlan = company != null
         ? PlanType.fromValue(company.planType)
-        : PlanType.freePersonal;
+        : PlanType.free;
 
     return Scaffold(
       backgroundColor: isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
@@ -27,8 +27,10 @@ class PricingScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close_rounded,
-              color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary),
+          icon: Icon(
+            Icons.close_rounded,
+            color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -55,7 +57,9 @@ class PricingScreen extends ConsumerWidget {
                   fontFamily: 'Panorama',
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
+                  color: isDark
+                      ? NeuColors.textPrimaryDark
+                      : NeuColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -65,21 +69,25 @@ class PricingScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontFamily: 'Panorama',
                   fontSize: 14,
-                  color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+                  color: isDark
+                      ? NeuColors.textSecondaryDark
+                      : NeuColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
 
               // ── Plan Cards ────────────────────────────────────────
-              ...PlanType.values.map((plan) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _PlanCard(
-                      plan: plan,
-                      isCurrentPlan: plan == currentPlan,
-                      isDark: isDark,
-                    ),
-                  )),
+              ...PlanType.values.map(
+                (plan) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: _PlanCard(
+                    plan: plan,
+                    isCurrentPlan: plan == currentPlan,
+                    isDark: isDark,
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 16),
 
@@ -112,7 +120,7 @@ class _PlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPopular = plan == PlanType.business;
-    final isPremium = plan == PlanType.enterprise;
+    final isPremium = plan == PlanType.business;
 
     return Stack(
       children: [
@@ -121,17 +129,17 @@ class _PlanCard extends StatelessWidget {
             color: isCurrentPlan
                 ? NeuColors.primaryTint
                 : isDark
-                    ? NeuColors.surfaceDark
-                    : Colors.white,
+                ? NeuColors.surfaceDark
+                : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isCurrentPlan
                   ? NeuColors.primary
                   : isPopular
-                      ? NeuColors.accentMuted
-                      : isDark
-                          ? NeuColors.borderDark
-                          : NeuColors.border,
+                  ? NeuColors.accentMuted
+                  : isDark
+                  ? NeuColors.borderDark
+                  : NeuColors.border,
               width: isCurrentPlan || isPopular ? 2 : 1,
             ),
             boxShadow: isPopular
@@ -140,7 +148,7 @@ class _PlanCard extends StatelessWidget {
                       color: NeuColors.accentMuted.withValues(alpha: 0.2),
                       blurRadius: 20,
                       spreadRadius: 2,
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -157,8 +165,11 @@ class _PlanCard extends StatelessWidget {
                       color: _planColor(plan).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_planIcon(plan),
-                        color: _planColor(plan), size: 22),
+                    child: Icon(
+                      _planIcon(plan),
+                      color: _planColor(plan),
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -204,7 +215,7 @@ class _PlanCard extends StatelessWidget {
                           color: _planColor(plan),
                         ),
                       ),
-                      if (plan != PlanType.freePersonal)
+                      if (plan != PlanType.free)
                         const Text(
                           'ريال/شهر',
                           style: TextStyle(
@@ -223,28 +234,33 @@ class _PlanCard extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Features
-              ..._planFeatures(plan).map((feature) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check_circle_rounded,
-                            color: NeuColors.primary, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            feature,
-                            style: TextStyle(
-                              fontFamily: 'Panorama',
-                              fontSize: 13,
-                              color: isDark
-                                  ? NeuColors.textSecondaryDark
-                                  : NeuColors.textSecondary,
-                            ),
+              ..._planFeatures(plan).map(
+                (feature) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: NeuColors.primary,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          feature,
+                          style: TextStyle(
+                            fontFamily: 'Panorama',
+                            fontSize: 13,
+                            color: isDark
+                                ? NeuColors.textSecondaryDark
+                                : NeuColors.textSecondary,
                           ),
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 16),
 
@@ -272,9 +288,9 @@ class _PlanCard extends StatelessWidget {
                   child: Text(
                     isCurrentPlan
                         ? '✓ باقتك الحالية'
-                        : plan == PlanType.freePersonal
-                            ? 'ابدأ مجاناً'
-                            : 'اشترك الآن',
+                        : plan == PlanType.free
+                        ? 'ابدأ مجاناً'
+                        : 'اشترك الآن',
                     style: const TextStyle(
                       fontFamily: 'Panorama',
                       fontSize: 14,
@@ -339,31 +355,34 @@ class _PlanCard extends StatelessWidget {
 
   Color _planColor(PlanType plan) {
     switch (plan) {
-      case PlanType.freePersonal: return NeuColors.textHint;
-      case PlanType.professional: return NeuColors.primary;
-      case PlanType.business: return NeuColors.accentMuted;
-      case PlanType.businessPlus: return const Color(0xFF7B1FA2);
-      case PlanType.enterprise: return const Color(0xFF1B5E20);
+      case PlanType.free:
+        return NeuColors.textHint;
+      case PlanType.professional:
+        return NeuColors.primary;
+      case PlanType.business:
+        return NeuColors.accentMuted;
     }
   }
 
   IconData _planIcon(PlanType plan) {
     switch (plan) {
-      case PlanType.freePersonal: return Icons.person_outline_rounded;
-      case PlanType.professional: return Icons.business_center_rounded;
-      case PlanType.business: return Icons.apartment_rounded;
-      case PlanType.businessPlus: return Icons.corporate_fare_rounded;
-      case PlanType.enterprise: return Icons.domain_rounded;
+      case PlanType.free:
+        return Icons.person_outline_rounded;
+      case PlanType.professional:
+        return Icons.business_center_rounded;
+      case PlanType.business:
+        return Icons.apartment_rounded;
     }
   }
 
   String _planPrice(PlanType plan) {
     switch (plan) {
-      case PlanType.freePersonal: return 'مجاني';
-      case PlanType.professional: return '149';
-      case PlanType.business: return '399';
-      case PlanType.businessPlus: return '799';
-      case PlanType.enterprise: return 'تواصل معنا';
+      case PlanType.free:
+        return 'مجاني';
+      case PlanType.professional:
+        return '149';
+      case PlanType.business:
+        return '399';
     }
   }
 
@@ -373,7 +392,7 @@ class _PlanCard extends StatelessWidget {
   /// Ready to be connected to Stripe / PayTabs / HyperPay when keys are configured.
   void _showPaymentDialog(BuildContext context, PlanType plan) {
     final price = _planPrice(plan);
-    final isEnterprise = plan == PlanType.enterprise;
+    final isEnterprise = plan == PlanType.business;
 
     showModalBottomSheet(
       context: context,
@@ -384,8 +403,7 @@ class _PlanCard extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: isDark ? NeuColors.surfaceDark : Colors.white,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: EdgeInsets.only(
             top: 16,
@@ -416,8 +434,11 @@ class _PlanCard extends StatelessWidget {
                       color: _planColor(plan).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_planIcon(plan),
-                        color: _planColor(plan), size: 24),
+                    child: Icon(
+                      _planIcon(plan),
+                      color: _planColor(plan),
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -474,14 +495,15 @@ class _PlanCard extends StatelessWidget {
                       Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text(
-                              'سيتواصل معك فريق المبيعات قريباً'),
+                          content: Text('سيتواصل معك فريق المبيعات قريباً'),
                           backgroundColor: NeuColors.primary,
                         ),
                       );
                     },
-                    icon: const Icon(Icons.support_agent_rounded,
-                        color: Colors.white),
+                    icon: const Icon(
+                      Icons.support_agent_rounded,
+                      color: Colors.white,
+                    ),
                     label: const Text(
                       'تواصل مع فريق المبيعات',
                       style: TextStyle(
@@ -495,7 +517,8 @@ class _PlanCard extends StatelessWidget {
                       backgroundColor: NeuColors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
                   ),
                 ),
@@ -509,12 +532,12 @@ class _PlanCard extends StatelessWidget {
                     Navigator.pop(ctx);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content:
-                            Text('سيتم ربط بوابة الدفع قريباً'),
+                        content: Text('سيتم ربط بوابة الدفع قريباً'),
                         backgroundColor: NeuColors.primary,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         margin: const EdgeInsets.all(16),
                       ),
                     );
@@ -530,7 +553,8 @@ class _PlanCard extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
-                            'تفاصيل الحساب البنكي ستُرسل على بريدك الإلكتروني'),
+                          'تفاصيل الحساب البنكي ستُرسل على بريدك الإلكتروني',
+                        ),
                         backgroundColor: NeuColors.primary,
                       ),
                     );
@@ -560,7 +584,7 @@ class _PlanCard extends StatelessWidget {
 
   List<String> _planFeatures(PlanType plan) {
     switch (plan) {
-      case PlanType.freePersonal:
+      case PlanType.free:
         return [
           'لوحة تحكم شخصية',
           'إدارة المهام والتقويم',
@@ -570,40 +594,21 @@ class _PlanCard extends StatelessWidget {
         ];
       case PlanType.professional:
         return [
-          'كل مزايا المجاني',
-          'حتى 10 مستخدمين',
-          'الشؤون المالية والفواتير',
-          'إدارة العملا، والمشاريع',
-          'التقارير والإحصائيات',
-          'دومين workspace مخصص',
+          'كل ما في المجاني',
+          'حتى ٥ مستخدمين',
+          'الفواتير والمصروفات والإيرادات',
+          'العملاء والمشاريع والموردون',
+          'المتاجر الإلكترونية',
+          'التقارير المالية',
         ];
       case PlanType.business:
         return [
-          'كل مزايا Professional',
-          'حتى 50 مستخدم',
-          'الموارد البشرية الكاملة',
-          'الرواتب والحضور',
-          'المتابعات والتوجيهات',
-          'نظام الموافقات',
-          'دعم أولوية',
-        ];
-      case PlanType.businessPlus:
-        return [
-          'كل مزايا Business',
-          'حتى 200 مستخدم',
-          'إدارة الفروع المتعددة',
-          'تقارير متقدمة',
-          'API كامل',
-          'دعم مخصص 24/7',
-        ];
-      case PlanType.enterprise:
-        return [
-          'مستخدمون غير محدودون',
-          'SSO وAD Integration',
-          'Custom Domain',
-          'SLA مضمون 99.9%',
-          'فريق تقني مخصص',
-          'تخصيص كامل للنظام',
+          'كل ما في الاحترافي',
+          'مستخدمون بلا حدّ',
+          'الموارد البشرية كاملة',
+          'الرواتب والحضور والإجازات',
+          'الأقسام والفروع',
+          'الأدوار والصلاحيات والتدقيق',
         ];
     }
   }
@@ -618,14 +623,19 @@ class _FaqSection extends StatelessWidget {
   final bool isDark;
 
   static const _faqs = [
-    ('هل يمكنني تغيير الباقة لاحقاً؟',
-     'نعم، يمكنك الترقية أو التخفيض في أي وقت. عند الترقية يتم احتساب الفرق حتى نهاية الفترة.'),
-    ('ما طرق الدفع المتاحة؟',
-     'ندعم البطاقات الائتمانية (Visa/Mastercard)، مدى، Apple Pay، وتحويل بنكي للشركات.'),
-    ('هل بياناتي محفوظة عند التخفيض؟',
-     'نعم، بياناتك محفوظة دائماً. عند التخفيض يتم تعطيل الميزات الإضافية فقط.'),
-    ('هل يوجد عقد ملزم؟',
-     'لا، الاشتراك شهري قابل للإلغاء في أي وقت.'),
+    (
+      'هل يمكنني تغيير الباقة لاحقاً؟',
+      'نعم، يمكنك الترقية أو التخفيض في أي وقت. عند الترقية يتم احتساب الفرق حتى نهاية الفترة.',
+    ),
+    (
+      'ما طرق الدفع المتاحة؟',
+      'ندعم البطاقات الائتمانية (Visa/Mastercard)، مدى، Apple Pay، وتحويل بنكي للشركات.',
+    ),
+    (
+      'هل بياناتي محفوظة عند التخفيض؟',
+      'نعم، بياناتك محفوظة دائماً. عند التخفيض يتم تعطيل الميزات الإضافية فقط.',
+    ),
+    ('هل يوجد عقد ملزم؟', 'لا، الاشتراك شهري قابل للإلغاء في أي وقت.'),
   ];
 
   @override
@@ -643,11 +653,9 @@ class _FaqSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        ..._faqs.map((faq) => _FaqItem(
-              question: faq.$1,
-              answer: faq.$2,
-              isDark: isDark,
-            )),
+        ..._faqs.map(
+          (faq) => _FaqItem(question: faq.$1, answer: faq.$2, isDark: isDark),
+        ),
       ],
     );
   }

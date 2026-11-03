@@ -11,6 +11,7 @@ import '../../../core/theme/neu_colors.dart';
 import '../../../shared/widgets/neu_button.dart';
 import '../../../shared/widgets/neu_card.dart';
 import '../../../shared/widgets/neu_input.dart';
+import '../../../core/design/azm_tokens.dart';
 
 /// Create / Edit Follow-up Screen (ERP Enhanced).
 ///
@@ -283,7 +284,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                     child: NeuCard(
                       isDark: isDark,
                       margin: EdgeInsets.zero,
-                      radius: 14,
+                      radius: AzmRadius.sm,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 14),
                       child: Row(children: [
@@ -314,7 +315,7 @@ class _CreateFollowupScreenState extends ConsumerState<CreateFollowupScreen> {
                     child: NeuCard(
                       isDark: isDark,
                       margin: EdgeInsets.zero,
-                      radius: 14,
+                      radius: AzmRadius.sm,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 14),
                       child: Row(children: [

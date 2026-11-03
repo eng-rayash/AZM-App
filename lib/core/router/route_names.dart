@@ -32,15 +32,17 @@ class RouteNames {
   static const String businessShell = 'business';
   static const String insightsShell = 'insights';
 
-  // Full paths for shell routes
+  // تبويبات الشريط السفلي الخمسة — وهي نفسها مجموعات الشريط الجانبي،
+  // فمن تعلّم أحدهما تعلّم الآخر.
   static const String dashboardFull = '/home/dashboard';
   static const String workFull = '/home/work';
   static const String businessFull = '/home/business';
-  static const String insightsFull = '/home/insights';
+  static const String hrmFull = '/home/hrm';
+  static const String toolsFull = '/home/tools';
 
   // مسارات مُبقاة داخل الـShell — وجهات لا تبويبات
   static const String followupsListFull = '/home/followups';
-  static const String hrmFull = '/home/hrm';
+  static const String insightsFull = '/home/insights';
   static const String financeFull = '/home/finance';
   static const String moreFull = '/home/more';
 

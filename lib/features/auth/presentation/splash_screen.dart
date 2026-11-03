@@ -20,6 +20,16 @@ import '../../../core/services/remote_config_service.dart';
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
+  /// ميزانية الإقلاع — أقصى ما ينتظره المستخدم قبل أن يمضي التطبيق
+  /// ببياناته المحلية.
+  ///
+  /// التطبيق يعمل دون اتصال، فلا معنى لحبس الشاشة الأولى على شبكة:
+  /// ما يصل في الوقت يُستعمل، وما تأخّر يلحق بنا بعد الدخول.
+  ///
+  /// عامّة ليقرأها اختبار الدخان: كان يضخّ ١٥٠٠ مللي ثانية بالرقم،
+  /// فكل تغيير هنا يتركه يرسُب بمؤقّت معلّق.
+  static const bootBudget = Duration(milliseconds: 2500);
+
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
@@ -38,61 +48,78 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       duration: const Duration(milliseconds: 800),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
     _navigateAfterDelay();
   }
 
+  /// أقلّ ما تبقى شاشة الانطلاق ظاهرة — لحظة علامة لا انتظار.
+  static const _minSplash = Duration(milliseconds: 700);
+
   Future<void> _navigateAfterDelay() async {
-    // 1. إعدادات التطبيق من الباكند الموحّد (وبلا اتصال تبقى الافتراضية)
-    try {
-      await RemoteConfigService.instance.fetchConfigs();
-    } catch (e) {
-      debugPrint('Error fetching configs: $e');
-    }
+    // الإقلاع كان **متسلسلًا**: `fetchConfigs` ينتظر الشبكة حتى
+    // `apiTimeout` (١٥ ثانية)، ثم يُضاف إليه تأخير صناعي ثابت ١٫٥
+    // ثانية، ثم `checkCurrentState` ينتظر الشبكة مرّة أخرى — فبلا
+    // خادم يدور المؤشّر قرابة ٣٠ ثانية قبل أن يظهر شيء.
+    //
+    // الآن: الطلبان يجريان معًا، وتحتهما سقف واحد، ولحظة العلامة
+    // تتداخل معهما بدل أن تُضاف إليهما. فالزمن = الأطول لا المجموع.
+    final minSplash = Future<void>.delayed(_minSplash);
+
+    final boot = Future.wait([
+      RemoteConfigService.instance.fetchConfigs().catchError((Object e) {
+        debugPrint('Error fetching configs: $e');
+      }),
+      _resolveAuth(),
+    ]);
+
+    await Future.wait([
+      minSplash,
+      boot.timeout(
+        SplashScreen.bootBudget,
+        onTimeout: () {
+          // لا خطأ هنا: تجاوز الميزانية حالة متوقّعة لا عطب. الإعدادات
+          // تبقى على افتراضياتها، وحالة الدخول تُحسم من الجلسة المخزَّنة.
+          debugPrint('Boot budget exceeded — continuing with local state.');
+          return const [];
+        },
+      ),
+    ]);
 
     if (!mounted) return;
 
-    // 2. Check for Maintenance Mode
+    // الصيانة والتحديث الإلزامي يُفحصان **بعد** وصول الإعدادات لا
+    // قبلها: بلا اتصال تبقى القيم الافتراضية، فلا يُحتجز المستخدم
+    // خلف شاشة صيانة لأن الشبكة تأخّرت.
     if (RemoteConfigService.instance.maintenanceMode) {
       context.go(RouteNames.maintenance);
       return;
     }
 
-    // 3. Check for Forced Update Constraints
     const currentVersion = AppConstants.appVersion;
     final minVersionRequired = RemoteConfigService.instance.minVersion;
-    if (RemoteConfigService.instance.isVersionOlder(currentVersion, minVersionRequired)) {
+    if (RemoteConfigService.instance.isVersionOlder(
+      currentVersion,
+      minVersionRequired,
+    )) {
       context.go(RouteNames.forceUpdate);
       return;
     }
 
-    await Future.delayed(AppConstants.splashDuration);
-    if (!mounted) return;
-
-    // حالة الدخول من المزوّد: إن لم تُحسم بعد (الإقلاع الأول يسأل الخادم)
-    // تُنتظر هنا بدل قراءة جلسة نصف جاهزة
-    final authNotifier = ref.read(authStateNotifierProvider.notifier);
-    var auth = ref.read(authStateNotifierProvider);
-    if (auth.status == AuthStatus.initial || auth.status == AuthStatus.loading) {
-      await authNotifier.checkCurrentState();
-      if (!mounted) return;
-      auth = ref.read(authStateNotifierProvider);
-    }
+    final auth = ref.read(authStateNotifierProvider);
     final isGuest = auth.status == AuthStatus.guest;
     final isLoggedIn = auth.status == AuthStatus.authenticated;
 
-    if (!mounted) return;
-
     if (!isGuest && !isLoggedIn) {
-      // First time — send to RVIOS Welcome/Onboarding screen
       context.go('/onboarding');
       return;
     }
@@ -117,6 +144,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       // PIN disabled — go directly to home
       context.go(RouteNames.dashboardFull);
     }
+  }
+
+  /// يحسم حالة الدخول إن لم تكن محسومة — وإلا فلا طلب.
+  Future<void> _resolveAuth() async {
+    final status = ref.read(authStateNotifierProvider).status;
+    if (status != AuthStatus.initial && status != AuthStatus.loading) return;
+    await ref.read(authStateNotifierProvider.notifier).checkCurrentState();
   }
 
   @override
