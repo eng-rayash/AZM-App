@@ -205,6 +205,13 @@ class AzmSpace {
 
   /// المسافة الرأسية بين قسمين رئيسيين.
   static const double sectionGap = 32;
+
+  /// الخلوص أسفل كل شاشة تمرير داخل الهيكل.
+  ///
+  /// شريط التنقّل (٥٨) زائد الزرّ العائم (٥٦) وفجوته (١٦) زائد متنفَّس.
+  /// قيمةٌ واحدة لأن الشاشات تحسبها كلها، وانحراف واحدة يعني صفًّا
+  /// أخيرًا يجلس تحت الزرّ ولا يُضغط.
+  static const double scrollBottomInset = 140;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -229,8 +236,9 @@ class AzmRadius {
 
   static const BorderRadius zero = BorderRadius.zero;
   static const BorderRadius control = BorderRadius.all(Radius.circular(sm));
-  static const BorderRadius sheet =
-      BorderRadius.vertical(top: Radius.circular(lg));
+  static const BorderRadius sheet = BorderRadius.vertical(
+    top: Radius.circular(lg),
+  );
   static const BorderRadius pill = BorderRadius.all(Radius.circular(full));
 }
 

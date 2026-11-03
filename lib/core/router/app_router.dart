@@ -62,6 +62,7 @@ import '../../features/settings/presentation/legal_protection_screen.dart';
 import '../../features/hrm/presentation/hrm_screen.dart';
 import '../../features/finance/presentation/finance_screen.dart';
 import '../../features/more/presentation/more_screen.dart';
+import '../../features/tools/presentation/tools_screen.dart';
 import '../../features/work/presentation/work_screen.dart';
 import '../../features/business/presentation/business_screen.dart';
 import '../../features/insights/presentation/insights_screen.dart';
@@ -266,6 +267,12 @@ class AppRouter {
             path: RouteNames.financeFull,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: FinanceScreen(),
+            ),
+          ),
+          GoRoute(
+            path: RouteNames.toolsFull,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ToolsScreen(),
             ),
           ),
           GoRoute(

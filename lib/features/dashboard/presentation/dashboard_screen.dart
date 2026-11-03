@@ -357,10 +357,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   ),
 
-            // خلوص أسفل الشاشة — ارتفاع شريط التنقّل زائد متنفَّس،
-            // بنفس قيمة [AzmScreen] حتى يقف آخر صفّ في الموضع نفسه
-            // في كل تبويب.
-            const SliverToBoxAdapter(child: SizedBox(height: 96)),
+            // خلوص أسفل الشاشة — بنفس قيمة [AzmScreen] حتى يقف آخر صفّ
+            // في الموضع نفسه في كل تبويب.
+            const SliverToBoxAdapter(
+              child: SizedBox(height: AzmSpace.scrollBottomInset),
+            ),
           ],
         ),
       ),

@@ -9,7 +9,7 @@ import '../../../shared/widgets/azm_screen.dart';
 import '../../followups/providers/follow_ups_provider.dart';
 import '../../meetings/providers/meetings_provider.dart';
 
-/// AZM — العمل
+/// AZM — التنفيذ
 ///
 /// عمود EXECUTE. يجيب عن سؤال واحد: **ما الذي يجب تنفيذه؟**
 ///
@@ -30,13 +30,11 @@ class WorkScreen extends ConsumerWidget {
 
     final openFollowUps =
         followUps?.where((f) => f.status != 3 && f.status != 6).length ?? 0;
-    final overdueFollowUps =
-        followUps?.where((f) => f.status == 4).length ?? 0;
-    final upcomingMeetings =
-        meetings?.where((m) => m.status == 0).length ?? 0;
+    final overdueFollowUps = followUps?.where((f) => f.status == 4).length ?? 0;
+    final upcomingMeetings = meetings?.where((m) => m.status == 0).length ?? 0;
 
     return AzmScreen(
-      title: 'العمل',
+      title: 'التنفيذ',
       caption: 'ما الذي يجب تنفيذه',
       primaryAction: AzmIconAction(
         icon: Icons.search_rounded,
@@ -46,36 +44,40 @@ class WorkScreen extends ConsumerWidget {
       slivers: [
         // ── التنفيذ ───────────────────────────────────────────
         SliverToBoxAdapter(
+          // القسم لا يحمل اسم الشاشة: «التنفيذ» داخل «التنفيذ» يضيع
+          // معه معنى الفصل بين الأقسام.
           child: AzmSectionHeader(
-            title: 'التنفيذ',
+            title: 'الالتزامات',
             caption: 'ما التزمتَ به وما ينتظر إغلاقًا',
           ),
         ),
         SliverToBoxAdapter(
-          child: AzmRowGroup(rows: [
-            AzmNavRow(
-              title: 'المتابعات',
-              subtitle: 'كل ما هو مفتوح ومسند',
-              icon: Icons.checklist_rounded,
-              badge: AzmCount(
-                openFollowUps,
-                tone: overdueFollowUps > 0 ? p.danger : null,
+          child: AzmRowGroup(
+            rows: [
+              AzmNavRow(
+                title: 'المتابعات',
+                subtitle: 'كل ما هو مفتوح ومسند',
+                icon: Icons.checklist_rounded,
+                badge: AzmCount(
+                  openFollowUps,
+                  tone: overdueFollowUps > 0 ? p.danger : null,
+                ),
+                onTap: () => context.go(RouteNames.followupsListFull),
               ),
-              onTap: () => context.go(RouteNames.followupsListFull),
-            ),
-            AzmNavRow(
-              title: 'التوجيهات',
-              subtitle: 'ما وجّهتَ به ولم يُغلق بعد',
-              icon: Icons.assignment_turned_in_outlined,
-              onTap: () => context.push(RouteNames.directivesList),
-            ),
-            AzmNavRow(
-              title: 'الروتين اليومي',
-              subtitle: 'الالتزامات المتكررة',
-              icon: Icons.repeat_rounded,
-              onTap: () => context.push(RouteNames.routineTasksList),
-            ),
-          ]),
+              AzmNavRow(
+                title: 'التوجيهات',
+                subtitle: 'ما وجّهتَ به ولم يُغلق بعد',
+                icon: Icons.assignment_turned_in_outlined,
+                onTap: () => context.push(RouteNames.directivesList),
+              ),
+              AzmNavRow(
+                title: 'الروتين اليومي',
+                subtitle: 'الالتزامات المتكررة',
+                icon: Icons.repeat_rounded,
+                onTap: () => context.push(RouteNames.routineTasksList),
+              ),
+            ],
+          ),
         ),
 
         // ── اللقاء والقرار ────────────────────────────────────
@@ -86,45 +88,46 @@ class WorkScreen extends ConsumerWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: AzmRowGroup(rows: [
-            AzmNavRow(
-              title: 'الاجتماعات واللقاءات',
-              subtitle: 'جدول الأعمال والقرارات والمخرجات',
-              icon: Icons.groups_2_outlined,
-              badge: AzmCount(upcomingMeetings),
-              onTap: () => context.push(RouteNames.meetingsList),
-            ),
-            AzmNavRow(
-              title: 'المواعيد',
-              subtitle: 'ما هو مثبّت في التقويم',
-              icon: Icons.event_outlined,
-              onTap: () => context.push(RouteNames.appointmentsList),
-            ),
-            AzmNavRow(
-              title: 'الجدول الزمني',
-              subtitle: 'أحداث اليوم مرتّبة بالأولوية',
-              icon: Icons.timeline_rounded,
-              onTap: () => context.push(RouteNames.timeline),
-            ),
-          ]),
+          child: AzmRowGroup(
+            rows: [
+              AzmNavRow(
+                title: 'الاجتماعات واللقاءات',
+                subtitle: 'جدول الأعمال والقرارات والمخرجات',
+                icon: Icons.groups_2_outlined,
+                badge: AzmCount(upcomingMeetings),
+                onTap: () => context.push(RouteNames.meetingsList),
+              ),
+              AzmNavRow(
+                title: 'المواعيد',
+                subtitle: 'ما هو مثبّت في التقويم',
+                icon: Icons.event_outlined,
+                onTap: () => context.push(RouteNames.appointmentsList),
+              ),
+              AzmNavRow(
+                title: 'الجدول الزمني',
+                subtitle: 'أحداث اليوم مرتّبة بالأولوية',
+                icon: Icons.timeline_rounded,
+                onTap: () => context.push(RouteNames.timeline),
+              ),
+            ],
+          ),
         ),
 
         // ── الاعتماد ──────────────────────────────────────────
         SliverToBoxAdapter(
-          child: AzmSectionHeader(
-            title: 'الاعتماد',
-            caption: 'ما ينتظر قرارك',
-          ),
+          child: AzmSectionHeader(title: 'الاعتماد', caption: 'ما ينتظر قرارك'),
         ),
         SliverToBoxAdapter(
-          child: AzmRowGroup(rows: [
-            AzmNavRow(
-              title: 'الموافقات',
-              subtitle: 'طلبات الإجازات والسلف والمشتريات',
-              icon: Icons.approval_outlined,
-              onTap: () => context.push('/approvals'),
-            ),
-          ]),
+          child: AzmRowGroup(
+            rows: [
+              AzmNavRow(
+                title: 'الموافقات',
+                subtitle: 'طلبات الإجازات والسلف والمشتريات',
+                icon: Icons.approval_outlined,
+                onTap: () => context.push('/approvals'),
+              ),
+            ],
+          ),
         ),
       ],
     );

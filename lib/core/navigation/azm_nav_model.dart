@@ -79,7 +79,7 @@ class AzmNav {
 
   /// الوجهة المفردة أعلى الشجرة — بلا مجموعة.
   static const NavDestination home = NavDestination(
-    label: 'الرئيسية',
+    label: 'اليوم',
     icon: Icons.dashboard_rounded,
     route: RouteNames.dashboardFull,
     description: 'ما وضع عملك · ما يحتاجك · ماذا تفعل الآن',

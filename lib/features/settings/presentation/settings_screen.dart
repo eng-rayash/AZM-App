@@ -2,36 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/neu_decorations.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/design/azm_tokens.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/security/auth_service.dart';
 import '../../../core/security/secure_storage_service.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../../core/services/remote_config_service.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/theme/neu_colors.dart';
-import '../../../shared/widgets/neu_button.dart';
-import '../../../shared/widgets/neu_card.dart';
+import '../../../shared/widgets/azm_list.dart';
+import '../../../shared/widgets/azm_screen.dart';
 import '../../backup/domain/backup_service.dart';
 import '../../reports/domain/export_service.dart';
 import '../../reports/providers/reports_provider.dart';
-import '../../../shared/widgets/app_logo.dart';
 
-/// Advanced Settings Screen — comprehensive settings organized in sections.
+/// AZM — الإعدادات
 ///
-/// Sections:
-/// 1. Security & Protection
-/// 2. Appearance
-/// 3. Data & Export
-/// 4. Notifications (placeholder for future)
-/// 5. Application Info
+/// كانت ستة أقسام بلا منطق يجمعها: «الحساب والتحقق» يجاور «حذف جميع
+/// البيانات» يجاور «سياسة الخصوصية». والمستخدم الباحث عن إعداد لا يعرف
+/// أين يبدأ، فيمسح الشاشة كلها في كل مرة.
+///
+/// الأقسام السبعة هنا مرتّبة من **الأقرب إليك** إلى **الأبعد عنك**:
+/// أنت، ثم مكان عملك، ثم ما يحرسه، ثم ما يقاطعك، ثم ما تراه، ثم ما
+/// تملكه، ثم البرنامج نفسه. ومن بحث عن إعداد يعرف من اسم القسم وحده
+/// إن كان فيه أو لا.
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  ConsumerState<SettingsScreen> createState() =>
-      _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
@@ -60,7 +59,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     _notificationsEnabled = notificationsVal != 'false';
     _overdueAlertsEnabled = overdueVal != 'false';
-    _pinEnabled = pinEnabledVal == 'true'; // Default: disabled
+    _pinEnabled = pinEnabledVal == 'true';
 
     if (mounted) setState(() {});
   }
@@ -68,6 +67,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _toggleBiometric(bool value) async {
     final authService = AuthService.instance;
     if (value) {
+      // البصمة تُفعَّل بالبصمة: تفعيلٌ بلا إثبات يقفل الحساب على من
+      // لا يملك الإصبع المسجَّل.
       final ok = await authService.authenticateWithBiometrics();
       if (ok) {
         await authService.setPreferredAuthMethod(0);
@@ -80,717 +81,401 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _toggleNotifications(bool value) async {
-    final storage = SecureStorageService.instance;
-    await storage.write('notifications_enabled', value.toString());
+    await SecureStorageService.instance.write(
+      'notifications_enabled',
+      value.toString(),
+    );
     setState(() => _notificationsEnabled = value);
   }
 
   Future<void> _toggleOverdueAlerts(bool value) async {
-    final storage = SecureStorageService.instance;
-    await storage.write('overdue_alerts_enabled', value.toString());
+    await SecureStorageService.instance.write(
+      'overdue_alerts_enabled',
+      value.toString(),
+    );
     setState(() => _overdueAlertsEnabled = value);
   }
 
   Future<void> _togglePinEnabled(bool value) async {
-    final storage = SecureStorageService.instance;
-    await storage.write('pin_enabled', value.toString());
+    await SecureStorageService.instance.write('pin_enabled', value.toString());
     setState(() => _pinEnabled = value);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            value ? 'تم تفعيل رمز الدخول بنجاح' : 'تم إيقاف رمز الدخول',
-            textDirection: TextDirection.rtl,
-          ),
-          backgroundColor: value ? NeuColors.success : NeuColors.navyDeep,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
+    _say(value ? 'تم تفعيل رمز الدخول' : 'تم إيقاف رمز الدخول');
+  }
+
+  void _say(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final p = AzmPalette.of(context);
     final themeMode = ref.watch(themeProvider);
 
-    return Scaffold(
-      backgroundColor:
-          isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
-      appBar: AppBar(
-        backgroundColor:
-            isDark ? NeuColors.bgColorDark : NeuColors.bgColor,
-        elevation: 0,
-        title: Text(
-          'الإعدادات',
-          style: isDark ? AppTypography.h3Dark : AppTypography.h3,
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-          ),
-          onPressed: () => context.canPop() ? context.pop() : context.go(RouteNames.dashboardFull),
-        ),
+    return AzmScreen(
+      title: 'الإعدادات',
+      caption: 'ما يضبط التطبيق وحسابك',
+      leading: AzmIconAction(
+        // `arrow_back` تُعكس تلقائيًا مع اتجاه النص فتشير يمينًا في
+        // RTL — وهو اتجاه «رجوع» هنا. و`arrow_forward` تشير يسارًا،
+        // أي إلى الأمام، عكس ما يفعله الزرّ.
+        icon: Icons.arrow_back_rounded,
+        tooltip: 'رجوع',
+        onTap: () => context.canPop()
+            ? context.pop()
+            : context.go(RouteNames.dashboardFull),
       ),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: SingleChildScrollView(
-          padding: AppSpacing.screen,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ─── Section 0: Account & Verification (Top) ───
-              _buildSectionTitle(
-                  'الحساب والتحقق', Icons.cloud_done_rounded, isDark),
-              AppSpacing.gapMd,
-
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.cloud_done_rounded,
-                title: 'إعدادات الحساب والتحقق',
-                subtitle: 'ربط ومزامنة الحساب سحابياً',
+      slivers: [
+        // ── ١ · الحساب ───────────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'الحساب',
+            caption: 'من أنت في هذا التطبيق',
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: AzmRowGroup(
+            rows: [
+              AzmNavRow(
+                title: 'الملف الشخصي',
+                subtitle: 'الاسم والبريد وحالة التحقق',
+                icon: Icons.person_outline_rounded,
                 onTap: () => context.push(RouteNames.account),
               ),
-
-              AppSpacing.gapXxl,
-
-              // ─── Section 1: Security ───
-              _buildSectionTitle(
-                  'الحماية والأمان', Icons.shield_rounded, isDark),
-              AppSpacing.gapMd,
-
-              // PIN toggle (default: disabled)
-              _buildToggleTile(
-                isDark,
-                icon: Icons.dialpad_rounded,
-                title: 'تفعيل رمز الدخول',
-                subtitle: 'تمكين حماية التطبيق برمز PIN (الافتراضي: معطل)',
-                value: _pinEnabled,
-                onChanged: _togglePinEnabled,
-              ),
-
-              // Biometric toggle
-              if (_biometricAvailable)
-                _buildToggleTile(
-                  isDark,
-                  icon: Icons.fingerprint_rounded,
-                  title: 'تفعيل البصمة',
-                  subtitle: 'استخدم البصمة للدخول السريع',
-                  value: _biometricEnabled,
-                  onChanged: _toggleBiometric,
-                ),
-
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.lock_rounded,
-                title: 'تغيير رمز الدخول',
-                subtitle: 'تحديث رمز PIN الحالي',
-                onTap: () => context.push(RouteNames.changePin),
-              ),
-
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.history_rounded,
-                title: 'سجل الأنشطة الأمنية',
-                subtitle: 'عرض سجل تسجيلات الدخول',
-                onTap: () => context.push(RouteNames.securityLog),
-              ),
-
-              AppSpacing.gapXxl,
-
-              // ─── Section 2: Appearance ───
-              _buildSectionTitle(
-                  'المظهر', Icons.palette_rounded, isDark),
-              AppSpacing.gapMd,
-
-              NeuCard(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'وضع العرض',
-                      style: isDark
-                          ? AppTypography.h4Dark
-                          : AppTypography.h4,
-                    ),
-                    AppSpacing.gapMd,
-                    Row(
-                      children: [
-                        _buildThemeOption(
-                          isDark,
-                          'فاتح',
-                          Icons.light_mode_rounded,
-                          themeMode == ThemeMode.light,
-                          () => ref
-                              .read(themeProvider.notifier)
-                              .setTheme(ThemeMode.light),
-                        ),
-                        AppSpacing.gapHMd,
-                        _buildThemeOption(
-                          isDark,
-                          'داكن',
-                          Icons.dark_mode_rounded,
-                          themeMode == ThemeMode.dark,
-                          () => ref
-                              .read(themeProvider.notifier)
-                              .setTheme(ThemeMode.dark),
-                        ),
-                        AppSpacing.gapHMd,
-                        _buildThemeOption(
-                          isDark,
-                          'تلقائي',
-                          Icons.settings_brightness_rounded,
-                          themeMode == ThemeMode.system,
-                          () => ref
-                              .read(themeProvider.notifier)
-                              .setTheme(ThemeMode.system),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              AppSpacing.gapXxl,
-
-              // ─── Section 3: Data & Export ───
-              _buildSectionTitle(
-                  'البيانات والتصدير', Icons.storage_rounded, isDark),
-              AppSpacing.gapMd,
-
-              NeuCard(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text(
-                      'إدارة النسخ الاحتياطي والتصدير',
-                      style: isDark
-                          ? AppTypography.bodyDark
-                          : AppTypography.body,
-                      textAlign: TextAlign.center,
-                    ),
-                    AppSpacing.gapLg,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: NeuButton(
-                            label: 'إنشاء نسخة',
-                            icon: Icons.backup_rounded,
-                            variant: NeuButtonVariant.primary,
-                            onPressed: () async {
-                              await ref
-                                  .read(backupServiceProvider)
-                                  .exportBackup();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'تم إنشاء النسخة الاحتياطية بنجاح'),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        AppSpacing.gapHMd,
-                        Expanded(
-                          child: NeuButton(
-                            label: 'استعادة',
-                            icon: Icons.restore_rounded,
-                            variant: NeuButtonVariant.gold,
-                            onPressed: () async {
-                              final result = await ref
-                                  .read(backupServiceProvider)
-                                  .restoreBackup();
-                              // الإلغاء ليس فشلًا ولا يستحق رسالة
-                              if (!context.mounted || result.isCancelled) {
-                                return;
-                              }
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(result.displayMessage),
-                                  duration: const Duration(seconds: 6),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    AppSpacing.gapMd,
-                    SizedBox(
-                      width: double.infinity,
-                      child: NeuButton(
-                        label: 'تصدير التقرير اليومي',
-                        icon: Icons.ios_share_rounded,
-                        variant: NeuButtonVariant.secondary,
-                        onPressed: () async {
-                          final analytics =
-                              ref.read(reportsAnalyticsProvider);
-                          await ref
-                              .read(exportServiceProvider)
-                              .exportDailyReport(analytics);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              AppSpacing.gapMd,
-
-              // Delete all data
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.delete_forever_rounded,
-                title: 'حذف جميع البيانات',
-                subtitle: 'تحذير: لا يمكن التراجع عن هذا الإجراء',
-                titleColor: NeuColors.danger,
-                onTap: () => _confirmDeleteAll(context),
-              ),
-
-              AppSpacing.gapXxl,
-
-              // ─── Section 4: Notifications ───
-              _buildSectionTitle(
-                  'الإشعارات', Icons.notifications_rounded, isDark),
-              AppSpacing.gapMd,
-
-              _buildToggleTile(
-                isDark,
-                icon: Icons.notifications_active_rounded,
-                title: 'تفعيل الإشعارات',
-                subtitle: 'تذكيرات الاجتماعات والمهام',
-                value: _notificationsEnabled,
-                onChanged: _toggleNotifications,
-              ),
-
-              _buildToggleTile(
-                isDark,
-                icon: Icons.warning_rounded,
-                title: 'تنبيهات المهام المتأخرة',
-                subtitle: 'إشعار عند تأخر مهمة',
-                value: _overdueAlertsEnabled,
-                onChanged: _toggleOverdueAlerts,
-              ),
-
-              AppSpacing.gapXxl,
-
-              // ─── Section 5: About (Bottom) ───
-              _buildSectionTitle(
-                  'عن التطبيق', Icons.info_rounded, isDark),
-              AppSpacing.gapMd,
-
-              Container(
-                decoration: NeuDecorations.neuFlat(isDark: isDark).copyWith(
-                  border: Border.all(
-                    color: isDark ? NeuColors.goldAccent : NeuColors.goldAccent.withValues(alpha: 0.6),
-                    width: 2.0,
-                  ),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      alignment: Alignment.center,
-                      child: AzmMark(size: 72, isDark: isDark),
-                    ),
-                    AppSpacing.gapMd,
-                    Text(
-                      'عزم',
-                      style: isDark
-                          ? AppTypography.h3Dark
-                          : AppTypography.h3,
-                    ),
-                    AppSpacing.gapXs,
-                    Text(
-                      'نظام إدارة تنفيذي احترافي',
-                      style: isDark
-                          ? AppTypography.bodySmallDark
-                          : AppTypography.bodySmall,
-                    ),
-                    AppSpacing.gapSm,
-                    Text(
-                      'الإصدار ${AppConstants.appVersion} • بناء 1',
-                      style: isDark
-                          ? AppTypography.captionDark
-                          : AppTypography.caption,
-                    ),
-                    AppSpacing.gapMd,
-                    Divider(
-                      color: isDark ? NeuColors.goldAccent.withValues(alpha: 0.3) : NeuColors.navyDeep.withValues(alpha: 0.15),
-                      thickness: 1,
-                    ),
-                    AppSpacing.gapMd,
-                    Text(
-                      'تطوير المهندس: Eng: Rayash Albureihi',
-                      style: TextStyle(
-                        fontFamily: 'Panorama',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.gapMd,
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.privacy_tip_rounded,
-                title: 'سياسة الخصوصية',
-                subtitle: 'بيان حماية البيانات والسرية الأمنية',
-                onTap: () => context.push(RouteNames.privacyPolicy),
-              ),
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.gavel_rounded,
-                title: 'شروط الاستخدام والملكية الفكرية',
-                subtitle: 'حقوق الملكية الفكرية والترخيص القانوني',
-                onTap: () => context.push(RouteNames.legalProtection),
-              ),
-              _buildNavigationTile(
-                isDark,
-                icon: Icons.system_update_rounded,
-                title: 'التحقق من التحديثات',
-                subtitle: 'التأكد من توفر إصدار جديد للتطبيق',
-                onTap: () => _checkUpdatesManual(context),
-              ),
-
-              AppSpacing.gapXxl,
             ],
           ),
         ),
-      ),
-    );
-  }
 
-  Widget _buildSectionTitle(
-      String title, IconData icon, bool isDark) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
+        // ── ٢ · مساحة العمل ──────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'مساحة العمل',
+            caption: 'الشركة التي تعمل فيها وما تشمله',
+          ),
         ),
-        AppSpacing.gapHSm,
-        Text(
-          title,
-          style: isDark ? AppTypography.h4Dark : AppTypography.h4,
+        SliverToBoxAdapter(
+          child: AzmRowGroup(
+            rows: [
+              AzmNavRow(
+                title: 'إدارة الشركة',
+                subtitle: 'البيانات والأعضاء والأدوار',
+                icon: Icons.business_outlined,
+                onTap: () => context.push('/company/manage'),
+              ),
+              AzmNavRow(
+                title: 'الوحدات المفعّلة',
+                subtitle: 'ما يظهر من وحدات التطبيق وما يُخفى',
+                icon: Icons.widgets_outlined,
+                onTap: () => context.push('/settings/modules'),
+              ),
+              AzmNavRow(
+                title: 'الباقة والفوترة',
+                subtitle: 'باقتك الحالية وما تفتحه الترقية',
+                icon: Icons.workspace_premium_outlined,
+                onTap: () => context.push('/subscription/pricing'),
+              ),
+            ],
+          ),
+        ),
+
+        // ── ٣ · الأمان ───────────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'الأمان',
+            caption: 'ما يمنع غيرك من فتح التطبيق',
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              AzmSwitchRow(
+                title: 'رمز الدخول',
+                subtitle: 'يُطلب عند كل فتح للتطبيق',
+                icon: Icons.pin_outlined,
+                value: _pinEnabled,
+                onChanged: _togglePinEnabled,
+              ),
+              AzmNavRow(
+                title: 'تغيير رمز الدخول',
+                subtitle: 'تحديث الرمز الحالي',
+                icon: Icons.password_outlined,
+                enabled: _pinEnabled,
+                onTap: () => context.push(RouteNames.changePin),
+              ),
+              AzmSwitchRow(
+                title: 'البصمة',
+                subtitle: _biometricAvailable
+                    ? 'الدخول بالبصمة بدل كتابة الرمز'
+                    : 'غير متاحة على هذا الجهاز',
+                icon: Icons.fingerprint_rounded,
+                value: _biometricEnabled,
+                enabled: _biometricAvailable,
+                onChanged: _toggleBiometric,
+              ),
+              AzmNavRow(
+                title: 'السجلّ الأمني',
+                subtitle: 'من دخل ومتى ومن أين',
+                icon: Icons.shield_outlined,
+                showDivider: false,
+                onTap: () => context.push(RouteNames.securityLog),
+              ),
+            ],
+          ),
+        ),
+
+        // ── ٤ · التنبيهات ────────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'التنبيهات',
+            caption: 'متى يقاطعك التطبيق',
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              AzmSwitchRow(
+                title: 'الإشعارات',
+                subtitle: 'تذكيرات الاجتماعات والمهام والمواعيد',
+                icon: Icons.notifications_none_rounded,
+                value: _notificationsEnabled,
+                onChanged: _toggleNotifications,
+              ),
+              AzmSwitchRow(
+                title: 'تنبيه المتأخّر',
+                subtitle: 'إشعار حين يتجاوز التزامٌ موعده',
+                icon: Icons.running_with_errors_outlined,
+                value: _overdueAlertsEnabled,
+                // التنبيه فرعٌ من الإشعارات: إطفاء الأصل يطفئ الفرع،
+                // فلا يبقى مفتاحٌ مفعّل لا أثر له.
+                enabled: _notificationsEnabled,
+                showDivider: false,
+                onChanged: _toggleOverdueAlerts,
+              ),
+            ],
+          ),
+        ),
+
+        // ── ٥ · المظهر ───────────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(title: 'المظهر', caption: 'كيف يبدو التطبيق'),
+        ),
+        SliverToBoxAdapter(
+          child: AzmSegmented<ThemeMode>(
+            label: 'السمة',
+            value: themeMode,
+            options: const [
+              (ThemeMode.light, 'فاتح'),
+              (ThemeMode.dark, 'داكن'),
+              (ThemeMode.system, 'تلقائي'),
+            ],
+            showDivider: false,
+            onChanged: (mode) =>
+                ref.read(themeProvider.notifier).setTheme(mode),
+          ),
+        ),
+
+        // ── ٦ · البيانات ─────────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'البيانات',
+            caption: 'ما تملكه، ونسخه وإخراجه ومحوه',
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              AzmNavRow(
+                title: 'نسخة احتياطية',
+                subtitle: 'احفظ كل بياناتك في ملف واحد',
+                icon: Icons.backup_outlined,
+                onTap: _exportBackup,
+              ),
+              AzmNavRow(
+                title: 'استعادة نسخة',
+                subtitle: 'استرجع البيانات من ملف نسخة',
+                icon: Icons.restore_outlined,
+                onTap: _restoreBackup,
+              ),
+              AzmNavRow(
+                title: 'تصدير التقرير اليومي',
+                subtitle: 'ملف PDF بما جرى اليوم',
+                icon: Icons.picture_as_pdf_outlined,
+                onTap: _exportDailyReport,
+              ),
+              AzmNavRow(
+                title: 'حذف جميع البيانات',
+                subtitle: 'لا يمكن التراجع — يُطلب تأكيدان',
+                icon: Icons.delete_forever_outlined,
+                badge: Icon(
+                  Icons.warning_amber_rounded,
+                  size: 16,
+                  color: p.danger,
+                ),
+                showDivider: false,
+                onTap: _confirmDeleteAll,
+              ),
+            ],
+          ),
+        ),
+
+        // ── ٧ · عن التطبيق ───────────────────────────────────
+        SliverToBoxAdapter(
+          child: AzmSectionHeader(
+            title: 'عن التطبيق',
+            caption: 'الإصدار والحقوق والدعم',
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              AzmNavRow(
+                title: 'التحقق من التحديثات',
+                subtitle: 'الإصدار الحالي ${AppConstants.appVersion}',
+                icon: Icons.system_update_outlined,
+                onTap: _checkUpdates,
+              ),
+              AzmNavRow(
+                title: 'سياسة الخصوصية',
+                subtitle: 'كيف تُحفظ بياناتك ومن يصل إليها',
+                icon: Icons.privacy_tip_outlined,
+                onTap: () => context.push(RouteNames.privacyPolicy),
+              ),
+              AzmNavRow(
+                title: 'شروط الاستخدام',
+                subtitle: 'الترخيص والملكية الفكرية',
+                icon: Icons.gavel_outlined,
+                showDivider: false,
+                onTap: () => context.push(RouteNames.legalProtection),
+              ),
+            ],
+          ),
+        ),
+
+        // ختام هادئ — العلامة وإصدارها، بلا إطار ولا بطاقة.
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: AzmSpace.xxl),
+            child: Center(
+              child: Text(
+                'عزم · ${AppConstants.appVersion}',
+                style: AppTypography.caption.copyWith(color: p.inkGhost),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildToggleTile(
-    bool isDark, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return NeuCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 22,
-              color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep),
-          AppSpacing.gapHMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: isDark
-                        ? AppTypography.bodyDark
-                        : AppTypography.body),
-                Text(subtitle,
-                    style: isDark
-                        ? AppTypography.captionDark
-                        : AppTypography.caption),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeTrackColor: NeuColors.accentMuted,
-            activeThumbColor: NeuColors.navyDeep,
-          ),
-        ],
-      ),
-    );
-  }
+  // ─────────────────────────────────────────────────────────
+  // البيانات
+  // ─────────────────────────────────────────────────────────
 
-  Widget _buildNavigationTile(
-    bool isDark, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    Color? titleColor,
-  }) {
-    return NeuCard(
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 22,
-              color: titleColor ??
-                  (isDark ? NeuColors.goldAccent : NeuColors.navyDeep)),
-          AppSpacing.gapHMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: (isDark
-                            ? AppTypography.bodyDark
-                            : AppTypography.body)
-                        .copyWith(color: titleColor)),
-                Text(subtitle,
-                    style: isDark
-                        ? AppTypography.captionDark
-                        : AppTypography.caption),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_left_rounded, size: 24,
-              color: isDark
-                  ? NeuColors.textHintDark
-                  : NeuColors.textHint),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildThemeOption(
-    bool isDark,
-    String label,
-    IconData icon,
-    bool isSelected,
-    VoidCallback onTap,
-  ) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark
-                    ? NeuColors.navyDeep
-                    : NeuColors.navyDeep.withValues(alpha: 0.1))
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected
-                  ? NeuColors.navyDeep
-                  : (isDark ? NeuColors.dividerDark : NeuColors.divider),
-              width: isSelected ? 2 : 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              Icon(icon,
-                  color: isSelected
-                      ? (isDark
-                          ? NeuColors.accentMuted
-                          : NeuColors.navyDeep)
-                      : (isDark
-                          ? NeuColors.textHintDark
-                          : NeuColors.textHint),
-                  size: 24),
-              AppSpacing.gapXs,
-              Text(label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w400,
-                    color: isSelected
-                        ? (isDark
-                            ? NeuColors.accentMuted
-                            : NeuColors.navyDeep)
-                        : (isDark
-                            ? NeuColors.textHintDark
-                            : NeuColors.textHint),
-                    fontFamily: 'Panorama',
-                  )),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _confirmDeleteAll(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          title: const Text('حذف جميع البيانات',
-              style: AppTypography.h3),
-          content: const Text(
-            'هل أنت متأكد من حذف جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه.',
-            style: AppTypography.body,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: NeuColors.danger,
-              ),
-              onPressed: () {
-                // Double confirmation
-                Navigator.pop(ctx);
-                _secondConfirm(context);
-              },
-              child: const Text('تأكيد الحذف'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _secondConfirm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          title: const Text('تأكيد نهائي',
-              style: AppTypography.h3),
-          content: const Text(
-            'سيتم حذف جميع البيانات نهائيًا. هل تريد المتابعة؟',
-            style: AppTypography.body,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: NeuColors.danger,
-              ),
-              onPressed: () async {
-                await ref.read(backupServiceProvider).wipeAllData();
-                await SecureStorageService.instance.deleteAll();
-                if (ctx.mounted) Navigator.pop(ctx);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('تم حذف جميع البيانات بنجاح. أعد تشغيل التطبيق.'),
-                    ),
-                  );
-                }
-              },
-              child: const Text('حذف نهائي'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _checkUpdatesManual(BuildContext context) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    // Show a loading dialog first
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: NeuCard(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(isDark ? NeuColors.goldAccent : NeuColors.navyDeep),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  'جاري التحقق من وجود تحديثات...',
-                  style: isDark ? AppTypography.bodyDark : AppTypography.body,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    // Simulate network delay for 1.5 seconds
-    await Future.delayed(const Duration(milliseconds: 1500));
-    
-    if (context.mounted) {
-      // Dismiss loading dialog
-      Navigator.of(context).pop();
-
-      // Show update is available or application is up to date
-      showDialog(
-        context: context,
-        builder: (ctx) => Dialog(
-          backgroundColor: Colors.transparent,
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: NeuCard(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.check_circle_outline_rounded,
-                    color: NeuColors.success,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'تطبيقك محدث بالكامل',
-                    style: (isDark ? AppTypography.h3Dark : AppTypography.h3).copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'أنت تستخدم أحدث إصدار من تطبيق "عزم" (${AppConstants.appVersion}).',
-                    style: isDark ? AppTypography.bodyDark : AppTypography.body,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: NeuButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      label: 'موافق',
-                      variant: NeuButtonVariant.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
+  Future<void> _exportBackup() async {
+    try {
+      await ref.read(backupServiceProvider).exportBackup();
+      _say('تم إنشاء النسخة الاحتياطية');
+    } catch (e) {
+      _say('تعذّر إنشاء النسخة: $e');
     }
+  }
+
+  Future<void> _restoreBackup() async {
+    try {
+      await ref.read(backupServiceProvider).restoreBackup();
+      _say('تمت الاستعادة — أعد تشغيل التطبيق');
+    } catch (e) {
+      _say('تعذّرت الاستعادة: $e');
+    }
+  }
+
+  Future<void> _exportDailyReport() async {
+    try {
+      final analytics = ref.read(reportsAnalyticsProvider);
+      await ref.read(exportServiceProvider).exportDailyReport(analytics);
+    } catch (e) {
+      _say('تعذّر تصدير التقرير: $e');
+    }
+  }
+
+  /// حذف كل البيانات — تأكيدان لا واحد.
+  ///
+  /// الأول يسأل عن النيّة، والثاني يسأل بعد أن تُقرأ العاقبة. فعلٌ لا
+  /// رجعة فيه لا يصحّ أن يبعد عن الإصبع ضغطةً واحدة.
+  void _confirmDeleteAll() {
+    _ask(
+      title: 'حذف جميع البيانات',
+      body: 'سيُحذف كل ما سجّلته في هذا الجهاز. لا يمكن التراجع.',
+      confirmLabel: 'متابعة',
+      onConfirm: () => _ask(
+        title: 'تأكيد نهائي',
+        body: 'هذه آخر فرصة للتراجع. هل تريد الحذف؟',
+        confirmLabel: 'احذف نهائيًا',
+        onConfirm: _wipe,
+      ),
+    );
+  }
+
+  Future<void> _wipe() async {
+    await ref.read(backupServiceProvider).wipeAllData();
+    await SecureStorageService.instance.deleteAll();
+    _say('حُذفت البيانات — أعد تشغيل التطبيق');
+  }
+
+  void _ask({
+    required String title,
+    required String body,
+    required String confirmLabel,
+    required VoidCallback onConfirm,
+  }) {
+    final p = AzmPalette.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: p.surfaceRaised,
+        shape: RoundedRectangleBorder(borderRadius: AzmRadius.control),
+        title: Text(title, style: AppTypography.h4.copyWith(color: p.ink)),
+        content: Text(
+          body,
+          style: AppTypography.body.copyWith(color: p.inkMuted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('إلغاء', style: TextStyle(color: p.inkMuted)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              onConfirm();
+            },
+            child: Text(confirmLabel, style: TextStyle(color: p.danger)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // التحديثات
+  // ─────────────────────────────────────────────────────────
+
+  /// يسأل الخادم فعلًا عن الإصدار.
+  ///
+  /// الصيغة السابقة كانت تُظهر مؤشّر تحميل ١٫٥ ثانية بـ`Future.delayed`
+  /// ثم تُعلن النتيجة بلا أن تسأل أحدًا — واجهةٌ تمثّل العمل ولا تعمله.
+  Future<void> _checkUpdates() async {
+    _say('جارٍ التحقق…');
+    await RemoteConfigService.instance.fetchConfigs();
+    if (!mounted) return;
+
+    final latest = RemoteConfigService.instance.latestVersion;
+    final outdated = RemoteConfigService.instance.isVersionOlder(
+      AppConstants.appVersion,
+      latest,
+    );
+    _say(outdated ? 'يتوفّر إصدار أحدث: $latest' : 'تطبيقك محدَّث');
   }
 }
