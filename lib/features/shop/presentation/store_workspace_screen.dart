@@ -9,6 +9,13 @@ import 'tabs/store_orders_tab.dart';
 import 'tabs/store_overview_tab.dart';
 import 'tabs/store_products_tab.dart';
 import 'widgets/shop_async.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../store_tools/ai_assistant_screen.dart';
+import '../../store_tools/order_watcher.dart';
+import '../../store_tools/payment_accounts_screen.dart';
+import '../../store_tools/store_settings_screen.dart';
+import '../../store_tools/store_tools_api.dart';
 
 /// AZM — لوحة المتجر
 ///
@@ -31,6 +38,13 @@ class StoreWorkspaceScreen extends ConsumerStatefulWidget {
 class _StoreWorkspaceScreenState extends ConsumerState<StoreWorkspaceScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabs = TabController(length: 3, vsync: this);
+
+  @override
+  void initState() {
+    super.initState();
+    // إشعار بكل طلب جديد في متاجر الشركة ما دام التطبيق مفتوحًا
+    ref.read(orderWatcherProvider).start();
+  }
 
   @override
   void dispose() {
@@ -124,6 +138,7 @@ class _Header extends StatelessWidget {
                   ],
                 ),
               ),
+              _StoreTools(store: store),
             ],
           ),
           if (store.isSuspended) ...[
@@ -258,6 +273,54 @@ class _Tabs extends ConsumerWidget {
           const Tab(text: 'المنتجات'),
         ],
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// أدوات المتجر: الإعدادات، الشكل، المساعد، الدفع
+// ─────────────────────────────────────────────
+
+class _StoreTools extends StatelessWidget {
+  const _StoreTools({required this.store});
+
+  final ShopStore store;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    void push(Widget page) => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          tooltip: 'RVIOS AI',
+          icon: Icon(Icons.auto_awesome, color: p.accent),
+          onPressed: () => push(AiAssistantScreen(storeId: store.id, storeName: store.name)),
+        ),
+        PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert_rounded, color: p.ink),
+          onSelected: (v) {
+            switch (v) {
+              case 'settings':
+                push(StoreSettingsScreen(store: store));
+              case 'look':
+                // محرر الشكل الكامل يحتاج شاشة كبيرة ومعاينة حيّة — في لوحة الويب
+                launchUrl(Uri.parse('$azmWebUrl/store/appearance'), mode: LaunchMode.externalApplication);
+              case 'open':
+                launchUrl(Uri.parse('$storefrontUrl/s/${store.slug}'), mode: LaunchMode.externalApplication);
+              case 'pay':
+                push(const PaymentAccountsScreen());
+            }
+          },
+          itemBuilder: (_) => const [
+            PopupMenuItem(value: 'settings', child: ListTile(leading: Icon(Icons.tune), title: Text('إعدادات المتجر'), contentPadding: EdgeInsets.zero)),
+            PopupMenuItem(value: 'look', child: ListTile(leading: Icon(Icons.palette_outlined), title: Text('تصميم شكل المتجر'), contentPadding: EdgeInsets.zero)),
+            PopupMenuItem(value: 'open', child: ListTile(leading: Icon(Icons.open_in_new), title: Text('فتح المتجر'), contentPadding: EdgeInsets.zero)),
+            PopupMenuItem(value: 'pay', child: ListTile(leading: Icon(Icons.payments_outlined), title: Text('طرق دفع الاشتراك'), contentPadding: EdgeInsets.zero)),
+          ],
+        ),
+      ],
     );
   }
 }
