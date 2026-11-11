@@ -4,6 +4,7 @@ import '../database/providers/database_providers.dart';
 import '../database/tenant_database.dart';
 import '../../features/auth/data/azm_auth_api.dart';
 import 'api_client.dart';
+import '../../features/store_tools/azm_push.dart';
 import 'auth_token_store.dart';
 
 /// AZM — مزوّدات الشبكة
@@ -79,6 +80,8 @@ class SessionController {
   /// المستخدم أراد، وتعديلات لم تُزامَن بعد تضيع لو مُحيت. الملف يبقى،
   /// ويعود المستخدم إليه عند الدخول.
   Future<void> end() async {
+    // الجهاز يُلغى تسجيله والرمز ما زال صالحًا
+    await _ref.read(azmPushProvider).stop();
     await _ref.read(authTokenStoreProvider).clear();
     await _ref.read(activeTenantIdProvider.notifier).switchTo(personalTenant);
     _ref.read(sessionExpiredProvider.notifier).state = false;

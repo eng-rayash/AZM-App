@@ -12,6 +12,7 @@ import 'widgets/shop_async.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../store_tools/ai_assistant_screen.dart';
+import '../../store_tools/azm_push.dart';
 import '../../store_tools/order_watcher.dart';
 import '../../store_tools/payment_accounts_screen.dart';
 import '../../store_tools/store_settings_screen.dart';
@@ -44,6 +45,8 @@ class _StoreWorkspaceScreenState extends ConsumerState<StoreWorkspaceScreen>
     super.initState();
     // إشعار بكل طلب جديد في متاجر الشركة ما دام التطبيق مفتوحًا
     ref.read(orderWatcherProvider).start();
+    // إشعار الطلب والتطبيق مغلق (FCM) — يسجّل الجهاز مع الشركة النشطة
+    ref.read(azmPushProvider).start();
   }
 
   @override

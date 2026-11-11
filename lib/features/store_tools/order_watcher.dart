@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../notifications/domain/notification_service.dart';
 import '../shop/data/shop_models.dart';
 import '../shop/providers/shop_providers.dart';
+import 'azm_push.dart';
 
 /// يراقب طلبات متاجر الشركة الجديدة ويُظهر إشعارًا على الهاتف لكل طلب لم
 /// يره التاجر — سرعة الرد تصنع البيع في متجر يبيع عبر واتساب.
@@ -27,6 +28,9 @@ class OrderWatcher {
     _timer = Timer.periodic(const Duration(minutes: 2), (_) => _tick());
   }
 
+  /// إشعار دفع وصل والتطبيق مفتوح — اسأل الآن بدل انتظار الدورة
+  Future<void> checkNow() => _tick();
+
   void stop() {
     _timer?.cancel();
     _timer = null;
@@ -45,7 +49,9 @@ class OrderWatcher {
         final seen = prefs.getStringList(key);
         final ids = page.orders.map((o) => o.id).toList();
         // أول مرة: نعدّ الموجود مقروءًا كي لا تنهال إشعارات الطلبات القديمة
-        if (seen != null) {
+        // في الخلفية مع إشعارات الدفع: النظام أظهر الطلب من FCM — لا نكرّره
+        final background = WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed;
+        if (seen != null && !(background && _ref.read(azmPushProvider).active)) {
           for (final o in page.orders.where((o) => !seen.contains(o.id))) {
             await _ref.read(notificationServiceProvider).showNotification(
                   id: o.id.hashCode,
