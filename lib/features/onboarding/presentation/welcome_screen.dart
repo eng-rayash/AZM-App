@@ -148,40 +148,28 @@ class _AzmLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 96,
-          height: 96,
-          alignment: Alignment.center,
-          child: AzmMark(size: 88, isDark: isDark),
-        ),
+        // علامة RV: تُرسم ثم تمتلئ ويعبرها بريق
+        AnimatedRvMark(width: 168, color: isDark ? RvBrand.cream : RvBrand.red, glow: isDark),
+
+        const SizedBox(height: 26),
+
+        // «ريفيوس RVIOS للإبداع والتقنية» تدخل بعد العلامة
+        RviosWordmark(width: 236, onDark: isDark, animate: true, delay: const Duration(milliseconds: 900)),
 
         const SizedBox(height: 18),
 
-        Text(
-          'ريفيوس',
-          style: AppTypography.wordmarkAr.copyWith(
-            fontSize: 40,
-            color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
-          ),
-        ),
-
-        Text(
-          'RVIOS',
-          style: AppTypography.wordmarkEn.copyWith(
-            fontSize: 20,
-            color: isDark ? NeuColors.textHintDark : NeuColors.textHint,
-          ),
-        ),
-
-        const SizedBox(height: 6),
-
-        Text(
-          AppConstants.appDescriptionAr,
-          style: AppTypography.bodySmall.copyWith(
-            color: isDark
-                ? NeuColors.textSecondaryDark
-                : NeuColors.textSecondary,
-            letterSpacing: 0.3,
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 2600),
+          curve: const Interval(.75, 1, curve: Curves.easeOut),
+          builder: (context, v, child) => Opacity(opacity: v, child: child),
+          child: Text(
+            AppConstants.appDescriptionAr,
+            textAlign: TextAlign.center,
+            style: AppTypography.bodySmall.copyWith(
+              color: isDark ? NeuColors.textSecondaryDark : NeuColors.textSecondary,
+              letterSpacing: 0.3,
+            ),
           ),
         ),
       ],

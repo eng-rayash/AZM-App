@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 643.92 252.54">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: MedadSony-Regular, 'Medad Sony';
+        font-size: 130.52px;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: #a3272d;
+      }
+
+      .cls-2 {
+        font-family: Muslimah-Light, Muslimah;
+        font-size: 113.84px;
+        font-weight: 300;
+      }
+
+      .cls-4 {
+        fill: #ffdaa7;
+        font-family: thmanyahserifdisplay-Medium, 'thmanyah serif display';
+        font-size: 43.91px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <text class="cls-1" transform="translate(0 111.24) scale(1.07 1)"><tspan x="0" y="0">ريفـيـــوس</tspan></text>
+      <text class="cls-2" transform="translate(.01 211.4) scale(.97 1)"><tspan x="0" y="0">RVIOS</tspan></text>
+      <rect class="cls-3" x="376.1" y="150.35" width="264.55" height="65.88"/>
+      <text class="cls-4" transform="translate(384.72 196.22) scale(1.03 1)"><tspan x="0" y="0">للإبداع والتقنية</tspan><tspan x="240.45" y="0"> </tspan></text>
+    </g>
+  </g>
+</svg>

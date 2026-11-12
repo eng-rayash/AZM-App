@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/neu_colors.dart';
+import 'rvios_brand.dart';
 
-/// Official Brand Logo & Typography Component
+export 'rvios_brand.dart';
+
+/// شعار ريفيوس: علامة RV فوق العلامة اللفظية «ريفيوس RVIOS للإبداع والتقنية».
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,
@@ -12,80 +16,46 @@ class AppLogo extends StatelessWidget {
     this.isDark = false,
     this.useFullBanner = false,
     this.showTagline = false,
+    this.animate = false,
   });
 
-  /// Logo Icon Size
+  /// عرض العلامة
   final double size;
-
-  /// Whether to display brand text alongside logo icon
   final bool showText;
-
-  /// Dark mode toggle
   final bool isDark;
 
-  /// Whether to use full logo banner image asset
+  /// أفقي: العلامة بجوار العلامة اللفظية
   final bool useFullBanner;
-
-  /// Whether to show the tagline line under the wordmark
   final bool showTagline;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
+    final markColor = isDark ? RvBrand.cream : RvBrand.red;
+    final mark = animate ? AnimatedRvMark(width: size * 1.3, color: markColor) : RvMark(width: size * 1.3, color: markColor);
+    final word = RviosWordmark(width: size * 2.4, onDark: isDark, animate: animate, delay: const Duration(milliseconds: 650));
+
     if (useFullBanner) {
-      // الشعار الأفقي: العلامة بجوار الاسم — لا صورة مسطّحة للاسم، فيبقى
-      // النص بخطوط التطبيق وألوان الوضع الحالي.
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset('assets/brand/rvios_mark.png', height: size, fit: BoxFit.contain),
-          SizedBox(width: size * 0.25),
-          _buildTextLogo(),
-        ],
-      );
+      return Row(mainAxisSize: MainAxisSize.min, children: [mark, SizedBox(width: size * .3), word]);
     }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Brand Logo Icon
-        AppLogoMark(size: size, isDark: isDark),
-
+        mark,
         if (showText) ...[
-          SizedBox(height: size * 0.2),
-
-          // English Title (Yapari Bold)
-          Text(
-            'ريفيوس',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamilyRTLMaghfira,
-              fontSize: size * 0.46,
-              color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
-            ),
-          ),
-
-          Text(
-            'RVIOS',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamilyYapari,
-              fontSize: size * 0.3,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.0,
-              color: isDark ? NeuColors.gold : NeuColors.primaryDark,
-            ),
-          ),
-
+          SizedBox(height: size * .28),
+          word,
           if (showTagline) ...[
-            SizedBox(height: size * 0.18),
+            SizedBox(height: size * .18),
             Text(
-              'افهم عملك · احسم ما يهم · نفّذ بعزم',
+              AppConstants.appTagline,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: AppTypography.fontFamilyPanorama,
-                fontSize: size * 0.15,
+                fontSize: size * .17,
                 height: 1.5,
-                letterSpacing: 0.8,
-                color:
-                    isDark ? NeuColors.textHintDark : NeuColors.textSecondary,
+                color: isDark ? NeuColors.textHintDark : NeuColors.textSecondary,
               ),
             ),
           ],
@@ -93,69 +63,32 @@ class AppLogo extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildTextLogo() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'ريفيوس',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamilyRTLMaghfira,
-            fontSize: size * 0.5,
-            color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
-          ),
-        ),
-        Text(
-          'RVIOS',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamilyYapari,
-            fontSize: size * 0.32,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 3.0,
-            color: isDark ? NeuColors.gold : NeuColors.primaryDark,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
-/// علامة التطبيق المربّعة — أيقونة عزم سمارت نفسها التي تستعملها منصة الويب:
-/// العلامة الكريمية فوق مربّع أحمر مستدير الزوايا (الاستدارة في الصورة نفسها).
-///
-/// تُستخدم حيث تلزم أيقونة مربعة: شاشة البداية، القفل، الترحيب،
-/// الإعدادات، والشريط الجانبي.
+/// علامة RV في مربع بحجم [size] — حيث تلزم أيقونة: الدخول، القفل، الشريط الجانبي.
+/// أحمر على الفاتح، كريمي على الداكن. [animate] لدخول مرسوم.
 class AppLogoMark extends StatelessWidget {
   const AppLogoMark({
     super.key,
     this.size = 64,
     this.isDark = false,
+    this.animate = false,
+    this.color,
   });
 
   final double size;
   final bool isDark;
+  final bool animate;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final c = color ?? (isDark ? RvBrand.cream : RvBrand.red);
+    return SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        // يطابق استدارة زوايا الصورة (≈٢٢٪) كي يتبع الظلّ حوافها
-        borderRadius: BorderRadius.circular(size * 0.21),
-        boxShadow: [
-          BoxShadow(
-            color: NeuColors.primary.withValues(alpha: 0.25),
-            blurRadius: size * 0.25,
-            offset: Offset(0, size * 0.1),
-          ),
-        ],
-      ),
-      child: Image.asset(
-        'assets/brand/rvios_icon.png',
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.medium,
+      child: Center(
+        child: animate ? AnimatedRvMark(width: size, color: c, loop: false) : RvMark(width: size, color: c),
       ),
     );
   }

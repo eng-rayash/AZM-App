@@ -96,6 +96,19 @@ flutter:
       fonts:
         - asset: assets/fonts/ZainMobileSwashes-VF.woff2
 
+    # خطوط العلامة اللفظية «ريفيوس RVIOS للإبداع والتقنية» — من ملف الهوية الأصلي
+    - family: MedadSony
+      fonts:
+        - asset: assets/fonts/MedadSony.ttf
+    - family: Muslimah
+      fonts:
+        - asset: assets/fonts/Muslimah-Light.otf
+          weight: 300
+    - family: ThmanyahDisplay
+      fonts:
+        - asset: assets/fonts/ThmanyahSerifDisplay-Medium.otf
+          weight: 500
+
     # خط يابار — العناوين الإنجليزية الكبيرة والعلامة اللاتينية.
     - family: Yapari
       fonts:

@@ -141,7 +141,7 @@ class _LockScreenState extends State<LockScreen> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 alignment: Alignment.center,
-                child: AzmMark(size: 80, isDark: isDark),
+                child: AzmMark(size: 80, isDark: isDark, animate: true),
               ),
 
               AppSpacing.gapXxl,

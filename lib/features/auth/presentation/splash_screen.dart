@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../shared/widgets/rvios_brand.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -174,55 +176,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // شعار عزم سمارت على بطاقة بيضاء
-                    Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.35),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(28),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(
-                            'assets/brand/rvios_mark.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-
-                    // العلامة اللاتينية — Yapari Bold
-                    const Text(
-                      'RVIOS',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamilyYapari,
-                        fontSize: 38,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: 4,
-                      ),
-                    ),
-
-                    // العلامة العربية — RTL Maghfira
-                    const Text(
-                      'ريفيوس',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamilyRTLMaghfira,
-                        fontSize: 36,
-                        color: NeuColors.gold,
-                      ),
-                    ),
+                    // علامة RV الكريمية على الأحمر — تُرسم ثم تمتلئ
+                    const AnimatedRvMark(width: 150, color: RvBrand.cream, glow: true, loop: false),
+                    const SizedBox(height: 26),
+                    const RviosWordmark(width: 210, onDark: true, animate: true, delay: Duration(milliseconds: 700)),
                     const SizedBox(height: 8),
 
                     Text(

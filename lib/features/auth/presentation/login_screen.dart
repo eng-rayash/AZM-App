@@ -90,7 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
-                      child: const AppLogoMark(size: 40),
+                      child: const AppLogoMark(size: 40, animate: true),
                     ),
                     const SizedBox(height: 22),
                     Text(code ? 'تحقّق من بريدك' : 'أدِر متجرك\nمن جوالك',

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/api/api_client.dart';
@@ -84,7 +85,38 @@ class AuthRepository {
 
   static const _guestKey = 'rvios_guest_mode';
   static const _sessionKey = 'azm.lastSession';
+  /// «الجهاز الموثوق»: بعد تأكيد رمز البريد مرة لا يُطلب طوال مدة الثقة (٣٠ يومًا تتجدّد).
+  /// يبقى بعد تسجيل الخروج — هو ثقة بالجهاز، وكلمة المرور تبقى مطلوبة.
+  static const _trustKey = 'rvios.trustToken';
+  static const _secure = FlutterSecureStorage();
   final ApiClient _api;
+
+  Future<String?> _readTrust() async {
+    try {
+      return await _secure.read(key: _trustKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _saveTrust(Object? t) async {
+    if (t is! String || t.isEmpty) return;
+    try {
+      await _secure.write(key: _trustKey, value: t);
+    } catch (_) {}
+  }
+
+  /// تجديد الجلسة بصمت عند الفتح — من يستخدم التطبيق لا تنتهي جلسته.
+  Future<void> _refresh(String companyId) async {
+    try {
+      final r = await _api.post('/auth/refresh', const {});
+      final token = r['accessToken'];
+      if (token is String && token.isNotEmpty) {
+        await _api.tokens.write(token);
+        await AuthTokenStore().save(token: token, companyId: companyId);
+      }
+    } catch (_) {}
+  }
 
   ApiClient get api => _api;
 
@@ -117,6 +149,7 @@ class AuthRepository {
         role: (ctx['role'] as num).toInt(),
       );
       await _remember(session);
+      await _refresh(session.company.id);
       return session;
     } on ApiException catch (e) {
       if (e.isUnauthorized) {
@@ -132,10 +165,12 @@ class AuthRepository {
   }
 
   Future<AzmSession> signIn({required String email, required String password, String? companyId}) async {
+    final trust = await _readTrust();
     final r = await _api.post('/auth/login', {
       'email': email,
       'password': password,
       'companyId': ?companyId,
+      'trustToken': ?trust,
     });
     return _open(r);
   }
@@ -213,6 +248,7 @@ class AuthRepository {
       throw VerificationRequired('${r['email'] ?? ''}', sent: r['sent'] == true);
     }
     await _api.tokens.write(r['accessToken'] as String);
+    await _saveTrust(r['trustToken']);
     // عميلا الشبكة (المتجر والأدوات) يقرآن مخزن الجلسة الآخر — رمز واحد للتطبيق كله
     await AuthTokenStore().save(
       token: r['accessToken'] as String,
