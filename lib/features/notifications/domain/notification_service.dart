@@ -13,6 +13,11 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
+  /// التنبيه بالدقيقة يحتاج إذن «المنبّهات الدقيقة» في أندرويد ١٢+، ولا يُمنح
+  /// افتراضيًا. بدونه يرفض النظام الجدولة كلها — فنسقط إلى «تقريبي» يصل
+  /// خلال دقائق بدل ألّا يصل أبدًا.
+  AndroidScheduleMode _scheduleMode = AndroidScheduleMode.inexactAllowWhileIdle;
+
   Future<void> init() async {
     if (_initialized) return;
 
@@ -49,6 +54,12 @@ class NotificationService {
           // Handle notification tap
         },
       );
+      try {
+        final exact = await _flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+            ?.canScheduleExactNotifications();
+        _scheduleMode = exact == true ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle;
+      } catch (_) {}
       _initialized = true;
 
       // Auto schedule staggered alerts if enabled
@@ -158,7 +169,7 @@ class NotificationService {
             importance: Importance.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -180,7 +191,7 @@ class NotificationService {
             importance: Importance.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -202,7 +213,7 @@ class NotificationService {
             importance: Importance.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -273,7 +284,7 @@ class NotificationService {
             channelDescription: 'تنبيهات المواعيد المجدولة',
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
       );
     } catch (e) {
       debugPrint('NotificationService.scheduleNotification error: $e');
@@ -350,7 +361,7 @@ class NotificationService {
             priority: Priority.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -388,7 +399,7 @@ class NotificationService {
             priority: Priority.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -425,7 +436,7 @@ class NotificationService {
             priority: Priority.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -465,7 +476,7 @@ class NotificationService {
             priority: Priority.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -494,7 +505,7 @@ class NotificationService {
             priority: Priority.high,
           ),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: _scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
       );
 
@@ -558,7 +569,7 @@ class NotificationService {
               priority: Priority.high,
             ),
           ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          androidScheduleMode: _scheduleMode,
         );
       } else {
         await _flutterLocalNotificationsPlugin.cancel(id: 10000 + meeting.id);
@@ -601,7 +612,7 @@ class NotificationService {
               priority: Priority.high,
             ),
           ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          androidScheduleMode: _scheduleMode,
         );
       } else {
         await _flutterLocalNotificationsPlugin.cancel(id: 20000 + appt.id);
@@ -650,7 +661,7 @@ class NotificationService {
                 priority: Priority.high,
               ),
             ),
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            androidScheduleMode: _scheduleMode,
           );
         } else {
           await _flutterLocalNotificationsPlugin.cancel(id: 40000 + task.id);
@@ -712,7 +723,7 @@ class NotificationService {
               priority: Priority.high,
             ),
           ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          androidScheduleMode: _scheduleMode,
         );
       } else {
         await _flutterLocalNotificationsPlugin.cancel(id: 30000 + intId);

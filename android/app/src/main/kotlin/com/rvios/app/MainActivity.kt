@@ -1,4 +1,4 @@
-package com.mudiri.mudiri
+package com.rvios.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

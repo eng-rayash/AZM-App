@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,8 +12,8 @@ import 'package:http/http.dart' as http;
 String get azmApiUrl {
   const fromEnv = String.fromEnvironment('AZM_API_URL');
   if (fromEnv.isNotEmpty) return fromEnv.replaceAll(RegExp(r'/+$'), '');
-  final host = !kIsWeb && defaultTargetPlatform == TargetPlatform.android ? '10.0.2.2' : 'localhost';
-  return 'http://$host:3002/api/v1';
+  // الافتراضي خادم الإنتاج — للتطوير المحلي: AZM_API_URL=http://10.0.2.2:3002/api/v1
+  return 'https://api.rvios.com/api/v1';
 }
 
 /// خطأ من الباكند برسالته العربية كما كتبها (`{ message }`)، أو رسالة
