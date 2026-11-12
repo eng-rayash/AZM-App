@@ -54,3 +54,4 @@ android/key.properties
 # Firebase (مشروع rvios-tech) — يوضع محليًا، انظر README
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+/dist/

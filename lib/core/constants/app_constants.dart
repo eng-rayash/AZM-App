@@ -20,7 +20,7 @@ class AppConstants {
   /// الشركة المالكة — المظلة، لا المنتج
   static const String companyName = 'RVIOS Technologies';
 
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '1.1.0';
 
   /// وصف التطبيق في شاشة الترحيب
   static const String appDescription = 'Your store and business in one app.';
