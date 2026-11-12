@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +24,7 @@ class StoreHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return StoreGate(builder: (context, store, all) => _Home(store: store, all: all));
+    return StoreGate(builder: (context, store, all) => WithHelp(tip: StoreHelp.home, child: _Home(store: store, all: all)));
   }
 }
 

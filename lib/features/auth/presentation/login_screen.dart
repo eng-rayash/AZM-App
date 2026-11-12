@@ -12,7 +12,6 @@ import '../providers/auth_providers.dart';
 /// دخول التاجر بحساب عزم سمارت نفسه — ثم رمز البريد إن طلبه الخادم.
 ///
 /// رأس متدرّج بهوية RVIOS، ونموذج واحد بخطوتين: البريد وكلمة المرور، ثم الرمز.
-/// «المتابعة بلا حساب» تبقى لمن يريد وحدات الأعمال المحلية وحدها.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -188,11 +187,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     icon: const Icon(Icons.add_business_outlined),
                     label: const Text('حساب جديد ومتجر مجاني'),
                     style: OutlinedButton.styleFrom(minimumSize: const Size(0, 50), foregroundColor: Rv.red, side: BorderSide(color: Rv.red.withValues(alpha: .35)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-                  ),
-                  const SizedBox(height: 6),
-                  TextButton(
-                    onPressed: busy ? null : () => ref.read(authStateNotifierProvider.notifier).continueAsGuest(),
-                    child: Text('المتابعة بلا حساب — وحدات الأعمال على الجهاز فقط', style: AppTypography.caption.copyWith(color: p.inkMuted)),
                   ),
                 ],
               ]),

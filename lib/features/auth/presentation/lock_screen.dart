@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../store_app/store_routes.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_constants.dart';
-import '../../../core/router/route_names.dart';
 import '../../../core/security/auth_service.dart';
 import '../../../core/security/lock_manager.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -116,7 +116,7 @@ class _LockScreenState extends State<LockScreen> {
 
   void _unlockAndNavigate() {
     LockManager.instance.unlock();
-    context.go(RouteNames.dashboardFull);
+    context.go(StoreRoutes.home);
   }
 
   @override

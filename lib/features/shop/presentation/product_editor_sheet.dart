@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/design/azm_tokens.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_typography.dart';
 import '../data/shop_models.dart';
 import '../providers/shop_providers.dart';
+import '../../store_app/kit.dart';
+import '../../store_app/store_api.dart';
 
 /// AZM — محرّر المنتج
 ///
@@ -49,6 +52,11 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
   late final TextEditingController _qty;
   late final TextEditingController _lowStock;
   late final TextEditingController _brand;
+  late final TextEditingController _description;
+
+  /// المعرض: الأولى غلاف المنتج. الرفع فوري، والحفظ يرسل القائمة كاملة.
+  late List<String> _images;
+  int _uploading = 0;
 
   late bool _live;
   String? _categoryId;
@@ -70,6 +78,9 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     _qty = TextEditingController(text: p == null ? '0' : '${p.qty}');
     _lowStock = TextEditingController(text: p == null ? '0' : '${p.lowStock}');
     _brand = TextEditingController(text: p?.brand ?? '');
+    _description = TextEditingController(text: p?.description ?? '');
+    _images = [...?p?.images];
+    if (_images.isEmpty && (p?.image ?? '').isNotEmpty) _images = [p!.image];
     _live = p?.live ?? true;
     _categoryId = p?.categoryId;
   }
@@ -83,11 +94,13 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     _qty.dispose();
     _lowStock.dispose();
     _brand.dispose();
+    _description.dispose();
     super.dispose();
   }
 
   bool get _canSave =>
       !_saving &&
+      _uploading == 0 &&
       _name.text.trim().isNotEmpty &&
       int.tryParse(_price.text.trim()) != null;
 
@@ -96,6 +109,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     final name = _name.text.trim();
     final summary = _summary.text.trim();
     final brand = _brand.text.trim();
+    final description = _description.text.trim();
     final price = int.tryParse(_price.text.trim()) ?? 0;
     final oldPrice = int.tryParse(_oldPrice.text.trim());
     final qty = int.tryParse(_qty.text.trim()) ?? 0;
@@ -110,6 +124,8 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
         'live': _live,
         if (summary.isNotEmpty) 'summary': summary,
         if (brand.isNotEmpty) 'brand': brand,
+        if (description.isNotEmpty) 'description': description,
+        if (_images.isNotEmpty) 'images': _images,
         'oldPrice': ?oldPrice,
         'categoryId': ?_categoryId,
       };
@@ -120,6 +136,8 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
       if (name != before.name) 'name': name,
       if (summary != before.summary) 'summary': summary,
       if (brand != before.brand) 'brand': brand,
+      if (description != before.description) 'description': description,
+      if (!_sameImages(before)) 'images': _images,
       if (price != before.price) 'price': price,
       if (oldPrice != before.oldPrice) 'oldPrice': oldPrice,
       if (qty != before.qty) 'qty': qty,
@@ -127,6 +145,53 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
       if (_live != before.live) 'live': _live,
       if (_categoryId != before.categoryId) 'categoryId': _categoryId,
     };
+  }
+
+  bool _sameImages(ShopProduct before) {
+    final was = before.images.isEmpty && before.image.isNotEmpty ? [before.image] : before.images;
+    if (was.length != _images.length) return false;
+    for (var i = 0; i < was.length; i++) {
+      if (was[i] != _images[i]) return false;
+    }
+    return true;
+  }
+
+  /// يختار صورًا من المعرض أو الكاميرا ويرفعها فورًا. التصغير على الجهاز أولًا
+  /// (١٦٠٠ بكسل) فيقصر الرفع على الشبكات الضعيفة، والخادم يحوّلها WebP خفيفة.
+  Future<void> _addImages(int max, {bool camera = false}) async {
+    final room = max - _images.length - _uploading;
+    if (room <= 0) {
+      setState(() => _error = 'باقتك تسمح بـ$max ${max == 1 ? 'صورة' : 'صور'} للمنتج — رقِّ الباقة لصور أكثر');
+      return;
+    }
+    final picker = ImagePicker();
+    final List<XFile> picked;
+    if (camera) {
+      final x = await picker.pickImage(source: ImageSource.camera, maxWidth: 1600, maxHeight: 1600, imageQuality: 85);
+      picked = x == null ? const [] : [x];
+    } else if (room == 1) {
+      final x = await picker.pickImage(source: ImageSource.gallery, maxWidth: 1600, maxHeight: 1600, imageQuality: 85);
+      picked = x == null ? const [] : [x];
+    } else {
+      picked = await picker.pickMultiImage(maxWidth: 1600, maxHeight: 1600, imageQuality: 85, limit: room);
+    }
+    if (picked.isEmpty || !mounted) return;
+    final files = picked.take(room).toList();
+    setState(() {
+      _uploading += files.length;
+      _error = null;
+    });
+    final api = ref.read(storeDataApiProvider);
+    for (final f in files) {
+      try {
+        final url = await api.uploadImage(widget.storeId, await f.readAsBytes(), f.name);
+        if (mounted) setState(() => _images.add(url));
+      } catch (e) {
+        if (mounted) setState(() => _error = 'تعذّر رفع صورة: $e');
+      } finally {
+        if (mounted) setState(() => _uploading--);
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -269,6 +334,17 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
               ),
               const SizedBox(height: AzmSpace.lg),
 
+              _Gallery(
+                images: _images,
+                uploading: _uploading,
+                max: ref.watch(productsProvider(widget.storeId)).valueOrNull?.capacity.imagesPerProduct ?? 1,
+                onAdd: (max) => _addImages(max),
+                onCamera: (max) => _addImages(max, camera: true),
+                onRemove: (i) => setState(() => _images.removeAt(i)),
+                onCover: (i) => setState(() => _images.insert(0, _images.removeAt(i))),
+              ),
+              const SizedBox(height: AzmSpace.lg),
+
               _Text(controller: _name, label: 'الاسم', hint: 'عود كمبودي'),
               const SizedBox(height: AzmSpace.lg),
               _Text(
@@ -327,6 +403,23 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
                 style: AppTypography.caption.copyWith(color: p.inkFaint),
               ),
               const SizedBox(height: AzmSpace.lg),
+
+              TextField(
+                controller: _description,
+                minLines: 3,
+                maxLines: 8,
+                maxLength: 1200,
+                decoration: InputDecoration(
+                  labelText: 'الوصف الكامل',
+                  hintText: 'المكوّنات، المقاسات، طريقة الاستخدام… يظهر في صفحة المنتج',
+                  alignLabelWithHint: true,
+                  filled: true,
+                  fillColor: p.surfaceSunken,
+                  border: OutlineInputBorder(borderRadius: AzmRadius.control, borderSide: BorderSide(color: p.hairline)),
+                  enabledBorder: OutlineInputBorder(borderRadius: AzmRadius.control, borderSide: BorderSide(color: p.hairline)),
+                ),
+              ),
+              const SizedBox(height: AzmSpace.md),
 
               _Text(controller: _brand, label: 'العلامة', hint: 'اختياري'),
               const SizedBox(height: AzmSpace.lg),
@@ -559,5 +652,121 @@ class _Pill extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// معرض صور المنتج: الأولى غلاف، الضغط المطوّل يجعلها غلافًا، و× يحذفها.
+class _Gallery extends StatelessWidget {
+  const _Gallery({
+    required this.images,
+    required this.uploading,
+    required this.max,
+    required this.onAdd,
+    required this.onCamera,
+    required this.onRemove,
+    required this.onCover,
+  });
+  final List<String> images;
+  final int uploading;
+  final int max;
+  final void Function(int max) onAdd;
+  final void Function(int max) onCamera;
+  final void Function(int i) onRemove;
+  final void Function(int i) onCover;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final full = images.length + uploading >= max;
+    Widget addTile(IconData icon, String label, VoidCallback onTap) => InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            width: 96,
+            height: 96,
+            margin: const EdgeInsetsDirectional.only(end: 10),
+            decoration: BoxDecoration(
+              color: Rv.red.withValues(alpha: .06),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Rv.red.withValues(alpha: .35), width: 1.4),
+            ),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(icon, color: Rv.red, size: 26),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(color: Rv.red, fontSize: 11.5, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+        );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Text('صور المنتج', style: TextStyle(fontWeight: FontWeight.w800, color: p.ink)),
+        const SizedBox(width: 8),
+        Text('${images.length}/$max', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+        const Spacer(),
+        if (images.length > 1) Text('اضغط مطوّلًا لجعلها الغلاف', style: AppTypography.caption.copyWith(color: p.inkFaint, fontSize: 11)),
+      ]),
+      const SizedBox(height: 10),
+      SizedBox(
+        height: 96,
+        child: ListView(scrollDirection: Axis.horizontal, children: [
+          if (!full) ...[
+            addTile(Icons.add_photo_alternate_rounded, 'من المعرض', () => onAdd(max)),
+            addTile(Icons.photo_camera_rounded, 'الكاميرا', () => onCamera(max)),
+          ],
+          for (var i = 0; i < images.length; i++)
+            GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                onCover(i);
+              },
+              child: Container(
+                width: 96,
+                height: 96,
+                margin: const EdgeInsetsDirectional.only(end: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: i == 0 ? Rv.red : p.hairline, width: i == 0 ? 2 : 1),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Stack(fit: StackFit.expand, children: [
+                  Image.network(images[i], fit: BoxFit.cover, cacheWidth: 300, errorBuilder: (_, _, _) => Icon(Icons.broken_image_outlined, color: p.inkFaint)),
+                  if (i == 0)
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: double.infinity,
+                        color: Rv.red,
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: const Text('الغلاف', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
+                      ),
+                    ),
+                  PositionedDirectional(
+                    top: 4,
+                    end: 4,
+                    child: GestureDetector(
+                      onTap: () => onRemove(i),
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                        child: const Icon(Icons.close_rounded, color: Colors.white, size: 14),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          for (var i = 0; i < uploading; i++)
+            Container(
+              width: 96,
+              height: 96,
+              margin: const EdgeInsetsDirectional.only(end: 10),
+              decoration: BoxDecoration(color: p.surfaceSunken, borderRadius: BorderRadius.circular(18)),
+              child: const Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2.4, color: Rv.red))),
+            ),
+        ]),
+      ),
+      const SizedBox(height: 6),
+      Text('تُصغَّر الصور وتُحوَّل إلى WebP تلقائيًا ليفتح متجرك أسرع.', style: AppTypography.caption.copyWith(color: p.inkFaint, fontSize: 11)),
+    ]);
   }
 }

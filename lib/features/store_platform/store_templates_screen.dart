@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../store_app/store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,8 +26,8 @@ class StoreTemplatesScreen extends ConsumerWidget {
     final p = AzmPalette.of(context);
     return Scaffold(
       backgroundColor: p.ground,
-      appBar: AppBar(backgroundColor: p.ground, title: const Text('قوالب المتجر')),
-      body: StoreGate(builder: (context, store, _) => _Gallery(store: store)),
+      appBar: AppBar(backgroundColor: p.ground, title: const Text('قوالب المتجر'), actions: const [HelpButton(StoreHelp.templates)]),
+      body: StoreGate(builder: (context, store, _) => WithHelp(tip: StoreHelp.templates, child: _Gallery(store: store))),
     );
   }
 }

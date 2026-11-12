@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../store_app/store_routes.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_constants.dart';
-import '../../../core/router/route_names.dart';
 import '../../../core/security/auth_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -96,7 +96,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
       if (_showBiometricOption && mounted) {
         _promptBiometric();
       } else if (mounted) {
-        context.go(RouteNames.dashboardFull);
+        context.go(StoreRoutes.home);
       }
     } else {
       setState(() {
@@ -171,7 +171,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
     }
 
     if (mounted) {
-      context.go(RouteNames.dashboardFull);
+      context.go(StoreRoutes.home);
     }
   }
 

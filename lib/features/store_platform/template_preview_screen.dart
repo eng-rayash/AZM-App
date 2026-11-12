@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../store_app/kit.dart';
+import 'live_store_frame.dart';
 import 'platform_catalog.dart';
 import 'platform_widgets.dart';
 
-/// معاينة القالب داخل التطبيق: متجر العرض الحقيقي يعمل في إطار هاتف، يُتصفَّح ويُجرَّب
-/// كما يراه العميل. التنقّل بين القوالب بالأسهم، واختيار القالب من الأسفل.
+/// معاينة القالب داخل التطبيق: متجر العرض الحقيقي يعمل في إطار هاتف أو متصفح سطح المكتب،
+/// يُتصفَّح ويُجرَّب كما يراه العميل. التنقّل بين القوالب بالأسهم، واختيار القالب من الأسفل.
 class TemplatePreviewScreen extends StatefulWidget {
   const TemplatePreviewScreen({
     super.key,
@@ -54,36 +54,14 @@ class TemplatePreviewScreen extends StatefulWidget {
 
 class _TemplatePreviewScreenState extends State<TemplatePreviewScreen> {
   late StoreTemplate _t = widget.initial;
-  late final WebViewController _web;
-  int _progress = 0;
-  bool _live = true;
+  PreviewDevice _device = PreviewDevice.phone;
   bool _details = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _web = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (p) => mounted ? setState(() => _progress = p) : null,
-        onPageStarted: (_) => mounted ? setState(() => _progress = 5) : null,
-        onPageFinished: (_) => mounted ? setState(() => _progress = 100) : null,
-        // المعاينة لمتجر العرض وحده: الروابط الخارجية (واتساب، إنستغرام…) لا تُفتح داخل الإطار
-        onNavigationRequest: (r) => r.url.contains('rvios') ? NavigationDecision.navigate : NavigationDecision.prevent,
-      ))
-      ..loadRequest(Uri.parse(_t.demoUrl));
-  }
 
   void _go(int step) {
     final l = widget.templates;
     final i = (l.indexWhere((x) => x.id == _t.id) + step) % l.length;
     HapticFeedback.selectionClick();
-    setState(() {
-      _t = l[i < 0 ? i + l.length : i];
-      _progress = 0;
-    });
-    _web.loadRequest(Uri.parse(_t.demoUrl));
+    setState(() => _t = l[i < 0 ? i + l.length : i]);
   }
 
   @override
@@ -121,7 +99,7 @@ class _TemplatePreviewScreenState extends State<TemplatePreviewScreen> {
                       ]),
                     ),
                   ),
-                  _ModeSwitch(live: _live, onChanged: (v) => setState(() => _live = v)),
+                  DeviceSwitch(value: _device, onChanged: (d) => setState(() => _device = d)),
                 ]),
               ),
               // ── الهاتف ──
@@ -130,34 +108,24 @@ class _TemplatePreviewScreenState extends State<TemplatePreviewScreen> {
                   _Arrow(icon: Icons.chevron_right_rounded, onTap: () => _go(-1)),
                   Expanded(
                     child: Center(
-                      child: AspectRatio(
-                        aspectRatio: 390 / 820,
-                        child: Container(
-                          padding: const EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF050404),
-                            borderRadius: BorderRadius.circular(38),
-                            border: Border.all(color: Colors.white24, width: 1.2),
-                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .6), blurRadius: 40, offset: const Offset(0, 20))],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(31),
-                            child: Stack(fit: StackFit.expand, children: [
-                              TemplateShot(_t, frame: false, radius: 31),
-                              if (_live) AnimatedOpacity(opacity: _progress > 60 ? 1 : 0, duration: const Duration(milliseconds: 400), child: WebViewWidget(controller: _web)),
-                              if (_live && _progress < 100)
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: LinearProgressIndicator(value: _progress / 100, minHeight: 3, color: Rv.gold, backgroundColor: Colors.transparent),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: _device == PreviewDevice.phone
+                            ? AspectRatio(
+                                key: ValueKey('p${_t.id}'),
+                                aspectRatio: 390 / 820,
+                                child: LiveStoreFrame(url: _t.demoUrl, device: PreviewDevice.phone, placeholder: TemplateShot(_t, frame: false, radius: 28)),
+                              )
+                            : Padding(
+                                key: ValueKey('d${_t.id}'),
+                                padding: const EdgeInsets.symmetric(vertical: 20),
+                                child: LiveStoreFrame(
+                                  url: _t.demoUrl,
+                                  device: PreviewDevice.desktop,
+                                  address: '${_t.demo}.rvios.store',
+                                  placeholder: Image.network(_t.shotDesk, fit: BoxFit.cover, alignment: Alignment.topCenter, errorBuilder: (_, _, _) => const SizedBox()),
                                 ),
-                              // نتوء الهاتف
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(margin: const EdgeInsets.only(top: 8), width: 84, height: 22, decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(99))),
                               ),
-                            ]),
-                          ),
-                        ),
                       ),
                     ),
                   ),
@@ -234,27 +202,4 @@ class _Arrow extends StatelessWidget {
           child: Icon(icon, color: Colors.white, size: 26),
         ),
       );
-}
-
-class _ModeSwitch extends StatelessWidget {
-  const _ModeSwitch({required this.live, required this.onChanged});
-  final bool live;
-  final ValueChanged<bool> onChanged;
-  @override
-  Widget build(BuildContext context) {
-    Widget b(String t, bool v) => GestureDetector(
-          onTap: () => onChanged(v),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(color: live == v ? Colors.white : Colors.transparent, borderRadius: BorderRadius.circular(99)),
-            child: Text(t, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: live == v ? Colors.black : Colors.white70)),
-          ),
-        );
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(color: Colors.white.withValues(alpha: .1), borderRadius: BorderRadius.circular(99)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [b('حي', true), b('لقطة', false)]),
-    );
-  }
 }

@@ -6,6 +6,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/design/azm_tokens.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/router/route_names.dart';
+import '../../../shared/widgets/help_tips.dart';
+import '../../store_app/store_routes.dart';
 import '../../../core/security/auth_service.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../core/services/remote_config_service.dart';
@@ -13,8 +15,6 @@ import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/azm_list.dart';
 import '../../../shared/widgets/azm_screen.dart';
 import '../../backup/domain/backup_service.dart';
-import '../../reports/domain/export_service.dart';
-import '../../reports/providers/reports_provider.dart';
 
 /// AZM — الإعدادات
 ///
@@ -125,7 +125,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         tooltip: 'رجوع',
         onTap: () => context.canPop()
             ? context.pop()
-            : context.go(RouteNames.dashboardFull),
+            : context.go(StoreRoutes.home),
       ),
       slivers: [
         // ── ١ · الحساب ───────────────────────────────────────
@@ -148,33 +148,42 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
 
-        // ── ٢ · مساحة العمل ──────────────────────────────────
+        // ── ٢ · متجري ────────────────────────────────────────
         SliverToBoxAdapter(
           child: AzmSectionHeader(
-            title: 'مساحة العمل',
-            caption: 'الشركة التي تعمل فيها وما تشمله',
+            title: 'متجري',
+            caption: 'الباقة والفريق والدفع',
           ),
         ),
         SliverToBoxAdapter(
           child: AzmRowGroup(
             rows: [
               AzmNavRow(
-                title: 'إدارة الشركة',
-                subtitle: 'البيانات والأعضاء والأدوار',
-                icon: Icons.business_outlined,
-                onTap: () => context.push('/company/manage'),
-              ),
-              AzmNavRow(
-                title: 'الوحدات المفعّلة',
-                subtitle: 'ما يظهر من وحدات التطبيق وما يُخفى',
-                icon: Icons.widgets_outlined,
-                onTap: () => context.push('/settings/modules'),
-              ),
-              AzmNavRow(
-                title: 'الباقة والفوترة',
-                subtitle: 'باقتك الحالية وما تفتحه الترقية',
+                title: 'الباقة والاشتراك',
+                subtitle: 'باقتك الحالية والترقية والفواتير',
                 icon: Icons.workspace_premium_outlined,
-                onTap: () => context.push('/subscription/pricing'),
+                onTap: () => context.push(StoreRoutes.billing),
+              ),
+              AzmNavRow(
+                title: 'فريق المتجر',
+                subtitle: 'من يدير المتجر معك',
+                icon: Icons.groups_outlined,
+                onTap: () => context.push(StoreRoutes.team),
+              ),
+              AzmNavRow(
+                title: 'طرق الدفع',
+                subtitle: 'حسابات دفع اشتراكات RVIOS',
+                icon: Icons.account_balance_wallet_outlined,
+                onTap: () => context.push(StoreRoutes.pay),
+              ),
+              AzmNavRow(
+                title: 'إعادة الإرشادات',
+                subtitle: 'أظهر نوافذ التعليمات في كل شاشة من جديد',
+                icon: Icons.tips_and_updates_outlined,
+                onTap: () async {
+                  await HelpTips.resetAll();
+                  if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ستظهر الإرشادات من جديد')));
+                },
               ),
             ],
           ),
@@ -214,13 +223,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 enabled: _biometricAvailable,
                 onChanged: _toggleBiometric,
               ),
-              AzmNavRow(
-                title: 'السجلّ الأمني',
-                subtitle: 'من دخل ومتى ومن أين',
-                icon: Icons.shield_outlined,
-                showDivider: false,
-                onTap: () => context.push(RouteNames.securityLog),
-              ),
             ],
           ),
         ),
@@ -237,7 +239,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               AzmSwitchRow(
                 title: 'الإشعارات',
-                subtitle: 'تذكيرات الاجتماعات والمهام والمواعيد',
+                subtitle: 'تنبيهات الطلبات والروتين اليومي',
                 icon: Icons.notifications_none_rounded,
                 value: _notificationsEnabled,
                 onChanged: _toggleNotifications,
@@ -297,12 +299,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 subtitle: 'استرجع البيانات من ملف نسخة',
                 icon: Icons.restore_outlined,
                 onTap: _restoreBackup,
-              ),
-              AzmNavRow(
-                title: 'تصدير التقرير اليومي',
-                subtitle: 'ملف PDF بما جرى اليوم',
-                icon: Icons.picture_as_pdf_outlined,
-                onTap: _exportDailyReport,
               ),
               AzmNavRow(
                 title: 'حذف جميع البيانات',
@@ -388,15 +384,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _say('تمت الاستعادة — أعد تشغيل التطبيق');
     } catch (e) {
       _say('تعذّرت الاستعادة: $e');
-    }
-  }
-
-  Future<void> _exportDailyReport() async {
-    try {
-      final analytics = ref.read(reportsAnalyticsProvider);
-      await ref.read(exportServiceProvider).exportDailyReport(analytics);
-    } catch (e) {
-      _say('تعذّر تصدير التقرير: $e');
     }
   }
 

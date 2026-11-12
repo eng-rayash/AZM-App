@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../store_app/store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,8 +28,8 @@ class StorePlanScreen extends ConsumerWidget {
     final p = AzmPalette.of(context);
     return Scaffold(
       backgroundColor: p.ground,
-      appBar: AppBar(backgroundColor: p.ground, title: const Text('الباقة والاشتراك')),
-      body: StoreGate(builder: (context, store, _) => _PlanBody(store: store)),
+      appBar: AppBar(backgroundColor: p.ground, title: const Text('الباقة والاشتراك'), actions: const [HelpButton(StoreHelp.plan)]),
+      body: StoreGate(builder: (context, store, _) => WithHelp(tip: StoreHelp.plan, child: _PlanBody(store: store))),
     );
   }
 }

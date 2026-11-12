@@ -7,7 +7,6 @@ import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
 import '../../features/store_app/store_routes.dart';
 import 'azm_sidebar.dart';
-import 'dashboard_fab.dart';
 
 /// AZM — هيكل التطبيق
 ///
@@ -60,14 +59,8 @@ class AppShellScaffold extends StatelessWidget {
     _Tab(
       icon: Icons.business_center_outlined,
       activeIcon: Icons.business_center_rounded,
-      label: 'الأعمال',
+      label: 'أعمالي',
       path: RouteNames.businessFull,
-    ),
-    _Tab(
-      icon: Icons.wb_sunny_outlined,
-      activeIcon: Icons.wb_sunny_rounded,
-      label: 'اليوم',
-      path: RouteNames.dashboardFull,
     ),
   ];
 
@@ -115,7 +108,6 @@ class AppShellScaffold extends StatelessWidget {
         // الزرّ العائم على الضيّقة وحدها: على العريضة اللوح الجانبي ظاهر
         // دائمًا ومداخل الإنشاء فيه، فلا يزاحم المحتوى زرٌّ فوقه.
         // شاشات المتجر لها أزرارها (منتج جديد، تبديل المتجر) — لا زرّ عائم فوقها
-        floatingActionButton: wide || location.startsWith(StoreRoutes.home) ? null : _CreateFab(location: location),
         bottomNavigationBar: wide
             ? null
             : _AzmBottomNav(tabs: _tabs, currentPath: location, palette: p),
@@ -146,7 +138,7 @@ class _TopBar extends StatelessWidget {
   /// الشجرة قبلها كانت تسمّي «الذكاء» في الأسفل و«صحة الأعمال» في الأعلى
   /// لنفس الشاشة.
   String _title() {
-    if (location == RouteNames.dashboardFull) return AzmNav.home.label;
+    if (location == StoreRoutes.home) return AzmNav.home.label;
     for (final tab in AppShellScaffold._tabs) {
       if (location.startsWith(tab.path)) return tab.label;
     }
@@ -195,14 +187,9 @@ class _TopBar extends StatelessWidget {
                 ),
               ),
               _BarIcon(
-                icon: Icons.search_rounded,
-                tooltip: 'بحث',
-                onTap: () => context.push(RouteNames.globalSearch),
-              ),
-              _BarIcon(
                 icon: Icons.notifications_none_rounded,
                 tooltip: 'الإشعارات',
-                onTap: () => context.push(RouteNames.notificationCenter),
+                onTap: () => context.push(StoreRoutes.notifications),
               ),
               const SizedBox(width: AzmSpace.xs),
             ],
@@ -260,7 +247,7 @@ class _AzmBottomNav extends StatelessWidget {
   /// الرئيسية تطابق تمامًا، وما عداها يطابق البادئة فيبقى التبويب مضاءً
   /// داخل وجهاته الفرعية.
   bool _isActive(String path) {
-    if (path == RouteNames.dashboardFull || path == StoreRoutes.home) {
+    if (path == StoreRoutes.home) {
       return currentPath == path;
     }
     return currentPath.startsWith(path);
@@ -350,70 +337,6 @@ class _NavItem extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// زرّ الإنشاء — عائم وواعٍ بالسياق.
-///
-/// كان يجلس في منتصف الشريط السفلي يفتح قائمةً بأحد عشر خيارًا: تنقّلٌ
-/// مقنّع في هيئة إجراء، ويأكل خُمس عرض الشريط الذي صارت التبويبات
-/// الخمسة أولى به.
-///
-/// الآن ضغطةٌ واحدة تُنشئ ما يخصّ التبويب الحالي مباشرةً — مهمة في
-/// «التنفيذ»، فاتورة في «الأعمال»، موظفًا في «الفريق» — والضغطة
-/// المطوّلة تفتح القائمة الكاملة لمن أراد غير ذلك.
-class _CreateFab extends StatelessWidget {
-  const _CreateFab({required this.location});
-
-  final String location;
-
-  /// ما يُنشأ بالضغطة القصيرة في كل تبويب، وتسميته لقارئ الشاشة.
-  ///
-  /// `null` يعني أن التبويب لا كيان أساسيًّا له — فالزرّ يفتح القائمة
-  /// الكاملة بدل أن يخمّن.
-  (String, String)? _primary() {
-    if (location.startsWith(RouteNames.workFull)) {
-      return (RouteNames.taskCreate, 'مهمة جديدة');
-    }
-    if (location.startsWith(RouteNames.businessFull)) {
-      return (RouteNames.invoiceCreate, 'فاتورة جديدة');
-    }
-    if (location.startsWith(RouteNames.hrmFull)) {
-      return (RouteNames.employeeCreate, 'موظف جديد');
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final p = AzmPalette.of(context);
-    final primary = _primary();
-    final label = primary?.$2 ?? 'إنشاء';
-
-    return Semantics(
-      button: true,
-      label: label,
-      hint: 'اضغط مطوّلًا لكل خيارات الإنشاء',
-      child: Tooltip(
-        message: label,
-        child: GestureDetector(
-          onLongPress: () => DashboardFab.showQuickAddMenu(context),
-          child: FloatingActionButton(
-            onPressed: () => primary == null
-                ? DashboardFab.showQuickAddMenu(context)
-                : context.push(primary.$1),
-            backgroundColor: p.accent,
-            foregroundColor: p.onAccent,
-            elevation: 0,
-            highlightElevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AzmRadius.sm),
-            ),
-            child: const Icon(Icons.add_rounded, size: 26),
           ),
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../features/store_app/store_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -56,8 +58,8 @@ class _AzmSidebarState extends ConsumerState<AzmSidebar> {
   }
 
   bool _isActive(String route) {
-    if (route == RouteNames.dashboardFull) {
-      return widget.currentLocation == RouteNames.dashboardFull;
+    if (route == StoreRoutes.home) {
+      return widget.currentLocation == StoreRoutes.home;
     }
     return widget.currentLocation.startsWith(route);
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../store_app/store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/design/azm_tokens.dart';
 import '../../core/network/api_exception.dart';
@@ -13,6 +14,7 @@ import '../store_app/kit.dart';
 import '../store_app/store_api.dart';
 import '../store_app/store_gate.dart';
 import '../store_tools/store_tools_api.dart' show storefrontUrl;
+import 'live_store_frame.dart';
 import 'platform_api.dart';
 import 'platform_catalog.dart';
 import 'platform_widgets.dart';
@@ -30,8 +32,8 @@ class DesignStudioScreen extends ConsumerWidget {
     final p = AzmPalette.of(context);
     return Scaffold(
       backgroundColor: p.ground,
-      appBar: AppBar(backgroundColor: p.ground, title: const Text('تصميم المتجر')),
-      body: StoreGate(builder: (context, store, _) => _Studio(key: ValueKey(store.id), storeId: store.id)),
+      appBar: AppBar(backgroundColor: p.ground, title: const Text('تصميم المتجر'), actions: const [HelpButton(StoreHelp.design)]),
+      body: StoreGate(builder: (context, store, _) => WithHelp(tip: StoreHelp.design, child: _Studio(key: ValueKey(store.id), storeId: store.id))),
     );
   }
 }
@@ -48,8 +50,10 @@ const _swatches = [Color(0xFFC1272D), Color(0xFF1F3C88), Color(0xFF2F4A3A), Colo
 class _StudioState extends ConsumerState<_Studio> {
   Map<String, dynamic>? _s;
   String? _loadError;
-  final _web = WebViewController();
-  int _progress = 0;
+  PreviewDevice _device = PreviewDevice.phone;
+
+  /// يتغيّر مع كل حفظ فتُعاد المعاينة بلا نسخة مخزّنة
+  int _version = DateTime.now().millisecondsSinceEpoch;
   bool _busy = false;
   bool _expanded = false;
 
@@ -66,13 +70,6 @@ class _StudioState extends ConsumerState<_Studio> {
   @override
   void initState() {
     super.initState();
-    _web
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (v) => mounted ? setState(() => _progress = v) : null,
-        onNavigationRequest: (r) => r.url.contains('rvios') ? NavigationDecision.navigate : NavigationDecision.prevent,
-      ));
     _load();
   }
 
@@ -115,8 +112,7 @@ class _StudioState extends ConsumerState<_Studio> {
 
   void _reloadPreview() {
     if (_slug.isEmpty || _pending) return;
-    // معامل يتغيّر مع كل حفظ — لا تُعرض نسخة مخزّنة قديمة
-    _web.loadRequest(Uri.parse('$storefrontUrl/s/$_slug?v=${DateTime.now().millisecondsSinceEpoch}'));
+    if (mounted) setState(() => _version = DateTime.now().millisecondsSinceEpoch);
   }
 
   void _snack(String m, {bool error = false}) =>
@@ -190,7 +186,9 @@ class _StudioState extends ConsumerState<_Studio> {
             Row(children: [
               const Icon(Icons.circle, size: 9, color: Color(0xFF34D399)),
               const SizedBox(width: 6),
-              Expanded(child: Text(_pending ? 'يظهر بعد التفعيل' : '$_slug.rvios.store · معاينة حية', textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white70, fontSize: 12))),
+              Expanded(child: Text(_pending ? 'يظهر بعد التفعيل' : 'معاينة حية', style: const TextStyle(color: Colors.white70, fontSize: 12))),
+              DeviceSwitch(value: _device, onChanged: (d) => setState(() => _device = d)),
+              const SizedBox(width: 4),
               _MiniBtn(icon: Icons.refresh_rounded, onTap: _reloadPreview),
               _MiniBtn(icon: _expanded ? Icons.close_fullscreen_rounded : Icons.open_in_full_rounded, onTap: () => setState(() => _expanded = !_expanded)),
               _MiniBtn(icon: Icons.open_in_new_rounded, onTap: () => launchUrl(Uri.parse('$storefrontUrl/s/$_slug'), mode: LaunchMode.externalApplication)),
@@ -198,21 +196,25 @@ class _StudioState extends ConsumerState<_Studio> {
             const SizedBox(height: 8),
             Expanded(
               child: Center(
-                child: AspectRatio(
-                  aspectRatio: 390 / 780,
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(26), border: Border.all(color: Colors.white24)),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(21),
-                      child: Stack(fit: StackFit.expand, children: [
-                        TemplateShot(tpl, frame: false, radius: 21),
-                        if (!_pending) AnimatedOpacity(opacity: _progress > 55 ? 1 : 0, duration: const Duration(milliseconds: 350), child: WebViewWidget(controller: _web)),
-                        if (!_pending && _progress < 100) Align(alignment: Alignment.topCenter, child: LinearProgressIndicator(value: _progress / 100, minHeight: 3, color: Rv.gold, backgroundColor: Colors.transparent)),
-                      ]),
-                    ),
-                  ),
-                ),
+                child: _pending
+                    ? AspectRatio(aspectRatio: 390 / 780, child: TemplateShot(tpl, radius: 26))
+                    : _device == PreviewDevice.phone
+                        ? AspectRatio(
+                            aspectRatio: 390 / 780,
+                            child: LiveStoreFrame(
+                              key: ValueKey('p$_version'),
+                              url: '$storefrontUrl/s/$_slug?v=$_version',
+                              device: PreviewDevice.phone,
+                              placeholder: TemplateShot(tpl, frame: false, radius: 26),
+                            ),
+                          )
+                        : LiveStoreFrame(
+                            key: ValueKey('d$_version'),
+                            url: '$storefrontUrl/s/$_slug?v=$_version',
+                            device: PreviewDevice.desktop,
+                            address: '$_slug.rvios.store',
+                            placeholder: Image.network(tpl.shotDesk, fit: BoxFit.cover, alignment: Alignment.topCenter, errorBuilder: (_, _, _) => const SizedBox()),
+                          ),
               ),
             ),
           ]),

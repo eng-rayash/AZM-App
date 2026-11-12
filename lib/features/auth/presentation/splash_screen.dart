@@ -144,8 +144,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     } else if (isPinEnabled) {
       context.go(RouteNames.lock);
     } else {
-      // PIN disabled — المتجر أولًا لمن دخل بحساب، و«اليوم» للاستخدام المحلي
-      context.go(isLoggedIn ? StoreRoutes.home : RouteNames.dashboardFull);
+      // PIN disabled — إلى لوحة المتجر
+      context.go(StoreRoutes.home);
     }
   }
 

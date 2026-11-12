@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/design/azm_tokens.dart';
@@ -13,10 +15,10 @@ class StoreOrdersScreen extends ConsumerWidget {
   const StoreOrdersScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) => StoreGate(
-        builder: (context, store, all) => Column(children: [
-          _StoreBar(title: 'الطلبات', subtitle: store.name, onSwitch: all.length > 1 ? () => pickStore(context, ref, all, store.id) : null),
+        builder: (context, store, all) => WithHelp(tip: StoreHelp.orders, child: Column(children: [
+          _StoreBar(title: 'الطلبات', subtitle: store.name, tip: StoreHelp.orders, onSwitch: all.length > 1 ? () => pickStore(context, ref, all, store.id) : null),
           Expanded(child: StoreOrdersTab(key: ValueKey('o${store.id}'), storeId: store.id, store: store)),
-        ]),
+        ])),
       );
 }
 
@@ -25,15 +27,16 @@ class StoreProductsScreen extends ConsumerWidget {
   const StoreProductsScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) => StoreGate(
-        builder: (context, store, all) => Column(children: [
-          _StoreBar(title: 'المنتجات', subtitle: store.name, onSwitch: all.length > 1 ? () => pickStore(context, ref, all, store.id) : null),
+        builder: (context, store, all) => WithHelp(tip: StoreHelp.products, child: Column(children: [
+          _StoreBar(title: 'المنتجات', subtitle: store.name, tip: StoreHelp.products, onSwitch: all.length > 1 ? () => pickStore(context, ref, all, store.id) : null),
           Expanded(child: StoreProductsTab(key: ValueKey('p${store.id}'), storeId: store.id, store: store)),
-        ]),
+        ])),
       );
 }
 
 class _StoreBar extends StatelessWidget {
-  const _StoreBar({required this.title, required this.subtitle, this.onSwitch});
+  const _StoreBar({required this.title, required this.subtitle, required this.tip, this.onSwitch});
+  final HelpTip tip;
   final String title;
   final String subtitle;
   final VoidCallback? onSwitch;
@@ -49,6 +52,7 @@ class _StoreBar extends StatelessWidget {
             Text(subtitle, style: AppTypography.caption.copyWith(color: p.inkFaint)),
           ]),
         ),
+        HelpButton(tip, color: p.inkMuted),
         if (onSwitch != null)
           OutlinedButton.icon(
             onPressed: onSwitch,

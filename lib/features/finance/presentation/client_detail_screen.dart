@@ -61,7 +61,6 @@ class _ClientDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tp = isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary;
     final fmt = NumberFormat('#,##0.00');
 
     final totalInvoiced = invoices.fold<double>(0, (s, i) => s + i.total);
@@ -197,35 +196,6 @@ class _ClientDetailBody extends StatelessWidget {
                 ),
 
                 // ── Invoices List ─────────────────────────────────
-                if (invoices.isNotEmpty) ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('فواتير العميل',
-                            style: AppTypography.h4.copyWith(color: tp)),
-                        TextButton.icon(
-                          onPressed: () => context.push(
-                              '${RouteNames.invoiceCreate}?clientId=${client.id}'),
-                          icon: const Icon(Icons.add_rounded, size: 16),
-                          label: const Text('فاتورة جديدة',
-                              style: TextStyle(fontFamily: 'Panorama')),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ...invoices.take(5).map((inv) => _InvoiceTile(
-                      invoice: inv, isDark: isDark, fmt: fmt)),
-                  if (invoices.length > 5)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      child: TextButton(
-                        onPressed: () => context.push(RouteNames.invoicesList),
-                        child: Text('عرض كل الفواتير (${invoices.length})',
-                            style: const TextStyle(fontFamily: 'Panorama')),
-                      ),
-                    ),
-                ],
 
                 // ── Related Entities ───────────────────────────────
                 const SizedBox(height: 8),
@@ -300,55 +270,4 @@ class _InfoRow extends StatelessWidget {
       ])),
     ]),
   );
-}
-
-class _InvoiceTile extends StatelessWidget {
-  const _InvoiceTile({
-    required this.invoice, required this.isDark, required this.fmt,
-  });
-  final Invoice invoice;
-  final bool isDark;
-  final NumberFormat fmt;
-
-  @override
-  Widget build(BuildContext context) {
-    final statusColor = invoice.status == 1
-        ? NeuColors.success
-        : invoice.status == 2
-            ? NeuColors.danger
-            : NeuColors.warning;
-
-    return NeuCard(
-      isDark: isDark, radius: AzmRadius.sm,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Row(children: [
-        Container(
-          width: 8, height: 8,
-          decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 10),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(invoice.invoiceNumber ?? 'فاتورة', style: AppTypography.bodySmall.copyWith(
-              color: isDark ? NeuColors.textPrimaryDark : NeuColors.textPrimary,
-              fontWeight: FontWeight.w600)),
-          if (invoice.dueDate != null)
-            Text('استحقاق: ${invoice.dueDate}',
-                style: AppTypography.caption.copyWith(
-                    color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),
-        ])),
-        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(fmt.format(invoice.total),
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
-                  color: isDark ? NeuColors.goldAccent : NeuColors.navyDeep,
-                  fontFamily: 'Panorama')),
-          Text(invoice.currency, style: AppTypography.caption.copyWith(
-              color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),
-        ]),
-        const SizedBox(width: 8),
-        Icon(Icons.arrow_forward_ios_rounded, size: 14,
-            color: isDark ? NeuColors.textHintDark : NeuColors.textHint),
-      ]),
-    );
-  }
 }

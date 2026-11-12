@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../store_app/store_help.dart';
+import '../../shared/widgets/help_tips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -189,7 +191,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
       },
       child: Scaffold(
         backgroundColor: p.ground,
-        body: SafeArea(
+        body: WithHelp(tip: StoreHelp.wizard, child: SafeArea(
           bottom: false,
           child: Column(children: [
             _Header(step: _step, onClose: () => Navigator.of(context).maybePop(), onBack: _step > 0 ? () => _goto(_step - 1) : null, onTap: (i) => i < _step ? _goto(i) : null),
@@ -226,7 +228,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
                         ),
             ),
           ]),
-        ),
+        )),
       ),
     );
   }
