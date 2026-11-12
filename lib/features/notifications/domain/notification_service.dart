@@ -240,7 +240,7 @@ class NotificationService {
           AndroidNotificationDetails(
         'mudiri_main_channel',
         'Mudiri Main Channel',
-        channelDescription: 'تنبيهات تطبيق عزم',
+        channelDescription: 'تنبيهات تطبيق RVIOS',
         importance: Importance.max,
         priority: Priority.high,
       );

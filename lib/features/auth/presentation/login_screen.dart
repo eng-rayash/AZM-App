@@ -99,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Text(
                       code
                           ? 'أرسلنا رمزًا إلى ${notifier.pendingEmail ?? 'بريدك'}. اكتبه لإكمال الدخول.'
-                          : 'ادخل بحساب عزم سمارت نفسه: الطلبات والمنتجات والعملاء والتصميم وأعمالك كلها في مكان واحد.',
+                          : 'ادخل بحسابك في RVIOS — حساب لوحة التحكم نفسه: الطلبات والمنتجات والعملاء والتصميم وأعمالك كلها في مكان واحد.',
                       style: TextStyle(color: Colors.white.withValues(alpha: .82), height: 1.6),
                     ),
                   ]),

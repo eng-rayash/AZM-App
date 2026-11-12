@@ -140,7 +140,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'يتوفر إصدار جديد من تطبيق "عزم". يرجى التحديث لضمان الحصول على أحدث الميزات وتحسينات الأمان والأداء.',
+                    'يتوفر إصدار جديد من تطبيق "RVIOS". يرجى التحديث لضمان الحصول على أحدث الميزات وتحسينات الأمان والأداء.',
                     style: isDark ? AppTypography.bodyDark : AppTypography.body,
                     textAlign: TextAlign.center,
                   ),

@@ -194,7 +194,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Image.asset(
-                            'assets/brand/azmsmart_mark.png',
+                            'assets/brand/rvios_mark.png',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -204,7 +204,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
                     // العلامة اللاتينية — Yapari Bold
                     const Text(
-                      'AZM',
+                      'RVIOS',
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamilyYapari,
                         fontSize: 38,
@@ -216,7 +216,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
                     // العلامة العربية — RTL Maghfira
                     const Text(
-                      'عزم',
+                      'ريفيوس',
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamilyRTLMaghfira,
                         fontSize: 36,

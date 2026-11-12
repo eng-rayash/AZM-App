@@ -37,7 +37,7 @@ class AppLogo extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset('assets/brand/azmsmart_mark.png', height: size, fit: BoxFit.contain),
+          Image.asset('assets/brand/rvios_mark.png', height: size, fit: BoxFit.contain),
           SizedBox(width: size * 0.25),
           _buildTextLogo(),
         ],
@@ -55,7 +55,7 @@ class AppLogo extends StatelessWidget {
 
           // English Title (Yapari Bold)
           Text(
-            'عزم',
+            'ريفيوس',
             style: TextStyle(
               fontFamily: AppTypography.fontFamilyRTLMaghfira,
               fontSize: size * 0.46,
@@ -64,7 +64,7 @@ class AppLogo extends StatelessWidget {
           ),
 
           Text(
-            'AZM',
+            'RVIOS',
             style: TextStyle(
               fontFamily: AppTypography.fontFamilyYapari,
               fontSize: size * 0.3,
@@ -99,7 +99,7 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'عزم',
+          'ريفيوس',
           style: TextStyle(
             fontFamily: AppTypography.fontFamilyRTLMaghfira,
             fontSize: size * 0.5,
@@ -107,7 +107,7 @@ class AppLogo extends StatelessWidget {
           ),
         ),
         Text(
-          'AZM',
+          'RVIOS',
           style: TextStyle(
             fontFamily: AppTypography.fontFamilyYapari,
             fontSize: size * 0.32,
@@ -153,7 +153,7 @@ class AppLogoMark extends StatelessWidget {
         ],
       ),
       child: Image.asset(
-        'assets/brand/azmsmart_icon.png',
+        'assets/brand/rvios_icon.png',
         fit: BoxFit.contain,
         filterQuality: FilterQuality.medium,
       ),

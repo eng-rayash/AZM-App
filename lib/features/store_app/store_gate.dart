@@ -27,7 +27,7 @@ class StoreGate extends ConsumerWidget {
       return RvEmpty(
         icon: Icons.storefront_rounded,
         title: 'متجرك على RVIOS',
-        body: 'ادخل بحساب عزم سمارت نفسه لتدير متجرك: الطلبات والمنتجات والعملاء والتصميم، من جوالك.',
+        body: 'ادخل بحسابك في RVIOS لتدير متجرك: الطلبات والمنتجات والعملاء والتصميم، من جوالك.',
         action: 'تسجيل الدخول',
         onAction: () => context.go(RouteNames.login),
       );

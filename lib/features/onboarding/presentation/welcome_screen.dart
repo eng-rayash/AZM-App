@@ -62,9 +62,9 @@ class WelcomeScreen extends ConsumerWidget {
               // 1. ابدأ مجاناً
               _WelcomeButton(
                 id: 'btn_start_free',
-                label: 'ابدأ مجاناً',
-                sublabel: 'حساب شخصي • مجاني',
-                icon: Icons.person_outline_rounded,
+                label: 'افتح متجرك مجاناً',
+                sublabel: 'حساب جديد • متجر جاهز في دقائق',
+                icon: Icons.storefront_outlined,
                 isPrimary: true,
                 onTap: () => context.push('/onboarding/register-personal'),
               ),
@@ -75,7 +75,7 @@ class WelcomeScreen extends ConsumerWidget {
               _WelcomeButton(
                 id: 'btn_create_company',
                 label: 'إنشاء حساب شركة',
-                sublabel: 'للشركات والمؤسسات',
+                sublabel: 'للشركات وأصحاب الفروع والفِرق',
                 icon: Icons.business_outlined,
                 isPrimary: false,
                 onTap: () => context.push('/onboarding/create-company'),
@@ -158,7 +158,7 @@ class _AzmLogo extends StatelessWidget {
         const SizedBox(height: 18),
 
         Text(
-          'عزم',
+          'ريفيوس',
           style: AppTypography.wordmarkAr.copyWith(
             fontSize: 40,
             color: isDark ? NeuColors.textPrimaryDark : NeuColors.primary,
@@ -166,7 +166,7 @@ class _AzmLogo extends StatelessWidget {
         ),
 
         Text(
-          'AZM',
+          'RVIOS',
           style: AppTypography.wordmarkEn.copyWith(
             fontSize: 20,
             color: isDark ? NeuColors.textHintDark : NeuColors.textHint,

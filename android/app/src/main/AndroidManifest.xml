@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <application
-        android:label="عزم"
+        android:label="RVIOS"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:networkSecurityConfig="@xml/network_security_config">

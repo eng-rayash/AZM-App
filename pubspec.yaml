@@ -78,6 +78,8 @@ flutter:
     # علامة عزم سمارت — المصدر نفسه الذي تستعمله منصة الويب (public/brand)
     - assets/brand/azmsmart_mark.png
     - assets/brand/azmsmart_icon.png
+    - assets/brand/rvios_icon.png
+    - assets/brand/rvios_mark.png
 
   fonts:
     # خط ثمانية — النص العربي العام (متن وواجهة).
@@ -102,12 +104,12 @@ flutter:
 
 
 flutter_launcher_icons:
-  # أيقونة عزم سمارت نفسها على كل المنصات: العلامة الكريمية فوق الأحمر
+  # أيقونة RVIOS: علامة RV الكريمية فوق الأحمر
   # (#C1272D)، كما في أيقونة منصة الويب. تُولَّد بـ:
   #   dart run flutter_launcher_icons
   image_path: "assets/brand/launcher_icon.png"
   android: "launcher_icon"
-  adaptive_icon_background: "#C1272D"
+  adaptive_icon_background: "#A3272D"
   adaptive_icon_foreground: "assets/brand/launcher_foreground.png"
   ios: true
   remove_alpha_ios: true

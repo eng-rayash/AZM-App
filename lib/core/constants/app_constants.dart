@@ -12,22 +12,22 @@ class AppConstants {
   // المستخدم؛ واسم الشركة يظهر في الحقوق والوثائق القانونية وحدها.
 
   /// اسم المنتج كما يُعرض للمستخدم
-  static const String appName = 'عزم';
+  static const String appName = 'RVIOS';
 
-  static const String appNameAr = 'عزم';
-  static const String appNameEn = 'AZM';
+  static const String appNameAr = 'ريفيوس';
+  static const String appNameEn = 'RVIOS';
 
   /// الشركة المالكة — المظلة، لا المنتج
   static const String companyName = 'RVIOS Technologies';
 
   static const String appVersion = '1.0.0';
 
-  /// الفلسفة الداخلية للمنتج — دورة: فهم ← قرار ← تنفيذ
-  static const String appDescription = 'Understand. Decide. Execute.';
-  static const String appDescriptionAr = 'نظام تشغيل الأعمال الذكي';
+  /// وصف التطبيق في شاشة الترحيب
+  static const String appDescription = 'Your store and business in one app.';
+  static const String appDescriptionAr = 'أدِر متجرك وطلباتك وعملاءك وأعمالك من جوالك';
 
   /// سطر العلامة الكامل
-  static const String appTagline = 'افهم عملك · احسم ما يهم · نفّذ بعزم';
+  static const String appTagline = 'متجرك وأعمالك في تطبيق واحد';
 
   /// النطاق والدعم — بنية RVIOS Technologies القائمة.
   /// نطاق خاص بـعزم قرارُ منتج لم يُحسم بعد؛ حتى ذلك الحين تبقى هذه
