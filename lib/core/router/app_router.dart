@@ -19,6 +19,10 @@ import '../../features/archive/presentation/archive_list_screen.dart';
 import '../../features/archive/presentation/create_archive_screen.dart';
 import '../../features/archive/presentation/archive_pdf_viewer_screen.dart';
 import '../../features/auth/presentation/change_pin_page.dart';
+import '../../features/store_app/store_home_screen.dart';
+import '../../features/store_app/store_modules.dart';
+import '../../features/store_app/store_routes.dart';
+import '../../features/store_app/store_tabs.dart';
 import '../../features/auth/presentation/lock_screen.dart';
 import '../../features/auth/presentation/pin_setup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
@@ -219,7 +223,11 @@ class AppRouter {
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => AppShellScaffold(child: child),
         routes: [
-          // تبويب ١ — الرئيسية
+          // ── المتجر أولًا: تبويبات تطبيق عزم للتاجر ──
+          GoRoute(path: StoreRoutes.home, pageBuilder: (context, state) => const NoTransitionPage(child: StoreHomeScreen())),
+          GoRoute(path: StoreRoutes.orders, pageBuilder: (context, state) => const NoTransitionPage(child: StoreOrdersScreen())),
+          GoRoute(path: StoreRoutes.products, pageBuilder: (context, state) => const NoTransitionPage(child: StoreProductsScreen())),
+          // تبويب — اليوم (أعمالي)
           GoRoute(
             path: RouteNames.dashboardFull,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -290,6 +298,15 @@ class AppRouter {
           ),
         ],
       ),
+
+      // ─── وحدات المتجر — تُفتح فوق التبويبات ─────────────────────
+      GoRoute(path: StoreRoutes.customers, builder: (context, state) => const StoreCustomersScreen()),
+      GoRoute(path: StoreRoutes.reviews, builder: (context, state) => const StoreReviewsScreen()),
+      GoRoute(path: StoreRoutes.zones, builder: (context, state) => const StoreZonesScreen()),
+      GoRoute(path: StoreRoutes.analytics, builder: (context, state) => const StoreAnalyticsScreen()),
+      GoRoute(path: StoreRoutes.billing, builder: (context, state) => const StoreBillingScreen()),
+      GoRoute(path: StoreRoutes.team, builder: (context, state) => const StoreTeamScreen()),
+      GoRoute(path: StoreRoutes.notifications, builder: (context, state) => const StoreNotificationsScreen()),
 
       // ─── Follow-ups Routes ────────────────────────────────────────
       GoRoute(

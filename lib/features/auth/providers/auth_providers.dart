@@ -95,9 +95,45 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
       final session = await _repository.signIn(email: email, password: password);
       state = AuthState.authenticated(session);
+    } on VerificationRequired catch (v) {
+      pendingEmail = v.email;
+      state = const AuthState.emailVerificationPending();
     } catch (e) {
       state = AuthState.error(_message(e));
     }
+  }
+
+  /// البريد الذي أُرسل إليه رمز التحقق (بعد دخول أو تسجيل)
+  String? pendingEmail;
+
+  /// يكمل الدخول برمز البريد.
+  Future<void> verifyCode(String code) async {
+    final email = pendingEmail;
+    if (email == null) return;
+    state = const AuthState.loading();
+    try {
+      final session = await _repository.verifyCode(email: email, code: code);
+      pendingEmail = null;
+      state = AuthState.authenticated(session);
+    } catch (e) {
+      state = AuthState.error(_message(e));
+      // يبقى على خطوة الرمز: الخطأ رسالة لا عودة لكلمة المرور
+      state = const AuthState.emailVerificationPending();
+      lastError = _message(e);
+    }
+  }
+
+  /// آخر خطأ في خطوة الرمز — تعرضه الشاشة تحت الحقل
+  String? lastError;
+
+  Future<void> resendCode() async {
+    if (pendingEmail != null) await _repository.resendCode(pendingEmail!);
+  }
+
+  void cancelVerification() {
+    pendingEmail = null;
+    lastError = null;
+    state = const AuthState.unauthenticated();
   }
 
   /// حساب جديد وشركته — الخادم ينشئهما معًا، والمسجِّل مالكها.

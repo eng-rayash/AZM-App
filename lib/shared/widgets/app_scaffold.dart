@@ -5,6 +5,7 @@ import '../../core/design/azm_tokens.dart';
 import '../../core/navigation/azm_nav_model.dart';
 import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
+import '../../features/store_app/store_routes.dart';
 import 'azm_sidebar.dart';
 import 'dashboard_fab.dart';
 
@@ -34,18 +35,27 @@ class AppShellScaffold extends StatelessWidget {
   /// «العمل» و«الأعمال» يفرّق بينهما حرف ومعناهما مختلف تمامًا؛ وأكبر
   /// مجموعتين (المالية ١٠ وجهات، والفريق ١٢) بلا تبويب أصلًا؛ و«الذكاء»
   /// اسمٌ يَعِد بما لا يُسلَّم — فتحته تقارير.
+  /// عزم للتاجر: المتجر أولًا (المتجر · الطلبات · المنتجات)، ثم وحدات
+  /// الأعمال التي تساعده على إدارة عمله (الأعمال · اليوم). بقية الوحدات في
+  /// الشريط الجانبي.
   static const _tabs = <_Tab>[
     _Tab(
-      icon: Icons.wb_sunny_outlined,
-      activeIcon: Icons.wb_sunny_rounded,
-      label: 'اليوم',
-      path: RouteNames.dashboardFull,
+      icon: Icons.storefront_outlined,
+      activeIcon: Icons.storefront_rounded,
+      label: 'المتجر',
+      path: StoreRoutes.home,
     ),
     _Tab(
-      icon: Icons.checklist_outlined,
-      activeIcon: Icons.checklist_rounded,
-      label: 'التنفيذ',
-      path: RouteNames.workFull,
+      icon: Icons.receipt_long_outlined,
+      activeIcon: Icons.receipt_long_rounded,
+      label: 'الطلبات',
+      path: StoreRoutes.orders,
+    ),
+    _Tab(
+      icon: Icons.inventory_2_outlined,
+      activeIcon: Icons.inventory_2_rounded,
+      label: 'المنتجات',
+      path: StoreRoutes.products,
     ),
     _Tab(
       icon: Icons.business_center_outlined,
@@ -54,16 +64,10 @@ class AppShellScaffold extends StatelessWidget {
       path: RouteNames.businessFull,
     ),
     _Tab(
-      icon: Icons.groups_outlined,
-      activeIcon: Icons.groups_rounded,
-      label: 'الفريق',
-      path: RouteNames.hrmFull,
-    ),
-    _Tab(
-      icon: Icons.handyman_outlined,
-      activeIcon: Icons.handyman_rounded,
-      label: 'أدوات',
-      path: RouteNames.toolsFull,
+      icon: Icons.wb_sunny_outlined,
+      activeIcon: Icons.wb_sunny_rounded,
+      label: 'اليوم',
+      path: RouteNames.dashboardFull,
     ),
   ];
 
@@ -74,11 +78,11 @@ class AppShellScaffold extends StatelessWidget {
     final wide = AzmBreakpoint.hasSidebar(context);
 
     return PopScope(
-      canPop: location == RouteNames.dashboardFull,
+      canPop: location == StoreRoutes.home,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        if (location != RouteNames.dashboardFull) {
-          context.go(RouteNames.dashboardFull);
+        if (location != StoreRoutes.home) {
+          context.go(StoreRoutes.home);
         }
       },
       child: Scaffold(
@@ -110,7 +114,8 @@ class AppShellScaffold extends StatelessWidget {
               ),
         // الزرّ العائم على الضيّقة وحدها: على العريضة اللوح الجانبي ظاهر
         // دائمًا ومداخل الإنشاء فيه، فلا يزاحم المحتوى زرٌّ فوقه.
-        floatingActionButton: wide ? null : _CreateFab(location: location),
+        // شاشات المتجر لها أزرارها (منتج جديد، تبديل المتجر) — لا زرّ عائم فوقها
+        floatingActionButton: wide || location.startsWith(StoreRoutes.home) ? null : _CreateFab(location: location),
         bottomNavigationBar: wide
             ? null
             : _AzmBottomNav(tabs: _tabs, currentPath: location, palette: p),
@@ -255,8 +260,8 @@ class _AzmBottomNav extends StatelessWidget {
   /// الرئيسية تطابق تمامًا، وما عداها يطابق البادئة فيبقى التبويب مضاءً
   /// داخل وجهاته الفرعية.
   bool _isActive(String path) {
-    if (path == RouteNames.dashboardFull) {
-      return currentPath == RouteNames.dashboardFull;
+    if (path == RouteNames.dashboardFull || path == StoreRoutes.home) {
+      return currentPath == path;
     }
     return currentPath.startsWith(path);
   }

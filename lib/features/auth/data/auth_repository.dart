@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/api/api_client.dart';
+import '../../../core/network/auth_token_store.dart';
 
 /// حساب المستخدم في النظام الموحّد — نفسه الذي يدخل به منصة عزم سمارت على الويب.
 class AzmAccount {
@@ -139,6 +140,15 @@ class AuthRepository {
     return _open(r);
   }
 
+  /// رمز البريد بعد الدخول أو التسجيل — هنا تصدر الجلسة.
+  Future<AzmSession> verifyCode({required String email, required String code}) async {
+    final r = await _api.post('/auth/verify', {'email': email, 'code': code.trim()});
+    return _open(r);
+  }
+
+  /// إعادة إرسال رمز البريد.
+  Future<void> resendCode(String email) => _api.post('/auth/verify/resend', {'email': email});
+
   /// حساب جديد وشركته معًا — كما في التسجيل من الويب.
   Future<AzmSession> signUp({
     required String email,
@@ -159,6 +169,7 @@ class AuthRepository {
   Future<AzmSession> switchCompany(String companyId) async {
     final r = await _api.post('/auth/switch', {'companyId': companyId});
     await _api.tokens.write(r['accessToken'] as String);
+    await AuthTokenStore().save(token: r['accessToken'] as String, companyId: companyId);
     final session = await restore();
     if (session == null) throw const ApiException('تعذّر فتح الشركة المختارة.');
     return session;
@@ -167,6 +178,7 @@ class AuthRepository {
   Future<void> signOut() async {
     await setGuestMode(false);
     await _api.tokens.clear();
+    await AuthTokenStore().clear();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_sessionKey);
   }
@@ -197,7 +209,15 @@ class AuthRepository {
   }
 
   Future<AzmSession> _open(Map<String, dynamic> r, {bool ownerOfNewCompany = false}) async {
+    if (r['verificationRequired'] == true) {
+      throw VerificationRequired('${r['email'] ?? ''}', sent: r['sent'] == true);
+    }
     await _api.tokens.write(r['accessToken'] as String);
+    // عميلا الشبكة (المتجر والأدوات) يقرآن مخزن الجلسة الآخر — رمز واحد للتطبيق كله
+    await AuthTokenStore().save(
+      token: r['accessToken'] as String,
+      companyId: '${(r['company'] as Map?)?['id'] ?? ''}',
+    );
     await setGuestMode(false);
     final company = AzmCompany.fromJson(r['company'] as Map<String, dynamic>);
     final companies = (r['companies'] as List?)
@@ -216,4 +236,14 @@ class AuthRepository {
     await _remember(session);
     return session;
   }
+}
+
+
+/// كلمة المرور صحيحة وبقي رمز البريد — لا جلسة قبله.
+class VerificationRequired implements Exception {
+  const VerificationRequired(this.email, {this.sent = true});
+  final String email;
+  final bool sent;
+  @override
+  String toString() => 'أرسلنا رمز تحقق إلى $email';
 }

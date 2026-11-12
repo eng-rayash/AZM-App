@@ -10,6 +10,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/neu_colors.dart';
 import '../providers/auth_providers.dart';
 import '../../../core/services/remote_config_service.dart';
+import '../../store_app/store_routes.dart';
 
 /// AZM Splash Screen — app entry point.
 ///
@@ -141,8 +142,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     } else if (isPinEnabled) {
       context.go(RouteNames.lock);
     } else {
-      // PIN disabled — go directly to home
-      context.go(RouteNames.dashboardFull);
+      // PIN disabled — المتجر أولًا لمن دخل بحساب، و«اليوم» للاستخدام المحلي
+      context.go(isLoggedIn ? StoreRoutes.home : RouteNames.dashboardFull);
     }
   }
 
