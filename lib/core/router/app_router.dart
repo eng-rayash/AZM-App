@@ -99,6 +99,10 @@ import '../../features/finance/presentation/finance_reports_screen.dart';
 
 // ── RVIOS Onboarding ───────────────────────────────────────────────────
 import '../../features/onboarding/presentation/welcome_screen.dart';
+import '../../features/store_platform/design_studio_screen.dart';
+import '../../features/store_platform/payment_methods_screen.dart';
+import '../../features/store_platform/store_plan_screen.dart';
+import '../../features/store_platform/store_templates_screen.dart';
 import '../../features/onboarding/presentation/create_company_wizard.dart';
 import '../../features/onboarding/presentation/join_company_screen.dart';
 import '../../features/company/presentation/company_management_screen.dart';
@@ -304,7 +308,10 @@ class AppRouter {
       GoRoute(path: StoreRoutes.reviews, builder: (context, state) => const StoreReviewsScreen()),
       GoRoute(path: StoreRoutes.zones, builder: (context, state) => const StoreZonesScreen()),
       GoRoute(path: StoreRoutes.analytics, builder: (context, state) => const StoreAnalyticsScreen()),
-      GoRoute(path: StoreRoutes.billing, builder: (context, state) => const StoreBillingScreen()),
+      GoRoute(path: StoreRoutes.billing, builder: (context, state) => const StorePlanScreen()),
+      GoRoute(path: StoreRoutes.templates, builder: (context, state) => const StoreTemplatesScreen()),
+      GoRoute(path: StoreRoutes.design, builder: (context, state) => const DesignStudioScreen()),
+      GoRoute(path: StoreRoutes.pay, builder: (context, state) => const PaymentMethodsScreen()),
       GoRoute(path: StoreRoutes.team, builder: (context, state) => const StoreTeamScreen()),
       GoRoute(path: StoreRoutes.notifications, builder: (context, state) => const StoreNotificationsScreen()),
 

@@ -10,10 +10,9 @@ import '../../../shared/widgets/app_logo.dart';
 /// RVIOS — Welcome Screen
 ///
 /// الشاشة الأولى التي يراها المستخدم الجديد.
-/// تعرض هوية RVIOS وثلاثة خيارات:
-///   1. ابدأ مجاناً (Free Personal)
-///   2. أنا موظف في شركة (Join Company)
-///   3. لدي حساب (Login)
+/// تعرض هوية RVIOS وخيارين فقط:
+///   1. افتح متجرك مجاناً — حساب جديد ثم معالج المتجر
+///   2. لدي حساب — تسجيل الدخول
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
@@ -59,7 +58,7 @@ class WelcomeScreen extends ConsumerWidget {
 
               // ── Action Buttons ───────────────────────────────────
 
-              // 1. ابدأ مجاناً
+              // افتح متجرك — حساب جديد ثم معالج المتجر مباشرة
               _WelcomeButton(
                 id: 'btn_start_free',
                 label: 'افتح متجرك مجاناً',
@@ -71,54 +70,34 @@ class WelcomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 12),
 
-              // 2. إنشاء حساب شركة
+              // لدي حساب
               _WelcomeButton(
-                id: 'btn_create_company',
-                label: 'إنشاء حساب شركة',
-                sublabel: 'للشركات وأصحاب الفروع والفِرق',
-                icon: Icons.business_outlined,
+                id: 'btn_login',
+                label: 'لدي حساب — تسجيل الدخول',
+                sublabel: 'ادخل إلى متجرك وأعمالك',
+                icon: Icons.login_rounded,
                 isPrimary: false,
-                onTap: () => context.push('/onboarding/create-company'),
+                onTap: () => context.go('/login'),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
-              // 3. أنا موظف في شركة
-              _WelcomeButton(
-                id: 'btn_join_company',
-                label: 'أنا موظف في شركة',
-                sublabel: 'تسجيل دخول بكود الشركة',
-                icon: Icons.badge_outlined,
-                isPrimary: false,
-                onTap: () => context.push('/onboarding/join-company'),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Login Link ─────────────────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              // ميزات قصيرة تطمئن قبل البدء
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 14,
+                runSpacing: 6,
                 children: [
-                  Text(
-                    'لديك حساب؟ ',
-                    style: AppTypography.body.copyWith(
-                      color: isDark
-                          ? NeuColors.textSecondaryDark
-                          : NeuColors.textSecondary,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => context.go('/login'),
-                    child: Text(
-                      'سجّل دخولك',
-                      style: AppTypography.body.copyWith(
-                        color: NeuColors.primary,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline,
-                        decorationColor: NeuColors.primary,
-                      ),
-                    ),
-                  ),
+                  for (final (icon, text) in const [
+                    (Icons.dashboard_customize_outlined, '١٨ قالبًا احترافيًا'),
+                    (Icons.money_off_csred_outlined, 'بلا عمولة على مبيعاتك'),
+                    (Icons.bolt_rounded, 'مجاني للبدء'),
+                  ])
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(icon, size: 15, color: isDark ? NeuColors.textHintDark : NeuColors.textHint),
+                      const SizedBox(width: 4),
+                      Text(text, style: AppTypography.caption.copyWith(color: isDark ? NeuColors.textHintDark : NeuColors.textHint)),
+                    ]),
                 ],
               ),
 

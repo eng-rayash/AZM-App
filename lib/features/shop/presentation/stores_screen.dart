@@ -6,7 +6,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/azm_screen.dart';
 import '../data/shop_models.dart';
 import '../providers/shop_providers.dart';
-import 'create_store_sheet.dart';
+import '../../store_platform/create_store_wizard.dart';
 import 'store_workspace_screen.dart';
 import 'widgets/shop_async.dart';
 
@@ -80,12 +80,7 @@ class StoresScreen extends ConsumerWidget {
   }
 
   void _openCreate(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const CreateStoreSheet(),
-    );
+    CreateStoreWizard.open(context);
   }
 
   void _openStore(BuildContext context, WidgetRef ref, ShopStore store) {

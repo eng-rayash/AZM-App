@@ -12,4 +12,7 @@ class StoreRoutes {
   static const billing = '/store/billing';
   static const team = '/store/team';
   static const notifications = '/store/notifications';
+  static const templates = '/store/templates';
+  static const design = '/store/design';
+  static const pay = '/store/pay';
 }

@@ -90,6 +90,13 @@ class ApiClient {
             : {'If-Match': '$expectedVersion'},
       );
 
+  Future<T> put<T>(
+    String path, {
+    Object? body,
+    T Function(dynamic json)? decode,
+  }) =>
+      _send('PUT', path, body: body, decode: decode);
+
   Future<T> delete<T>(
     String path, {
     T Function(dynamic json)? decode,

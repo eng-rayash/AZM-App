@@ -147,6 +147,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         companyName: companyName,
       );
       state = AuthState.authenticated(session);
+    } on VerificationRequired catch (v) {
+      // الخادم أرسل رمزًا إلى البريد — الجلسة بعد تأكيده
+      pendingEmail = v.email;
+      lastError = null;
+      state = const AuthState.emailVerificationPending();
     } catch (e) {
       state = AuthState.error(_message(e));
     }

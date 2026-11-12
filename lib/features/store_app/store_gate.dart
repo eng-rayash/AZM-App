@@ -7,7 +7,7 @@ import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
 import '../auth/providers/auth_providers.dart';
 import '../shop/data/shop_models.dart';
-import '../shop/presentation/create_store_sheet.dart';
+import '../store_platform/create_store_wizard.dart';
 import '../shop/providers/shop_providers.dart';
 import 'kit.dart';
 
@@ -44,11 +44,17 @@ class StoreGate extends ConsumerWidget {
       ),
       data: (l) {
         if (l.stores.isEmpty) {
+          if (CreateStoreWizard.openAfterSignUp) {
+            CreateStoreWizard.openAfterSignUp = false;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) CreateStoreWizard.open(context);
+            });
+          }
           return RvEmpty(
             icon: Icons.add_business_rounded,
-            title: 'أنشئ متجرك الأول',
-            body: 'متجر إلكتروني بقالب احترافي ورابط خاص، يستقبل الطلبات على واتساب. مجاني للبدء.',
-            action: 'إنشاء متجر',
+            title: 'افتح متجرك الأول',
+            body: 'اختر قالبًا من ١٨ قالبًا احترافيًا بمعاينة حية، ثم الباقة، ويصير متجرك جاهزًا برابطه الخاص. مجاني للبدء.',
+            action: 'افتح متجرك الآن',
             onAction: () => showCreateStoreSheet(context),
           );
         }
@@ -96,11 +102,5 @@ Future<void> pickStore(BuildContext context, WidgetRef ref, List<ShopStore> all,
   if (picked != null) ref.read(activeStoreIdProvider.notifier).state = picked;
 }
 
-void showCreateStoreSheet(BuildContext context) {
-  showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => const CreateStoreSheet(),
-  );
-}
+/// «افتح متجرك» — معالج المنصة الكامل: القالب بمعاينة حية، الباقة، البيانات، الدفع.
+void showCreateStoreSheet(BuildContext context) => CreateStoreWizard.open(context);

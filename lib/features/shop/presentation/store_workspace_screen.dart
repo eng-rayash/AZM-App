@@ -14,7 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../store_tools/ai_assistant_screen.dart';
 import '../../store_tools/azm_push.dart';
 import '../../store_tools/order_watcher.dart';
-import '../../store_tools/payment_accounts_screen.dart';
+import '../../store_platform/design_studio_screen.dart';
+import '../../store_platform/payment_methods_screen.dart';
 import '../../store_tools/store_settings_screen.dart';
 import '../../store_tools/store_tools_api.dart';
 
@@ -308,12 +309,11 @@ class _StoreTools extends StatelessWidget {
               case 'settings':
                 push(StoreSettingsScreen(store: store));
               case 'look':
-                // محرر الشكل الكامل يحتاج شاشة كبيرة ومعاينة حيّة — في لوحة الويب
-                launchUrl(Uri.parse('$azmWebUrl/store/appearance'), mode: LaunchMode.externalApplication);
+                push(const DesignStudioScreen());
               case 'open':
                 launchUrl(Uri.parse('$storefrontUrl/s/${store.slug}'), mode: LaunchMode.externalApplication);
               case 'pay':
-                push(const PaymentAccountsScreen());
+                push(const PaymentMethodsScreen());
             }
           },
           itemBuilder: (_) => const [

@@ -118,6 +118,28 @@ class _Home extends ConsumerWidget {
             ),
           ),
 
+        if (store.status == 2)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: RvCard(
+              color: const Color(0xFFFFF4E0),
+              onTap: () => context.push(StoreRoutes.billing),
+              child: Row(children: [
+                const Icon(Icons.hourglass_top_rounded, color: Color(0xFFB45309)),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text('متجرك بانتظار التفعيل — أكمل الدفع وارفع الإيصال، فيظهر للعملاء.',
+                      style: TextStyle(color: Color(0xFF92400E), fontWeight: FontWeight.w600)),
+                ),
+                const Icon(Icons.chevron_left_rounded, color: Color(0xFFB45309)),
+              ]),
+            ),
+          ),
+
+        // ── منصة متجرك: التصميم والقوالب والباقة والدفع ──
+        const SizedBox(height: 14),
+        _PlatformStrip(store: store),
+
         // ── المؤشرات ──
         overview.when(
           loading: () => const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: Rv.red))),
@@ -208,7 +230,7 @@ class _Home extends ConsumerWidget {
               icon: Icons.palette_rounded,
               label: 'تصميم المتجر',
               color: const Color(0xFFDB2777),
-              onTap: () => launchUrl(Uri.parse('$azmWebUrl/store/appearance'), mode: LaunchMode.externalApplication),
+              onTap: () => context.push(StoreRoutes.design),
             ),
             RvAction(
               icon: Icons.tune_rounded,
@@ -216,7 +238,9 @@ class _Home extends ConsumerWidget {
               color: p.inkMuted,
               onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => StoreSettingsScreen(store: store))),
             ),
-            RvAction(icon: Icons.workspace_premium_rounded, label: 'الباقة والفواتير', color: Rv.redDeep, onTap: () => context.push(StoreRoutes.billing)),
+            RvAction(icon: Icons.workspace_premium_rounded, label: 'الباقة', color: Rv.redDeep, onTap: () => context.push(StoreRoutes.billing)),
+            RvAction(icon: Icons.dashboard_customize_rounded, label: 'القوالب', color: const Color(0xFF9333EA), onTap: () => context.push(StoreRoutes.templates)),
+            RvAction(icon: Icons.account_balance_wallet_rounded, label: 'طرق الدفع', color: const Color(0xFF0E7C86), onTap: () => context.push(StoreRoutes.pay)),
             RvAction(icon: Icons.groups_rounded, label: 'الفريق', color: const Color(0xFF0891B2), onTap: () => context.push(StoreRoutes.team)),
             RvAction(icon: Icons.notifications_rounded, label: 'الإشعارات', color: const Color(0xFF475569), onTap: () => context.push(StoreRoutes.notifications)),
             RvAction(
@@ -322,5 +346,49 @@ class _OrderRow extends StatelessWidget {
         ]),
       ),
     );
+  }
+}
+
+/// منصة متجرك في سطر: التصميم بمعاينة حية، القوالب، الباقة، طرق الدفع.
+class _PlatformStrip extends StatelessWidget {
+  const _PlatformStrip({required this.store});
+  final ShopStore store;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tile(IconData icon, String title, String sub, List<Color> g, String route) => Expanded(
+          child: Material(
+            borderRadius: BorderRadius.circular(20),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => context.push(route),
+              child: Ink(
+                height: 104,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(gradient: LinearGradient(begin: AlignmentDirectional.topStart, end: AlignmentDirectional.bottomEnd, colors: g)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Icon(icon, color: Colors.white, size: 24),
+                  const Spacer(),
+                  Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14)),
+                  Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: .8), fontSize: 11)),
+                ]),
+              ),
+            ),
+          ),
+        );
+    final plan = switch (store.plan) { 'pro' => 'أعمال', 'plus' => 'احترافي', _ => 'مجاني' };
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        tile(Icons.brush_rounded, 'صمّم متجرك', 'معاينة حية', const [Color(0xFFD12F36), Color(0xFF7A1418)], StoreRoutes.design),
+        const SizedBox(width: 8),
+        tile(Icons.dashboard_customize_rounded, 'القوالب', '١٨ قالبًا', const [Color(0xFF8B5CF6), Color(0xFF4C1D95)], StoreRoutes.templates),
+      ]),
+      const SizedBox(height: 8),
+      Row(children: [
+        tile(Icons.workspace_premium_rounded, 'الباقة', 'باقتك: $plan', const [Color(0xFF2A1714), Color(0xFF120B0A)], StoreRoutes.billing),
+        const SizedBox(width: 8),
+        tile(Icons.account_balance_wallet_rounded, 'طرق الدفع', 'الكريمي · جيب · جوالي', const [Color(0xFF0E7C86), Color(0xFF0B4F55)], StoreRoutes.pay),
+      ]),
+    ]);
   }
 }
