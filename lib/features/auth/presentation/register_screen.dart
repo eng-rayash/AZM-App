@@ -179,7 +179,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                           Text(code ? 'تأكيد ومتابعة إلى متجري' : 'أنشئ حسابي وتابع', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                           const SizedBox(width: 6),
-                          const Icon(Icons.arrow_back_rounded, size: 20),
+                          const Icon(Icons.arrow_forward_rounded, size: 20),
                         ]),
                 ),
                 if (code)

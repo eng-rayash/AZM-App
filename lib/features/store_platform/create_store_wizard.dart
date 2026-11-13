@@ -214,7 +214,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
                       child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                         Text('متابعة', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                         SizedBox(width: 6),
-                        Icon(Icons.arrow_back_rounded, size: 20),
+                        Icon(Icons.arrow_forward_rounded, size: 20),
                       ]),
                     )
                   : _plan.paid
@@ -363,18 +363,21 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
         setState(() {});
       }),
       const SizedBox(height: 14),
-      _field(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: _field(
         p,
         _slug,
         'رابط متجرك',
         Icons.link_rounded,
         ltr: true,
         hint: 'mystore',
-        suffix: Padding(padding: const EdgeInsets.only(left: 12, right: 4), child: Text('.rvios.store', style: TextStyle(color: p.inkMuted, fontWeight: FontWeight.w600))),
+        suffix: Padding(padding: const EdgeInsets.only(left: 4), child: Text('.rvios.store', style: TextStyle(color: p.inkMuted, fontWeight: FontWeight.w600))),
         onChanged: (v) {
           _slugTouched = true;
           _scheduleSlug();
         },
+      ),
       ),
       const SizedBox(height: 6),
       AnimatedSwitcher(

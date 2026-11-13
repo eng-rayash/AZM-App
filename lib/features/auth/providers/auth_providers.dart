@@ -1,9 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_client.dart';
-import '../../../core/dev/dev_demo_accounts.dart';
-import '../../../core/dev/dev_demo_orchestrator.dart';
 import '../data/auth_repository.dart';
 
 enum AuthStatus { initial, loading, authenticated, guest, unauthenticated, error, emailVerificationPending }
@@ -40,6 +37,7 @@ final apiClientProvider = Provider<ApiClient>((ref) => ref.watch(authRepositoryP
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
+  // ignore: unused_field
   final Ref _ref;
 
   AuthNotifier(this._repository, this._ref) : super(const AuthState.initial()) {
@@ -53,20 +51,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = const AuthState.guest();
         return;
       }
-      // استعادة جلسة تجريبية محفوظة (وضع التطوير فقط)
-      final demoSession = await DevDemoAccounts.restoreSession();
-      if (demoSession != null) {
-        // إعادة تهيئة الشركة والباقة من القاعدة المحلية
-        if (kDebugMode) {
-          await DevDemoOrchestrator.activate(
-            _ref,
-            demoSession,
-            demoSession.account.email,
-          );
-        }
-        state = AuthState.authenticated(demoSession);
-        return;
-      }
       final session = await _repository.restore();
       state = session != null ? AuthState.authenticated(session) : const AuthState.unauthenticated();
     } catch (e) {
@@ -78,21 +62,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> login(String email, String password) async {
     state = const AuthState.loading();
     try {
-      // ── حسابات المطوّر التجريبية — تعمل بلا خادم في وضع التطوير فقط ──
-      final demoSession = DevDemoAccounts.tryLogin(email, password);
-      if (demoSession != null) {
-        await DevDemoAccounts.saveSession(demoSession);
-        // تهيئة الشركة والباقة وبيانات العرض
-        if (kDebugMode) {
-          await DevDemoOrchestrator.activate(
-            _ref,
-            demoSession,
-            email,
-          );
-        }
-        state = AuthState.authenticated(demoSession);
-        return;
-      }
       final session = await _repository.signIn(email: email, password: password);
       state = AuthState.authenticated(session);
     } on VerificationRequired catch (v) {
@@ -178,7 +147,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     state = const AuthState.loading();
     try {
-      await DevDemoAccounts.clearSession();
       await _repository.signOut();
       state = const AuthState.unauthenticated();
     } catch (e) {
