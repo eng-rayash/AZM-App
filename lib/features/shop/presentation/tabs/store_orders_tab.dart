@@ -259,6 +259,11 @@ class _OrderRow extends ConsumerWidget {
             ],
           ),
 
+          if (order.status == OrderStatus.off && order.cancelReason.isNotEmpty) ...[
+            const SizedBox(height: AzmSpace.xs),
+            Text('سبب الإلغاء: ${order.cancelReason}', style: AppTypography.caption.copyWith(color: p.inkMuted)),
+          ],
+
           if (order.discount > 0) ...[
             const SizedBox(height: AzmSpace.xs),
             Row(children: [
@@ -317,6 +322,16 @@ class _OrderRow extends ConsumerWidget {
                   ),
                   child: Text(_advanceLabel(next)),
                 ),
+              if (order.status != OrderStatus.done && order.status != OrderStatus.off)
+                PopupMenuButton<OrderStatus>(
+                  tooltip: 'المزيد',
+                  icon: Icon(Icons.more_vert_rounded, color: p.inkMuted),
+                  onSelected: (s) => s == OrderStatus.off ? _cancel(context, ref) : _advance(context, ref, s),
+                  itemBuilder: (_) => [
+                    for (final j in _jumps(order.status)) PopupMenuItem(value: j, child: Text('مباشرة إلى «${j.label}»')),
+                    PopupMenuItem(value: OrderStatus.off, child: Text('إلغاء الطلب', style: TextStyle(color: p.danger))),
+                  ],
+                ),
             ],
           ),
         ],
@@ -331,16 +346,60 @@ class _OrderRow extends ConsumerWidget {
   /// بالخطأ تُلغي طلبًا.
   OrderStatus? _nextStatus(OrderStatus current) => switch (current) {
         OrderStatus.wait => OrderStatus.confirmed,
-        OrderStatus.confirmed => OrderStatus.done,
+        OrderStatus.confirmed => OrderStatus.preparing,
+        OrderStatus.preparing => OrderStatus.shipped,
+        OrderStatus.shipped => OrderStatus.done,
         OrderStatus.done => null,
         OrderStatus.off => null,
       };
 
+  /// قفزات أمامية مسموحة غير الزر الأساسي (كما في ORDER_NEXT بالخادم) — في قائمة «المزيد»
+  List<OrderStatus> _jumps(OrderStatus current) => switch (current) {
+        OrderStatus.confirmed => const [OrderStatus.shipped, OrderStatus.done],
+        OrderStatus.preparing => const [OrderStatus.done],
+        _ => const [],
+      };
+
   String _advanceLabel(OrderStatus next) => switch (next) {
         OrderStatus.confirmed => 'تأكيد',
-        OrderStatus.done => 'إكمال',
+        OrderStatus.preparing => 'بدء التجهيز',
+        OrderStatus.shipped => 'تم الشحن',
+        OrderStatus.done => 'تم التسليم',
         _ => next.label,
       };
+
+  Future<void> _cancel(BuildContext context, WidgetRef ref) async {
+    final reason = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('إلغاء الطلب ${order.ref}'),
+        content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          const Text('يعيد الإلغاء المخزون وقسيمة الخصم. السبب يظهر للعميل في صفحة تتبّع طلبه.'),
+          const SizedBox(height: 12),
+          TextField(
+            controller: reason,
+            maxLength: 200,
+            decoration: const InputDecoration(hintText: 'مثال: نفد المنتج، أو تعذّر التواصل'),
+          ),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('تراجع')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(c).colorScheme.error),
+            onPressed: () => Navigator.pop(c, true),
+            child: const Text('إلغاء الطلب'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    await runShopAction(
+      context,
+      action: () => ref.read(shopActionsProvider).advanceOrder(storeId, order.id, OrderStatus.off, reason: reason.text),
+      success: 'أُلغي الطلب ${order.ref} وأُعيد المخزون',
+    );
+  }
 
   Future<void> _advance(
     BuildContext context,
@@ -439,6 +498,8 @@ class _StatusDot extends StatelessWidget {
     final color = switch (status) {
       OrderStatus.wait => p.accent,
       OrderStatus.confirmed => p.info,
+      OrderStatus.preparing => const Color(0xFF7C3AED),
+      OrderStatus.shipped => const Color(0xFF4F46E5),
       OrderStatus.done => p.success,
       OrderStatus.off => p.inkGhost,
     };

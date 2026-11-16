@@ -224,11 +224,12 @@ class ShopApi {
   Future<ShopOrder> advanceOrder(
     String storeId,
     String orderId,
-    OrderStatus to,
-  ) =>
+    OrderStatus to, {
+    String? reason,
+  }) =>
       _client.patch(
         '/shop/stores/$storeId/orders/$orderId',
-        body: {'status': to.value},
+        body: {'status': to.value, if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim()},
         decode: (json) => ShopOrder.fromJson(_nested(json, 'order')),
       );
 

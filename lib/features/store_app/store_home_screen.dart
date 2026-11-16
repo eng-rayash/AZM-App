@@ -325,6 +325,8 @@ class _OrderRow extends StatelessWidget {
     final tone = switch (order.status) {
       OrderStatus.wait => Rv.red,
       OrderStatus.confirmed => const Color(0xFF2F6FB3),
+      OrderStatus.preparing => const Color(0xFF7C3AED),
+      OrderStatus.shipped => const Color(0xFF4F46E5),
       OrderStatus.done => const Color(0xFF0F766E),
       OrderStatus.off => p.inkFaint,
     };

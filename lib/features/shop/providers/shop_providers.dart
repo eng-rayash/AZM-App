@@ -222,9 +222,10 @@ class ShopActions {
   Future<ShopOrder> advanceOrder(
     String storeId,
     String orderId,
-    OrderStatus to,
-  ) async {
-    final order = await _api.advanceOrder(storeId, orderId, to);
+    OrderStatus to, {
+    String? reason,
+  }) async {
+    final order = await _api.advanceOrder(storeId, orderId, to, reason: reason);
     _invalidateOrders(storeId);
     return order;
   }

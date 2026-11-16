@@ -393,9 +393,12 @@ class ProductList {
 // ─────────────────────────────────────────────
 
 /// حالة الطلب — الأرقام نفسها في `shop.constants.ts`.
+/// بترتيب المسار (الأرقام من الخادم: 4 و5 أُضيفتا لاحقًا).
 enum OrderStatus {
   wait(0, 'قيد التأكيد'),
   confirmed(1, 'مؤكد'),
+  preparing(4, 'قيد التجهيز'),
+  shipped(5, 'تم الشحن'),
   done(2, 'مكتمل'),
   off(3, 'ملغى');
 
@@ -470,6 +473,7 @@ class ShopOrder {
     this.deliveryFee = 0,
     this.couponCode = '',
     this.discount = 0,
+    this.cancelReason = '',
     this.items = const [],
     this.wa = '',
     this.createdAt,
@@ -492,6 +496,7 @@ class ShopOrder {
         deliveryFee: _int(json['deliveryFee']),
         couponCode: _str(json['couponCode']),
         discount: _int(json['discount']),
+        cancelReason: _str(json['cancelReason']),
         items: _list(json['items'], OrderItem.fromJson),
         wa: _str(json['wa']),
         createdAt: _date(json['createdAt']),
@@ -521,6 +526,9 @@ class ShopOrder {
   /// قسيمة الخصم المطبّقة ومبلغها — الإجمالي بعد خصمه
   final String couponCode;
   final int discount;
+
+  /// سبب الإلغاء — يراه العميل في تتبّع طلبه
+  final String cancelReason;
   final List<OrderItem> items;
 
   /// رابط واتساب جاهز برسالة الطلب — يبنيه الخادم.
