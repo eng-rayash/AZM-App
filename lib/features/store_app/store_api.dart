@@ -23,7 +23,9 @@ class StoreDataApi {
   Future<void> setReview(String storeId, String id, {int? status, String? reply}) =>
       _c.patch('${_s(storeId)}/reviews/$id', body: {'status': ?status, 'reply': ?reply});
 
-  Future<List<Map<String, dynamic>>> zones(String storeId) => _c.get('${_s(storeId)}/zones', decode: _list);
+  /// الخادم يعيد `{zones, fallback}` — لا قائمة مجردة (قراءتها قائمةً كانت تُفشل الشاشة)
+  Future<List<Map<String, dynamic>>> zones(String storeId) =>
+      _c.get('${_s(storeId)}/zones', decode: (j) => _list(j is Map ? j['zones'] ?? const [] : j));
   Future<void> addZone(String storeId, Map<String, Object?> z) => _c.post('${_s(storeId)}/zones', body: z);
   Future<void> editZone(String storeId, String id, Map<String, Object?> z) => _c.patch('${_s(storeId)}/zones/$id', body: z);
   Future<void> removeZone(String storeId, String id) => _c.delete('${_s(storeId)}/zones/$id');

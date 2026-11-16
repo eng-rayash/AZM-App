@@ -233,8 +233,24 @@ class StoreReviewsScreen extends StatelessWidget {
 // مناطق التوصيل
 // ═══════════════════════════════════════════════════════════
 
+/// المحافظات لإضافتها مناطقَ توصيل بلمسة (كما في اللوحة: src/lib/shop/regions.ts)
+const _regions = <String, (String, List<String>)>{
+  'YE': ('محافظات اليمن', ['أمانة العاصمة', 'صنعاء', 'عدن', 'تعز', 'إب', 'الحديدة', 'ذمار', 'حضرموت', 'المهرة', 'شبوة', 'أبين', 'لحج', 'الضالع', 'البيضاء', 'مأرب', 'الجوف', 'حجة', 'صعدة', 'عمران', 'المحويت', 'ريمة', 'سقطرى']),
+  'SA': ('مناطق السعودية', ['الرياض', 'مكة المكرمة', 'المدينة المنورة', 'القصيم', 'المنطقة الشرقية', 'عسير', 'تبوك', 'حائل', 'الحدود الشمالية', 'جازان', 'نجران', 'الباحة', 'الجوف']),
+};
+
 class StoreZonesScreen extends StatelessWidget {
   const StoreZonesScreen({super.key});
+
+  Future<void> _addRegions(BuildContext context, ShopStore store, List<String> missing, Future<void> Function() reload) async {
+    final api = ProviderScope.containerOf(context).read(storeDataApiProvider);
+    await _run(context, () async {
+      for (final n in missing) {
+        await api.addZone(store.id, {'name': n, 'fee': store.deliveryFee, 'freeOver': store.deliveryFreeOver});
+      }
+      await reload();
+    }, 'أُضيفت ${missing.length} منطقة — المس أي منطقة لتعديل رسمها');
+  }
 
   Future<void> _edit(BuildContext context, ShopStore store, Future<void> Function() reload, [Map? z]) async {
     final name = TextEditingController(text: '${z?['name'] ?? ''}');
@@ -279,6 +295,16 @@ class StoreZonesScreen extends StatelessWidget {
         Text('لكل مدينة أو حي رسمه، ويختار العميل منطقته عند الطلب. بلا مناطق يُطبَّق رسم التوصيل العام من إعدادات المتجر.',
             style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
         const SizedBox(height: 12),
+        if (_regions[store.country] case final r?)
+          if (r.$2.where((n) => !list.any((z) => '${z['name']}'.trim() == n)).toList() case final missing when missing.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: OutlinedButton.icon(
+                onPressed: () => _addRegions(context, store, missing, reload),
+                icon: const Icon(Icons.playlist_add_rounded),
+                label: Text('أضف ${r.$1} (${missing.length})'),
+              ),
+            ),
         if (list.isEmpty) RvEmpty(icon: Icons.local_shipping_outlined, title: 'لا مناطق بعد', action: 'أضف منطقة', onAction: () => _edit(context, store, reload)),
         for (final z in list)
           Padding(
