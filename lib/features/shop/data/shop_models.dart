@@ -468,6 +468,8 @@ class ShopOrder {
     this.zoneName = '',
     this.note = '',
     this.deliveryFee = 0,
+    this.couponCode = '',
+    this.discount = 0,
     this.items = const [],
     this.wa = '',
     this.createdAt,
@@ -488,6 +490,8 @@ class ShopOrder {
         zoneName: _str(json['zoneName']),
         note: _str(json['note']),
         deliveryFee: _int(json['deliveryFee']),
+        couponCode: _str(json['couponCode']),
+        discount: _int(json['discount']),
         items: _list(json['items'], OrderItem.fromJson),
         wa: _str(json['wa']),
         createdAt: _date(json['createdAt']),
@@ -513,6 +517,10 @@ class ShopOrder {
   final String zoneName;
   final String note;
   final int deliveryFee;
+
+  /// قسيمة الخصم المطبّقة ومبلغها — الإجمالي بعد خصمه
+  final String couponCode;
+  final int discount;
   final List<OrderItem> items;
 
   /// رابط واتساب جاهز برسالة الطلب — يبنيه الخادم.

@@ -8,6 +8,7 @@ class StoreRoutes {
   static const customers = '/store/customers';
   static const reviews = '/store/reviews';
   static const zones = '/store/zones';
+  static const coupons = '/store/coupons';
   static const analytics = '/store/analytics';
   static const billing = '/store/billing';
   static const team = '/store/team';

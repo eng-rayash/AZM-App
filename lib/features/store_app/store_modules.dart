@@ -313,6 +313,306 @@ class StoreZonesScreen extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════
+// قسائم الخصم
+// ═══════════════════════════════════════════════════════════
+
+/// رموز خصم يكتبها العميل في سلة المتجر — نسبة بسقف، أو مبلغ، أو توصيل مجاني.
+/// الخادم يحسبها ويحجزها عند كل طلب؛ الشاشة تعرض أثر كل قسيمة.
+class StoreCouponsScreen extends StatelessWidget {
+  const StoreCouponsScreen({super.key});
+
+  static const _green = Color(0xFF16A34A);
+
+  static (String, Color) _status(Map c, Color faint) {
+    if (c['active'] != true) return ('موقوفة', faint);
+    final now = DateTime.now();
+    final ends = DateTime.tryParse('${c['endsAt'] ?? ''}');
+    final starts = DateTime.tryParse('${c['startsAt'] ?? ''}');
+    final limit = (c['usageLimit'] as num?) ?? 0;
+    if (ends != null && ends.isBefore(now)) return ('منتهية', faint);
+    if (limit > 0 && ((c['used'] as num?) ?? 0) >= limit) return ('نفدت', Rv.gold);
+    if (starts != null && starts.isAfter(now)) return ('مجدولة', const Color(0xFF2F6FB3));
+    return ('نشطة', _green);
+  }
+
+  Future<void> _edit(BuildContext context, ShopStore store, Future<void> Function() reload, [Map? c]) async {
+    final locked = c != null && ((c['used'] as num?) ?? 0) > 0;
+    final code = TextEditingController(text: '${c?['code'] ?? ''}');
+    String txt(String k) => c == null || ((c[k] as num?) ?? 0) == 0 ? '' : '${c[k]}';
+    final value = TextEditingController(text: txt('value'));
+    final cap = TextEditingController(text: txt('maxDiscount'));
+    final min = TextEditingController(text: txt('minSubtotal'));
+    final limit = TextEditingController(text: txt('usageLimit'));
+    final per = TextEditingController(text: txt('perCustomer'));
+    var kind = '${c?['kind'] ?? 'percent'}';
+    var active = c?['active'] ?? true;
+    var ends = DateTime.tryParse('${c?['endsAt'] ?? ''}')?.toLocal();
+    final cur = store.currency;
+
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheet) => StatefulBuilder(
+        builder: (sheet, set) => Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.of(sheet).viewInsets.bottom),
+          child: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Text(c == null ? 'قسيمة خصم جديدة' : 'تعديل القسيمة', style: AppTypography.h3),
+              const SizedBox(height: 12),
+              TextField(
+                controller: code,
+                enabled: !locked,
+                textDirection: TextDirection.ltr,
+                textCapitalization: TextCapitalization.characters,
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9_-]')), LengthLimitingTextInputFormatter(24)],
+                decoration: InputDecoration(labelText: 'الرمز', hintText: 'EID15', helperText: locked ? 'استُخدم في طلبات فلا يُغيَّر' : null),
+              ),
+              const SizedBox(height: 12),
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'percent', label: Text('نسبة')),
+                  ButtonSegment(value: 'amount', label: Text('مبلغ')),
+                  ButtonSegment(value: 'ship', label: Text('توصيل مجاني')),
+                ],
+                selected: {kind},
+                onSelectionChanged: (v) => set(() => kind = v.first),
+              ),
+              const SizedBox(height: 12),
+              if (kind != 'ship')
+                Row(children: [
+                  Expanded(
+                    child: TextField(
+                      controller: value,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(labelText: kind == 'percent' ? 'النسبة ٪' : 'المبلغ ($cur)'),
+                    ),
+                  ),
+                  if (kind == 'percent') ...[
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: cap,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(labelText: 'أقصى خصم ($cur)', hintText: 'بلا سقف'),
+                      ),
+                    ),
+                  ],
+                ]),
+              if (kind != 'ship') const SizedBox(height: 10),
+              TextField(
+                controller: min,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(labelText: 'حد أدنى للطلب ($cur)', hintText: 'بلا حد'),
+              ),
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(
+                  child: TextField(
+                    controller: limit,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(labelText: 'مرات الاستخدام', hintText: 'بلا حد'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: per,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(labelText: 'لكل عميل', hintText: 'بلا حد'),
+                  ),
+                ),
+              ]),
+              const SizedBox(height: 6),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.event_rounded),
+                title: Text(ends == null ? 'بلا تاريخ انتهاء' : 'تنتهي ${ends!.year}/${ends!.month}/${ends!.day}'),
+                trailing: ends == null ? const Icon(Icons.add_rounded) : IconButton(icon: const Icon(Icons.close_rounded), onPressed: () => set(() => ends = null)),
+                onTap: () async {
+                  final now = DateTime.now();
+                  final d = await showDatePicker(context: sheet, firstDate: now, lastDate: DateTime(now.year + 3), initialDate: ends ?? now.add(const Duration(days: 7)));
+                  if (d != null) set(() => ends = d);
+                },
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: active == true,
+                activeThumbColor: Rv.red,
+                title: const Text('مفعّلة'),
+                subtitle: const Text('الموقوفة تبقى محفوظة ولا يقبلها المتجر'),
+                onChanged: (v) => set(() => active = v),
+              ),
+              const SizedBox(height: 8),
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: Rv.red, minimumSize: const Size(0, 48)),
+                onPressed: () => Navigator.pop(sheet, true),
+                child: Text(c == null ? 'إنشاء القسيمة' : 'حفظ'),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    int n(TextEditingController t) => int.tryParse(t.text.trim()) ?? 0;
+    final e = ends;
+    final body = <String, Object?>{
+      if (!locked) 'code': code.text.trim().toUpperCase(),
+      'kind': kind,
+      'value': kind == 'ship' ? 0 : n(value),
+      'maxDiscount': kind == 'percent' ? n(cap) : 0,
+      'minSubtotal': n(min),
+      'usageLimit': n(limit),
+      'perCustomer': n(per),
+      // آخر اليوم المختار بتوقيت الجهاز
+      'endsAt': e == null ? null : DateTime(e.year, e.month, e.day, 23, 59, 59).toUtc().toIso8601String(),
+      'active': active == true,
+    };
+    final api = ProviderScope.containerOf(context).read(storeDataApiProvider);
+    await _run(context, () async {
+      c == null ? await api.addCoupon(store.id, body) : await api.editCoupon(store.id, '${c['id']}', body);
+      await reload();
+    }, c == null ? 'أُنشئت القسيمة — شارك رمزها مع عملائك' : 'حُفظت القسيمة');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<Map<String, dynamic>>(
+      title: 'قسائم الخصم',
+      load: (api, s) => api.coupons(s.id),
+      actions: (context, store, reload) => [IconButton(icon: const Icon(Icons.add_circle_rounded, color: Rv.red), onPressed: () => _edit(context, store, reload))],
+      builder: (context, d, store, reload) {
+        final list = ((d['coupons'] as List?) ?? const []).cast<Map>();
+        final cur = '${d['currency'] ?? store.currency}';
+        num sum(String k) => list.fold<num>(0, (a, c) => a + ((c[k] as num?) ?? 0));
+        final limit = d['limit'] as num?;
+        final activeCount = list.where((c) => c['active'] == true).length;
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          RvHero(
+            child: Row(children: [
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('ما خصمته لعملائك', style: TextStyle(color: Colors.white70)),
+                  Text('${Rv.money(sum('discounted'))} $cur', style: const TextStyle(fontFamily: 'Zain', fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white)),
+                  Text('${Rv.money(sum('orders'))} طلب بقسيمة · مبيعاتها ${Rv.money(sum('revenue'))} $cur', style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
+                ]),
+              ),
+              const Icon(Icons.local_offer_rounded, color: Rv.gold, size: 40),
+            ]),
+          ),
+          const SizedBox(height: 10),
+          if (limit != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text('باقة ${d['planName'] ?? ''}: حتى ${limit.toInt()} قسائم مفعّلة معًا ($activeCount الآن). الباقات المدفوعة بلا حد.',
+                  style: AppTypography.caption.copyWith(color: p.inkMuted)),
+            ),
+          if (list.isEmpty)
+            RvEmpty(
+              icon: Icons.local_offer_outlined,
+              title: 'لا قسائم بعد',
+              body: 'أنشئ رمزًا مثل WELCOME10 لأول طلب، أو FREESHIP للتوصيل المجاني، وشاركه في حساباتك.',
+              action: 'أنشئ قسيمة',
+              onAction: () => _edit(context, store, reload),
+            ),
+          for (final c in list)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Builder(builder: (context) {
+                final (st, color) = _status(c, p.inkFaint);
+                final used = (c['used'] as num?) ?? 0;
+                final lim = (c['usageLimit'] as num?) ?? 0;
+                return RvCard(
+                  onTap: () => _edit(context, store, reload, c),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: _green.withValues(alpha: .08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: _green.withValues(alpha: .35)),
+                        ),
+                        child: Text('${c['code']}', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: .8, color: _green)),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text('${c['label'] ?? ''}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700))),
+                      RvChip(st, color: color),
+                    ]),
+                    const SizedBox(height: 8),
+                    Text(
+                      [
+                        'استُخدمت ${Rv.money(used)}${lim > 0 ? ' من ${Rv.money(lim)}' : ''}',
+                        if (((c['minSubtotal'] as num?) ?? 0) > 0) 'من ${Rv.money(c['minSubtotal'] as num)} $cur',
+                        if (((c['perCustomer'] as num?) ?? 0) > 0) '${c['perCustomer']} لكل عميل',
+                        'خُصم ${Rv.money((c['discounted'] as num?) ?? 0)} $cur',
+                      ].join(' · '),
+                      style: AppTypography.caption.copyWith(color: p.inkFaint),
+                    ),
+                    if (lim > 0) ...[
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(9),
+                        child: LinearProgressIndicator(value: (used / lim).clamp(0, 1).toDouble(), minHeight: 5, color: _green, backgroundColor: p.hairline),
+                      ),
+                    ],
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: '${c['code']}'));
+                          _snack(context, 'نُسخ الرمز ${c['code']}');
+                        },
+                        icon: const Icon(Icons.copy_rounded, size: 18),
+                        label: const Text('نسخ'),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => _run(context, () async {
+                          await ProviderScope.containerOf(context).read(storeDataApiProvider).editCoupon(store.id, '${c['id']}', {'active': c['active'] != true});
+                          await reload();
+                        }, c['active'] == true ? 'أُوقفت القسيمة' : 'فُعّلت القسيمة'),
+                        icon: Icon(c['active'] == true ? Icons.pause_circle_outline : Icons.play_circle_outline, size: 18),
+                        label: Text(c['active'] == true ? 'إيقاف' : 'تفعيل'),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete_outline, color: p.danger),
+                        onPressed: () async {
+                          final yes = await showDialog<bool>(
+                            context: context,
+                            builder: (dc) => AlertDialog(
+                              title: Text('حذف ${c['code']}؟'),
+                              content: const Text('الطلبات السابقة تحتفظ بخصمها كما هو.'),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(dc, false), child: const Text('إلغاء')),
+                                TextButton(onPressed: () => Navigator.pop(dc, true), child: Text('حذف', style: TextStyle(color: p.danger))),
+                              ],
+                            ),
+                          );
+                          if (yes != true || !context.mounted) return;
+                          await _run(context, () async {
+                            await ProviderScope.containerOf(context).read(storeDataApiProvider).removeCoupon(store.id, '${c['id']}');
+                            await reload();
+                          }, 'حُذفت القسيمة');
+                        },
+                      ),
+                    ]),
+                  ]),
+                );
+              }),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // التحليلات
 // ═══════════════════════════════════════════════════════════
 

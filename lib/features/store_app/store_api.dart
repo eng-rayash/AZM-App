@@ -28,6 +28,12 @@ class StoreDataApi {
   Future<void> editZone(String storeId, String id, Map<String, Object?> z) => _c.patch('${_s(storeId)}/zones/$id', body: z);
   Future<void> removeZone(String storeId, String id) => _c.delete('${_s(storeId)}/zones/$id');
 
+  /// قسائم الخصم — `{coupons, limit, planName, currency}`
+  Future<Map<String, dynamic>> coupons(String storeId) => _c.get('${_s(storeId)}/coupons', decode: _map);
+  Future<void> addCoupon(String storeId, Map<String, Object?> c) => _c.post('${_s(storeId)}/coupons', body: c);
+  Future<void> editCoupon(String storeId, String id, Map<String, Object?> c) => _c.patch('${_s(storeId)}/coupons/$id', body: c);
+  Future<void> removeCoupon(String storeId, String id) => _c.delete('${_s(storeId)}/coupons/$id');
+
   Future<Map<String, dynamic>> analytics(String storeId, int days) =>
       _c.get('${_s(storeId)}/analytics', query: {'days': '$days'}, decode: _map);
 

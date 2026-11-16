@@ -228,6 +228,7 @@ class _Home extends ConsumerWidget {
             RvAction(icon: Icons.insights_rounded, label: 'التحليلات', color: const Color(0xFF7C3AED), onTap: () => context.push(StoreRoutes.analytics)),
             RvAction(icon: Icons.star_rounded, label: 'التقييمات', color: Rv.gold, onTap: () => context.push(StoreRoutes.reviews)),
             RvAction(icon: Icons.local_shipping_rounded, label: 'التوصيل', color: const Color(0xFFD97706), onTap: () => context.push(StoreRoutes.zones)),
+            RvAction(icon: Icons.local_offer_rounded, label: 'القسائم', color: const Color(0xFF16A34A), onTap: () => context.push(StoreRoutes.coupons)),
             RvAction(
               icon: Icons.palette_rounded,
               label: 'تصميم المتجر',

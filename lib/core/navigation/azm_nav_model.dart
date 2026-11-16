@@ -100,6 +100,7 @@ class AzmNav {
         NavDestination(label: 'عملاء المتجر', icon: Icons.people_alt_outlined, route: StoreRoutes.customers),
         NavDestination(label: 'التقييمات', icon: Icons.star_outline_rounded, route: StoreRoutes.reviews),
         NavDestination(label: 'التوصيل', icon: Icons.local_shipping_outlined, route: StoreRoutes.zones),
+        NavDestination(label: 'قسائم الخصم', icon: Icons.local_offer_outlined, route: StoreRoutes.coupons),
         NavDestination(label: 'التحليلات', icon: Icons.insights_outlined, route: StoreRoutes.analytics),
         NavDestination(label: 'فريق المتجر', icon: Icons.groups_outlined, route: StoreRoutes.team),
       ],

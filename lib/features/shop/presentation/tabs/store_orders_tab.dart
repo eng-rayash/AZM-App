@@ -259,6 +259,18 @@ class _OrderRow extends ConsumerWidget {
             ],
           ),
 
+          if (order.discount > 0) ...[
+            const SizedBox(height: AzmSpace.xs),
+            Row(children: [
+              const Icon(Icons.local_offer_rounded, size: 14, color: Color(0xFF16A34A)),
+              const SizedBox(width: 4),
+              Text(
+                'قسيمة ${order.couponCode} · خصم ${_money(order.discount)} ${store.currency}',
+                style: AppTypography.caption.copyWith(color: const Color(0xFF16A34A), fontWeight: FontWeight.w600),
+              ),
+            ]),
+          ],
+
           if (order.custAddress.isNotEmpty || order.zoneName.isNotEmpty) ...[
             const SizedBox(height: AzmSpace.sm),
             Text(
