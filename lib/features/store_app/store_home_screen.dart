@@ -14,6 +14,7 @@ import '../store_tools/ai_assistant_screen.dart';
 import '../store_tools/store_settings_screen.dart';
 import '../store_tools/store_tools_api.dart';
 import 'kit.dart';
+import 'store_api.dart';
 import 'store_gate.dart';
 import 'store_routes.dart';
 
@@ -44,6 +45,7 @@ class _Home extends ConsumerWidget {
       color: Rv.red,
       onRefresh: () async {
         ref.invalidate(storeOverviewProvider(store.id));
+        ref.invalidate(storeReadinessProvider(store.id));
         ref.invalidate(storeListProvider);
       },
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 120), children: [
@@ -137,6 +139,9 @@ class _Home extends ConsumerWidget {
               ]),
             ),
           ),
+
+        // ── جاهزية المتجر: تختفي حين يكتمل كل شيء ──
+        _Readiness(store: store),
 
         // ── منصة متجرك: التصميم والقوالب والباقة والدفع ──
         const SizedBox(height: 14),
@@ -263,6 +268,101 @@ class _Home extends ConsumerWidget {
     if (d == null) return '';
     const n = ['اث', 'ثل', 'أر', 'خم', 'جم', 'سب', 'أح'];
     return n[(d.weekday - 1) % 7];
+  }
+}
+
+/// «جاهزية متجرك»: النسبة والمهمة التالية، والقائمة عند اللمس. المهام يحسبها الخادم من بيانات
+/// المتجر، فتُنجَز وحدها حين يُنجَز ما تطلبه.
+class _Readiness extends ConsumerWidget {
+  const _Readiness({required this.store});
+  final ShopStore store;
+
+  void _open(BuildContext context, String key) {
+    switch (key) {
+      case 'products' || 'images' || 'categories':
+        context.go(StoreRoutes.products);
+      case 'delivery':
+        context.push(StoreRoutes.zones);
+      case 'payment':
+        context.push(StoreRoutes.pay);
+      case 'coupon':
+        context.push(StoreRoutes.coupons);
+      case 'about' || 'contact':
+        Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => StoreSettingsScreen(store: store)));
+      case 'firstOrder':
+        context.go(StoreRoutes.orders);
+      default:
+        context.push(StoreRoutes.design);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = AzmPalette.of(context);
+    final r = ref.watch(storeReadinessProvider(store.id)).asData?.value;
+    if (r == null || ((r['percent'] as num?) ?? 100) >= 100) return const SizedBox.shrink();
+    final tasks = ((r['tasks'] as List?) ?? const []).cast<Map>();
+    final next = tasks.where((t) => t['key'] == r['next']).firstOrNull;
+    final pct = ((r['percent'] as num?) ?? 0).toDouble();
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: RvCard(
+        onTap: () => showModalBottomSheet<void>(
+          context: context,
+          isScrollControlled: true,
+          showDragHandle: true,
+          builder: (sheet) => SafeArea(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(sheet).size.height * .8),
+              child: ListView(shrinkWrap: true, padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), children: [
+                Text('جاهزية متجرك ${pct.round()}٪', style: AppTypography.h3.copyWith(color: p.ink)),
+                const SizedBox(height: 8),
+                for (final t in tasks)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(t['done'] == true ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                        color: t['done'] == true ? const Color(0xFF16A34A) : p.inkFaint),
+                    title: Text('${t['title']}',
+                        style: TextStyle(color: t['done'] == true ? p.inkFaint : p.ink, decoration: t['done'] == true ? TextDecoration.lineThrough : null)),
+                    subtitle: t['done'] == true ? null : Text('${t['hint']}', style: TextStyle(color: p.inkMuted, fontSize: 12)),
+                    trailing: t['done'] == true ? null : const Icon(Icons.chevron_left_rounded),
+                    onTap: t['done'] == true
+                        ? null
+                        : () {
+                            Navigator.pop(sheet);
+                            _open(context, '${t['key']}');
+                          },
+                  ),
+              ]),
+            ),
+          ),
+        ),
+        child: Row(children: [
+          SizedBox(
+            width: 56,
+            height: 56,
+            child: Stack(alignment: Alignment.center, children: [
+              CircularProgressIndicator(value: pct / 100, strokeWidth: 5, color: Rv.red, backgroundColor: p.hairline),
+              Text('${pct.round()}٪', style: TextStyle(fontWeight: FontWeight.w800, color: p.ink, fontSize: 13)),
+            ]),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('جاهزية متجرك', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w800)),
+              Text('${r['done']} من ${r['total']}${next != null ? ' — التالي: ${next['title']}' : ''}',
+                  style: AppTypography.caption.copyWith(color: p.inkMuted), maxLines: 2),
+            ]),
+          ),
+          if (next != null)
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Rv.red, visualDensity: VisualDensity.compact),
+              onPressed: () => _open(context, '${next['key']}'),
+              child: const Text('ابدأ'),
+            ),
+        ]),
+      ),
+    );
   }
 }
 

@@ -28,6 +28,9 @@ class StoreDataApi {
   Future<void> editZone(String storeId, String id, Map<String, Object?> z) => _c.patch('${_s(storeId)}/zones/$id', body: z);
   Future<void> removeZone(String storeId, String id) => _c.delete('${_s(storeId)}/zones/$id');
 
+  /// جاهزية المتجر — `{percent, done, total, next, tasks:[{key,title,hint,done,link}]}`
+  Future<Map<String, dynamic>> readiness(String storeId) => _c.get('${_s(storeId)}/readiness', decode: _map);
+
   /// قسائم الخصم — `{coupons, limit, planName, currency}`
   Future<Map<String, dynamic>> coupons(String storeId) => _c.get('${_s(storeId)}/coupons', decode: _map);
   Future<void> addCoupon(String storeId, Map<String, Object?> c) => _c.post('${_s(storeId)}/coupons', body: c);
@@ -67,3 +70,8 @@ class StoreDataApi {
 }
 
 final storeDataApiProvider = Provider<StoreDataApi>((ref) => StoreDataApi(ref.watch(apiClientProvider)));
+
+/// جاهزية المتجر — تُعاد مع سحب التحديث في الرئيسية
+final storeReadinessProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, String>(
+  (ref, storeId) => ref.watch(storeDataApiProvider).readiness(storeId),
+);
