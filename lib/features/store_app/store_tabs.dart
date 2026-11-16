@@ -8,6 +8,7 @@ import '../../core/theme/app_typography.dart';
 import '../shop/presentation/tabs/store_orders_tab.dart';
 import '../shop/presentation/tabs/store_products_tab.dart';
 import 'kit.dart';
+import 'manual_order_screen.dart';
 import 'store_gate.dart';
 
 /// تبويب «الطلبات»: طلبات المتجر المفتوح بمرشّحاتها وتفاصيلها.
@@ -17,7 +18,23 @@ class StoreOrdersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => StoreGate(
         builder: (context, store, all) => WithHelp(tip: StoreHelp.orders, child: Column(children: [
           _StoreBar(title: 'الطلبات', subtitle: store.name, tip: StoreHelp.orders, onSwitch: all.length > 1 ? () => pickStore(context, ref, all, store.id) : null),
-          Expanded(child: StoreOrdersTab(key: ValueKey('o${store.id}'), storeId: store.id, store: store)),
+          Expanded(
+            child: Stack(children: [
+              StoreOrdersTab(key: ValueKey('o${store.id}'), storeId: store.id, store: store),
+              PositionedDirectional(
+                start: 16,
+                bottom: 104,
+                child: FloatingActionButton.extended(
+                  heroTag: 'manual-order',
+                  backgroundColor: Rv.red,
+                  foregroundColor: Colors.white,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('طلب يدوي'),
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ManualOrderScreen(store: store))),
+                ),
+              ),
+            ]),
+          ),
         ])),
       );
 }

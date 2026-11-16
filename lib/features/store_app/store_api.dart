@@ -28,6 +28,10 @@ class StoreDataApi {
   Future<void> editZone(String storeId, String id, Map<String, Object?> z) => _c.patch('${_s(storeId)}/zones/$id', body: z);
   Future<void> removeZone(String storeId, String id) => _c.delete('${_s(storeId)}/zones/$id');
 
+  /// طلب يدوي (هاتف، واتساب، المحل) — يعيد الطلب المُنشأ
+  Future<Map<String, dynamic>> createManualOrder(String storeId, Map<String, Object?> body) =>
+      _c.post('${_s(storeId)}/orders', body: body, decode: _map);
+
   /// جاهزية المتجر — `{percent, done, total, next, tasks:[{key,title,hint,done,link}]}`
   Future<Map<String, dynamic>> readiness(String storeId) => _c.get('${_s(storeId)}/readiness', decode: _map);
 
