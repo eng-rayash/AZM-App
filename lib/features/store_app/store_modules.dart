@@ -139,6 +139,15 @@ class _StoreCustomersScreenState extends State<StoreCustomersScreen> {
                       Text('${c['ordersCount'] ?? 0} طلب · ${Rv.money((c['spent'] as num?) ?? 0)} ${store.currency}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
                     ]),
                   ),
+                  ActionChip(
+                    avatar: const Icon(Icons.card_giftcard_rounded, size: 16, color: Rv.red),
+                    label: Text(Rv.money((c['points'] as num?) ?? 0)),
+                    tooltip: 'رصيد المكافآت',
+                    onPressed: () async {
+                      await showModalBottomSheet<void>(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => _PointsSheet(store: store, customer: c));
+                      await reload();
+                    },
+                  ),
                   if ('${c['phone'] ?? ''}'.isNotEmpty)
                     IconButton(
                       tooltip: 'واتساب',
@@ -150,6 +159,107 @@ class _StoreCustomersScreenState extends State<StoreCustomersScreen> {
             ),
         ]);
       },
+    );
+  }
+}
+
+const _pointsKind = {'earn': 'مكافأة طلب', 'redeem': 'صُرف في طلب', 'revoke': 'سُحب (طلب مُرجَع)', 'adjust': 'تعديل يدوي'};
+
+/// رصيد مكافآت العميل وسجله، وإضافة أو خصم يدوي
+class _PointsSheet extends ConsumerStatefulWidget {
+  const _PointsSheet({required this.store, required this.customer});
+  final ShopStore store;
+  final Map customer;
+  @override
+  ConsumerState<_PointsSheet> createState() => _PointsSheetState();
+}
+
+class _PointsSheetState extends ConsumerState<_PointsSheet> {
+  final _amount = TextEditingController();
+  final _note = TextEditingController();
+  Map<String, dynamic>? _d;
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final d = await ref.read(storeDataApiProvider).customerPoints(widget.store.id, '${widget.customer['id']}');
+    if (mounted) setState(() => _d = d);
+  }
+
+  Future<void> _apply(int sign) async {
+    final v = int.tryParse(_amount.text.trim()) ?? 0;
+    if (v <= 0) return;
+    setState(() => _busy = true);
+    try {
+      await ref.read(storeDataApiProvider).adjustPoints(widget.store.id, '${widget.customer['id']}', sign * v, note: _note.text.trim());
+      _amount.clear();
+      _note.clear();
+      await _load();
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final cur = widget.store.currency;
+    final points = ((_d?['customer'] as Map?)?['points'] as num?) ?? (widget.customer['points'] as num?) ?? 0;
+    final history = ((_d?['history'] as List?) ?? const []).cast<Map>();
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * .7,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('رصيد ${'${widget.customer['name'] ?? ''}'.isEmpty ? 'العميل' : widget.customer['name']}', style: AppTypography.h4.copyWith(color: p.ink)),
+          Text('${Rv.money(points)} $cur — يُصرف خصمًا في طلب يدوي برقم جواله', style: AppTypography.caption.copyWith(color: p.inkMuted)),
+          const SizedBox(height: 12),
+          Row(children: [
+            SizedBox(
+              width: 110,
+              child: TextField(controller: _amount, keyboardType: TextInputType.number, inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: const InputDecoration(labelText: 'المبلغ')),
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: TextField(controller: _note, maxLength: 120, decoration: const InputDecoration(labelText: 'السبب (اختياري)', counterText: ''))),
+          ]),
+          const SizedBox(height: 8),
+          Row(children: [
+            FilledButton.icon(onPressed: _busy ? null : () => _apply(1), icon: const Icon(Icons.add), label: const Text('إضافة')),
+            const SizedBox(width: 8),
+            OutlinedButton.icon(onPressed: _busy || points <= 0 ? null : () => _apply(-1), icon: const Icon(Icons.remove), label: const Text('خصم')),
+          ]),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _d == null
+                ? const Center(child: CircularProgressIndicator())
+                : history.isEmpty
+                    ? Center(child: Text('لا حركات بعد', style: AppTypography.caption.copyWith(color: p.inkFaint)))
+                    : ListView.separated(
+                        itemCount: history.length,
+                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        itemBuilder: (_, i) {
+                          final t = history[i];
+                          final a = (t['amount'] as num?) ?? 0;
+                          final note = '${t['note'] ?? ''}';
+                          return ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(_pointsKind[t['kind']] ?? '${t['kind']}'),
+                            subtitle: Text([if (note.isNotEmpty) note, Rv.ago('${t['createdAt']}')].join(' · ')),
+                            trailing: Text('${a >= 0 ? '+' : ''}${Rv.money(a)}', textDirection: TextDirection.ltr, style: TextStyle(fontWeight: FontWeight.w800, color: a >= 0 ? const Color(0xFF16A34A) : Rv.red)),
+                          );
+                        },
+                      ),
+          ),
+        ]),
+      ),
     );
   }
 }

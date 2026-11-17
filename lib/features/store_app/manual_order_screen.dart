@@ -37,11 +37,32 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
   final _fee = TextEditingController();
   final _discount = TextEditingController();
   final _coupon = TextEditingController();
+  final _points = TextEditingController();
+  List<Map> _customers = const [];
   bool _paid = false;
   bool _confirm = true;
   bool _saving = false;
 
   int _n(TextEditingController c) => int.tryParse(c.text.trim()) ?? 0;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(storeDataApiProvider).customers(widget.store.id).then((d) {
+      if (mounted) setState(() => _customers = ((d['customers'] as List?) ?? const []).cast<Map>());
+    }).catchError((_) {});
+  }
+
+  /// صاحب الجوال من عملاء المتجر — آخر ٩ أرقام تكفي للمطابقة
+  Map? get _known {
+    final d = _phone.text.replaceAll(RegExp(r'\D'), '');
+    if (d.length < 7) return null;
+    final tail = d.length > 9 ? d.substring(d.length - 9) : d;
+    for (final c in _customers) {
+      if ('${c['phone']}'.replaceAll(RegExp(r'\D'), '').endsWith(tail)) return c;
+    }
+    return null;
+  }
   int get _subtotal => _lines.fold(0, (a, l) => a + l.price * l.qty);
 
   Future<void> _pick(List<ShopProduct> all) async {
@@ -105,6 +126,7 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
         if (_fee.text.trim().isNotEmpty) 'deliveryFee': _n(_fee),
         if (_n(_discount) > 0) 'extraDiscount': _n(_discount),
         if (_coupon.text.trim().isNotEmpty) 'coupon': _coupon.text.trim(),
+        if (_n(_points) > 0) 'pointsUsed': _n(_points),
         'paid': _paid,
         'confirm': _confirm,
       });
@@ -128,7 +150,8 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
     final products = ref.watch(productsProvider(widget.store.id));
     final cur = widget.store.currency;
     final fee = _fee.text.trim().isEmpty ? null : _n(_fee);
-    final total = (_subtotal + (fee ?? 0) - _n(_discount)).clamp(0, 1 << 31);
+    final balance = ((_known?['points'] as num?) ?? 0).toInt();
+    final total = (_subtotal + (fee ?? 0) - _n(_discount) - _n(_points)).clamp(0, 1 << 31);
     return Scaffold(
       backgroundColor: p.ground,
       appBar: AppBar(title: const Text('طلب يدوي'), backgroundColor: p.ground, surfaceTintColor: Colors.transparent),
@@ -173,7 +196,7 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
         const RvSection('العميل'),
         TextField(controller: _name, decoration: const InputDecoration(labelText: 'الاسم')),
         const SizedBox(height: 10),
-        TextField(controller: _phone, keyboardType: TextInputType.phone, textDirection: TextDirection.ltr, decoration: const InputDecoration(labelText: 'الجوال')),
+        TextField(controller: _phone, onChanged: (_) => setState(() {}), keyboardType: TextInputType.phone, textDirection: TextDirection.ltr, decoration: const InputDecoration(labelText: 'الجوال')),
         const SizedBox(height: 10),
         TextField(controller: _address, decoration: const InputDecoration(labelText: 'العنوان')),
         const SizedBox(height: 10),
@@ -207,6 +230,19 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
           textCapitalization: TextCapitalization.characters,
           decoration: const InputDecoration(labelText: 'رمز خصم (اختياري)'),
         ),
+        if (balance > 0) ...[
+          const SizedBox(height: 10),
+          TextField(
+            controller: _points,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              labelText: 'من رصيد المكافآت (متاح ${Rv.money(balance)} $cur)',
+              suffixIcon: TextButton(onPressed: () => setState(() => _points.text = '$balance'), child: const Text('الكل')),
+            ),
+          ),
+        ],
         SwitchListTile(contentPadding: EdgeInsets.zero, activeThumbColor: Rv.red, value: _paid, title: const Text('استُلم الدفع'), onChanged: (v) => setState(() => _paid = v)),
         SwitchListTile(contentPadding: EdgeInsets.zero, activeThumbColor: Rv.red, value: _confirm, title: const Text('الطلب مؤكد'), onChanged: (v) => setState(() => _confirm = v)),
         const SizedBox(height: 8),
@@ -215,6 +251,7 @@ class _ManualOrderScreenState extends ConsumerState<ManualOrderScreen> {
             _row(p, 'المجموع', '${Rv.money(_subtotal)} $cur'),
             _row(p, 'التوصيل', fee == null ? 'حسب المنطقة' : '${Rv.money(fee)} $cur'),
             if (_n(_discount) > 0) _row(p, 'خصم يدوي', '−${Rv.money(_n(_discount))} $cur'),
+            if (_n(_points) > 0) _row(p, 'من رصيد المكافآت', '−${Rv.money(_n(_points))} $cur'),
             const Divider(),
             _row(p, 'الإجمالي', '${Rv.money(total)} $cur', bold: true),
             if (_coupon.text.trim().isNotEmpty)

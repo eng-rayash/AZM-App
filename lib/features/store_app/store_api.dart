@@ -34,6 +34,12 @@ class StoreDataApi {
   Future<Map<String, dynamic>> createManualOrder(String storeId, Map<String, Object?> body) =>
       _c.post('${_s(storeId)}/orders', body: body, decode: _map);
 
+  /// رصيد مكافآت العميل وسجله — `{customer, history}`
+  Future<Map<String, dynamic>> customerPoints(String storeId, String customerId) =>
+      _c.get('${_s(storeId)}/customers/$customerId/points', decode: _map);
+  Future<Map<String, dynamic>> adjustPoints(String storeId, String customerId, int amount, {String? note}) =>
+      _c.post('${_s(storeId)}/customers/$customerId/points', body: {'amount': amount, if (note != null && note.isNotEmpty) 'note': note}, decode: _map);
+
   /// السلات المتروكة — `{carts, stats}`
   Future<Map<String, dynamic>> carts(String storeId, {bool recovered = false}) =>
       _c.get('${_s(storeId)}/carts', query: {if (recovered) 'status': '1'}, decode: _map);

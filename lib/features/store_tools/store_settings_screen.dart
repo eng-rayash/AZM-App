@@ -28,6 +28,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     'hours': TextEditingController(text: widget.store.hours),
     'deliveryFee': TextEditingController(text: '${widget.store.deliveryFee}'),
     'deliveryFreeOver': TextEditingController(text: '${widget.store.deliveryFreeOver}'),
+    'loyaltyRate': TextEditingController(text: '${widget.store.loyaltyRate}'),
     'deliveryNote': TextEditingController(text: widget.store.deliveryNote),
     'payNote': TextEditingController(text: widget.store.payNote),
   };
@@ -50,6 +51,7 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
       for (final k in ['name', 'tagline', 'about', 'whatsapp', 'city', 'address', 'hours', 'deliveryNote', 'payNote']) k: _f[k]!.text.trim(),
       'deliveryFee': int.tryParse(_f['deliveryFee']!.text.trim()) ?? 0,
       'deliveryFreeOver': int.tryParse(_f['deliveryFreeOver']!.text.trim()) ?? 0,
+      'loyaltyRate': (int.tryParse(_f['loyaltyRate']!.text.trim()) ?? 0).clamp(0, 30),
       'payMethods': _pay.toList(),
     };
     try {
@@ -100,6 +102,8 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
           Expanded(child: _field('deliveryFreeOver', 'مجاني فوق', type: TextInputType.number)),
         ]),
         _field('deliveryNote', 'ملاحظة التوصيل', lines: 2),
+        section('برنامج المكافآت'),
+        _field('loyaltyRate', 'نسبة المكافأة ٪', type: TextInputType.number, hint: 'من كل طلب مكتمل لرصيد العميل — 0 يوقفه'),
         section('طرق الدفع للعملاء'),
         for (final e in _payLabels.entries)
           CheckboxListTile(

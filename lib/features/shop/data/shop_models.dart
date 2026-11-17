@@ -61,6 +61,7 @@ class ShopStore {
     this.savedCustomDomain,
     this.deliveryFee = 0,
     this.deliveryFreeOver = 0,
+    this.loyaltyRate = 0,
     this.deliveryNote = '',
     this.payMethods = const ['cod'],
     this.payNote = '',
@@ -99,6 +100,7 @@ class ShopStore {
         savedCustomDomain: json['savedCustomDomain'] as String?,
         deliveryFee: _int(json['deliveryFee']),
         deliveryFreeOver: _int(json['deliveryFreeOver']),
+        loyaltyRate: _int(json['loyaltyRate']),
         deliveryNote: _str(json['deliveryNote']),
         // الخادم يخزّنها نصًّا مفصولًا بفواصل لا قائمة
         payMethods: _csv(json['payMethods'], fallback: const ['cod']),
@@ -165,6 +167,9 @@ class ShopStore {
 
   final int deliveryFee;
   final int deliveryFreeOver;
+
+  /// برنامج المكافآت: ٪ من الطلب المكتمل لرصيد العميل (0 متوقف)
+  final int loyaltyRate;
   final String deliveryNote;
 
   /// `cod` · `wallet` · `bank`. الـ`cod` لا تُنزع على الخادم.
