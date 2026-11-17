@@ -485,6 +485,9 @@ class ShopOrder {
     this.couponCode = '',
     this.discount = 0,
     this.cancelReason = '',
+    this.carrierName = '',
+    this.trackingNo = '',
+    this.trackUrl = '',
     this.items = const [],
     this.wa = '',
     this.createdAt,
@@ -508,6 +511,9 @@ class ShopOrder {
         couponCode: _str(json['couponCode']),
         discount: _int(json['discount']),
         cancelReason: _str(json['cancelReason']),
+        carrierName: _str(json['carrierName']),
+        trackingNo: _str(json['trackingNo']),
+        trackUrl: _str(json['trackUrl']),
         items: _list(json['items'], OrderItem.fromJson),
         wa: _str(json['wa']),
         createdAt: _date(json['createdAt']),
@@ -540,6 +546,11 @@ class ShopOrder {
 
   /// سبب الإلغاء — يراه العميل في تتبّع طلبه
   final String cancelReason;
+
+  /// الشحن: الشركة ورقم الشحنة ورابط التتبّع — يراها العميل بعد «تم الشحن»
+  final String carrierName;
+  final String trackingNo;
+  final String trackUrl;
   final List<OrderItem> items;
 
   /// رابط واتساب جاهز برسالة الطلب — يبنيه الخادم.

@@ -233,6 +233,16 @@ class ShopApi {
         decode: (json) => ShopOrder.fromJson(_nested(json, 'order')),
       );
 
+  /// شركات شحن المتجر — `[{id, name, trackUrl, active, ...}]`
+  Future<List<Map<String, dynamic>>> carriers(String storeId) => _client.get(
+        '/shop/stores/$storeId/carriers',
+        decode: (json) => ((json as Map)['carriers'] as List).map((e) => (e as Map).cast<String, dynamic>()).toList(),
+      );
+
+  /// شركة الشحن ورقم الشحنة لطلب — `carrierId: null` بلا شركة
+  Future<void> setOrderShipping(String storeId, String orderId, {String? carrierId, required String trackingNo}) =>
+      _client.patch('/shop/stores/$storeId/orders/$orderId/shipping', body: {'carrierId': carrierId, 'trackingNo': trackingNo.trim()});
+
   /// يؤكّد استلام تحويل أو ينقضه.
   Future<ShopOrder> setOrderPaid(
     String storeId,

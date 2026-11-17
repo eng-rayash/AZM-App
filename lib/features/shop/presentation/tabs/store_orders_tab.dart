@@ -264,6 +264,37 @@ class _OrderRow extends ConsumerWidget {
             Text('سبب الإلغاء: ${order.cancelReason}', style: AppTypography.caption.copyWith(color: p.inkMuted)),
           ],
 
+          if (const [OrderStatus.confirmed, OrderStatus.preparing, OrderStatus.shipped, OrderStatus.done].contains(order.status)) ...[
+            const SizedBox(height: AzmSpace.xs),
+            InkWell(
+              borderRadius: AzmRadius.control,
+              onTap: () async {
+                final saved = await showModalBottomSheet<bool>(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (_) => _ShipSheet(storeId: storeId, order: order),
+                );
+                if (saved == true) ref.invalidate(orderPageProvider(storeId));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(children: [
+                  Icon(Icons.local_shipping_outlined, size: 15, color: p.inkMuted),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      order.carrierName.isEmpty && order.trackingNo.isEmpty
+                          ? 'أضف شركة الشحن ورقم الشحنة'
+                          : [order.carrierName, if (order.trackingNo.isNotEmpty) 'رقم ${order.trackingNo}'].where((s) => s.isNotEmpty).join(' · '),
+                      style: AppTypography.caption.copyWith(color: order.carrierName.isEmpty && order.trackingNo.isEmpty ? p.accent : p.inkMuted),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          ],
+
           if (order.discount > 0) ...[
             const SizedBox(height: AzmSpace.xs),
             Row(children: [
@@ -442,6 +473,86 @@ class _OrderRow extends ConsumerWidget {
 ///
 /// يُعرض قبل زرّ التقدّم لأنه شرطه: تأكيد طلب تحويلٍ لم يُتحقَّق منه
 /// هو تسليم بضاعة بلا دفع.
+/// شركة الشحن ورقم الشحنة — يظهران للعميل مع زر التتبّع بعد «تم الشحن»
+class _ShipSheet extends ConsumerStatefulWidget {
+  const _ShipSheet({required this.storeId, required this.order});
+  final String storeId;
+  final ShopOrder order;
+  @override
+  ConsumerState<_ShipSheet> createState() => _ShipSheetState();
+}
+
+class _ShipSheetState extends ConsumerState<_ShipSheet> {
+  List<Map<String, dynamic>>? _carriers;
+  String? _carrierId;
+  late final _no = TextEditingController(text: widget.order.trackingNo);
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(shopApiProvider).carriers(widget.storeId).then((list) {
+      if (!mounted) return;
+      setState(() {
+        _carriers = list;
+        _carrierId = list.where((c) => c['name'] == widget.order.carrierName).map((c) => '${c['id']}').firstOrNull;
+      });
+    }).catchError((_) {
+      if (mounted) setState(() => _carriers = const []);
+    });
+  }
+
+  Future<void> _save() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(shopApiProvider).setOrderShipping(widget.storeId, widget.order.id, carrierId: _carrierId, trackingNo: _no.text);
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'.replaceFirst('Exception: ', ''))));
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final list = _carriers;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text('شحن الطلب ${widget.order.ref}', style: AppTypography.h4.copyWith(color: p.ink)),
+        const SizedBox(height: 12),
+        if (list == null)
+          const Center(child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()))
+        else if (list.isEmpty)
+          Text('أضف شركات الشحن التي تتعامل معها من «شركات الشحن» في لوحة الويب.', style: AppTypography.caption.copyWith(color: p.inkMuted))
+        else
+          DropdownButtonFormField<String?>(
+            initialValue: _carrierId,
+            decoration: const InputDecoration(labelText: 'شركة الشحن'),
+            items: [
+              const DropdownMenuItem<String?>(value: null, child: Text('بلا شركة (توصيل المتجر)')),
+              for (final c in list.where((c) => c['active'] != false || '${c['id']}' == _carrierId))
+                DropdownMenuItem<String?>(value: '${c['id']}', child: Text('${c['name']}')),
+            ],
+            onChanged: (v) => setState(() => _carrierId = v),
+          ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: _no,
+          maxLength: 60,
+          textDirection: TextDirection.ltr,
+          decoration: const InputDecoration(labelText: 'رقم الشحنة (بوليصة)', counterText: ''),
+        ),
+        const SizedBox(height: 12),
+        FilledButton(onPressed: _busy || list == null ? null : _save, child: Text(_busy ? '…' : 'حفظ')),
+      ]),
+    );
+  }
+}
+
 class _ProofNote extends ConsumerWidget {
   const _ProofNote({required this.order, required this.storeId});
 
