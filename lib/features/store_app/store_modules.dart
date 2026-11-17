@@ -1038,6 +1038,78 @@ class StoreSectionsScreen extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════
+// السلات المتروكة
+// ═══════════════════════════════════════════════════════════
+
+/// عملاء كتبوا جوالهم في الإتمام ولم يُكملوا — رسالة تذكير جاهزة على واتساب.
+class StoreCartsScreen extends StatefulWidget {
+  const StoreCartsScreen({super.key});
+  @override
+  State<StoreCartsScreen> createState() => _StoreCartsScreenState();
+}
+
+class _StoreCartsScreenState extends State<StoreCartsScreen> {
+  bool _recovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<Map<String, dynamic>>(
+      key: ValueKey(_recovered),
+      title: 'السلات المتروكة',
+      load: (api, s) => api.carts(s.id, recovered: _recovered),
+      builder: (context, d, store, reload) {
+        final list = ((d['carts'] as List?) ?? const []).cast<Map>();
+        final st = (d['stats'] as Map?) ?? {};
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          Row(children: [
+            Expanded(child: RvStat(label: 'متروكة الآن', value: Rv.money((st['open'] as num?) ?? 0), icon: Icons.remove_shopping_cart_outlined, tone: Rv.gold, hint: '${Rv.money((st['openValue'] as num?) ?? 0)} ${store.currency}')),
+            const SizedBox(width: 10),
+            Expanded(child: RvStat(label: 'نسبة الاستعادة', value: '${st['rate'] ?? 0}%', icon: Icons.replay_rounded, tone: const Color(0xFF16A34A))),
+          ]),
+          const SizedBox(height: 12),
+          SegmentedButton<bool>(
+            segments: const [ButtonSegment(value: false, label: Text('متروكة')), ButtonSegment(value: true, label: Text('أُكملت بطلب'))],
+            selected: {_recovered},
+            onSelectionChanged: (v) => setState(() => _recovered = v.first),
+          ),
+          const SizedBox(height: 12),
+          if (list.isEmpty) RvEmpty(icon: Icons.shopping_cart_checkout_rounded, title: _recovered ? 'لا سلات مستعادة بعد' : 'لا سلات متروكة الآن', body: 'تظهر السلة بعد ٣٠ دقيقة من ترك العميل صفحة الإتمام.'),
+          for (final c in list)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RvCard(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(child: Text('${'${c['name'] ?? ''}'.isEmpty ? 'عميل' : c['name']} · ${Rv.money((c['subtotal'] as num?) ?? 0)} ${store.currency}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700))),
+                    Text(Rv.ago('${c['updatedAt']}'), style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                  ]),
+                  Text(((c['items'] as List?) ?? const []).cast<Map>().map((i) => '${i['name']} × ${i['qty']}').join(' · '), style: AppTypography.caption.copyWith(color: p.inkMuted)),
+                  if (!_recovered)
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(backgroundColor: const Color(0xFF16A34A), visualDensity: VisualDensity.compact),
+                        icon: const Icon(Icons.chat_rounded, size: 18),
+                        label: Text(c['remindedAt'] != null ? 'تذكير مرة أخرى' : 'ذكّره على واتساب'),
+                        onPressed: () async {
+                          await launchUrl(Uri.parse('${c['wa']}'), mode: LaunchMode.externalApplication);
+                          if (!context.mounted) return;
+                          await ProviderScope.containerOf(context).read(storeDataApiProvider).cartReminded(store.id, '${c['id']}').catchError((_) {});
+                          await reload();
+                        },
+                      ),
+                    ),
+                ]),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // التحليلات
 // ═══════════════════════════════════════════════════════════
 
