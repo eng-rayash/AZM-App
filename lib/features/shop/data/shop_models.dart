@@ -290,6 +290,7 @@ class ShopProduct {
     this.description = '',
     this.brand = '',
     this.oldPrice,
+    this.costPrice,
     this.lowStock = 0,
     this.image = '',
     this.images = const [],
@@ -310,6 +311,7 @@ class ShopProduct {
         description: _str(json['description']),
         brand: _str(json['brand']),
         oldPrice: json['oldPrice'] as int?,
+        costPrice: json['costPrice'] as int?,
         lowStock: _int(json['lowStock']),
         image: _str(json['image']),
         images: _strList(json['images']),
@@ -334,6 +336,9 @@ class ShopProduct {
   final String description;
   final String brand;
   final int? oldPrice;
+
+  /// سعر التكلفة — خاص بالتاجر لحساب الربح
+  final int? costPrice;
   final int lowStock;
   final String image;
   final List<String> images;

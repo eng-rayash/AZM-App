@@ -49,6 +49,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
   late final TextEditingController _summary;
   late final TextEditingController _price;
   late final TextEditingController _oldPrice;
+  late final TextEditingController _costPrice;
   late final TextEditingController _qty;
   late final TextEditingController _lowStock;
   late final TextEditingController _brand;
@@ -75,6 +76,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     _price = TextEditingController(text: p == null ? '' : '${p.price}');
     _oldPrice =
         TextEditingController(text: p?.oldPrice == null ? '' : '${p!.oldPrice}');
+    _costPrice = TextEditingController(text: p?.costPrice == null ? '' : '${p!.costPrice}');
     _qty = TextEditingController(text: p == null ? '0' : '${p.qty}');
     _lowStock = TextEditingController(text: p == null ? '0' : '${p.lowStock}');
     _brand = TextEditingController(text: p?.brand ?? '');
@@ -91,6 +93,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     _summary.dispose();
     _price.dispose();
     _oldPrice.dispose();
+    _costPrice.dispose();
     _qty.dispose();
     _lowStock.dispose();
     _brand.dispose();
@@ -112,6 +115,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
     final description = _description.text.trim();
     final price = int.tryParse(_price.text.trim()) ?? 0;
     final oldPrice = int.tryParse(_oldPrice.text.trim());
+    final costPrice = int.tryParse(_costPrice.text.trim()) ?? 0;
     final qty = int.tryParse(_qty.text.trim()) ?? 0;
     final lowStock = int.tryParse(_lowStock.text.trim()) ?? 0;
 
@@ -127,6 +131,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
         if (description.isNotEmpty) 'description': description,
         if (_images.isNotEmpty) 'images': _images,
         'oldPrice': ?oldPrice,
+        if (costPrice > 0) 'costPrice': costPrice,
         'categoryId': ?_categoryId,
       };
     }
@@ -140,6 +145,7 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
       if (!_sameImages(before)) 'images': _images,
       if (price != before.price) 'price': price,
       if (oldPrice != before.oldPrice) 'oldPrice': oldPrice,
+      if (costPrice != (before.costPrice ?? 0)) 'costPrice': costPrice,
       if (qty != before.qty) 'qty': qty,
       if (lowStock != before.lowStock) 'lowStock': lowStock,
       if (_live != before.live) 'live': _live,
@@ -375,6 +381,26 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
                   ),
                 ],
               ),
+              const SizedBox(height: AzmSpace.lg),
+              _Text(
+                controller: _costPrice,
+                label: 'سعر التكلفة — لا يراه العملاء',
+                hint: 'اختياري — لحساب ربحك',
+                numeric: true,
+                onChanged: () => setState(() {}),
+              ),
+              if ((int.tryParse(_costPrice.text.trim()) ?? 0) > 0 && (int.tryParse(_price.text.trim()) ?? 0) > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Builder(builder: (context) {
+                    final pr = int.parse(_price.text.trim());
+                    final c = int.parse(_costPrice.text.trim());
+                    return Text(
+                      'الربح ${pr - c} للقطعة (${((pr - c) * 100 / pr).round()}٪)',
+                      style: TextStyle(fontSize: 12, color: pr > c ? const Color(0xFF16A34A) : Theme.of(context).colorScheme.error),
+                    );
+                  }),
+                ),
               const SizedBox(height: AzmSpace.lg),
 
               Row(

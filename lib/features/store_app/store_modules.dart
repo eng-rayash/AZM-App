@@ -806,6 +806,18 @@ class _StoreAnalyticsScreenState extends State<StoreAnalyticsScreen> {
               RvStat(label: 'نسبة الإلغاء', value: '${v('cancelRate')}%', icon: Icons.cancel_outlined, tone: p.danger),
             ],
           ),
+          // ربح المنتجات من الأسطر معروفة التكلفة — يظهر حين يُدخل التاجر «سعر التكلفة»
+          if (d['profit'] case {'coverage': final num cov, 'amount': final num amount, 'margin': final num margin} when cov > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: RvStat(
+                label: 'ربح المنتجات · هامش $margin%',
+                value: '${Rv.money(amount)} ${store.currency}',
+                icon: Icons.savings_outlined,
+                tone: const Color(0xFF16A34A),
+                hint: cov < 100 ? 'تغطي التكلفة $cov% من المبيعات — أضفها لبقية المنتجات' : null,
+              ),
+            ),
           const RvSection('الإيرادات يومًا بيوم'),
           RvCard(
             child: RvBars(
