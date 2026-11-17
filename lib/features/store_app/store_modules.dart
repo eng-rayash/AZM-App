@@ -639,6 +639,115 @@ class StoreCouponsScreen extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════
+// أسئلة العملاء
+// ═══════════════════════════════════════════════════════════
+
+/// أسئلة زوار المتجر عن المنتجات — الإجابة تُنشر تحت المنتج، ولا يُنشر سؤال بلا إجابة.
+class StoreQuestionsScreen extends StatefulWidget {
+  const StoreQuestionsScreen({super.key});
+  @override
+  State<StoreQuestionsScreen> createState() => _StoreQuestionsScreenState();
+}
+
+class _StoreQuestionsScreenState extends State<StoreQuestionsScreen> {
+  int? _status = 0;
+
+  Future<void> _answer(BuildContext context, ShopStore store, Map q, Future<void> Function() reload) async {
+    final c = TextEditingController(text: '${q['answer'] ?? ''}');
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (s) => Padding(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.of(s).viewInsets.bottom),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('${q['question']}', style: AppTypography.h4),
+          const SizedBox(height: 12),
+          TextField(controller: c, autofocus: true, maxLines: 4, maxLength: 1000, decoration: const InputDecoration(labelText: 'إجابتك — تظهر للجميع تحت المنتج')),
+          const SizedBox(height: 8),
+          FilledButton(style: FilledButton.styleFrom(backgroundColor: Rv.red, minimumSize: const Size(0, 48)), onPressed: () => Navigator.pop(s, true), child: const Text('إجابة ونشر')),
+        ]),
+      ),
+    );
+    if (ok != true || c.text.trim().isEmpty || !context.mounted) return;
+    await _run(context, () async {
+      await ProviderScope.containerOf(context).read(storeDataApiProvider).answerQuestion(store.id, '${q['id']}', answer: c.text.trim());
+      await reload();
+    }, 'نُشرت الإجابة في صفحة المنتج');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<Map<String, dynamic>>(
+      key: ValueKey(_status),
+      title: 'أسئلة العملاء',
+      load: (api, s) => api.questions(s.id, status: _status),
+      builder: (context, d, store, reload) {
+        final list = ((d['questions'] as List?) ?? const []).cast<Map>();
+        final counts = (d['counts'] as Map?) ?? {};
+        Widget chip(String label, int? v) => Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: ChoiceChip(
+                label: Text(v == null ? label : '$label (${counts['$v'] ?? 0})'),
+                selected: _status == v,
+                onSelected: (_) => setState(() => _status = v),
+              ),
+            );
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [chip('بانتظار الإجابة', 0), chip('منشور', 1), chip('مخفي', 2), chip('الكل', null)])),
+          const SizedBox(height: 12),
+          if (list.isEmpty)
+            RvEmpty(icon: Icons.contact_support_outlined, title: _status == 0 ? 'لا أسئلة تنتظرك' : 'لا أسئلة هنا', body: 'يسأل الزائر من صفحة المنتج، ويصلك إشعار.'),
+          for (final q in list)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RvCard(
+                onTap: () => _answer(context, store, q, reload),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(child: Text('${(q['product'] as Map?)?['name'] ?? ''}', style: AppTypography.caption.copyWith(color: p.inkFaint))),
+                    RvChip(const ['بانتظار الإجابة', 'منشور', 'مخفي'][((q['status'] as num?) ?? 0).toInt().clamp(0, 2)],
+                        color: [Rv.gold, const Color(0xFF0F766E), p.inkFaint][((q['status'] as num?) ?? 0).toInt().clamp(0, 2)]),
+                  ]),
+                  const SizedBox(height: 6),
+                  Text('${q['question']}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                  Text('${(q['name'] ?? '').toString().isEmpty ? 'زائر' : q['name']} · ${Rv.ago('${q['createdAt']}')}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                  if ('${q['answer'] ?? ''}'.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(color: p.hairline.withValues(alpha: .5), borderRadius: BorderRadius.circular(12)),
+                      child: Text('${q['answer']}', style: AppTypography.bodySmall.copyWith(color: p.ink)),
+                    ),
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    TextButton.icon(onPressed: () => _answer(context, store, q, reload), icon: const Icon(Icons.reply_rounded, size: 18), label: Text(q['status'] == 1 ? 'تعديل الإجابة' : 'أجب')),
+                    if (q['status'] == 1)
+                      TextButton(
+                        onPressed: () => _run(context, () async {
+                          await ProviderScope.containerOf(context).read(storeDataApiProvider).answerQuestion(store.id, '${q['id']}', status: 2);
+                          await reload();
+                        }, 'أُخفي من صفحة المنتج'),
+                        child: const Text('إخفاء'),
+                      ),
+                    IconButton(
+                      icon: Icon(Icons.delete_outline, color: p.danger),
+                      onPressed: () => _run(context, () async {
+                        await ProviderScope.containerOf(context).read(storeDataApiProvider).removeQuestion(store.id, '${q['id']}');
+                        await reload();
+                      }, 'حُذف السؤال'),
+                    ),
+                  ]),
+                ]),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // التحليلات
 // ═══════════════════════════════════════════════════════════
 
