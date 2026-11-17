@@ -245,9 +245,9 @@ class _ProductEditorSheetState extends ConsumerState<ProductEditorSheet> {
         title: Text('حذف ${widget.product!.name}؟',
             style: AppTypography.h3.copyWith(color: p.ink)),
         content: Text(
-          // الحذف لا يُسترجَع، والإخفاء بديل كافٍ في أغلب الحالات
-          'الحذف نهائي. إن كان المنتج نافدًا فقط فالإخفاء أنسب — يعود '
-          'بلمسة حين يتوفّر.',
+          // المحذوف يذهب إلى السلة ٣٠ يومًا، والإخفاء بديل أنسب للنافد
+          'يُنقل إلى «سلة المحذوفات» وتستعيده كما كان خلال ٣٠ يومًا. '
+          'إن كان المنتج نافدًا فقط فالإخفاء أنسب — يعود بلمسة حين يتوفّر.',
           style: AppTypography.body.copyWith(color: p.inkMuted),
         ),
         actions: [

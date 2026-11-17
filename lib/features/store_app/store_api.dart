@@ -34,6 +34,18 @@ class StoreDataApi {
   Future<Map<String, dynamic>> createManualOrder(String storeId, Map<String, Object?> body) =>
       _c.post('${_s(storeId)}/orders', body: body, decode: _map);
 
+  /// سلة المحذوفات
+  Future<List<Map<String, dynamic>>> trash(String storeId) => _c.get('${_s(storeId)}/trash', decode: _list);
+  Future<void> restoreTrash(String storeId, String id) => _c.post('${_s(storeId)}/trash/$id/restore');
+  Future<void> purgeTrash(String storeId, String id) => _c.delete('${_s(storeId)}/trash/$id');
+
+  /// أقسام الرئيسية
+  Future<List<Map<String, dynamic>>> sections(String storeId) => _c.get('${_s(storeId)}/sections', decode: _list);
+  Future<void> addSection(String storeId, Map<String, Object?> body) => _c.post('${_s(storeId)}/sections', body: body);
+  Future<void> editSection(String storeId, String id, Map<String, Object?> body) => _c.patch('${_s(storeId)}/sections/$id', body: body);
+  Future<void> reorderSections(String storeId, List<String> ids) => _c.post('${_s(storeId)}/sections/reorder', body: {'ids': ids});
+  Future<void> removeSection(String storeId, String id) => _c.delete('${_s(storeId)}/sections/$id');
+
   /// المرتجعات — `{returns, counts}`
   Future<Map<String, dynamic>> returns(String storeId, {int? status}) =>
       _c.get('${_s(storeId)}/returns', query: {if (status != null) 'status': '$status'}, decode: _map);

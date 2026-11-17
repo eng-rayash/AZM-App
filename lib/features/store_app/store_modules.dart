@@ -857,6 +857,187 @@ class _StoreReturnsScreenState extends State<StoreReturnsScreen> {
 }
 
 // ═══════════════════════════════════════════════════════════
+// سلة المحذوفات
+// ═══════════════════════════════════════════════════════════
+
+/// المنتجات المحذوفة ٣٠ يومًا بصورها وخياراتها وتقييماتها — تُستعاد كما كانت.
+class StoreTrashScreen extends StatelessWidget {
+  const StoreTrashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<List<Map<String, dynamic>>>(
+      title: 'سلة المحذوفات',
+      load: (api, s) => api.trash(s.id),
+      builder: (context, list, store, reload) => ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+        Text('المنتج المحذوف يبقى هنا ٣٠ يومًا ثم يُحذف نهائيًا.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
+        const SizedBox(height: 12),
+        if (list.isEmpty) const RvEmpty(icon: Icons.delete_outline_rounded, title: 'السلة فارغة'),
+        for (final t in list)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: RvCard(
+              child: Row(children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: '${t['image'] ?? ''}'.isEmpty
+                      ? Container(width: 48, height: 48, color: p.hairline)
+                      : Image.network('${t['image']}', width: 48, height: 48, fit: BoxFit.cover, errorBuilder: (_, _, _) => Container(width: 48, height: 48, color: p.hairline)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('${t['name'] ?? ''}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                    Text('حُذف ${Rv.ago('${t['deletedAt']}')}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                  ]),
+                ),
+                TextButton(
+                  onPressed: () => _run(context, () async {
+                    await ProviderScope.containerOf(context).read(storeDataApiProvider).restoreTrash(store.id, '${t['id']}');
+                    await reload();
+                  }, 'استُعيد المنتج كما كان'),
+                  child: const Text('استعادة'),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_forever_outlined, color: p.danger),
+                  onPressed: () async {
+                    final yes = await showDialog<bool>(
+                      context: context,
+                      builder: (dc) => AlertDialog(
+                        title: Text('حذف «${t['name']}» نهائيًا؟'),
+                        content: const Text('لا يمكن التراجع عن الحذف النهائي.'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(dc, false), child: const Text('إلغاء')),
+                          TextButton(onPressed: () => Navigator.pop(dc, true), child: Text('حذف نهائي', style: TextStyle(color: p.danger))),
+                        ],
+                      ),
+                    );
+                    if (yes != true || !context.mounted) return;
+                    await _run(context, () async {
+                      await ProviderScope.containerOf(context).read(storeDataApiProvider).purgeTrash(store.id, '${t['id']}');
+                      await reload();
+                    }, 'حُذف نهائيًا');
+                  },
+                ),
+              ]),
+            ),
+          ),
+      ]),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// أقسام الرئيسية
+// ═══════════════════════════════════════════════════════════
+
+/// أقسام منتجات تظهر في رئيسية المتجر تحت تصميم القالب. التطبيق يضيف الأقسام التلقائية
+/// (الأكثر مبيعًا، الأحدث، العروض)؛ التصنيف والعلامة والاختيار اليدوي من «أقسام الرئيسية» في اللوحة.
+class StoreSectionsScreen extends StatelessWidget {
+  const StoreSectionsScreen({super.key});
+
+  static const _sources = {'best': 'الأكثر مبيعًا', 'new': 'الأحدث', 'sale': 'العروض', 'category': 'تصنيف', 'brand': 'علامة تجارية', 'manual': 'اختيار يدوي'};
+
+  Future<void> _add(BuildContext context, ShopStore store, Future<void> Function() reload) async {
+    final title = TextEditingController();
+    var source = 'best';
+    var row = false;
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (s) => StatefulBuilder(
+        builder: (s, set) => Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.of(s).viewInsets.bottom),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('قسم جديد', style: AppTypography.h3),
+            const SizedBox(height: 12),
+            TextField(controller: title, maxLength: 60, decoration: const InputDecoration(labelText: 'العنوان', hintText: 'الأكثر طلبًا هذا الأسبوع')),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(value: 'best', label: Text('الأكثر مبيعًا')),
+                ButtonSegment(value: 'new', label: Text('الأحدث')),
+                ButtonSegment(value: 'sale', label: Text('العروض')),
+              ],
+              selected: {source},
+              onSelectionChanged: (v) => set(() => source = v.first),
+            ),
+            SwitchListTile(contentPadding: EdgeInsets.zero, activeThumbColor: Rv.red, value: row, title: const Text('شريط يمرّ أفقيًا'), onChanged: (v) => set(() => row = v)),
+            FilledButton(style: FilledButton.styleFrom(backgroundColor: Rv.red, minimumSize: const Size(0, 48)), onPressed: () => Navigator.pop(s, true), child: const Text('إضافة')),
+          ]),
+        ),
+      ),
+    );
+    if (ok != true || title.text.trim().isEmpty || !context.mounted) return;
+    await _run(context, () async {
+      await ProviderScope.containerOf(context).read(storeDataApiProvider).addSection(store.id, {'title': title.text.trim(), 'source': source, 'layout': row ? 'row' : 'grid'});
+      await reload();
+    }, 'أُضيف القسم إلى رئيسية متجرك');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<List<Map<String, dynamic>>>(
+      title: 'أقسام الرئيسية',
+      load: (api, s) => api.sections(s.id),
+      actions: (context, store, reload) => [IconButton(icon: const Icon(Icons.add_circle_rounded, color: Rv.red), onPressed: () => _add(context, store, reload))],
+      builder: (context, list, store, reload) {
+        final api = ProviderScope.containerOf(context).read(storeDataApiProvider);
+        Future<void> move(int i, int d) => _run(context, () async {
+              final ids = list.map((s) => '${s['id']}').toList();
+              final t = ids[i];
+              ids[i] = ids[i + d];
+              ids[i + d] = t;
+              await api.reorderSections(store.id, ids);
+              await reload();
+            }, 'رُتّبت الأقسام');
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          Text('تظهر في رئيسية متجرك بترتيبها، والقسم بلا منتجات لا يظهر.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
+          const SizedBox(height: 12),
+          if (list.isEmpty) RvEmpty(icon: Icons.view_agenda_outlined, title: 'لا أقسام بعد', action: 'أضف قسمًا', onAction: () => _add(context, store, reload)),
+          for (var i = 0; i < list.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RvCard(
+                padding: const EdgeInsets.fromLTRB(6, 6, 12, 6),
+                child: Row(children: [
+                  Column(children: [
+                    IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.keyboard_arrow_up_rounded), onPressed: i == 0 ? null : () => move(i, -1)),
+                    IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.keyboard_arrow_down_rounded), onPressed: i == list.length - 1 ? null : () => move(i, 1)),
+                  ]),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('${list[i]['title']}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                      Text('${_sources[list[i]['source']] ?? list[i]['source']} · ${list[i]['layout'] == 'row' ? 'شريط' : 'شبكة'}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                    ]),
+                  ),
+                  Switch(
+                    value: list[i]['active'] == true,
+                    activeThumbColor: Rv.red,
+                    onChanged: (v) => _run(context, () async {
+                      await api.editSection(store.id, '${list[i]['id']}', {'active': v});
+                      await reload();
+                    }, v ? 'ظهر القسم' : 'أُخفي القسم'),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, color: p.danger),
+                    onPressed: () => _run(context, () async {
+                      await api.removeSection(store.id, '${list[i]['id']}');
+                      await reload();
+                    }, 'حُذف القسم'),
+                  ),
+                ]),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // التحليلات
 // ═══════════════════════════════════════════════════════════
 
