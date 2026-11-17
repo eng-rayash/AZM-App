@@ -322,7 +322,7 @@ class _OrderRow extends ConsumerWidget {
                   ),
                   child: Text(_advanceLabel(next)),
                 ),
-              if (order.status != OrderStatus.done && order.status != OrderStatus.off)
+              if (order.status != OrderStatus.done && order.status != OrderStatus.off && order.status != OrderStatus.returned)
                 PopupMenuButton<OrderStatus>(
                   tooltip: 'المزيد',
                   icon: Icon(Icons.more_vert_rounded, color: p.inkMuted),
@@ -351,6 +351,7 @@ class _OrderRow extends ConsumerWidget {
         OrderStatus.shipped => OrderStatus.done,
         OrderStatus.done => null,
         OrderStatus.off => null,
+        OrderStatus.returned => null,
       };
 
   /// قفزات أمامية مسموحة غير الزر الأساسي (كما في ORDER_NEXT بالخادم) — في قائمة «المزيد»
@@ -502,6 +503,7 @@ class _StatusDot extends StatelessWidget {
       OrderStatus.shipped => const Color(0xFF4F46E5),
       OrderStatus.done => p.success,
       OrderStatus.off => p.inkGhost,
+      OrderStatus.returned => const Color(0xFFEA580C),
     };
 
     return Row(

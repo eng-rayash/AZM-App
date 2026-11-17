@@ -34,6 +34,11 @@ class StoreDataApi {
   Future<Map<String, dynamic>> createManualOrder(String storeId, Map<String, Object?> body) =>
       _c.post('${_s(storeId)}/orders', body: body, decode: _map);
 
+  /// المرتجعات — `{returns, counts}`
+  Future<Map<String, dynamic>> returns(String storeId, {int? status}) =>
+      _c.get('${_s(storeId)}/returns', query: {if (status != null) 'status': '$status'}, decode: _map);
+  Future<void> updateReturn(String storeId, String id, Map<String, Object?> body) => _c.patch('${_s(storeId)}/returns/$id', body: body);
+
   /// أسئلة المنتجات — `{questions, counts}`
   Future<Map<String, dynamic>> questions(String storeId, {int? status}) =>
       _c.get('${_s(storeId)}/questions', query: {if (status != null) 'status': '$status'}, decode: _map);

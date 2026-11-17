@@ -748,6 +748,115 @@ class _StoreQuestionsScreenState extends State<StoreQuestionsScreen> {
 }
 
 // ═══════════════════════════════════════════════════════════
+// المرتجعات
+// ═══════════════════════════════════════════════════════════
+
+/// طلبات الاسترجاع: قبول، أو رفض بملاحظة، أو إتمام بمبلغ مُعاد وإعادة المخزون — الطلب يصير «مُرجَعًا».
+class StoreReturnsScreen extends StatefulWidget {
+  const StoreReturnsScreen({super.key});
+  @override
+  State<StoreReturnsScreen> createState() => _StoreReturnsScreenState();
+}
+
+class _StoreReturnsScreenState extends State<StoreReturnsScreen> {
+  int? _status = 0;
+  static const _labels = {0: 'جديدة', 1: 'مقبولة', 3: 'مكتملة', 2: 'مرفوضة'};
+
+  Future<void> _act(BuildContext context, ShopStore store, Map r, Future<void> Function() reload) async {
+    final order = (r['order'] as Map?) ?? {};
+    final refund = TextEditingController(text: '${r['refund'] ?? order['total'] ?? 0}');
+    final note = TextEditingController(text: '${r['note'] ?? ''}');
+    var restock = r['restock'] != false;
+    final choice = await showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (s) => StatefulBuilder(
+        builder: (s, set) => Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.of(s).viewInsets.bottom),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('مرتجع ${order['ref'] ?? ''}', style: AppTypography.h3),
+            if ('${r['reason'] ?? ''}'.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6), child: Text('${r['reason']}')),
+            const SizedBox(height: 12),
+            TextField(controller: refund, keyboardType: TextInputType.number, inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: InputDecoration(labelText: 'المبلغ المُعاد (${store.currency})')),
+            const SizedBox(height: 10),
+            TextField(controller: note, maxLength: 300, decoration: const InputDecoration(labelText: 'ملاحظة يراها العميل')),
+            SwitchListTile(contentPadding: EdgeInsets.zero, activeThumbColor: Rv.red, value: restock, title: const Text('أعد الكميات للمخزون'), onChanged: (v) => set(() => restock = v)),
+            const SizedBox(height: 4),
+            FilledButton(style: FilledButton.styleFrom(backgroundColor: Rv.red, minimumSize: const Size(0, 48)), onPressed: () => Navigator.pop(s, 3), child: const Text('إتمام الاسترجاع')),
+            if (r['status'] == 0) OutlinedButton(onPressed: () => Navigator.pop(s, 1), child: const Text('قبول — سأستلم المنتج لاحقًا')),
+            TextButton(onPressed: () => Navigator.pop(s, 2), child: Text('رفض', style: TextStyle(color: AzmPalette.of(s).danger))),
+          ]),
+        ),
+      ),
+    );
+    if (choice == null || !context.mounted) return;
+    await _run(context, () async {
+      await ProviderScope.containerOf(context).read(storeDataApiProvider).updateReturn(store.id, '${r['id']}', {
+        'status': choice,
+        'refund': int.tryParse(refund.text.trim()) ?? 0,
+        'restock': restock,
+        'note': note.text.trim(),
+      });
+      await reload();
+    }, choice == 3 ? 'اكتمل الاسترجاع — الطلب صار «مُرجَعًا»' : choice == 1 ? 'قُبل الطلب' : 'رُفض الطلب');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<Map<String, dynamic>>(
+      key: ValueKey(_status),
+      title: 'المرتجعات',
+      load: (api, s) => api.returns(s.id, status: _status),
+      builder: (context, d, store, reload) {
+        final list = ((d['returns'] as List?) ?? const []).cast<Map>();
+        final counts = (d['counts'] as Map?) ?? {};
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: [
+              for (final e in _labels.entries)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 8),
+                  child: ChoiceChip(label: Text('${e.value} (${counts['${e.key}'] ?? 0})'), selected: _status == e.key, onSelected: (_) => setState(() => _status = e.key)),
+                ),
+              ChoiceChip(label: const Text('الكل'), selected: _status == null, onSelected: (_) => setState(() => _status = null)),
+            ]),
+          ),
+          const SizedBox(height: 12),
+          if (list.isEmpty) const RvEmpty(icon: Icons.assignment_return_outlined, title: 'لا مرتجعات هنا', body: 'يطلبها العميل من صفحة تتبّع طلب مكتمل خلال ١٤ يومًا.'),
+          for (final r in list)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Builder(builder: (context) {
+                final o = (r['order'] as Map?) ?? {};
+                final st = ((r['status'] as num?) ?? 0).toInt();
+                final open = st == 0 || st == 1;
+                return RvCard(
+                  onTap: open ? () => _act(context, store, r, reload) : null,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Text('${o['ref'] ?? ''}', textDirection: TextDirection.ltr, style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w800)),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text('${o['custName'] ?? ''} · ${Rv.money((o['total'] as num?) ?? 0)} ${store.currency}', style: AppTypography.caption.copyWith(color: p.inkFaint))),
+                      RvChip(_labels[st] ?? '', color: switch (st) { 0 => Rv.gold, 1 => const Color(0xFF2F6FB3), 3 => const Color(0xFF16A34A), _ => p.inkFaint }),
+                    ]),
+                    if ('${r['reason'] ?? ''}'.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6), child: Text('${r['reason']}', style: AppTypography.bodySmall.copyWith(color: p.ink))),
+                    if (st == 3) Text('أُعيد ${Rv.money((r['refund'] as num?) ?? 0)} ${store.currency}${r['restock'] == true ? ' وعادت الكميات للمخزون' : ''}', style: AppTypography.caption.copyWith(color: const Color(0xFF16A34A))),
+                    if ('${r['note'] ?? ''}'.isNotEmpty) Text('ملاحظة: ${r['note']}', style: AppTypography.caption.copyWith(color: p.inkMuted)),
+                    if (open) Align(alignment: AlignmentDirectional.centerEnd, child: TextButton(onPressed: () => _act(context, store, r, reload), child: const Text('معالجة'))),
+                  ]),
+                );
+              }),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // التحليلات
 // ═══════════════════════════════════════════════════════════
 

@@ -235,6 +235,7 @@ class _Home extends ConsumerWidget {
             RvAction(icon: Icons.local_shipping_rounded, label: 'التوصيل', color: const Color(0xFFD97706), onTap: () => context.push(StoreRoutes.zones)),
             RvAction(icon: Icons.local_offer_rounded, label: 'القسائم', color: const Color(0xFF16A34A), onTap: () => context.push(StoreRoutes.coupons)),
             RvAction(icon: Icons.contact_support_rounded, label: 'الأسئلة', color: const Color(0xFF0369A1), onTap: () => context.push(StoreRoutes.questions)),
+            RvAction(icon: Icons.assignment_return_rounded, label: 'المرتجعات', color: const Color(0xFFEA580C), onTap: () => context.push(StoreRoutes.returns)),
             RvAction(
               icon: Icons.palette_rounded,
               label: 'تصميم المتجر',
@@ -430,6 +431,7 @@ class _OrderRow extends StatelessWidget {
       OrderStatus.shipped => const Color(0xFF4F46E5),
       OrderStatus.done => const Color(0xFF0F766E),
       OrderStatus.off => p.inkFaint,
+      OrderStatus.returned => const Color(0xFFEA580C),
     };
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),

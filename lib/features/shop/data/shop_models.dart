@@ -405,7 +405,8 @@ enum OrderStatus {
   preparing(4, 'قيد التجهيز'),
   shipped(5, 'تم الشحن'),
   done(2, 'مكتمل'),
-  off(3, 'ملغى');
+  off(3, 'ملغى'),
+  returned(6, 'مُرجَع');
 
   const OrderStatus(this.value, this.label);
   final int value;
