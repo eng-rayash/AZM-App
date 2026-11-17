@@ -109,6 +109,32 @@ class StoreDataApi {
     return '${(j as Map)['url']}';
   }
 
+  // ── توثيق المتجر — الوثائق خاصة: تُرفع وتُقرأ بالرمز، ولا رابط عامًا لها ──
+  Future<Map<String, dynamic>> kyc(String storeId) => _c.get('${_s(storeId)}/kyc', decode: _map);
+  Future<Map<String, dynamic>> saveKyc(String storeId, Map<String, Object?> body) => _c.put('${_s(storeId)}/kyc', body: body, decode: _map);
+  Future<Map<String, dynamic>> submitKyc(String storeId) => _c.post('${_s(storeId)}/kyc/submit', decode: _map);
+  Future<Map<String, dynamic>> removeKycDoc(String storeId, String docId) => _c.delete('${_s(storeId)}/kyc/docs/$docId', decode: _map);
+
+  Future<void> uploadKycDoc(String storeId, String kind, List<int> bytes, String filename) async {
+    final token = await AuthTokenStore().readToken();
+    final req = http.MultipartRequest('POST', Uri.parse('$apiBaseUrl$apiPrefix/shop/stores/$storeId/kyc/docs?kind=$kind'))
+      ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: filename));
+    if (token != null) req.headers['authorization'] = 'Bearer $token';
+    final res = await http.Response.fromStream(await req.send().timeout(const Duration(seconds: 60)));
+    if (res.statusCode >= 300) {
+      final j = jsonDecode(utf8.decode(res.bodyBytes));
+      throw Exception(j is Map && j['message'] != null ? '${j['message']}' : 'تعذّر رفع الوثيقة');
+    }
+  }
+
+  Future<List<int>> kycDocBytes(String storeId, String docId) async {
+    final token = await AuthTokenStore().readToken();
+    final res = await http.get(Uri.parse('$apiBaseUrl$apiPrefix/shop/stores/$storeId/kyc/docs/$docId'),
+        headers: {if (token != null) 'authorization': 'Bearer $token'}).timeout(const Duration(seconds: 30));
+    if (res.statusCode >= 300) throw Exception('تعذّر فتح الوثيقة');
+    return res.bodyBytes;
+  }
+
   static Map<String, dynamic> _map(dynamic j) => (j as Map).cast<String, dynamic>();
   static List<Map<String, dynamic>> _list(dynamic j) => (j as List).map((e) => (e as Map).cast<String, dynamic>()).toList();
 }

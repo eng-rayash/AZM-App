@@ -119,6 +119,7 @@ class AzmNav {
         NavDestination(label: 'القوالب', icon: Icons.dashboard_customize_outlined, route: StoreRoutes.templates),
         NavDestination(label: 'الباقة والاشتراك', icon: Icons.workspace_premium_outlined, route: StoreRoutes.billing),
         NavDestination(label: 'طرق الدفع', icon: Icons.account_balance_wallet_outlined, route: StoreRoutes.pay),
+        NavDestination(label: 'توثيق المتجر', icon: Icons.verified_outlined, route: StoreRoutes.verification),
       ],
     ),
     NavGroup(

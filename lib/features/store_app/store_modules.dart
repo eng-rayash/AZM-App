@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1217,6 +1218,195 @@ class _StoreCartsScreenState extends State<StoreCartsScreen> {
       },
     );
   }
+}
+
+// ═══════════════════════════════════════════════════════════
+// توثيق المتجر
+// ═══════════════════════════════════════════════════════════
+
+/// وثائق صاحب المتجر لشارة «متجر موثَّق» — خاصة: لا تُرفع إلى الحاوية العامة.
+class StoreVerificationScreen extends StatelessWidget {
+  const StoreVerificationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _ModuleScaffold<Map<String, dynamic>>(
+      title: 'توثيق المتجر',
+      load: (api, s) => api.kyc(s.id),
+      builder: (context, d, store, reload) => _KycBody(data: d, store: store, reload: reload),
+    );
+  }
+}
+
+class _KycBody extends ConsumerStatefulWidget {
+  const _KycBody({required this.data, required this.store, required this.reload});
+  final Map<String, dynamic> data;
+  final ShopStore store;
+  final Future<void> Function() reload;
+  @override
+  ConsumerState<_KycBody> createState() => _KycBodyState();
+}
+
+class _KycBodyState extends ConsumerState<_KycBody> {
+  static const _slots = [
+    ('id_front', 'وجه الهوية', 'always'),
+    ('id_back', 'ظهر الهوية', 'optional'),
+    ('selfie', 'صورتك مع الهوية', 'optional'),
+    ('cr', 'السجل التجاري', 'business'),
+  ];
+  late String _kind = '${widget.data['kind'] ?? 'person'}';
+  late final _name = TextEditingController(text: '${widget.data['legalName'] ?? ''}');
+  late final _cr = TextEditingController(text: '${widget.data['crNumber'] ?? ''}');
+  String? _busy;
+  // صورة كل وثيقة تُجلب مرة واحدة لا مع كل إعادة رسم
+  final _thumbs = <String, Future<List<int>>>{};
+
+  Future<void> _save(StoreDataApi api) => api.saveKyc(widget.store.id, {'kind': _kind, 'legalName': _name.text.trim(), if (_cr.text.trim().isNotEmpty) 'crNumber': _cr.text.trim()});
+
+  Future<void> _go(String key, Future<void> Function() f, [String? ok]) async {
+    setState(() => _busy = key);
+    try {
+      await f();
+      if (ok != null && mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok)));
+      await widget.reload();
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'.replaceFirst('Exception: ', ''))));
+    } finally {
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  Future<void> _pick(String kind) async {
+    final src = await showModalBottomSheet<ImageSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (s) => SafeArea(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        ListTile(leading: const Icon(Icons.photo_camera_outlined), title: const Text('تصوير الآن'), onTap: () => Navigator.pop(s, ImageSource.camera)),
+        ListTile(leading: const Icon(Icons.photo_library_outlined), title: const Text('من المعرض'), onTap: () => Navigator.pop(s, ImageSource.gallery)),
+      ])),
+    );
+    if (src == null) return;
+    final img = await ImagePicker().pickImage(source: src, imageQuality: 85, maxWidth: 2000);
+    if (img == null) return;
+    final bytes = await img.readAsBytes();
+    final api = ref.read(storeDataApiProvider);
+    await _go(kind, () async {
+      // ما كُتب في الحقول يُحفظ أولًا كي لا يضيع مع التحديث
+      if (_name.text.trim().length >= 3) await _save(api);
+      await api.uploadKycDoc(widget.store.id, kind, bytes, img.name);
+    }, 'رُفعت الوثيقة');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final d = widget.data;
+    final status = (d['status'] as num?)?.toInt();
+    final verified = d['verified'] == true;
+    final locked = verified || status == 1;
+    final docs = ((d['docs'] as List?) ?? const []).cast<Map>();
+    final api = ref.read(storeDataApiProvider);
+    Map? doc(String k) => docs.where((x) => x['kind'] == k).firstOrNull;
+
+    return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+      if (verified)
+        _banner(p, Icons.verified_rounded, const Color(0xFF16A34A), 'متجرك موثَّق', 'تظهر شارة «متجر موثَّق» في صفحات متجرك.')
+      else if (status == 1)
+        _banner(p, Icons.schedule_rounded, Rv.gold, 'طلبك قيد المراجعة', 'يراجعه فريق RVIOS عادة خلال يوم عمل، ويصلك إشعار بالقرار.')
+      else if (status == 3)
+        _banner(p, Icons.error_outline_rounded, Rv.red, 'يحتاج طلبك تصحيحًا', '${d['reviewNote'] ?? ''}')
+      else
+        Text('وثّق هويتك مرة واحدة فيظهر لمتجرك شارة «متجر موثَّق» تطمئن العملاء قبل الطلب.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
+      const SizedBox(height: 12),
+      SegmentedButton<String>(
+        segments: const [ButtonSegment(value: 'person', label: Text('فرد')), ButtonSegment(value: 'business', label: Text('منشأة بسجل تجاري'))],
+        selected: {_kind},
+        onSelectionChanged: locked ? null : (v) => setState(() => _kind = v.first),
+      ),
+      const SizedBox(height: 10),
+      TextField(controller: _name, enabled: !locked, maxLength: 120, decoration: InputDecoration(labelText: _kind == 'business' ? 'اسم المنشأة الرسمي' : 'الاسم الكامل كما في الهوية', counterText: '')),
+      if (_kind == 'business') ...[
+        const SizedBox(height: 10),
+        TextField(controller: _cr, enabled: !locked, maxLength: 40, textDirection: TextDirection.ltr, decoration: const InputDecoration(labelText: 'رقم السجل التجاري', counterText: '')),
+      ],
+      const SizedBox(height: 16),
+      for (final (kind, label, need) in _slots)
+        if (need != 'business' || _kind == 'business')
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: RvCard(
+              child: Row(children: [
+                SizedBox(
+                  width: 84,
+                  height: 56,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: doc(kind) == null
+                        ? ColoredBox(color: p.hairline, child: Icon(Icons.badge_outlined, color: p.inkFaint))
+                        : FutureBuilder<List<int>>(
+                            future: _thumbs.putIfAbsent('${doc(kind)!['id']}', () => api.kycDocBytes(widget.store.id, '${doc(kind)!['id']}')),
+                            builder: (_, s) => s.hasData
+                                ? Image.memory(Uint8List.fromList(s.data!), fit: BoxFit.cover)
+                                : ColoredBox(color: p.hairline, child: const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)))),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(label, style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                    Text(need == 'optional' ? 'اختياري' : 'مطلوب', style: AppTypography.caption.copyWith(color: need == 'optional' ? p.inkFaint : Rv.red)),
+                  ]),
+                ),
+                if (!locked)
+                  _busy == kind
+                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                      : Row(mainAxisSize: MainAxisSize.min, children: [
+                          if (doc(kind) != null)
+                            IconButton(
+                              tooltip: 'حذف',
+                              icon: const Icon(Icons.delete_outline_rounded),
+                              onPressed: _busy != null ? null : () => _go(kind, () => api.removeKycDoc(widget.store.id, '${doc(kind)!['id']}')),
+                            ),
+                          TextButton(onPressed: _busy != null ? null : () => _pick(kind), child: Text(doc(kind) == null ? 'رفع' : 'استبدال')),
+                        ]),
+              ]),
+            ),
+          ),
+      RvCard(
+        color: p.hairline.withValues(alpha: .4),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(Icons.lock_outline_rounded, size: 18, color: p.inkMuted),
+          const SizedBox(width: 10),
+          Expanded(child: Text('لا رابط عامًا لوثائقك: لا يراها إلا مالك المتجر ومديروه وفريق مراجعة RVIOS. تُحذف بياناتها الوصفية عند الرفع، وتُحذف الصور نهائيًا بعد ${d['keepDays'] ?? 30} يومًا من القرار.', style: AppTypography.caption.copyWith(color: p.inkMuted))),
+        ]),
+      ),
+      if (!locked) ...[
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(backgroundColor: Rv.red, minimumSize: const Size.fromHeight(48)),
+          onPressed: _busy != null ? null : () => _go('submit', () async {
+            await _save(api);
+            await api.submitKyc(widget.store.id);
+          }, 'أُرسل الطلب للمراجعة'),
+          icon: _busy == 'submit' ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.send_rounded),
+          label: const Text('إرسال للمراجعة'),
+        ),
+      ],
+    ]);
+  }
+
+  Widget _banner(AzmPalette p, IconData icon, Color tone, String title, String body) => RvCard(
+        color: tone.withValues(alpha: .08),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(icon, color: tone),
+          const SizedBox(width: 10),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w800)),
+            if (body.isNotEmpty) Text(body, style: AppTypography.caption.copyWith(color: p.inkMuted)),
+          ])),
+        ]),
+      );
 }
 
 // ═══════════════════════════════════════════════════════════
