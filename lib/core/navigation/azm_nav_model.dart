@@ -140,6 +140,34 @@ class AzmNav {
     NavDestination(label: 'الإعدادات', icon: Icons.settings_outlined, route: RouteNames.settings),
   ];
 
+  /// قسم المتجر الذي تتبعه الوجهة — ما لا يتبع قسمًا يحكمه الدور وحده (مطابق للخادم)
+  static const Map<String, String> _sectionOf = {
+    StoreRoutes.orders: 'orders',
+    StoreRoutes.returns: 'orders',
+    StoreRoutes.carts: 'orders',
+    StoreRoutes.products: 'products',
+    StoreRoutes.reviews: 'products',
+    StoreRoutes.questions: 'products',
+    StoreRoutes.sections: 'products',
+    StoreRoutes.trash: 'products',
+    StoreRoutes.customers: 'customers',
+    StoreRoutes.coupons: 'marketing',
+    StoreRoutes.analytics: 'reports',
+  };
+
+  static bool allowed(String route, List<String>? sections) {
+    final s = _sectionOf[route];
+    return sections == null || s == null || sections.contains(s);
+  }
+
+  /// المجموعات بعد إخفاء ما لم يُمنح للموظف
+  static List<NavGroup> visibleGroups(List<String>? sections) => sections == null
+      ? groups
+      : [
+          for (final g in groups)
+            NavGroup(label: g.label, icon: g.icon, question: g.question, destinations: [for (final d in g.destinations) if (allowed(d.route, sections)) d]),
+        ];
+
   /// المجموعة التي تحوي المسار الحالي، أو `null` للرئيسية وما لا ينتمي.
   static NavGroup? groupFor(String location) {
     for (final g in groups) {

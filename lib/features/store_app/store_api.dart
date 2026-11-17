@@ -7,6 +7,7 @@ import '../../core/network/api_client.dart';
 import '../../core/network/api_config.dart';
 import '../../core/network/auth_token_store.dart';
 import '../../core/network/network_providers.dart';
+import '../auth/providers/auth_providers.dart' show authStateNotifierProvider;
 
 /// مسارات وحدات المتجر الجديدة في التطبيق — نفسها التي تستعملها لوحة عزم سمارت:
 /// العملاء، التقييمات، مناطق التوصيل، التحليلات، الباقة والفواتير، الفريق، الإشعارات.
@@ -89,6 +90,8 @@ class StoreDataApi {
       _c.post('/shop/invoices/$invoiceId/proof', body: {'proofKey': proofKey, 'method': ?method});
 
   Future<Map<String, dynamic>> members() => _c.get('/team/members', decode: _map);
+  /// أقسام المتجر للعضو — null = كلها
+  Future<void> setMemberSections(String id, List<String>? sections) => _c.patch('/team/members/$id', body: {'sections': sections});
   Future<Map<String, dynamic>> notifications({bool unread = false}) =>
       _c.get('/notifications', query: {if (unread) 'unread': '1'}, decode: _map);
   Future<void> readAllNotifications() => _c.post('/notifications/read-all');
@@ -111,6 +114,15 @@ class StoreDataApi {
 }
 
 final storeDataApiProvider = Provider<StoreDataApi>((ref) => StoreDataApi(ref.watch(apiClientProvider)));
+
+/// أقسام المتجر المتاحة لي — null = كلها. القائمة تخفي الباقي، والمنع الفعلي في الخادم.
+final storeSectionsProvider = FutureProvider<List<String>?>((ref) async {
+  // يُعاد الجلب مع كل دخول أو تبديل شركة — لا تبقى صلاحيات حساب سابق
+  ref.watch(authStateNotifierProvider.select((a) => '${a.session?.account.id}/${a.session?.company.id}'));
+  final c = await ref.watch(storeDataApiProvider).context();
+  final s = c['sections'];
+  return s is List ? s.map((e) => '$e').toList() : null;
+});
 
 /// جاهزية المتجر — تُعاد مع سحب التحديث في الرئيسية
 final storeReadinessProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, String>(

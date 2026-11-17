@@ -1468,7 +1468,48 @@ class StoreBillingScreen extends StatelessWidget {
 
 class StoreTeamScreen extends StatelessWidget {
   const StoreTeamScreen({super.key});
-  static const _roles = ['المالك', 'مدير عام', 'مدير', 'مشرف', 'موظف', 'موظف', 'موظف', 'محاسب', 'عضو', 'ضيف'];
+  // مطابقة لأدوار الخادم (الأصغر أعلى)
+  static const _roles = ['مالك', 'مدير عام', 'مدير', 'تنفيذي', 'مدير موارد بشرية', 'مدير مالي', 'مدير قسم', 'قائد فريق', 'موظف', 'ضيف'];
+  static const _sections = {'orders': 'الطلبات', 'products': 'المنتجات', 'customers': 'العملاء', 'marketing': 'التسويق', 'reports': 'التقارير والأرباح'};
+
+  static String _sectionsText(int role, Object? v) {
+    if (role <= 2) return 'كل الأقسام (مدير)';
+    if (v is! List || v.length == _sections.length) return 'كل الأقسام';
+    if (v.isEmpty) return 'لا أقسام';
+    return [for (final e in _sections.entries) if (v.contains(e.key)) e.value].join('، ');
+  }
+
+  Future<void> _editSections(BuildContext context, Map m, Future<void> Function() reload) async {
+    final picked = <String>{...((m['sections'] as List?)?.map((e) => '$e') ?? _sections.keys)};
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheet) => StatefulBuilder(
+        builder: (sheet, set) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Text('ما يراه ${(m['user'] as Map?)?['displayName'] ?? 'العضو'} في المتجر', style: AppTypography.h4),
+              for (final e in _sections.entries)
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: picked.contains(e.key),
+                  title: Text(e.value),
+                  onChanged: (v) => set(() => v == true ? picked.add(e.key) : picked.remove(e.key)),
+                ),
+              FilledButton(onPressed: () => Navigator.pop(sheet, true), child: const Text('حفظ')),
+            ]),
+          ),
+        ),
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    await _run(context, () async {
+      await ProviderScope.containerOf(context).read(storeDataApiProvider)
+          .setMemberSections('${m['id']}', picked.length == _sections.length ? null : [for (final k in _sections.keys) if (picked.contains(k)) k]);
+      await reload();
+    }, 'حُفظت أقسام العضو');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1479,12 +1520,13 @@ class StoreTeamScreen extends StatelessWidget {
       builder: (context, d, store, reload) {
         final list = ((d['members'] as List?) ?? const []).cast<Map>();
         return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
-          Text('أعضاء شركتك في عزم سمارت. الإضافة وتغيير الأدوار من «الفريق» في لوحة الويب.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
+          Text('أعضاء شركتك. اضغط على عضو دون «مدير» لتحدّد أقسام المتجر التي يراها. الإضافة وتغيير الأدوار من «الفريق» في لوحة الويب.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
           const SizedBox(height: 12),
           for (final m in list)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: RvCard(
+                onTap: ((m['role'] as num?) ?? 8) > 2 ? () => _editSections(context, m, reload) : null,
                 child: Row(children: [
                   CircleAvatar(
                     backgroundColor: const Color(0xFF0891B2).withValues(alpha: .12),
@@ -1495,6 +1537,7 @@ class StoreTeamScreen extends StatelessWidget {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text('${(m['user'] as Map?)?['displayName'] ?? ''}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
                       Text('${(m['user'] as Map?)?['email'] ?? ''}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                      Text(_sectionsText(((m['role'] as num?) ?? 8).toInt(), m['sections']), style: AppTypography.caption.copyWith(color: p.inkMuted)),
                     ]),
                   ),
                   RvChip(_roles[((m['role'] as num?) ?? 8).toInt().clamp(0, 9)], color: m['isActive'] == false ? p.inkFaint : Rv.red),

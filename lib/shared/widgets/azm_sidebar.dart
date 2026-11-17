@@ -10,6 +10,7 @@ import '../../core/navigation/azm_nav_model.dart';
 import '../../core/router/route_names.dart';
 import '../../core/theme/app_typography.dart';
 import '../../features/company/providers/company_providers.dart';
+import '../../features/store_app/store_api.dart';
 import 'app_logo.dart';
 
 /// AZM — الشريط الجانبي
@@ -98,7 +99,7 @@ class _AzmSidebarState extends ConsumerState<AzmSidebar> {
               const SizedBox(height: AzmSpace.xs),
               _Divider(color: p.hairline),
 
-              for (final group in AzmNav.groups)
+              for (final group in AzmNav.visibleGroups(ref.watch(storeSectionsProvider).value))
                 _GroupTile(
                   group: group,
                   isOpen: _openGroup == group.label,
