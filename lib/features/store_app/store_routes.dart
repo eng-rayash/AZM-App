@@ -14,6 +14,8 @@ class StoreRoutes {
   static const trash = '/store/trash';
   static const carts = '/store/carts';
   static const verification = '/store/verification';
+  static const broadcasts = '/store/broadcasts';
+  static const support = '/store/support';
   static const sections = '/store/sections';
   static const analytics = '/store/analytics';
   static const billing = '/store/billing';

@@ -151,6 +151,8 @@ class AppRouter {
       GoRoute(path: StoreRoutes.trash, builder: (context, state) => const StoreTrashScreen()),
       GoRoute(path: StoreRoutes.carts, builder: (context, state) => const StoreCartsScreen()),
       GoRoute(path: StoreRoutes.verification, builder: (context, state) => const StoreVerificationScreen()),
+      GoRoute(path: StoreRoutes.broadcasts, builder: (context, state) => const StoreBroadcastsScreen()),
+      GoRoute(path: StoreRoutes.support, builder: (context, state) => const StoreSupportScreen()),
       GoRoute(path: StoreRoutes.sections, builder: (context, state) => const StoreSectionsScreen()),
       GoRoute(path: StoreRoutes.analytics, builder: (context, state) => const StoreAnalyticsScreen()),
       GoRoute(path: StoreRoutes.billing, builder: (context, state) => const StorePlanScreen()),

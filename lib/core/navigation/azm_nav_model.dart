@@ -101,6 +101,7 @@ class AzmNav {
         NavDestination(label: 'التقييمات', icon: Icons.star_outline_rounded, route: StoreRoutes.reviews),
         NavDestination(label: 'التوصيل', icon: Icons.local_shipping_outlined, route: StoreRoutes.zones),
         NavDestination(label: 'قسائم الخصم', icon: Icons.local_offer_outlined, route: StoreRoutes.coupons),
+        NavDestination(label: 'إشعارات العملاء', icon: Icons.campaign_outlined, route: StoreRoutes.broadcasts),
         NavDestination(label: 'أسئلة العملاء', icon: Icons.contact_support_outlined, route: StoreRoutes.questions),
         NavDestination(label: 'المرتجعات', icon: Icons.assignment_return_outlined, route: StoreRoutes.returns),
         NavDestination(label: 'السلات المتروكة', icon: Icons.remove_shopping_cart_outlined, route: StoreRoutes.carts),
@@ -120,6 +121,7 @@ class AzmNav {
         NavDestination(label: 'الباقة والاشتراك', icon: Icons.workspace_premium_outlined, route: StoreRoutes.billing),
         NavDestination(label: 'طرق الدفع', icon: Icons.account_balance_wallet_outlined, route: StoreRoutes.pay),
         NavDestination(label: 'توثيق المتجر', icon: Icons.verified_outlined, route: StoreRoutes.verification),
+        NavDestination(label: 'الدعم الفني', icon: Icons.support_agent_outlined, route: StoreRoutes.support),
       ],
     ),
     NavGroup(
@@ -153,6 +155,7 @@ class AzmNav {
     StoreRoutes.trash: 'products',
     StoreRoutes.customers: 'customers',
     StoreRoutes.coupons: 'marketing',
+    StoreRoutes.broadcasts: 'marketing',
     StoreRoutes.analytics: 'reports',
   };
 

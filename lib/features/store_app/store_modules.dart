@@ -149,6 +149,15 @@ class _StoreCustomersScreenState extends State<StoreCustomersScreen> {
                       await reload();
                     },
                   ),
+                  ActionChip(
+                    avatar: const Icon(Icons.account_balance_wallet_outlined, size: 16, color: Rv.red),
+                    label: Text(Rv.money((c['wallet'] as num?) ?? 0)),
+                    tooltip: 'المحفظة',
+                    onPressed: () async {
+                      await showModalBottomSheet<void>(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => _PointsSheet(store: store, customer: c, wallet: true));
+                      await reload();
+                    },
+                  ),
                   if ('${c['phone'] ?? ''}'.isNotEmpty)
                     IconButton(
                       tooltip: 'واتساب',
@@ -164,13 +173,15 @@ class _StoreCustomersScreenState extends State<StoreCustomersScreen> {
   }
 }
 
-const _pointsKind = {'earn': 'مكافأة طلب', 'redeem': 'صُرف في طلب', 'revoke': 'سُحب (طلب مُرجَع)', 'adjust': 'تعديل يدوي'};
+const _pointsKind = {'earn': 'مكافأة طلب', 'redeem': 'صُرف في طلب', 'revoke': 'سُحب (طلب مُرجَع)', 'adjust': 'تعديل يدوي', 'unredeem': 'أُعيد (طلب ملغى)', 'credit': 'إضافة منك', 'debit': 'خصم منك', 'refund': 'استرداد مرتجع', 'pay': 'دفع طلب', 'cancel': 'طلب ملغى أُعيد'};
 
 /// رصيد مكافآت العميل وسجله، وإضافة أو خصم يدوي
 class _PointsSheet extends ConsumerStatefulWidget {
-  const _PointsSheet({required this.store, required this.customer});
+  const _PointsSheet({required this.store, required this.customer, this.wallet = false});
   final ShopStore store;
   final Map customer;
+  /// المحفظة بدل المكافآت — الشاشة نفسها بنقطة نهاية أخرى
+  final bool wallet;
   @override
   ConsumerState<_PointsSheet> createState() => _PointsSheetState();
 }
@@ -188,7 +199,9 @@ class _PointsSheetState extends ConsumerState<_PointsSheet> {
   }
 
   Future<void> _load() async {
-    final d = await ref.read(storeDataApiProvider).customerPoints(widget.store.id, '${widget.customer['id']}');
+    final api = ref.read(storeDataApiProvider);
+    final id = '${widget.customer['id']}';
+    final d = widget.wallet ? await api.customerWallet(widget.store.id, id) : await api.customerPoints(widget.store.id, id);
     if (mounted) setState(() => _d = d);
   }
 
@@ -197,7 +210,13 @@ class _PointsSheetState extends ConsumerState<_PointsSheet> {
     if (v <= 0) return;
     setState(() => _busy = true);
     try {
-      await ref.read(storeDataApiProvider).adjustPoints(widget.store.id, '${widget.customer['id']}', sign * v, note: _note.text.trim());
+      final api = ref.read(storeDataApiProvider);
+      final id = '${widget.customer['id']}';
+      if (widget.wallet) {
+        await api.adjustWallet(widget.store.id, id, sign * v, note: _note.text.trim());
+      } else {
+        await api.adjustPoints(widget.store.id, id, sign * v, note: _note.text.trim());
+      }
       _amount.clear();
       _note.clear();
       await _load();
@@ -212,15 +231,16 @@ class _PointsSheetState extends ConsumerState<_PointsSheet> {
   Widget build(BuildContext context) {
     final p = AzmPalette.of(context);
     final cur = widget.store.currency;
-    final points = ((_d?['customer'] as Map?)?['points'] as num?) ?? (widget.customer['points'] as num?) ?? 0;
+    final field = widget.wallet ? 'wallet' : 'points';
+    final points = ((_d?['customer'] as Map?)?[field] as num?) ?? (widget.customer[field] as num?) ?? 0;
     final history = ((_d?['history'] as List?) ?? const []).cast<Map>();
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * .7,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text('رصيد ${'${widget.customer['name'] ?? ''}'.isEmpty ? 'العميل' : widget.customer['name']}', style: AppTypography.h4.copyWith(color: p.ink)),
-          Text('${Rv.money(points)} $cur — يُصرف خصمًا في طلب يدوي برقم جواله', style: AppTypography.caption.copyWith(color: p.inkMuted)),
+          Text('${widget.wallet ? 'محفظة' : 'رصيد'} ${'${widget.customer['name'] ?? ''}'.isEmpty ? 'العميل' : widget.customer['name']}', style: AppTypography.h4.copyWith(color: p.ink)),
+          Text(widget.wallet ? '${Rv.money(points)} $cur — يدفع منه العميل في طلبه وهو مسجّل الدخول في متجرك' : '${Rv.money(points)} $cur — يُصرف خصمًا في طلب يدوي برقم جواله', style: AppTypography.caption.copyWith(color: p.inkMuted)),
           const SizedBox(height: 12),
           Row(children: [
             SizedBox(
@@ -1407,6 +1427,281 @@ class _KycBodyState extends ConsumerState<_KycBody> {
           ])),
         ]),
       );
+}
+
+// ═══════════════════════════════════════════════════════════
+// إشعارات العملاء
+// ═══════════════════════════════════════════════════════════
+
+const _audience = {'all': 'كل العملاء', 'buyers': 'من اشترى منك', 'returning': 'العملاء العائدون', 'accounts': 'من لهم حساب'};
+
+/// إشعار جماعي لعملاء المتجر — يظهر في حساباتهم، وبرسالة جوال حين يُربط المزوّد.
+class StoreBroadcastsScreen extends StatefulWidget {
+  const StoreBroadcastsScreen({super.key});
+  @override
+  State<StoreBroadcastsScreen> createState() => _StoreBroadcastsScreenState();
+}
+
+class _StoreBroadcastsScreenState extends State<StoreBroadcastsScreen> {
+  final _title = TextEditingController();
+  final _body = TextEditingController();
+  String _aud = 'all';
+  bool _sms = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<Map<String, dynamic>>(
+      title: 'إشعارات العملاء',
+      load: (api, s) => api.broadcasts(s.id),
+      builder: (context, d, store, reload) {
+        final list = ((d['broadcasts'] as List?) ?? const []).cast<Map>();
+        final aud = (d['audience'] as Map?) ?? {};
+        final smsOk = d['smsAvailable'] == true;
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
+          Text('عرض أو خبر يصل عملاءك في حساباتهم بمتجرك. حتى ٥ إشعارات في اليوم.', style: AppTypography.bodySmall.copyWith(color: p.inkMuted)),
+          const SizedBox(height: 12),
+          TextField(controller: _title, maxLength: 80, decoration: const InputDecoration(labelText: 'العنوان', counterText: '')),
+          const SizedBox(height: 8),
+          TextField(controller: _body, maxLength: 500, maxLines: 3, decoration: const InputDecoration(labelText: 'النص', counterText: '')),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            initialValue: _aud,
+            decoration: const InputDecoration(labelText: 'إلى'),
+            items: [
+              for (final e in _audience.entries)
+                DropdownMenuItem(value: e.key, child: Text('${e.value} (${Rv.money((aud[e.key == 'returning' ? 'buyers' : e.key] as num?) ?? 0)})')),
+            ],
+            onChanged: (v) => setState(() => _aud = v ?? 'all'),
+          ),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: _sms && smsOk,
+            onChanged: smsOk ? (v) => setState(() => _sms = v == true) : null,
+            title: const Text('أرسله برسالة جوال أيضًا'),
+            subtitle: smsOk ? null : const Text('يُفعَّل حين تربط المنصة مزوّد الرسائل'),
+          ),
+          FilledButton.icon(
+            icon: const Icon(Icons.send_rounded),
+            label: const Text('إرسال'),
+            onPressed: () => _run(context, () async {
+              if (_title.text.trim().length < 2 || _body.text.trim().length < 2) throw Exception('اكتب العنوان والنص');
+              await ProviderScope.containerOf(context).read(storeDataApiProvider).sendBroadcast(store.id, {
+                'title': _title.text.trim(), 'body': _body.text.trim(), 'audience': _aud, if (_sms && smsOk) 'sms': true,
+              });
+              _title.clear();
+              _body.clear();
+              await reload();
+            }, 'أُرسل الإشعار'),
+          ),
+          const SizedBox(height: 20),
+          Text('المُرسَلة', style: AppTypography.h4.copyWith(color: p.ink)),
+          const SizedBox(height: 8),
+          if (list.isEmpty) const RvEmpty(icon: Icons.campaign_outlined, title: 'لم ترسل إشعارًا بعد', body: 'تصل عملاءك أيضًا إشعارات تلقائية بحالة كل طلب.'),
+          for (final b in list)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RvCard(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('${b['title']}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                  Text('${b['body']}', style: AppTypography.caption.copyWith(color: p.inkMuted)),
+                  const SizedBox(height: 4),
+                  Text('${_audience[b['audience']] ?? b['audience']} · ${Rv.money((b['recipients'] as num?) ?? 0)} عميل · ${Rv.ago('${b['createdAt']}')}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                ]),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// الدعم الفني
+// ═══════════════════════════════════════════════════════════
+
+const _ticketStatus = ['بانتظار فريق RVIOS', 'ردّ الفريق', 'مغلقة'];
+const _ticketCategory = {'store': 'متجري', 'billing': 'الاشتراك والفواتير', 'technical': 'مشكلة تقنية', 'domain': 'النطاق الخاص', 'other': 'أخرى'};
+
+/// تذاكر الدعم مع فريق RVIOS — قائمة، ومحادثة كل تذكرة، وتذكرة جديدة.
+class StoreSupportScreen extends StatelessWidget {
+  const StoreSupportScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return _ModuleScaffold<List<Map<String, dynamic>>>(
+      title: 'الدعم الفني',
+      load: (api, s) => api.tickets(),
+      actions: (context, store, reload) => [
+        IconButton(
+          tooltip: 'تذكرة جديدة',
+          icon: const Icon(Icons.add_comment_outlined),
+          onPressed: () async {
+            final ok = await showModalBottomSheet<bool>(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => const _NewTicketSheet());
+            if (ok == true) await reload();
+          },
+        ),
+      ],
+      builder: (context, list, store, reload) {
+        if (list.isEmpty) return ListView(children: const [SizedBox(height: 80), RvEmpty(icon: Icons.support_agent_outlined, title: 'لا تذاكر بعد', body: 'افتح تذكرة من الزر أعلاه لأي سؤال أو مشكلة.')]);
+        return ListView.separated(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
+          itemCount: list.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          itemBuilder: (context, i) {
+            final t = list[i];
+            final st = ((t['status'] as num?) ?? 0).toInt();
+            return RvCard(
+              onTap: () async {
+                await showModalBottomSheet<void>(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => _TicketSheet(id: '${t['id']}'));
+                await reload();
+              },
+              child: Row(children: [
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('${t['subject']}', style: AppTypography.body.copyWith(color: p.ink, fontWeight: FontWeight.w700)),
+                    Text('${t['ref']} · ${_ticketCategory[t['category']] ?? t['category']} · ${Rv.ago('${t['lastMessageAt']}')}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                  ]),
+                ),
+                RvChip(_ticketStatus[st.clamp(0, 2)], color: st == 1 ? const Color(0xFF0284C7) : st == 2 ? p.inkFaint : Rv.gold),
+              ]),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _NewTicketSheet extends ConsumerStatefulWidget {
+  const _NewTicketSheet();
+  @override
+  ConsumerState<_NewTicketSheet> createState() => _NewTicketSheetState();
+}
+
+class _NewTicketSheetState extends ConsumerState<_NewTicketSheet> {
+  final _subject = TextEditingController();
+  final _body = TextEditingController();
+  String _cat = 'store';
+  int _priority = 0;
+  bool _busy = false;
+
+  Future<void> _send() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(storeDataApiProvider).createTicket({'subject': _subject.text.trim(), 'category': _cat, 'priority': _priority, 'body': _body.text.trim()});
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'.replaceFirst('Exception: ', ''))));
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text('تذكرة جديدة', style: AppTypography.h4.copyWith(color: p.ink)),
+        const SizedBox(height: 10),
+        TextField(controller: _subject, maxLength: 120, decoration: const InputDecoration(labelText: 'الموضوع', counterText: '')),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(child: DropdownButtonFormField<String>(initialValue: _cat, decoration: const InputDecoration(labelText: 'النوع'), items: [for (final e in _ticketCategory.entries) DropdownMenuItem(value: e.key, child: Text(e.value))], onChanged: (v) => setState(() => _cat = v ?? 'store'))),
+          const SizedBox(width: 8),
+          Expanded(child: DropdownButtonFormField<int>(initialValue: _priority, decoration: const InputDecoration(labelText: 'الأولوية'), items: const [DropdownMenuItem(value: 0, child: Text('عادية')), DropdownMenuItem(value: 1, child: Text('مهمة')), DropdownMenuItem(value: 2, child: Text('عاجلة'))], onChanged: (v) => setState(() => _priority = v ?? 0))),
+        ]),
+        const SizedBox(height: 8),
+        TextField(controller: _body, maxLength: 4000, maxLines: 5, decoration: const InputDecoration(labelText: 'التفاصيل', counterText: '')),
+        const SizedBox(height: 12),
+        FilledButton(onPressed: _busy ? null : _send, child: Text(_busy ? '…' : 'فتح التذكرة')),
+      ]),
+    );
+  }
+}
+
+class _TicketSheet extends ConsumerStatefulWidget {
+  const _TicketSheet({required this.id});
+  final String id;
+  @override
+  ConsumerState<_TicketSheet> createState() => _TicketSheetState();
+}
+
+class _TicketSheetState extends ConsumerState<_TicketSheet> {
+  Map<String, dynamic>? _t;
+  final _reply = TextEditingController();
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(storeDataApiProvider).ticket(widget.id).then((t) { if (mounted) setState(() => _t = t); });
+  }
+
+  Future<void> _do(Future<Map<String, dynamic>> Function() f) async {
+    setState(() => _busy = true);
+    try {
+      final t = await f();
+      if (mounted) setState(() { _t = t; _reply.clear(); });
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'.replaceFirst('Exception: ', ''))));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AzmPalette.of(context);
+    final t = _t;
+    final api = ref.read(storeDataApiProvider);
+    final msgs = ((t?['messages'] as List?) ?? const []).cast<Map>();
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * .8,
+        child: t == null
+            ? const Center(child: CircularProgressIndicator())
+            : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Row(children: [
+                  Expanded(child: Text('${t['subject']}', style: AppTypography.h4.copyWith(color: p.ink))),
+                  if (t['status'] != 2) TextButton(onPressed: _busy ? null : () => _do(() => api.closeTicket(widget.id)), child: const Text('إغلاق — حُلّت')),
+                ]),
+                Text('${t['ref']} · ${_ticketStatus[((t['status'] as num?) ?? 0).toInt().clamp(0, 2)]}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView(children: [
+                    for (final m in msgs)
+                      Align(
+                        alignment: m['fromStaff'] == true ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .78),
+                          decoration: BoxDecoration(color: m['fromStaff'] == true ? p.hairline : Rv.red.withValues(alpha: .08), borderRadius: BorderRadius.circular(12)),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text('${m['fromStaff'] == true ? 'فريق RVIOS' : (m['author'] as Map?)?['displayName'] ?? ''} · ${Rv.ago('${m['createdAt']}')}', style: AppTypography.caption.copyWith(color: p.inkFaint)),
+                            Text('${m['body']}', style: AppTypography.body.copyWith(color: p.ink)),
+                          ]),
+                        ),
+                      ),
+                  ]),
+                ),
+                Row(children: [
+                  Expanded(child: TextField(controller: _reply, maxLines: 3, minLines: 1, decoration: InputDecoration(hintText: t['status'] == 2 ? 'اكتب لإعادة فتحها…' : 'ردّك…'))),
+                  IconButton(
+                    icon: const Icon(Icons.send_rounded),
+                    onPressed: _busy ? null : () { if (_reply.text.trim().isNotEmpty) _do(() => api.replyTicket(widget.id, _reply.text.trim())); },
+                  ),
+                ]),
+              ]),
+      ),
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════════════

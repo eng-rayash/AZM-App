@@ -41,6 +41,23 @@ class StoreDataApi {
   Future<Map<String, dynamic>> adjustPoints(String storeId, String customerId, int amount, {String? note}) =>
       _c.post('${_s(storeId)}/customers/$customerId/points', body: {'amount': amount, if (note != null && note.isNotEmpty) 'note': note}, decode: _map);
 
+  /// محفظة العميل — `{customer, history}`
+  Future<Map<String, dynamic>> customerWallet(String storeId, String customerId) =>
+      _c.get('${_s(storeId)}/customers/$customerId/wallet', decode: _map);
+  Future<Map<String, dynamic>> adjustWallet(String storeId, String customerId, int amount, {String? note}) =>
+      _c.post('${_s(storeId)}/customers/$customerId/wallet', body: {'amount': amount, if (note != null && note.isNotEmpty) 'note': note}, decode: _map);
+
+  /// إشعارات العملاء الجماعية — `{broadcasts, audience, smsAvailable}`
+  Future<Map<String, dynamic>> broadcasts(String storeId) => _c.get('${_s(storeId)}/broadcasts', decode: _map);
+  Future<Map<String, dynamic>> sendBroadcast(String storeId, Map<String, Object?> body) => _c.post('${_s(storeId)}/broadcasts', body: body, decode: _map);
+
+  /// تذاكر الدعم مع فريق المنصة
+  Future<List<Map<String, dynamic>>> tickets() => _c.get('/support/tickets', decode: _list);
+  Future<Map<String, dynamic>> ticket(String id) => _c.get('/support/tickets/$id', decode: _map);
+  Future<Map<String, dynamic>> createTicket(Map<String, Object?> body) => _c.post('/support/tickets', body: body, decode: _map);
+  Future<Map<String, dynamic>> replyTicket(String id, String body) => _c.post('/support/tickets/$id/messages', body: {'body': body}, decode: _map);
+  Future<Map<String, dynamic>> closeTicket(String id) => _c.post('/support/tickets/$id/close', decode: _map);
+
   /// السلات المتروكة — `{carts, stats}`
   Future<Map<String, dynamic>> carts(String storeId, {bool recovered = false}) =>
       _c.get('${_s(storeId)}/carts', query: {if (recovered) 'status': '1'}, decode: _map);
