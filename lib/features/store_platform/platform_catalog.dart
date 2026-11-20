@@ -156,7 +156,7 @@ String activationMessage({
   final cycle = yearly ? 'سنوي' : 'شهري';
   return [
     purpose ?? 'مرحبًا فريق RVIOS 👋 أريد تفعيل متجري:',
-    '🏪 المتجر: $store ($slug.rvios.store)',
+    '🏪 المتجر: $store ($slug.rvios.com)',
     '🎨 القالب: ${template.name}',
     if (plan.paid) '⭐ الباقة: ${plan.label} · $cycle',
     '💰 الإجمالي: ${fmtMoney(total)} ${currencyLabel(currency)}',

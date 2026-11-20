@@ -122,7 +122,7 @@ class _TemplatePreviewScreenState extends State<TemplatePreviewScreen> {
                                 child: LiveStoreFrame(
                                   url: _t.demoUrl,
                                   device: PreviewDevice.desktop,
-                                  address: '${_t.demo}.rvios.store',
+                                  address: '${_t.demo}.rvios.com',
                                   placeholder: Image.network(_t.shotDesk, fit: BoxFit.cover, alignment: Alignment.topCenter, errorBuilder: (_, _, _) => const SizedBox()),
                                 ),
                               ),

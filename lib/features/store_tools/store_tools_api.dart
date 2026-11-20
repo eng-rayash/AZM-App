@@ -86,3 +86,10 @@ class AiEvent {
 /// لوحة عزم سمارت على الويب — لما يحتاج شاشة كبيرة (محرر شكل المتجر).
 const String azmWebUrl = String.fromEnvironment('AZM_WEB_URL', defaultValue: 'https://azm.rvios.com');
 const String storefrontUrl = String.fromEnvironment('AZM_STORE_URL', defaultValue: 'https://store.rvios.com');
+/// نطاق روابط المتاجر: اسم-المتجر.rvios.com (مثل madad.rvios.com)
+const String storeDomain = String.fromEnvironment('AZM_STORE_DOMAIN', defaultValue: 'rvios.com');
+/// الرابط العام لمتجر — وفي التطوير المحلي مسار /s/ على المنصة
+String storePublicUrl(String slug) =>
+    storefrontUrl.contains('localhost') || storefrontUrl.contains('10.0.2.2') || storefrontUrl.contains('127.0.0.1')
+        ? '$storefrontUrl/s/$slug'
+        : 'https://$slug.$storeDomain';

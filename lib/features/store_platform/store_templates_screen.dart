@@ -69,7 +69,7 @@ class _GalleryState extends ConsumerState<_Gallery> {
           PlatformContact.forPhone(s.whatsapp, country: s.country),
           [
             'مرحبًا فريق RVIOS 👋 أريد شراء قالب لمتجري:',
-            '🏪 المتجر: ${s.name} (${s.slug}.rvios.store)',
+            '🏪 المتجر: ${s.name} (${s.slug}.rvios.com)',
             '🎨 القالب: ${t.name}',
             '🧾 الفاتورة: ${inv['invoiceNumber'] ?? ''}',
             '💰 المبلغ: ${fmtMoney((inv['amount'] as num?) ?? cost)} ${currencyLabel('${inv['currency'] ?? pr.currency}')}',

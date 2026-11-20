@@ -93,7 +93,7 @@ class _Home extends ConsumerWidget {
                 child: _HeroButton(
                   icon: Icons.open_in_new_rounded,
                   label: 'فتح المتجر',
-                  onTap: () => launchUrl(Uri.parse('$storefrontUrl/s/${store.slug}'), mode: LaunchMode.externalApplication),
+                  onTap: () => launchUrl(Uri.parse(storePublicUrl(store.slug)), mode: LaunchMode.externalApplication),
                 ),
               ),
               const SizedBox(width: 10),

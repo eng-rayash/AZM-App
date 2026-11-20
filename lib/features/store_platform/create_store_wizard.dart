@@ -372,7 +372,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
         Icons.link_rounded,
         ltr: true,
         hint: 'mystore',
-        suffix: Padding(padding: const EdgeInsets.only(left: 4), child: Text('.rvios.store', style: TextStyle(color: p.inkMuted, fontWeight: FontWeight.w600))),
+        suffix: Padding(padding: const EdgeInsets.only(left: 4), child: Text('.rvios.com', style: TextStyle(color: p.inkMuted, fontWeight: FontWeight.w600))),
         onChanged: (v) {
           _slugTouched = true;
           _scheduleSlug();
@@ -394,7 +394,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
               checking
                   ? 'نتحقق من الرابط…'
                   : ok
-                      ? 'متاح! متجرك على $_finalSlug.rvios.store'
+                      ? 'متاح! متجرك على $_finalSlug.rvios.com'
                       : _slugCheck == null
                           ? 'أحرف إنجليزية صغيرة وأرقام وشرطة — يُقترح من الاسم تلقائيًا'
                           : (reason.isEmpty ? 'هذا الرابط غير متاح' : reason),
@@ -452,7 +452,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(_name.text.trim().isEmpty ? 'اسم متجرك' : _name.text.trim(), style: const TextStyle(color: Colors.white, fontFamily: 'Zain', fontSize: 22, fontWeight: FontWeight.w800, height: 1.1)),
-              Text('${_finalSlug.isEmpty ? 'yourstore' : _finalSlug}.rvios.store', textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
+              Text('${_finalSlug.isEmpty ? 'yourstore' : _finalSlug}.rvios.com', textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
             ]),
           ),
           const Icon(Icons.verified_rounded, color: Colors.white70),
@@ -477,7 +477,7 @@ class _CreateStoreWizardState extends ConsumerState<CreateStoreWizard> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(_name.text.trim(), style: TextStyle(fontFamily: 'Zain', fontSize: 24, fontWeight: FontWeight.w800, color: p.ink, height: 1.1)),
-              Text('$_finalSlug.rvios.store', textDirection: TextDirection.ltr, style: AppTypography.caption.copyWith(color: p.inkMuted)),
+              Text('$_finalSlug.rvios.com', textDirection: TextDirection.ltr, style: AppTypography.caption.copyWith(color: p.inkMuted)),
               const SizedBox(height: 8),
               SummaryRow('القالب', tplCost == 0 ? (_tpl.isFree ? 'مجاني' : 'مشمول') : '${currencyLabel(_cur)}${fmtMoney(tplCost)}', hint: _tpl.name),
               SummaryRow('الباقة', _plan.paid ? '${currencyLabel(_cur)}${fmtMoney(_planPrice(_plan))}' : 'مجانية', hint: _plan.paid ? '${_plan.label} · ${_yearly ? 'سنوي' : 'شهري'}' : _plan.label),

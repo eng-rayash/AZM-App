@@ -89,7 +89,7 @@ class StoreCreatedScreen extends StatelessWidget {
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.link_rounded, color: Colors.white70, size: 18),
                       const SizedBox(width: 8),
-                      Flexible(child: Text('$slug.rvios.store', textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700))),
+                      Flexible(child: Text('$slug.rvios.com', textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700))),
                       const SizedBox(width: 8),
                       const Icon(Icons.copy_rounded, color: Colors.white70, size: 16),
                     ]),

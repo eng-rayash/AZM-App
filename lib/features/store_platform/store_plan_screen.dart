@@ -70,7 +70,7 @@ class _PlanBodyState extends ConsumerState<_PlanBody> {
         PlatformContact.forPhone(widget.store.whatsapp, country: widget.store.country),
         [
           'مرحبًا فريق RVIOS 👋 أريد ترقية باقة متجري:',
-          '🏪 المتجر: ${widget.store.name} (${widget.store.slug}.rvios.store)',
+          '🏪 المتجر: ${widget.store.name} (${widget.store.slug}.rvios.com)',
           '⭐ الباقة: ${plan.label} · ${_yearly ? 'سنوي' : 'شهري'}',
           '🧾 الفاتورة: ${inv['invoiceNumber'] ?? ''}',
           '💰 المبلغ: ${fmtMoney(amount)} ${currencyLabel('${inv['currency'] ?? pr.currency}')}',

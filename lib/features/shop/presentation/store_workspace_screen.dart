@@ -311,7 +311,7 @@ class _StoreTools extends StatelessWidget {
               case 'look':
                 push(const DesignStudioScreen());
               case 'open':
-                launchUrl(Uri.parse('$storefrontUrl/s/${store.slug}'), mode: LaunchMode.externalApplication);
+                launchUrl(Uri.parse(storePublicUrl(store.slug)), mode: LaunchMode.externalApplication);
               case 'pay':
                 push(const PaymentMethodsScreen());
             }

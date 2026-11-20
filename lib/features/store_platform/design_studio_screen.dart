@@ -13,7 +13,7 @@ import '../shop/providers/shop_providers.dart';
 import '../store_app/kit.dart';
 import '../store_app/store_api.dart';
 import '../store_app/store_gate.dart';
-import '../store_tools/store_tools_api.dart' show storefrontUrl;
+import '../store_tools/store_tools_api.dart' show storefrontUrl, storePublicUrl;
 import 'live_store_frame.dart';
 import 'platform_api.dart';
 import 'platform_catalog.dart';
@@ -191,7 +191,7 @@ class _StudioState extends ConsumerState<_Studio> {
               const SizedBox(width: 4),
               _MiniBtn(icon: Icons.refresh_rounded, onTap: _reloadPreview),
               _MiniBtn(icon: _expanded ? Icons.close_fullscreen_rounded : Icons.open_in_full_rounded, onTap: () => setState(() => _expanded = !_expanded)),
-              _MiniBtn(icon: Icons.open_in_new_rounded, onTap: () => launchUrl(Uri.parse('$storefrontUrl/s/$_slug'), mode: LaunchMode.externalApplication)),
+              _MiniBtn(icon: Icons.open_in_new_rounded, onTap: () => launchUrl(Uri.parse(storePublicUrl(_slug)), mode: LaunchMode.externalApplication)),
             ]),
             const SizedBox(height: 8),
             Expanded(
@@ -212,7 +212,7 @@ class _StudioState extends ConsumerState<_Studio> {
                             key: ValueKey('d$_version'),
                             url: '$storefrontUrl/s/$_slug?v=$_version',
                             device: PreviewDevice.desktop,
-                            address: '$_slug.rvios.store',
+                            address: '$_slug.rvios.com',
                             placeholder: Image.network(tpl.shotDesk, fit: BoxFit.cover, alignment: Alignment.topCenter, errorBuilder: (_, _, _) => const SizedBox()),
                           ),
               ),
@@ -315,7 +315,7 @@ class _StudioState extends ConsumerState<_Studio> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: p.hairline)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('$_slug.rvios.store', textDirection: TextDirection.ltr, style: const TextStyle(color: Color(0xFF1E6B34), fontSize: 12)),
+              Text('$_slug.rvios.com', textDirection: TextDirection.ltr, style: const TextStyle(color: Color(0xFF1E6B34), fontSize: 12)),
               Text(_seoTitle.text.isEmpty ? _name.text : _seoTitle.text, style: const TextStyle(color: Color(0xFF1A0DAB), fontSize: 16, fontWeight: FontWeight.w600)),
               Text(_seoDesc.text.isEmpty ? (_tagline.text.isEmpty ? 'وصف متجرك كما يظهر في Google' : _tagline.text) : _seoDesc.text,
                   maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Color(0xFF4D5156), fontSize: 13)),
